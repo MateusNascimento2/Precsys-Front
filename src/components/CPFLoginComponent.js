@@ -14,8 +14,8 @@ function CPFLoginComponent() {
       {showPasswordLogin ? (
         <PasswordLoginComponent />
       ) : (
-        <>
-          <h2 className="font-bold text-3xl text-center mb-8 w-[300px]">Log in para o Precsys</h2>
+        <div className="w-[300px]">
+          <h2 className="font-bold text-3xl text-center mb-8 ">Entrar para o Precsys</h2>
           <div>
             <form className="flex flex-col gap-4">
               <input className="border rounded py-3 px-4" type="text" placeholder="CPF/CNPJ" required />
@@ -37,7 +37,7 @@ function CPFLoginComponent() {
               </button>
             </form>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

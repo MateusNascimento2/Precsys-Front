@@ -2,16 +2,15 @@ import React from 'react';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 
 import Header from './components/Header';
-import CPFLoginComponent from './components/CPFLoginComponent';
-import PasswordLoginComponent from './components/PasswordLoginComponent';
+import Login from './pages/Login';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Header />}>
-          <Route index element={<CPFLoginComponent />} />
-          
+          <Route index element={<Login />} />
+
         </Route>
       </Routes>
     </BrowserRouter>
