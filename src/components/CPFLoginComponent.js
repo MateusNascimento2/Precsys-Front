@@ -1,24 +1,47 @@
 import React, { useState } from "react";
 import PasswordLoginComponent from "./PasswordLoginComponent";
+import axios from "axios";
 
 function CPFLoginComponent() {
   const [showPasswordLogin, setShowPasswordLogin] = useState(false);
+  const [cpfcnpj, setCpfCnpj] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userImage, setUserImage] = useState('');
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
 
-  const handleContinue = () => {
-    setShowPasswordLogin(true);
+  const handleContinue = async (event) => {
+    try {
+      event.preventDefault();
+      const {data} = await axios.post('https://precsys2.vercel.app/api/checkCpfCnpj', {
+        cpfcnpj: cpfcnpj
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      setUserName(data.userName);
+      setUserImage(data.photoUrl)
+      setShowPasswordLogin(true);
+    } catch (err) {
+      setShowErrorMessage(true)
+      console.error(err);
+    }
+    
+
   };
 
   return (
     <div className="flex flex-col">
 
       {showPasswordLogin ? (
-        <PasswordLoginComponent />
+        <PasswordLoginComponent nome={userName} imagemUsuario={userImage} cpfcnpj={cpfcnpj} />
       ) : (
         <div className="w-[300px]">
           <h2 className="font-bold text-3xl text-center mb-8 ">Entrar para o Precsys</h2>
           <div>
             <form className="flex flex-col gap-4">
-              <input className="border rounded py-3 px-4" type="text" placeholder="CPF/CNPJ" required />
+              {showErrorMessage ? (<span>CPF/CNPJ Inválido</span>) : null}
+              <input className="border rounded py-3 px-4" type="text" placeholder="CPF/CNPJ" name="cpfcnpj" id="cpfcnpj" value={cpfcnpj} onChange={(event) => setCpfCnpj(event.target.value)} required />
               <button
                 onClick={handleContinue}
                 className="border rounded-md text-white text-center bg-black py-3 px-4 flex items-center justify-center gap-2 hover:opacity-85"
