@@ -43,10 +43,8 @@ function CPFLoginComponent() {
 
       console.error(error);
     }
-
-
   };
-  ;
+  
 
   const handleCpfCnpjChange = (event) => {
     // Get only the numbers from the data input

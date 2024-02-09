@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import placeholder from "../../public/assets/placeholder-perfil.jpg";
 import axios from 'axios';
@@ -7,7 +8,8 @@ import { useUser } from '../context/UserContext';
 function PasswordLoginComponent({ nome, imagemUsuario, cpfcnpj }) {
   const [password, setPassword] = useState('');
   const { updateUser } = useUser();
-  const [isAuthenticated, setisAuthenticated] = useState(false);
+
+  const navigate = useNavigate();
 
   const handlePassword = async (event) => {
     try{
@@ -20,8 +22,8 @@ function PasswordLoginComponent({ nome, imagemUsuario, cpfcnpj }) {
       })
 
       if(data) {
-        setisAuthenticated(true);
         updateUser(data);
+        navigate("/dashboard");
       }
   
     } catch (err) {
