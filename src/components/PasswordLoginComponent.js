@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 
 import placeholder from "../../public/assets/placeholder-perfil.jpg";
 import axios from 'axios';
+import { useUser } from '../context/UserContext';
 
 function PasswordLoginComponent({ nome, imagemUsuario, cpfcnpj }) {
   const [password, setPassword] = useState('');
+  const { updateUser } = useUser();
+  const [isAuthenticated, setisAuthenticated] = useState(false);
 
   const handlePassword = async (event) => {
     try{
@@ -15,8 +18,12 @@ function PasswordLoginComponent({ nome, imagemUsuario, cpfcnpj }) {
       }, {
         headers: { 'Content-type': 'application/json' }
       })
+
+      if(data) {
+        setisAuthenticated(true);
+        updateUser(data);
+      }
   
-      console.log(data);
     } catch (err) {
       console.log(err);
     }
@@ -25,12 +32,12 @@ function PasswordLoginComponent({ nome, imagemUsuario, cpfcnpj }) {
 
   const nomeArr = nome.split(" ");
   const primeiroNome = nomeArr[0];
-  const sobrenome = nomeArr[1];
+  const sobrenome = nomeArr[nomeArr.length - 1];
 
   return (
     <div className="bg-white flex flex-col items-center gap-4 w-[300px]">
-      <img className='w-[200px]' src={imagemUsuario ? `${imagemUsuario}` : placeholder} alt="Imagem de Perfil do Usuário" />
-      <h2>Bem vindo, <strong>{`${primeiroNome} ${sobrenome}`}</strong></h2>
+      <img className='w-[200px] rounded-lg' src={imagemUsuario ? `${imagemUsuario}` : placeholder} alt="Imagem de Perfil do Usuário" />
+      <h2>Bem-vindo, <strong>{`${primeiroNome} ${sobrenome}`}</strong></h2>
       <div className='w-full'>
         <form className="flex flex-col gap-4 w-full">
           <input className="border rounded py-3 px-4" type="text" placeholder="Senha" name='password' id='password' required onChange={(event) => setPassword(event.target.value)} value={password} />

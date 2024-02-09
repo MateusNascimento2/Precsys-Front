@@ -11,6 +11,9 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans]
+      },
+      backgroundImage: {
+        'hero-pattern': "url('./public/assets/background-precsys.jpg')"
       }
     },
   },
