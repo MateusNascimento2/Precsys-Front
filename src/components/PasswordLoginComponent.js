@@ -3,25 +3,25 @@ import useAuth from '../hooks/useAuth';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import placeholder from "../../public/assets/placeholder-perfil.jpg";
-import axios from 'axios';
+import axios from '../api/axios';
 
 function PasswordLoginComponent({ nome, imagemUsuario, cpfcnpj }) {
   const { setAuth } = useAuth();
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  // const { updateUser } = useUser();
 
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || "/dashboard";
+  console.log(from);
 
 
   const handlePassword = async (event) => {
     event.preventDefault();
 
     try {
-      const { data } = await axios.post('https://precsys2.vercel.app/api/login', {
+      const { data } = await axios.post('/login', {
         cpfcnpj: cpfcnpj,
         password: password
       }, {
@@ -34,6 +34,7 @@ function PasswordLoginComponent({ nome, imagemUsuario, cpfcnpj }) {
       if (data.token) {
         const token = data.token;
         const user = data.result
+        console.log(`user do login: ${user}`);
         setAuth({user, token});
 
         navigate(from, {replace: true});

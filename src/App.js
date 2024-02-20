@@ -1,15 +1,15 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 import Header from './components/Header';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Cessoes from './pages/Cessoes';
 import AllCessoes from './pages/AllCessoes';
-import { UserProvider } from './context/UserContext';
 import { Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import {RequireAdminAuth, RequireNormalUserAuth} from './components/RequireAuth';
 import Unauthorized from './pages/Unauthorized';
+import Usuarios from './pages/Usuarios';
 
 function App() {
 
@@ -18,7 +18,7 @@ function App() {
       
       <Route path='/' element={<Layout />}>
         {/* Public Routes*/}
-        <Route path='login' element={<Login />} />  
+        <Route path='/' element={<Login />} />  
 
         {/* Protected Routes*/}
         <Route element={<RequireNormalUserAuth />}>
@@ -28,6 +28,7 @@ function App() {
 
         <Route element={<RequireAdminAuth />}>
           <Route path='allCessoes' element={<AllCessoes />} />
+          <Route path='users' element={<Usuarios />} />
         </Route>  
 
         <Route path='*' element={<Unauthorized />} />

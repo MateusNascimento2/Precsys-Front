@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PasswordLoginComponent from "./PasswordLoginComponent";
-import axios from "axios";
+import axios from '../api/axios';
 
 import LoadingSpinner from "./LoadingSpinner/LoadingSpinner";
 
@@ -19,7 +19,7 @@ function CPFLoginComponent() {
     try {
       event.preventDefault();
       setIsLoading(true)
-      const { data } = await axios.post('https://precsys2.vercel.app/api/checkCpfCnpj', {
+      const { data } = await axios.post('/checkCpfCnpj', {
         cpfcnpj: cpfcnpj
       }, {
         headers: {

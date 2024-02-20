@@ -1,7 +1,6 @@
 import React from 'react';
 import logo from "../../public/assets/precsys-logo.png"
 
-import { useUser } from '../context/UserContext'
 import useAuth from "../hooks/useAuth";
 import NavBarAdmin from "../components/NavBarAdmin";
 import NavBarUser from "../components/NavBarUser"
@@ -9,7 +8,6 @@ import { Outlet } from 'react-router';
 
 
 function Header() {
-  // const { user } = useUser();
   const { auth } = useAuth();
   // console.log(user);
   console.log(`Header auth: ${auth.user.admin}`)

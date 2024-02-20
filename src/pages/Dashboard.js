@@ -5,6 +5,10 @@ import Header from '../components/Header';
 
 function Dashboard() {
 
+/*   useEffect(() => {
+    axios.get("https://precsys2.vercel.app/api/refresh")
+  }) */
+
   return (
 
     <>
@@ -14,6 +18,7 @@ function Dashboard() {
         <li>
           <Link to="/">Login</Link>
           <Link to="/allCessoes">Cessoes</Link>
+          <Link to="/users">Todos os Usuarios</Link>
         </li>
       </ul>
     </>
