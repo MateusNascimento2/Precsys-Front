@@ -80,7 +80,7 @@ function CPFLoginComponent() {
   return (
     <div className="flex flex-col">
       {showPasswordLogin ? (
-        <PasswordLoginComponent nome={userName} imagemUsuario={userImage} cpfcnpj={cpfcnpj} />
+        <PasswordLoginComponent nome={userName} userImage={userImage} cpfcnpj={cpfcnpj} />
       ) : (
         <div className="w-[300px]">
 

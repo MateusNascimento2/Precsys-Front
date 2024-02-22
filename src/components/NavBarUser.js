@@ -4,7 +4,7 @@ function NavBarUser() {
   return (
     <nav>
       <span>USUÁRIO</span>
-      <ul>
+      <ul className='flex gap-2'>
         <li>Dashboard</li>
         <li>Minhas Cessões</li>
         <li>Meus Clientes</li>
