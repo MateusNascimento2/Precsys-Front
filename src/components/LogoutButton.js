@@ -15,7 +15,7 @@ function LogoutButton() {
   }
 
   return (
-    <button className='bg-black text-white rounded p-1' onClick={signOut}>Sair</button>
+    <button className='bg-black text-white rounded px-4 py-1' onClick={signOut}>Sair</button>
   )
 }
 
