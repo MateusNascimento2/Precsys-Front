@@ -1,6 +1,6 @@
 import React from "react";
 
-import placeholder from "../../public/assets/placeholder-perfil.jpg";
+import placeholder from "../../public/assets/placeholder-perfil.png";
 
 function ProfileImage({userImage}) {
   return(
