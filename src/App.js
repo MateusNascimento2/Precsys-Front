@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Header from './components/Header';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Cessoes from './pages/Cessoes';

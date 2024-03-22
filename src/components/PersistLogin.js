@@ -39,7 +39,7 @@ function PersistLogin() {
       {!persist
         ? <Outlet />
         : isLoading
-          ? <LoadingSpinner />
+          ? (<div className="w-screen h-screen flex justify-center items-center"><LoadingSpinner /></div>)
           : <Outlet />
       }
     </>

@@ -6,12 +6,13 @@ export default function Unauthorized() {
   const goBack = () => navigate(-1);
 
   return (
-    <section>
-      <h1>Unauthorized</h1>
+    <section className='flex flex-col justify-center items-center'>
+      <h1>401</h1>
+      <h2>Unauthorized</h2>
       <br />
-      <p>You do not have access to the request page.</p>
+      <p>Você não possui autorização para acessar a página requisitada !</p>
       <div>
-        <button onClick={goBack}>Go Back</button>
+        <button onClick={goBack}>Voltar</button>
       </div>
     </section>
   )

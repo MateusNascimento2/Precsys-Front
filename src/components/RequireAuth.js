@@ -6,7 +6,7 @@ export const RequireAdminAuth = () => {
     // esse auth está recebendo as informaçôes do usuário e verifica para ver se ele está autenticado, 
     // se ele estiver, ele tem acesso as minhas outras rotas, se nao ele volta pro login; 
     const { auth } = useAuth();
-    console.log(auth?.user?.admin);
+    console.log('admin' + auth?.user?.admin);
     
     const location = useLocation();
 
