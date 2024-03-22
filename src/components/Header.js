@@ -5,8 +5,10 @@ import NavBarAdmin from "../components/NavBarAdmin";
 import NavBarUser from "../components/NavBarUser"
 import ProfileImage from './ProfileImage';
 import UserToolbar from './UserToolbar';
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
+  const navigate = useNavigate();
   const { auth } = useAuth();
   const [showMenu, setShowMenu] = useState(false);
   const [menuType, setMenuType] = useState(null);
@@ -20,6 +22,10 @@ function Header() {
     }
   }
   
+  
+  const handleRoute = (route) => {
+    navigate(route)
+  }
 
   console.log(`Header auth: ${auth.user.admin}`)
 
@@ -33,7 +39,7 @@ function Header() {
             <div onClick={() => handleMenu('navBar')} className={showMenu && menuType === 'navBar' ? 'rotate-[-45deg] w-5 h-[2px] bg-[#222] rounded-sm transition-all translate-x-[-3px] translate-y-[-3px]' : 'w-5 h-[2px] bg-[#222] rounded-sm rotate-0 transition-all'}></div>
             {auth?.user && menuType === 'navBar' ? (auth?.user?.admin ? <NavBarAdmin show={showMenu} /> : <NavBarUser />) : null}
           </div>
-          <h1 className='flex items-center'><img className='h-[25px] lg:h-[35px]' src={logo} alt="Imagem da Logo do Precsys" /></h1>
+          <h1 className='flex items-center' onClick={() => handleRoute('/dashboard')}><img className='h-[25px] lg:h-[35px]' src={logo} alt="Imagem da Logo do Precsys" /></h1>
           <div onClick={() => handleMenu('navBar')} className='hidden lg:block'>
             {auth?.user.admin ? <NavBarAdmin show={true} /> : <NavBarUser />}  
           </div>

@@ -28,7 +28,7 @@ function App() {
           </Route>
 
           <Route element={<RequireAdminAuth />}>
-            <Route path='allCessoes' element={<AllCessoes />} />
+            <Route path='todas-cessoes' element={<AllCessoes />} />
             <Route path='users' element={<Usuarios />} />
           </Route>
         </Route>

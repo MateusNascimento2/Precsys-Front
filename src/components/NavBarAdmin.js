@@ -67,7 +67,7 @@ function NavBarAdmin({ show }) {
               <li className='mb-3 mt-2'>
                 <span className='font-[600] text-[12px] text-[#666666]'>Categorias</span>
               </li>
-              <li className='p-2 rounded cursor-pointer hover:bg-neutral-300' onClick={() => handleRoute('/allCessoes')}>
+              <li className='p-2 rounded cursor-pointer hover:bg-neutral-300' onClick={() => handleRoute('/todas-cessoes')}>
                   <span className='font-[600] text-[14px] text-[#171717]'>Todas as Cessões</span>
                   <p className='font-[500] text-[#666666]'>Ver todas as Cessões
                   </p>
