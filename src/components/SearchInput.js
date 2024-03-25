@@ -1,6 +1,11 @@
 import React, {useState} from 'react';
 
-export default function SearchInput() {
+export default function SearchInput({searchQuery, onSearchQueryChange}) {
+
+  const handleChange = (e) => {
+    onSearchQueryChange(e.target.value);
+  }
+
   return (
     <>
       <div className='border rounded mx-5 flex items-center gap-1 px-4'>
@@ -9,9 +14,11 @@ export default function SearchInput() {
             <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
           </svg>
         </div>
-        <input type='text' placeholder='Pesquisar' className='px-2 py-3 border-none w-full focus:outline-none'/>
+        <input value={searchQuery} onChange={handleChange} type='text' placeholder='Pesquisar' className='px-2 py-3 border-none w-full focus:outline-none'/>
       </div>
 
     </>
   )
 }
+
+//pegar o que o usuario passar pro input
