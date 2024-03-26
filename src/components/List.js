@@ -3,17 +3,24 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingSpinner from "./LoadingSpinner/LoadingSpinner";
 import DotsButton from "./DotsButton";
-import { List } from 'react-virtualized'
+import { List, AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache } from 'react-virtualized'
 
-export default function List({ searchQuery }) {
+
+export default function Lista({ searchQuery }) {
   const [cessoes, setCessoes] = useState([]);
   const [status, setStatus] = useState([]);
   const [orcamentos, setOrcamentos] = useState([]);
   const [natureza, setNatureza] = useState([]);
   const [empresas, setEmpresas] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Estado para controlar o carregamento
   const axiosPrivate = useAxiosPrivate()
   const navigate = useNavigate();
   const location = useLocation();
+
+  const cache = new CellMeasurerCache({
+    fixedWidth: true,
+    defaultHeight: 50
+  })
 
   useEffect(() => {
     let isMounted = true;
@@ -26,6 +33,7 @@ export default function List({ searchQuery }) {
         });
         if (isMounted) setter(data);
         console.log(data);
+        setIsLoading(false);
       } catch (err) {
         console.log(err);
         navigate('/', { state: { from: location }, replace: true });
@@ -57,57 +65,44 @@ export default function List({ searchQuery }) {
     "2": "Deixou bens",
   }
 
-  Object.entries(cessoes).map(([key, cessao]) => {
+  cessoes.forEach(cessao => {
+    // Atualiza propriedades de status
+    const statusAtualizado = status.find(s => parseInt(cessao.status) === parseInt(s.id));
+    if (statusAtualizado) {
+      cessao.status = statusAtualizado.nome;
+      cessao.statusColor = statusAtualizado.extra;
+    }
 
-    Object.entries(status).map(([key, status]) => {
-      if (parseInt(cessao.status) === parseInt(status.id)) {
-        cessao.status = status.nome
-        cessao.statusColor = status.extra
-      } else {
-        return null
-      }
-    })
+    // Atualiza propriedades de ente_id
+    const orcamentoAtualizado = orcamentos.find(o => parseInt(cessao.ente_id) === parseInt(o.id));
+    if (orcamentoAtualizado) {
+      cessao.ente_id = orcamentoAtualizado.apelido;
+    }
 
-    Object.entries(orcamentos).map(([key, orcamento]) => {
-      if (parseInt(cessao.ente_id) === parseInt(orcamento.id)) {
-        cessao.ente_id = orcamento.apelido
-      } else {
-        return null
-      }
-    })
+    // Atualiza propriedades de natureza
+    const naturezaAtualizada = natureza.find(n => parseInt(cessao.natureza) === parseInt(n.id));
+    if (naturezaAtualizada) {
+      cessao.natureza = naturezaAtualizada.nome;
+    }
 
-    Object.entries(natureza).map(([key, natureza]) => {
-      if (parseInt(cessao.natureza) === parseInt(natureza.id)) {
-        cessao.natureza = natureza.nome
-      } else {
-        return null
-      }
-    })
+    // Atualiza propriedades de empresa_id
+    const empresaAtualizada = empresas.find(e => parseInt(cessao.empresa_id) === parseInt(e.id));
+    if (empresaAtualizada) {
+      cessao.empresa_id = empresaAtualizada.nome;
+    }
 
-    Object.entries(empresas).map(([key, empresa]) => {
-      if (parseInt(cessao.empresa_id) === parseInt(empresa.id)) {
-        cessao.empresa_id = empresa.nome
-      } else {
-        return null
-      }
-    })
+    // Atualiza propriedades de adv
+    const anuencia = anuenciaValores[cessao.adv];
+    if (anuencia) {
+      cessao.adv = anuencia;
+    }
 
-    Object.entries(anuenciaValores).map(([key, anuencia]) => {
-      if (cessao.adv === key) {
-        cessao.adv = anuencia
-      } else {
-        return null
-      }
-    })
-
-    Object.entries(falecidoValores).map(([key, falecido]) => {
-      if (cessao.falecido === key) {
-        cessao.falecido = falecido
-      } else {
-        return null
-      }
-    })
-  })
+    // Atualiza propriedades de falecido
+    const falecido = falecidoValores[cessao.falecido];
+    if (falecido) {
+      cessao.falecido = falecido;
+    }
+  });
 
   console.log(cessoes);
 
@@ -134,55 +129,68 @@ export default function List({ searchQuery }) {
     )
   );
 
+  console.log(filteredCessoes);
+  console.log(filteredCessoes.length)
+
+  const renderRow = ({ index, parent, key, style }) => {
+    const cessao = filteredCessoes[index];
+
+    return (
+      <CellMeasurer key={key} cache={cache} parent={parent} columnIndex={0} rowIndex={index}>
+
+        <div style={{ ...style }} className="">
+          <div className="pb-4">
+            <div className="flex border px-2 py-1 justify-between rounded-t items-center">
+              <div className="flex">
+                <div className="border-r pr-2 my-3 flex items-center justify-center">
+                  <span className="font-[700]">{cessao.id}</span>
+                </div>
+                <div className="flex flex-col justify-center text-[12px] pl-2">
+                  <span className="font-bold">{cessao.precatorio}</span>
+                  <span className="text-neutral-400 font-medium line-clamp-1">{cessao.cedente}</span>
+                </div>
+              </div>
+              <DotsButton cessaoID={cessao.id} requisitorioFile={cessao.requisitorio} escrituraFile={cessao.escritura} />
+            </div>
+            <div className="text-[10px] rounded-b border-b border-r border-l py-3 px-2 flex gap-2 flex-wrap items-center">
+              <span style={{ backgroundColor: `${cessao.statusColor}` }} className={`px-2 py-1 rounded brightness-110`}><span className="text-black font-bold">{cessao.status}</span></span>
+              <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200`}>
+                <span className="text-black font-bold">{cessao.ente_id}</span>
+                {cessao.ano ? <span className="font-bold">{cessao.ano}</span> : null}
+              </span>
+              <span className={`px-2 py-1 rounded bg-neutral-200`}><span className="text-black font-bold">{cessao.natureza}</span></span>
+              {cessao.data_cessao ? (<span className="px-2 py-1 rounded bg-neutral-200 font-bold">{cessao.data_cessao.split('-')[2]}/{cessao.data_cessao.split('-')[1]}/{cessao.data_cessao.split('-')[0]}</span>) : null}
+              {cessao.empresa_id ? (<span className={`px-2 py-1 rounded bg-neutral-200`}><span className="text-black font-bold">{cessao.empresa_id}</span></span>) : null}
+              {cessao.adv ? (<span className={`px-2 py-1 rounded bg-neutral-200`}><span className="text-black font-bold">{cessao.adv}</span></span>) : null}
+              {cessao.falecido ? (<span className={`px-2 py-1 rounded bg-neutral-200`}><span className="text-black font-bold">{cessao.falecido}</span></span>) : null}
+            </div>
+          </div>
+
+        </div>
+      </CellMeasurer>
+    );
+  };
 
   return (
-    <section className="mx-5 mt-4">
-      {
-        !filteredCessoes ? 
-        (<p className="font-medium uppercase text-gray-400 text-[10px]">Nenhuma cessão encontrada.</p>)
-          : filteredCessoes?.length > 0
-            ? (
-              <ul className="w-full flex flex-col gap-2">
-                {filteredCessoes.map((cessao, index) => (
-                  <li key={index} className="shadow-sm border rounded px-2 py-1">
-                    <div className="flex border-b justify-between items-center">
-                      <div className="flex">
-                        <div className="border-r pr-2 my-3 flex items-center justify-center">
-                          <span className="font-[700]">{cessao.id}</span>
-                        </div>
-                        <div className="flex flex-col justify-center text-[12px] pl-2">
-                          <span className="font-bold">{cessao.precatorio}</span>
-                          <span className="text-neutral-400 font-medium line-clamp-1">{cessao.cedente}</span>
-                        </div>
-                      </div>
-                      <DotsButton cessaoID={cessao.id} requisitorioFile={cessao.requisitorio} escrituraFile={cessao.escritura} />
-                    </div>
-                    <div className="text-[10px] py-3 flex gap-2 flex-wrap items-center">
-
-                      <span style={{ backgroundColor: `${cessao.statusColor}` }} className={`px-2 py-1 rounded brightness-110`}><span className="text-black font-bold">{cessao.status}</span></span>
-
-                      <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200`}>
-                        <span className="text-black font-bold">{cessao.ente_id}</span>
-                        {cessao.ano ? <span className="font-bold">{cessao.ano}</span> : null}
-                      </span>
-
-                      <span className={`px-2 py-1 rounded bg-neutral-200`}><span className="text-black font-bold">{cessao.natureza}</span></span>
-
-                      {cessao.data_cessao ? (<span className="px-2 py-1 rounded bg-neutral-200 font-bold">{cessao.data_cessao.split('-')[2]}/{cessao.data_cessao.split('-')[1]}/{cessao.data_cessao.split('-')[0]}</span>) : null}
-
-                      {cessao.empresa_id ? (<span className={`px-2 py-1 rounded bg-neutral-200`}><span className="text-black font-bold">{cessao.empresa_id}</span></span>) : null}
-
-                      {cessao.adv ? (<span className={`px-2 py-1 rounded bg-neutral-200`}><span className="text-black font-bold">{cessao.adv}</span></span>) : null}
-
-
-                      {cessao.falecido ? (<span className={`px-2 py-1 rounded bg-neutral-200`}><span className="text-black font-bold">{cessao.falecido}</span></span>) : null}
-
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : <div className="mt-10 flex justify-center items-center"><LoadingSpinner /></div>
-      }
-    </section>
-  )
+    <>
+      {isLoading ? ( // Verifica se isLoading é verdadeiro
+        <LoadingSpinner /> // Se isLoading for verdadeiro, exibe o LoadingSpinner
+      ) : (
+        <section className="container mx-auto" style={{ width: "100%" }} >
+          <>
+            <p className="text-[12px] font-medium lg:text-[14px] text-neutral-500">Mostrando {filteredCessoes.length} de {cessoes.length} cessões</p>
+            <WindowScroller>
+              {({ height, isScrolling, onChildScroll, scrollTop }) => (
+                <AutoSizer>
+                  {({ width }) => (
+                    <List rowRenderer={renderRow} isScrolling={isScrolling} onScroll={onChildScroll} width={width} autoHeight height={height} rowCount={filteredCessoes.length} scrollTop={scrollTop} deferredMeasurementCache={cache} rowHeight={cache.rowHeight}
+                    />
+                  )}
+                </AutoSizer>)}
+            </WindowScroller>
+          </>
+        </section>
+      )}
+    </>
+  );
 }
