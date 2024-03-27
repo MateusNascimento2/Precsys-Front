@@ -32,7 +32,6 @@ export default function Lista({ searchQuery }) {
           signal: controller.signal
         });
         if (isMounted) setter(data);
-        console.log(data);
         setIsLoading(false);
       } catch (err) {
         console.log(err);
@@ -104,8 +103,6 @@ export default function Lista({ searchQuery }) {
     }
   });
 
-  console.log(cessoes);
-
   const filteredCessoes = cessoes.filter(cessao =>
     Object.entries(cessao).some(([key, value]) =>
       key !== 'substatus' &&
@@ -129,9 +126,6 @@ export default function Lista({ searchQuery }) {
     )
   );
 
-  console.log(filteredCessoes);
-  console.log(filteredCessoes.length)
-
   const renderRow = ({ index, parent, key, style }) => {
     const cessao = filteredCessoes[index];
 
@@ -140,9 +134,9 @@ export default function Lista({ searchQuery }) {
 
         <div style={{ ...style }} className="">
           <div className="pb-4">
-            <div className="flex border px-2 py-1 justify-between rounded-t items-center">
+            <div className="flex border dark:border-neutral-700  px-2 py-1 justify-between rounded-t items-center">
               <div className="flex">
-                <div className="border-r pr-2 my-3 flex items-center justify-center">
+                <div className="border-r dark:border-neutral-700  pr-2 my-3 flex items-center justify-center">
                   <span className="font-[700]">{cessao.id}</span>
                 </div>
                 <div className="flex flex-col justify-center text-[12px] pl-2">
@@ -152,17 +146,25 @@ export default function Lista({ searchQuery }) {
               </div>
               <DotsButton cessaoID={cessao.id} requisitorioFile={cessao.requisitorio} escrituraFile={cessao.escritura} />
             </div>
-            <div className="text-[10px] rounded-b border-b border-r border-l py-3 px-2 flex gap-2 flex-wrap items-center">
+            <div className="text-[10px] rounded-b border-b border-r border-l dark:border-neutral-700  py-3 px-2 flex gap-2 flex-wrap items-center">
               <span style={{ backgroundColor: `${cessao.statusColor}` }} className={`px-2 py-1 rounded brightness-110`}><span className="text-black font-bold">{cessao.status}</span></span>
-              <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200`}>
-                <span className="text-black font-bold">{cessao.ente_id}</span>
-                {cessao.ano ? <span className="font-bold">{cessao.ano}</span> : null}
+
+              <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 `}>
+                <span className="text-black font-bold dark:text-neutral-100">{cessao.ente_id}</span>
+                {cessao.ano ? <span className="font-bold dark:text-neutral-100">{cessao.ano}</span> : null}
               </span>
-              <span className={`px-2 py-1 rounded bg-neutral-200`}><span className="text-black font-bold">{cessao.natureza}</span></span>
-              {cessao.data_cessao ? (<span className="px-2 py-1 rounded bg-neutral-200 font-bold">{cessao.data_cessao.split('-')[2]}/{cessao.data_cessao.split('-')[1]}/{cessao.data_cessao.split('-')[0]}</span>) : null}
-              {cessao.empresa_id ? (<span className={`px-2 py-1 rounded bg-neutral-200`}><span className="text-black font-bold">{cessao.empresa_id}</span></span>) : null}
-              {cessao.adv ? (<span className={`px-2 py-1 rounded bg-neutral-200`}><span className="text-black font-bold">{cessao.adv}</span></span>) : null}
-              {cessao.falecido ? (<span className={`px-2 py-1 rounded bg-neutral-200`}><span className="text-black font-bold">{cessao.falecido}</span></span>) : null}
+
+              <span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}>
+                <span className="text-black font-bold dark:text-neutral-100">{cessao.natureza}</span>
+              </span>
+              
+              {cessao.data_cessao ? (<span className="px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 font-bold dark:text-neutral-100 ">{cessao.data_cessao.split('-')[2]}/{cessao.data_cessao.split('-')[1]}/{cessao.data_cessao.split('-')[0]}</span>) : null}
+
+              {cessao.empresa_id ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.empresa_id}</span></span>) : null}
+
+              {cessao.adv ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.adv}</span></span>) : null}
+
+              {cessao.falecido ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.falecido}</span></span>) : null}
             </div>
           </div>
 

@@ -15,15 +15,14 @@ export default function AllCessoes() {
 
   const handleShow = () => {
     setShow((prevState) => !prevState)
-    console.log(show);
   }
 
   return (
     <>
       <Header />
-      <main className={show ? 'container mx-auto overflow-hidden' : 'container mx-auto'}>
+      <main className={show ? 'container mx-auto overflow-hidden' : 'container mx-auto pt-[120px] dark:bg-neutral-900'}>
         <div className='px-[20px]'>
-          <h1 className='font-[700] text-[32px] mt-[16px]'>Cessões</h1>
+          <h2 className='font-[700] text-[32px] mt-[16px]'>Cessões</h2>
         </div>
         <div className='mt-[24px] mx-5'>
           <div className='flex gap-3 items-center mb-4 w-full'>

@@ -15,7 +15,7 @@ function LogoutButton() {
   }
 
   return (
-    <button className='bg-black text-white rounded px-4 py-1' onClick={signOut}>Sair</button>
+    <button className='px-2 py-1 font-medium text-[14px] hover:bg-neutral-100' onClick={signOut}>Sair</button>
   )
 }
 

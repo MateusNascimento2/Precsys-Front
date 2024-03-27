@@ -19,7 +19,7 @@ function CPFLoginComponent() {
     try {
       event.preventDefault();
       setIsLoading(true)
-      const { data } = await axios.post('/checkCpfCnpj', {
+      const { data } = await axios.post('/checkCpfCnpj/', {
         cpfcnpj: cpfcnpj
       }, {
         headers: {

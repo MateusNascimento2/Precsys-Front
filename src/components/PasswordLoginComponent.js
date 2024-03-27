@@ -21,7 +21,7 @@ function PasswordLoginComponent({ nome, userImage, cpfcnpj }) {
     event.preventDefault();
 
     try {
-      const { data } = await axios.post('/login', {
+      const { data } = await axios.post('/login/', {
         cpfcnpj: cpfcnpj,
         password: password
       }, {
