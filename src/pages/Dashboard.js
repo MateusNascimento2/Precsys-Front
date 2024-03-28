@@ -16,7 +16,7 @@ function Dashboard() {
 
     <>
       <Header show={show} onSetShow={handleShow} />
-      <main className='container mx-auto mt-[120px]'>
+      <main className='px-2 container mx-auto mt-[120px]'>
         <div className='mt-[120px] mb-[120px] flex flex-col gap-6 justify-between px-2 lg:flex-row lg:mt-[150px] lg:mb-[200px]'>
           <div className='flex flex-col gap-4'>
             <h2 className='font-[800] text-[24px] text-center md:text-left lg:text-[34px]'>Develop.Preview.Ship.</h2>

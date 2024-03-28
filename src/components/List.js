@@ -132,21 +132,21 @@ export default function Lista({ searchQuery }) {
     return (
       <CellMeasurer key={key} cache={cache} parent={parent} columnIndex={0} rowIndex={index}>
 
-        <div style={{ ...style }} className="">
-          <div className="pb-4">
-            <div className="flex border dark:border-neutral-700  px-2 py-1 justify-between rounded-t items-center">
+        <div style={{ ...style }} className="dark:bg-neutral-900">
+          <div className="pb-4 dark:bg-neutral-900">
+            <div className="flex border dark:border-neutral-700 dark:bg-neutral-900   px-2 py-1 justify-between rounded-t items-center">
               <div className="flex">
                 <div className="border-r dark:border-neutral-700  pr-2 my-3 flex items-center justify-center">
-                  <span className="font-[700]">{cessao.id}</span>
+                  <span className="font-[700] dark:text-white">{cessao.id}</span>
                 </div>
                 <div className="flex flex-col justify-center text-[12px] pl-2">
-                  <span className="font-bold">{cessao.precatorio}</span>
+                  <span className="font-bold dark:text-white">{cessao.precatorio}</span>
                   <span className="text-neutral-400 font-medium line-clamp-1">{cessao.cedente}</span>
                 </div>
               </div>
               <DotsButton cessaoID={cessao.id} requisitorioFile={cessao.requisitorio} escrituraFile={cessao.escritura} />
             </div>
-            <div className="text-[10px] rounded-b border-b border-r border-l dark:border-neutral-700  py-3 px-2 flex gap-2 flex-wrap items-center">
+            <div className="text-[10px] rounded-b border-b border-r border-l dark:border-neutral-700  py-3 px-2 flex gap-2 flex-wrap items-center dark:bg-neutral-900">
               <span style={{ backgroundColor: `${cessao.statusColor}` }} className={`px-2 py-1 rounded brightness-110`}><span className="text-black font-bold">{cessao.status}</span></span>
 
               <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 `}>
@@ -178,8 +178,8 @@ export default function Lista({ searchQuery }) {
       {isLoading ? ( // Verifica se isLoading é verdadeiro
         <LoadingSpinner /> // Se isLoading for verdadeiro, exibe o LoadingSpinner
       ) : (
-        <section className="container mx-auto" style={{ width: "100%" }} >
-          <>
+        <section className="container dark:bg-neutral-900" style={{ width: "100%" }} >
+          <div className="dark:bg-neutral-900">
             <p className="text-[12px] font-medium lg:text-[14px] text-neutral-500">Mostrando {filteredCessoes.length} de {cessoes.length} cessões</p>
             <WindowScroller>
               {({ height, isScrolling, onChildScroll, scrollTop }) => (
@@ -190,7 +190,7 @@ export default function Lista({ searchQuery }) {
                   )}
                 </AutoSizer>)}
             </WindowScroller>
-          </>
+          </div>
         </section>
       )}
     </>

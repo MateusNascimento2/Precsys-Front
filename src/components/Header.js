@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import logo from "../../public/assets/precsys-logo.png"
+import React, { useState, useEffect } from 'react';
+import logo_black from "../../public/assets/precsys-logo.png"
+import logo_white from "../../public/assets/precsys-logo-white.png"
 import useAuth from "../hooks/useAuth";
 import NavBarAdmin from "../components/NavBarAdmin";
 import NavBarUser from "../components/NavBarUser"
@@ -8,9 +9,38 @@ import UserToolbar from './UserToolbar';
 import { useNavigate } from 'react-router-dom';
 
 function Header() {
+  const [logo, setLogo] = useState(logo_black)
   const navigate = useNavigate();
   const { auth } = useAuth();
   const [showMenu, setShowMenu] = useState(false);
+
+  const [darkMode, setDarkMode] = useState(false);
+
+  console.log(darkMode)
+
+  useEffect(() => {
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(isDarkMode);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+    localStorage.setItem('darkMode', darkMode);
+
+    updateLogo(darkMode)
+  }, [darkMode]);
+
+  const handleDarkModeChange = (newDarkMode) => {
+    setDarkMode(newDarkMode);
+  };
+
+  const updateLogo = (darkMode) => {
+    if (darkMode) {
+      setLogo(logo_white);
+    } else {
+      setLogo(logo_black);
+    }
+  }
   
   
   const [menuType, setMenuType] = useState(null);
@@ -42,8 +72,8 @@ function Header() {
             <div className={showMenu && menuType === 'navBar' ? 'rotate-[-45deg] w-5 h-[2px] bg-[#222] rounded-sm transition-all translate-x-[-3px] translate-y-[-3px] dark:bg-white' : 'w-5 h-[2px] bg-[#222] rounded-sm rotate-0 transition-all dark:bg-white'}></div>
           </div>
 
-          <div onClick={() => {setShowMenu((prevState) => !prevState)}} className={showMenu ? 'fixed top-[52px] h-screen left-0 w-screen bg-neutral-800 opacity-60 z-[49] transition-opacity lg:opacity-0' : ' fixed top-[-9999px] opacity-0 transition-opacity'}></div>
-            {menuType === 'navBar' ? (auth?.user?.admin ? <NavBarAdmin show={showMenu}  /> : <NavBarUser />) : null}
+          <div onClick={() => {setShowMenu((prevState) => !prevState)}} className={showMenu && menuType === 'navBar' ? 'fixed top-[52px] h-screen left-0 w-screen bg-neutral-700 opacity-60 z-[49] transition-opacity lg:opacity-0' : showMenu && menuType === 'toolBar' ? 'fixed top-[52px] h-screen left-0 w-screen bg-white opacity-0 z-[49] transition-opacity lg:opacity-0' : ' fixed top-[-9999px] opacity-0 transition-opacity'}></div>
+          {menuType === 'navBar' ? (auth?.user?.admin ? <NavBarAdmin show={showMenu}  /> : <NavBarUser />) : null}
           
           
           <h1 className='flex items-center' onClick={() => handleRoute('/dashboard')}>
@@ -60,7 +90,7 @@ function Header() {
               <ProfileImage userImage={auth?.userImage} />
             </div>
 
-            {menuType === 'toolBar' ? (<UserToolbar show={showMenu}  />) : null }
+            {menuType === 'toolBar' ? (<UserToolbar show={showMenu} updateLogo={updateLogo} darkMode={darkMode} onDarkModeChange={handleDarkModeChange}  />) : null }
 
           </div>
 

@@ -5,7 +5,7 @@ import ProfileImage from './ProfileImage';
 
 import axios from '../api/axios';
 
-function PasswordLoginComponent({ nome, userImage, cpfcnpj }) {
+function PasswordLoginComponent({ nome, userImage, cpfcnpj, darkMode }) {
   const { setAuth, persist, setPersist } = useAuth();
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordErrorMessage] = useState(false);
@@ -64,17 +64,17 @@ function PasswordLoginComponent({ nome, userImage, cpfcnpj }) {
       <div className='w-[200px]'>
         <ProfileImage userImage={userImage}/>
       </div>
-      <h2>Bem-vindo, <strong>{`${primeiroNome} ${sobrenome}`}</strong></h2>
+      <h2 className={darkMode ? 'text-white': 'text-black'}>Bem-vindo, <strong>{`${primeiroNome} ${sobrenome}`}</strong></h2>
       {passwordError ? <div>{errorMessage}</div> : null}
       <div className='w-full'>
         <form className="flex flex-col gap-4 w-full">
-          <input className="border rounded py-3 px-4" type="text" placeholder="Senha" name='password' id='password' required onChange={(event) => setPassword(event.target.value)} value={password} />
-          <button type="submit" className="border rounded-md text-white text-center bg-black py-3 px-4 flex items-center justify-center gap-2 hover:opacity-85" onClick={handlePassword}>
+          <input className={darkMode ? "text-white border rounded py-3 px-4 bg-neutral-900 border-neutral-600" : 'border rounded py-3 px-4 text-black bg-white'} type="text" placeholder="Senha" name='password' id='password' required onChange={(event) => setPassword(event.target.value)} value={password} />
+          <button type="submit" className={darkMode ? "border rounded-md text-black text-center bg-white py-3 px-4 flex items-center justify-center gap-2 hover:opacity-85" : "border rounded-md text-white text-center bg-black py-3 px-4 flex items-center justify-center gap-2 hover:opacity-85"} onClick={handlePassword}>
             <span className="font-medium">Entrar</span>
           </button>
           <div className='flex gap-1 items-center justify-center'>
             <input type="checkbox" name="persist" id="persist" onChange={togglePersist} checked={persist} style={{color:'black'}}/>
-            <label className='font-medium text-sm' htmlFor="persist">Lembrar de mim nesse dispositivo ?</label>
+            <label className={darkMode ? 'font-medium text-sm text-white' : 'font-medium text-sm text-black'} htmlFor="persist">Lembrar de mim nesse dispositivo ?</label>
           </div>
         </form>
       </div>

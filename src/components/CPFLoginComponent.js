@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PasswordLoginComponent from "./PasswordLoginComponent";
 import axios from '../api/axios';
 
@@ -13,6 +13,15 @@ function CPFLoginComponent() {
   const [errorMessageText, setErrorMessageText] = useState('');
   const [errorClassName, setErrorClassName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(isDarkMode);
+  }, []);
+
+  console.log(darkMode)
 
   const handleContinue = async (event) => {
 
@@ -80,7 +89,7 @@ function CPFLoginComponent() {
   return (
     <div className="flex flex-col">
       {showPasswordLogin ? (
-        <PasswordLoginComponent nome={userName} userImage={userImage} cpfcnpj={cpfcnpj} />
+        <PasswordLoginComponent nome={userName} userImage={userImage} cpfcnpj={cpfcnpj} darkMode={darkMode} />
       ) : (
         <div className="w-[300px]">
 
@@ -89,11 +98,11 @@ function CPFLoginComponent() {
               <LoadingSpinner />
             ) : (
               <>
-                <h2 className="font-bold text-3xl text-center mb-8 ">Entrar para o Precsys</h2>
+                <h2 className={darkMode ? "font-bold text-3xl text-center mb-8 text-white" : "font-bold text-3xl text-center mb-8 text-black"}>Entrar para o Precsys</h2>
                 <div>
                   <form className="flex flex-col gap-4">
 
-                    {showErrorMessage ? (<div className={errorClassName}>{errorMessageText === 'CPF/CNPJ inválido.' ? (<span className="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                    {showErrorMessage ? (<div className='bg-red-500 px-4 py-3 rounded'>{errorMessageText === 'CPF/CNPJ inválido.' ? (<span className="flex gap-2"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                       <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                     </svg>
                       {errorMessageText}</span>
@@ -104,13 +113,13 @@ function CPFLoginComponent() {
                     }</div>) : null}
 
 
-                    <input className="border rounded py-3 px-4" type="text" placeholder="CPF/CNPJ" name="cpfcnpj" id="cpfcnpj" value={cpfcnpj} onChange
+                    <input className={darkMode ? "border rounded py-3 px-4 text-white bg-neutral-900 border-neutral-600" : 'border rounded py-3 px-4 text-black'} type="text" placeholder="CPF/CNPJ" name="cpfcnpj" id="cpfcnpj" value={cpfcnpj} onChange
                     ={(value) => handleCpfCnpjChange(value)} required />
 
                     <button
                       onClick={handleContinue}
                       disabled={isLoading}
-                      className="border rounded-md text-white text-center bg-black py-3 px-4 flex items-center justify-center gap-2 hover:opacity-85"
+                      className={darkMode ? "border rounded-md text-black text-center bg-white py-3 px-4 flex items-center justify-center gap-2 hover:opacity-85" : "border rounded-md text-white text-center bg-black py-3 px-4 flex items-center justify-center gap-2 hover:opacity-85"}
                     >
                       <span className="font-medium">Continuar com a Senha</span>
                       <svg

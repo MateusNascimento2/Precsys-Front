@@ -22,9 +22,9 @@ export default function AllCessoes() {
       <Header />
       <main className={show ? 'container mx-auto overflow-hidden' : 'container mx-auto pt-[120px] dark:bg-neutral-900'}>
         <div className='px-[20px]'>
-          <h2 className='font-[700] text-[32px] mt-[16px]'>Cessões</h2>
+          <h2 className='font-[700] text-[32px] mt-[16px] dark:text-white'>Cessões</h2>
         </div>
-        <div className='mt-[24px] mx-5'>
+        <div className='mt-[24px] px-5 dark:bg-neutral-900'>
           <div className='flex gap-3 items-center mb-4 w-full'>
             <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'py-3'} />
             <FilterButton onSetShow={handleShow}/>
