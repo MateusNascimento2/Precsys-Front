@@ -61,7 +61,7 @@ function PasswordLoginComponent({ nome, userImage, cpfcnpj, darkMode }) {
 
   return (
     <div className="flex flex-col items-center gap-4 w-[300px]">
-      <div className='w-[200px]'>
+      <div className='w-[200px] bg-neutral-100'>
         <ProfileImage userImage={userImage}/>
       </div>
       <h2 className={darkMode ? 'text-white': 'text-black'}>Bem-vindo, <strong>{`${primeiroNome} ${sobrenome}`}</strong></h2>

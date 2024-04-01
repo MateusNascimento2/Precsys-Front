@@ -30,8 +30,16 @@ export default function AllCessoes() {
             <FilterButton onSetShow={handleShow}/>
           </div>
           
-
-          <Lista searchQuery={searchQuery} />
+          <div className='lg:flex lg:gap-4 lg:items-start'>
+            <div className='hidden lg:block'>
+              <Filter show={true} onSetShow={handleShow}/>
+            </div>
+            <div className='w-full'>
+              <Lista searchQuery={searchQuery} />
+            </div>
+            
+          </div>
+         
 
         </div>
         <Filter show={show} onSetShow={handleShow} />

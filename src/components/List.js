@@ -125,9 +125,12 @@ export default function Lista({ searchQuery }) {
       value && typeof value === 'string' && value.toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
+  
 
   const renderRow = ({ index, parent, key, style }) => {
     const cessao = filteredCessoes[index];
+    const listLength = filteredCessoes.length;
+  
 
     return (
       <CellMeasurer key={key} cache={cache} parent={parent} columnIndex={0} rowIndex={index}>
@@ -144,7 +147,7 @@ export default function Lista({ searchQuery }) {
                   <span className="text-neutral-400 font-medium line-clamp-1">{cessao.cedente}</span>
                 </div>
               </div>
-              <DotsButton cessaoID={cessao.id} requisitorioFile={cessao.requisitorio} escrituraFile={cessao.escritura} />
+              <DotsButton listLength={listLength} cessaoID={cessao.id} requisitorioFile={cessao.requisitorio} escrituraFile={cessao.escritura} />
             </div>
             <div className="text-[10px] rounded-b border-b border-r border-l dark:border-neutral-700  py-3 px-2 flex gap-2 flex-wrap items-center dark:bg-neutral-900">
               <span style={{ backgroundColor: `${cessao.statusColor}` }} className={`px-2 py-1 rounded brightness-110`}><span className="text-black font-bold">{cessao.status}</span></span>
@@ -180,7 +183,7 @@ export default function Lista({ searchQuery }) {
       ) : (
         <section className="container dark:bg-neutral-900" style={{ width: "100%" }} >
           <div className="dark:bg-neutral-900">
-            <p className="text-[12px] font-medium lg:text-[14px] text-neutral-500">Mostrando {filteredCessoes.length} de {cessoes.length} cessões</p>
+            <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-400">Mostrando {filteredCessoes.length} de {cessoes.length} cessões</p>
             <WindowScroller>
               {({ height, isScrolling, onChildScroll, scrollTop }) => (
                 <AutoSizer>
