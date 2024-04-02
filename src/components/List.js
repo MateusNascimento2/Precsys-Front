@@ -64,6 +64,8 @@ export default function Lista({ searchQuery }) {
     "2": "Deixou bens",
   }
 
+
+
   cessoes.forEach(cessao => {
     // Atualiza propriedades de status
     const statusAtualizado = status.find(s => parseInt(cessao.status) === parseInt(s.id));
@@ -74,7 +76,9 @@ export default function Lista({ searchQuery }) {
 
     // Atualiza propriedades de ente_id
     const orcamentoAtualizado = orcamentos.find(o => parseInt(cessao.ente_id) === parseInt(o.id));
-    if (orcamentoAtualizado) {
+    if (orcamentoAtualizado && cessao.ano) {
+      cessao.ente_id = orcamentoAtualizado.apelido + " " + cessao.ano;
+    } else if (orcamentoAtualizado) {
       cessao.ente_id = orcamentoAtualizado.apelido;
     }
 
@@ -102,6 +106,8 @@ export default function Lista({ searchQuery }) {
       cessao.falecido = falecido;
     }
   });
+
+  console.log(cessoes)
 
   const filteredCessoes = cessoes.filter(cessao =>
     Object.entries(cessao).some(([key, value]) =>
@@ -154,7 +160,6 @@ export default function Lista({ searchQuery }) {
 
               <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 `}>
                 <span className="text-black font-bold dark:text-neutral-100">{cessao.ente_id}</span>
-                {cessao.ano ? <span className="font-bold dark:text-neutral-100">{cessao.ano}</span> : null}
               </span>
 
               <span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}>

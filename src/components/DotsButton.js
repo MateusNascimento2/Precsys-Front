@@ -3,7 +3,7 @@ import React, { useState } from "react";
 export default function DotsButton({ listLength, cessaoID, requisitorioFile, escrituraFile }) {
 
   const [menuState, setMenuState] = useState({});
-  // const [openMenu, setOpenMenu] = useState(Array.from({length: listLength}).fill({cessaoID: false}));
+  
 
   const handleShow = () => {
     setMenuState((prevMenuState) => ({
@@ -11,9 +11,6 @@ export default function DotsButton({ listLength, cessaoID, requisitorioFile, esc
       [cessaoID]: !prevMenuState[cessaoID] // abre ou fecha o menu clicado
     }));
   };
-
-  console.log(menuState)
-
 
   return (
     <>
