@@ -6,7 +6,7 @@ import DotsButton from "./DotsButton";
 import { List, AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache } from 'react-virtualized'
 
 
-export default function Lista({ searchQuery }) {
+export default function Lista({ searchQuery, selectedFilters }) {
   const [cessoes, setCessoes] = useState([]);
   const [status, setStatus] = useState([]);
   const [orcamentos, setOrcamentos] = useState([]);
@@ -107,9 +107,24 @@ export default function Lista({ searchQuery }) {
     }
   });
 
-  console.log(cessoes)
+  cessoes.forEach(cessao => {
+    delete cessao.ano;
+  })
 
-  const filteredCessoes = cessoes.filter(cessao =>
+  //console.log(cessoes)
+
+  console.log(selectedFilters)
+
+  const filteredByCheckbox = selectedFilters.length === 0 ? cessoes : cessoes.filter(cessao => {
+    return selectedFilters.every(filter => {
+      return Object.values(cessao).includes(filter);
+    });
+  });
+
+  console.log(filteredByCheckbox)
+
+
+  const filteredCessoes = filteredByCheckbox.filter(cessao =>
     Object.entries(cessao).some(([key, value]) =>
       key !== 'substatus' &&
       key !== 'escritura' &&
@@ -128,15 +143,17 @@ export default function Lista({ searchQuery }) {
       key !== 'juridico_obs' &&
       key !== 'juridico_obs_data' &&
       key !== 'obs' &&
+      
       value && typeof value === 'string' && value.toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
-  
+
+  console.log(filteredCessoes)
 
   const renderRow = ({ index, parent, key, style }) => {
     const cessao = filteredCessoes[index];
     const listLength = filteredCessoes.length;
-  
+
 
     return (
       <CellMeasurer key={key} cache={cache} parent={parent} columnIndex={0} rowIndex={index}>
@@ -165,7 +182,7 @@ export default function Lista({ searchQuery }) {
               <span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}>
                 <span className="text-black font-bold dark:text-neutral-100">{cessao.natureza}</span>
               </span>
-              
+
               {cessao.data_cessao ? (<span className="px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 font-bold dark:text-neutral-100 ">{cessao.data_cessao.split('-')[2]}/{cessao.data_cessao.split('-')[1]}/{cessao.data_cessao.split('-')[0]}</span>) : null}
 
               {cessao.empresa_id ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.empresa_id}</span></span>) : null}

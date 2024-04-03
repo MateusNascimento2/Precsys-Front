@@ -16,8 +16,6 @@ function Header() {
 
   const [darkMode, setDarkMode] = useState(false);
 
-  console.log(darkMode)
-
   useEffect(() => {
     const isDarkMode = localStorage.getItem('darkMode') === 'true';
     setDarkMode(isDarkMode);

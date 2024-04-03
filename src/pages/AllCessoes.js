@@ -18,6 +18,10 @@ export default function AllCessoes() {
     setShow((prevState) => !prevState)
   }
 
+  const handleSelectedCheckboxesChange = (childData) => {
+    setSelectedCheckboxes(childData);
+  };
+
   
   return (
     <>
@@ -34,17 +38,17 @@ export default function AllCessoes() {
 
           <div className='lg:flex lg:gap-4 lg:items-start'>
             <div className='hidden lg:block'>
-              <Filter show={true} onSetShow={handleShow} />
+              <Filter show={true} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} />
             </div>
             <div className='w-full'>
-              <Lista searchQuery={searchQuery} />
+              <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} />
             </div>
 
           </div>
 
 
         </div>
-        <Filter show={show} onSetShow={handleShow} />
+        <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} />
       </main>
     </>
 
