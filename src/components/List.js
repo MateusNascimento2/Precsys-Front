@@ -114,21 +114,34 @@ export default function Lista({ searchQuery, selectedFilters }) {
 
   console.log(cessoes)
 
-  console.log(selectedFilters)
+  console.log('selected in filter', selectedFilters)
+
+  function aplicarFiltros(dados, filtros) {
+    // Mapeia as chaves e seus valores dos filtros em um objeto
+    const filtroObj = filtros.reduce((acc, filtro) => {
+      const chave = Object.keys(filtro)[0];
+      acc[chave] = acc[chave] || [];
+      acc[chave].push(filtro[chave]);
+      return acc;
+    }, {});
+
+    // Função auxiliar para verificar se os dados satisfazem todos os filtros de uma chave
+    const verificarFiltrosChave = (chave, valor) => {
+      if (!filtroObj[chave]) return true; // Se não houver filtro para a chave, retorna verdadeiro
+      return filtroObj[chave].includes(valor); // Verifica se o valor está presente nos filtros da chave
+    };
+
+    // Verifica se os dados satisfazem todos os filtros
+    return Object.entries(dados).every(([chave, valor]) => verificarFiltrosChave(chave, valor));
+  }
 
 
-  const filteredByCheckbox = selectedFilters.length === 0 ? cessoes : cessoes.filter(cessao => {
-    return selectedFilters.every(filter => {
-      return Object.values(cessao).includes(filter);
-    });
-  });
+  // Aplica o filtro em cada objeto do array
+  let resultadoFiltrado = cessoes.filter(objeto => aplicarFiltros(objeto, selectedFilters));
 
-  console.log("cessoes filtradas")
+  console.log(resultadoFiltrado)
 
-
-
-
-  const filteredCessoes = filteredByCheckbox.filter(cessao =>
+  const filteredCessoes = resultadoFiltrado.filter(cessao =>
     Object.entries(cessao).some(([key, value]) =>
       key !== 'substatus' &&
       key !== 'escritura' &&
@@ -163,7 +176,7 @@ export default function Lista({ searchQuery, selectedFilters }) {
       <CellMeasurer key={key} cache={cache} parent={parent} columnIndex={0} rowIndex={index}>
 
         <div style={{ ...style }} className="dark:bg-neutral-900">
-          <div className="pb-4 dark:bg-neutral-900">
+          <div className="mb-4 dark:bg-neutral-900">
             <div className="flex border dark:border-neutral-700 dark:bg-neutral-900   px-2 py-1 justify-between rounded-t items-center">
               <div className="flex">
                 <div className="border-r dark:border-neutral-700  pr-2 my-3 flex items-center justify-center">
@@ -176,7 +189,7 @@ export default function Lista({ searchQuery, selectedFilters }) {
               </div>
               <DotsButton listLength={listLength} cessaoID={cessao.id} requisitorioFile={cessao.requisitorio} escrituraFile={cessao.escritura} />
             </div>
-            <div className="text-[10px] rounded-b border-b border-r border-l dark:border-neutral-700  py-3 px-2 flex gap-2 flex-wrap items-center dark:bg-neutral-900">
+            <div className="text-[10px] rounded-b border-b border-r border-l dark:border-neutral-700  py-3 px-2 flex gap-2 flex-wrap items-center dark:bg-neutral-900 ">
               <span style={{ backgroundColor: `${cessao.statusColor}` }} className={`px-2 py-1 rounded brightness-110`}><span className="text-black font-bold">{cessao.status}</span></span>
 
               <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 `}>

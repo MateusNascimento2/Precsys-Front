@@ -10,7 +10,7 @@ function UserToolbar({ show, updateLogo, darkMode, onDarkModeChange }) {
 
   return (
     <>
-      <section className={show ? 'cursor-auto shadow rounded right-0 absolute flex flex-col px-4 items-start bg-[#FFF] dark:bg-neutral-900 dark:text-white dark:border-neutral-600 border w-[300px] z-50 top-[calc(0vh+40px)] transition-opacity duration-[0.3s] ease-in-out' : 'rounded right-0 transition-opacity duration-[0.3s] ease-in-out flex flex-col items-start w-[300px] z-50 fixed top-[-100vh] opacity-0'}>
+      <section className={show ? 'cursor-auto shadow rounded right-0 absolute flex flex-col px-4 items-start bg-[#FFF] dark:bg-neutral-900 dark:text-white dark:border-neutral-600 border w-[300px] z-50 top-[calc(0vh+40px)] lg:top-[calc(0vh+45px)] transition-opacity duration-[0.3s] ease-in-out' : 'rounded right-0 transition-opacity duration-[0.3s] ease-in-out flex flex-col items-start w-[300px] z-50 fixed top-[-100vh] opacity-0'}>
         <div className="flex items-center border-b dark:border-neutral-600 gap-5 py-3 w-full">
           <div className="w-[70px] bg-gray-100 rounded pt-1">
             <ProfileImage userImage={auth?.userImage} />

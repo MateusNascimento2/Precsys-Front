@@ -87,7 +87,6 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
 
 
     const checkboxValor = { [checkboxName]: checkboxValue }
-    console.log(checkboxName)
 
     if (isChecked) {
       onSelectedCheckboxesChange(prevState => [...prevState, checkboxValor])
@@ -106,7 +105,11 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
       checkboxesWithTheSameID.forEach(checkbox => {
         checkbox.checked = false
 
-        onSelectedCheckboxesChange(prevState => prevState.filter(item => item !== checkbox))
+        const checkboxValorFilho = checkbox.value
+
+        const objCheckBoxFilho = { [checkboxName]: checkboxValorFilho }
+
+        onSelectedCheckboxesChange(prevState => prevState.filter(item => item.ente_id !== objCheckBoxFilho.ente_id))
       })
 
     }
@@ -134,11 +137,25 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
 
   }
 
+  const handleClearCheckbox = () => {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+      if (checkbox.checked) {
+        checkbox.checked = false;
+      }
+    })
+
+    onSelectedCheckboxesChange([]);
+  }
+
   const filteredEnte = orcamentos.filter(orcamento =>
     Object.entries(orcamento).some(([key, value]) =>
       value && typeof value === 'string' && value.toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
+
+  const anuencia = ["Sem anuência", "Honorários", "Com anuência", "Quitação"]
+  const obito = ["Vivo", "Não deixou bens", "Deixou bens",]
 
   return (
     <>
@@ -146,7 +163,29 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
       </div>
       <div className={show ? "bg-white dark:bg-neutral-900 h-full w-screen fixed z-[60] top-[15%] transition-all ease-in-out duration-[0.3s] shadow rounded-t-[20px] lg:bg-transparent lg:border-r dark:border-neutral-700 lg:transition-none lg:rounded-none lg:w-[300px] lg:relative lg:shadow-none lg:mt-5 lg:h-full lg:z-0 left-0" : 'top-[100%] transition-all ease-in-out duration-[0.3s] w-screen fixed bg-white dark:bg-neutral-900 h-full left-0'}>
         <div className="p-4 lg:p-0 lg:px-2">
-          <span className="font-[700] dark:text-white">Filtros:</span>
+          <div className="flex items-center justify-between ">
+            <span className="font-[700] dark:text-white">Filtros</span>
+            <span className="cursor-pointer hover:rounded p-1 text-black hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-white" onClick={() => handleClearCheckbox()}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="122.88"
+                height="110.668"
+                x="0"
+                y="0"
+                version="1.1"
+                viewBox="0 0 122.88 110.668"
+                xmlSpace="preserve"
+                className="w-5 h-5 dark:fill-white fill-black"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M91.124 15.645c12.928 0 23.406 10.479 23.406 23.406s-10.479 23.406-23.406 23.406-23.406-10.479-23.406-23.406c0-12.926 10.479-23.406 23.406-23.406zM2.756 0h117.322a2.801 2.801 0 012.802 2.802 2.75 2.75 0 01-.996 2.139l-10.667 13.556a28.777 28.777 0 00-4.614-3.672l6.628-9.22H9.43l37.975 46.171c.59.516.958 1.254.958 2.102v49.148l21.056-9.623V57.896a28.914 28.914 0 005.642 4.996v32.133a2.735 2.735 0 01-1.586 2.506l-26.476 12.758a2.753 2.753 0 01-3.798-1.033 2.74 2.74 0 01-.368-1.4V55.02L.803 4.756a2.825 2.825 0 010-3.945A2.731 2.731 0 012.756 0zM96.93 28.282a3.388 3.388 0 014.825-.013 3.47 3.47 0 01.013 4.872l-5.829 5.914 5.836 5.919c1.317 1.338 1.299 3.506-.04 4.843-1.34 1.336-3.493 1.333-4.81-.006l-5.797-5.878-5.807 5.889a3.39 3.39 0 01-4.826.013 3.47 3.47 0 01-.013-4.872l5.83-5.913-5.836-5.919c-1.317-1.338-1.3-3.507.04-4.843a3.385 3.385 0 014.81.006l5.796 5.878 5.808-5.89z"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+            </span>
+          </div>
+
           <div className="mt-4 flex flex-col gap-2 lg:divide-y dark:divide-neutral-700">
             <div className="rounded px-2 py-1 text-gray-600 text-[14px] dark:text-neutral-300">
               <div>
@@ -159,10 +198,19 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                   </span>
                 </div>
               </div>
-              <div className={showMenu && menuType === 'status' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[210px] overflow-y-hidden transition-all cursor-default border-l' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l'}>
+              <div className={showMenu && menuType === 'status' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[210px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
                 {status.map((s) => (
                   <div className="flex items-center gap-2">
-                    <input type="checkbox" name={"status"} id={s.nome} value={s.nome} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e)} />
+                    <input type="checkbox" name={"status"} id={s.nome} value={s.nome} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
+                    <span
+                      class={showMenu && menuType === 'status' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                        stroke="currentColor" stroke-width="1">
+                        <path fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"></path>
+                      </svg>
+                    </span>
                     <label htmlFor={s.nome} key={s.id}>{s.nome}</label>
                   </div>
 
@@ -181,11 +229,11 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                   </span>
                 </div>
 
-                <div className={showMenu && menuType === 'ente' ? 'mt-2 pl-2 flex flex-col gap-2 text-[12px] h-[250px] transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-hidden transition-all flex flex-col gap-2 text-[12px] border-l'}>
+                <div className={showMenu && menuType === 'ente' ? 'mt-2 pl-2 flex flex-col gap-2 text-[12px] h-[350px] transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
 
                   <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'py-1'} />
 
-                  <div className="flex flex-col gap-2 overflow-y-scroll scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-300 dark:scrollbar-track-neutral-700 dark:scrollbar-thumb-neutral-300">
+                  <div className="flex flex-col gap-2 overflow-y-scroll ">
 
                     {filteredEnte.map((orcamento) => (
 
@@ -193,8 +241,18 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                         <div>
                           <div className="cursor-pointer">
                             <div className="flex items-center gap-2 ">
-                              <input type="checkbox" name={"ente_id"} id={orcamento.id} value={orcamento.apelido} className="accent-black mb-[1px]" onClick={(e) => handleMarkAllCheckboxInEnte(e, orcamento.id)} />
-                              <div className="w-full flex items-center justify-between" onClick={() => handleSubMenu(orcamento.apelido)}>
+                              <input type="checkbox" name={"ente_id"} id={orcamento.id} value={orcamento.apelido} className="peer relative h-[18px] w-[18px] cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleMarkAllCheckboxInEnte(e, orcamento.id)} />
+                              <span
+                                class="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                                  stroke="currentColor" stroke-width="1">
+                                  <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
+                                </svg>
+                              </span>
+
+                              <div className="w-full flex items-center justify-between pr-3" onClick={() => handleSubMenu(orcamento.apelido)}>
                                 <p>{orcamento.apelido}</p>
                                 <span className='text-[12px] '>
                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showSubMenu && subMenuType === orcamento.apelido ? "w-3 h-3 inline-block rotate-180" : 'w-3 h-3 inline-block'}>
@@ -205,12 +263,21 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                             </div>
                           </div>
 
-                          <div className={showSubMenu && subMenuType === orcamento.apelido ? "border-l dark:border-neutral-600 px-2 flex flex-col gap-1 mt-1 h-full" : 'h-0 overflow-hidden '}>
+                          <div className={showSubMenu && subMenuType === orcamento.apelido ? "border-l dark:border-neutral-600 px-2 flex flex-col gap-1 mt-1 h-full" : 'hidden h-0 overflow-hidden '}>
                             {orcamentosAnos.map((orcamentoAno) => (
 
                               parseInt(orcamento.id) === parseInt(orcamentoAno.budget_id) ? (
-                                <div className="flex items-center gap-2">
-                                  <input type="checkbox" name={"ente_id"} value={orcamento.apelido + " " + orcamentoAno.ano} data-budget-id={orcamentoAno.budget_id} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e, orcamento.id, orcamentoAno.budget_id)} />
+                                <div className="flex items-center gap-2 overflow-hidden">
+                                  <input type="checkbox" name={"ente_id"} value={orcamento.apelido + " " + orcamentoAno.ano} data-budget-id={orcamentoAno.budget_id} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e, orcamento.id, orcamentoAno.budget_id)} />
+                                  <span
+                                    className="absolute text-white transition-opacity hidden pointer-events-none peer-checked:block dark:text-black">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                                      stroke="currentColor" stroke-width="1">
+                                      <path fill-rule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clip-rule="evenodd"></path>
+                                    </svg>
+                                  </span>
                                   <p key={orcamentoAno.id}>{orcamentoAno.ano}</p>
                                 </div>
                               ) : null
@@ -239,10 +306,19 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                   </span>
                 </div>
               </div>
-              <div className={showMenu && menuType === 'empresa' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[165px] overflow-y-hidden transition-all cursor-default border-l' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l'}>
+              <div className={showMenu && menuType === 'empresa' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[165px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
                 {empresas.map((empresa) => (
                   <div className="flex items-center gap-2">
-                    <input type="checkbox" name={'empresa'} id={empresa.nome} value={empresa.nome} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e)} />
+                    <input type="checkbox" name={'empresa_id'} id={empresa.nome} value={empresa.nome} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
+                    <span
+                      className={showMenu && menuType === 'empresa' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px] dark:text-black" viewBox="0 0 20 20" fill="currentColor"
+                        stroke="currentColor" stroke-width="1">
+                        <path fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"></path>
+                      </svg>
+                    </span>
                     <label htmlFor={empresa.nome} key={empresa.id}>{empresa.nome}</label>
                   </div>
 
@@ -261,11 +337,84 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                   </span>
                 </div>
 
-                <div className={showMenu && menuType === 'natureza' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[50px] overflow-y-hidden transition-all cursor-default border-l' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l'}>
+                <div className={showMenu && menuType === 'natureza' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[50px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
                   {natureza.map((na) => (
                     <div className="flex items-center gap-2">
-                      <input type="checkbox" name={"natureza"} id={na.nome} value={na.nome} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e)} />
+                      <input type="checkbox" name={"natureza"} id={na.nome} value={na.nome} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
+                      <span
+                        class={showMenu && menuType === 'natureza' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                          stroke="currentColor" stroke-width="1">
+                          <path fill-rule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clip-rule="evenodd"></path>
+                        </svg>
+                      </span>
                       <label htmlFor={na.nome} key={na.id}>{na.nome}</label>
+                    </div>
+
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="px-2 py-1 text-gray-600 text-[14px] dark:text-neutral-300 ">
+              <div>
+                <div onClick={() => handleMenu('anuencia')} className="flex justify-between items-center cursor-pointer">
+                  <span>Anuência</span>
+                  <span className='text-[12px] '>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showMenu && menuType === 'anuencia' ? "w-3 h-3 inline-block rotate-180 transition-all" : 'w-3 h-3 inline-block'}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </span>
+                </div>
+
+                <div className={showMenu && menuType === 'anuencia' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[100px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
+                  {anuencia.map((an) => (
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" name={"adv"} id={an} value={an} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
+                      <span
+                        class={showMenu && menuType === 'anuencia' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                          stroke="currentColor" stroke-width="1">
+                          <path fill-rule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clip-rule="evenodd"></path>
+                        </svg>
+                      </span>
+                      <label htmlFor={an} key={an}>{an}</label>
+                    </div>
+
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="px-2 py-1 text-gray-600 text-[14px] dark:text-neutral-300 ">
+              <div>
+                <div onClick={() => handleMenu('obito')} className="flex justify-between items-center cursor-pointer">
+                  <span>Óbito</span>
+                  <span className='text-[12px] '>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showMenu && menuType === 'obito' ? "w-3 h-3 inline-block rotate-180 transition-all" : 'w-3 h-3 inline-block'}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </span>
+                </div>
+
+                <div className={showMenu && menuType === 'obito' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[75px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
+                  {obito.map((ob) => (
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" name={"falecido"} id={ob} value={ob} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
+                      <span
+                        class={showMenu && menuType === 'obito' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                          stroke="currentColor" stroke-width="1">
+                          <path fill-rule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clip-rule="evenodd"></path>
+                        </svg>
+                      </span>
+                      <label htmlFor={ob} key={ob}>{ob}</label>
                     </div>
 
                   ))}
@@ -275,7 +424,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
           </div>
         </div>
 
-      </div>
+      </div >
     </>
 
   )

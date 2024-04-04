@@ -4,7 +4,7 @@ import placeholder from "../../public/assets/placeholder-perfil.png";
 
 function ProfileImage({userImage}) {
   return(
-    <img className='w-full' src={userImage ? `${userImage}` : placeholder} alt="Imagem de Perfil do Usuário" />
+    <img className='w-full rounded' src={userImage ? `${userImage}` : placeholder} alt="Imagem de Perfil do Usuário" />
   )
 }
 

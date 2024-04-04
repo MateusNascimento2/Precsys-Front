@@ -21,9 +21,9 @@ export default function DotsButton({ listLength, cessaoID, requisitorioFile, esc
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
             </svg>
           </div>
-          <div className={menuState[cessaoID] && parseInt(Object.keys(menuState)[0]) === cessaoID ? " bg-white border shadow absolute rounded top-4 right-0 z-50 px-2 py-1 gap-2 flex flex-col dark:bg-neutral-900 dark:border-neutral-700 " : " bg-white dark:bg-neutral-900 border shadow absolute rounded top-4 right-0 z-50 px-2 py-1 gap-2 hidden"}>
-            <span className="cursor-pointer text-[12px] rounded p-1 hover:bg-neutral-200 dark:text-white dark:hover:bg-neutral-800"><a href={requisitorioFile} download target="_blank">Requisitório</a></span>
-            <span className="cursor-pointer text-[12px] rounded p-1 hover:bg-neutral-200 dark:text-white dark:hover:bg-neutral-800"><a href={escrituraFile} download target="_blank">Escritura</a></span>
+          <div className={menuState[cessaoID] && parseInt(Object.keys(menuState)[0]) === cessaoID ? " bg-white border shadow absolute rounded top-4 right-0 z-50 px-1 py-1 gap-1 flex flex-col dark:bg-neutral-900 dark:border-neutral-700 " : " bg-white dark:bg-neutral-900 border shadow absolute rounded top-4 right-0 z-50 px-1 py-1 gap-1 hidden"}>
+            <span className="cursor-pointer text-[12px] rounded p-1 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"><a href={requisitorioFile} download target="_blank">Requisitório</a></span>
+            <span className="cursor-pointer text-[12px] rounded p-1 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"><a href={escrituraFile} download target="_blank">Escritura</a></span>
           </div>
         </div>
     </>

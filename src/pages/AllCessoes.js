@@ -22,7 +22,7 @@ export default function AllCessoes() {
     setSelectedCheckboxes(childData);
   };
 
-  
+
   return (
     <>
       <Header />

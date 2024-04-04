@@ -64,7 +64,10 @@ function Header() {
 
       <header className='bg-white fixed z-50 border-b dark:border-neutral-700 dark:bg-neutral-900  w-full top-0 '>
         <div onClick={() => { setShowMenu((prevState) => !prevState) }} className={showMenu && menuType === 'navBar' ? 'fixed top-[52px] h-screen left-0 w-screen bg-neutral-700 opacity-60 z-[49] transition-opacity lg:opacity-0 lg:hidden' : showMenu && menuType === 'toolBar' ? 'fixed top-[52px] h-screen left-0 w-screen bg-white opacity-0 z-[49] transition-opacity lg:opacity-0' : ' fixed top-[-9999px] opacity-0 transition-opacity lg:hidden'}></div>
-        {menuType === 'navBar' ? (auth?.user?.admin ? <NavBarAdmin show={showMenu} /> : <NavBarUser />) : null}
+        <div className='lg:hidden'>
+          {menuType === 'navBar' ? (auth?.user?.admin ? <NavBarAdmin show={showMenu} /> : <NavBarUser />) : null}
+        </div>
+
         <section className='px-4 py-2 flex justify-between gap-4 bg-white dark:bg-neutral-900 lg:container lg:mx-auto lg:gap-20'>
 
           <div className='relative flex flex-col gap-[3px] justify-center lg:hidden  ' onClick={() => handleMenu('navBar')}>
@@ -84,7 +87,7 @@ function Header() {
             {auth?.user.admin ? <NavBarAdmin show={true} /> : <NavBarUser />}
           </div>
 
-          <div className='relative w-[35px] lg:w-[45px] bg-neutral-200 py-[2px] rounded ' >
+          <div className='relative w-[35px] lg:w-[45px] bg-neutral-200 rounded ' >
 
             <div className='cursor-pointer' onClick={() => handleMenu('toolBar')}>
               <ProfileImage userImage={auth?.userImage} />
