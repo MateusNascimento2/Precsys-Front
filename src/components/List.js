@@ -12,7 +12,8 @@ export default function Lista({ searchQuery, selectedFilters }) {
   const [orcamentos, setOrcamentos] = useState([]);
   const [natureza, setNatureza] = useState([]);
   const [empresas, setEmpresas] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Estado para controlar o carregamento
+  const [isLoading, setIsLoading] = useState(true);
+  const [cessoesFiltradas, setCessoesFiltradas] = useState([]) // Estado para controlar o carregamento
   const axiosPrivate = useAxiosPrivate()
   const navigate = useNavigate();
   const location = useLocation();
@@ -111,9 +112,10 @@ export default function Lista({ searchQuery, selectedFilters }) {
     delete cessao.ano;
   })
 
-  //console.log(cessoes)
+  console.log(cessoes)
 
   console.log(selectedFilters)
+
 
   const filteredByCheckbox = selectedFilters.length === 0 ? cessoes : cessoes.filter(cessao => {
     return selectedFilters.every(filter => {
@@ -121,7 +123,9 @@ export default function Lista({ searchQuery, selectedFilters }) {
     });
   });
 
-  console.log(filteredByCheckbox)
+  console.log("cessoes filtradas")
+
+
 
 
   const filteredCessoes = filteredByCheckbox.filter(cessao =>
@@ -143,12 +147,12 @@ export default function Lista({ searchQuery, selectedFilters }) {
       key !== 'juridico_obs' &&
       key !== 'juridico_obs_data' &&
       key !== 'obs' &&
-      
+
       value && typeof value === 'string' && value.toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
 
-  console.log(filteredCessoes)
+
 
   const renderRow = ({ index, parent, key, style }) => {
     const cessao = filteredCessoes[index];

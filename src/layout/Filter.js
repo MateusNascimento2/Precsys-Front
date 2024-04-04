@@ -15,7 +15,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
   const [subMenuType, setSubMenuType] = useState(null);
   const [menuType, setMenuType] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+
 
   const axiosPrivate = useAxiosPrivate()
   const navigate = useNavigate();
@@ -79,38 +79,60 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
   }
 
   // Função para lidar com a seleção/deseleção de um checkbox
-  const handleCheckboxChange = (event, budget_id, orcamento_id) => {
+  const handleMarkAllCheckboxInEnte = (event, orcamento_id) => {
     const checkboxName = event.target.name;
+    const checkboxValue = event.target.value;
     const isChecked = event.target.checked;
+    const checkboxesWithTheSameID = document.querySelectorAll(`input[type="checkbox"][data-budget-id="${orcamento_id}"]`)
 
+
+    const checkboxValor = { [checkboxName]: checkboxValue }
     console.log(checkboxName)
 
+    if (isChecked) {
+      onSelectedCheckboxesChange(prevState => [...prevState, checkboxValor])
+      checkboxesWithTheSameID.forEach(checkbox => {
+        checkbox.checked = true
+        const checkboxValorFilho = checkbox.value
 
-    // Verifica se o checkbox foi marcado ou desmarcado e atualiza o estado em conformidade
-    if (isChecked && parseInt(budget_id) === parseInt(orcamento_id)) {
+        const objCheckBoxFilho = { [checkboxName]: checkboxValorFilho }
 
-      const apelidoCheckBox = document.getElementById(orcamento_id);
+        onSelectedCheckboxesChange(prevState => [...prevState, objCheckBoxFilho])
+      })
 
-      apelidoCheckBox.checked = true;
-      setSelectedCheckboxes(prevState => [...prevState, checkboxName])
-      onSelectedCheckboxesChange(prevState => [...prevState, checkboxName])
-      
-
-    } else if (isChecked) {
-
-      setSelectedCheckboxes(prevState => [...prevState, checkboxName])
-      onSelectedCheckboxesChange(prevState => [...prevState, checkboxName]);
-
+      console.log(checkboxesWithTheSameID)
     } else {
-      onSelectedCheckboxesChange(prevState => prevState.filter(item => item !== checkboxName));
-      setSelectedCheckboxes(prevState => prevState.filter(item => item !== checkboxName))
+      onSelectedCheckboxesChange(prevState => prevState.filter(item => item.ente_id !== checkboxValor.ente_id))
+      checkboxesWithTheSameID.forEach(checkbox => {
+        checkbox.checked = false
+
+        onSelectedCheckboxesChange(prevState => prevState.filter(item => item !== checkbox))
+      })
 
     }
+
+
   };
 
+  const handleCheckboxChange = (event) => {
+    const checkboxName = event.target.name;
+    const checkboxValue = event.target.value;
+    const isChecked = event.target.checked;
 
+    console.log(checkboxValue)
 
+    const checkbox = { [checkboxName]: checkboxValue }
 
+    if (isChecked) {
+      onSelectedCheckboxesChange(prevState => [...prevState, checkbox])
+    } else {
+      onSelectedCheckboxesChange(prevState => prevState.filter(item => {
+        const [key] = Object.keys(item); // Obtém a chave do objeto
+        return item[key] !== checkboxValue; // Filtra com base no valor da chave do objeto
+      }));
+    }
+
+  }
 
   const filteredEnte = orcamentos.filter(orcamento =>
     Object.entries(orcamento).some(([key, value]) =>
@@ -140,7 +162,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
               <div className={showMenu && menuType === 'status' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[210px] overflow-y-hidden transition-all cursor-default border-l' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l'}>
                 {status.map((s) => (
                   <div className="flex items-center gap-2">
-                    <input type="checkbox" name={s.nome} id={s.nome} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e)} />
+                    <input type="checkbox" name={"status"} id={s.nome} value={s.nome} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e)} />
                     <label htmlFor={s.nome} key={s.id}>{s.nome}</label>
                   </div>
 
@@ -171,7 +193,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                         <div>
                           <div className="cursor-pointer">
                             <div className="flex items-center gap-2 ">
-                              <input type="checkbox" name={orcamento.apelido} id={orcamento.id} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e)} />
+                              <input type="checkbox" name={"ente_id"} id={orcamento.id} value={orcamento.apelido} className="accent-black mb-[1px]" onClick={(e) => handleMarkAllCheckboxInEnte(e, orcamento.id)} />
                               <div className="w-full flex items-center justify-between" onClick={() => handleSubMenu(orcamento.apelido)}>
                                 <p>{orcamento.apelido}</p>
                                 <span className='text-[12px] '>
@@ -188,7 +210,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
 
                               parseInt(orcamento.id) === parseInt(orcamentoAno.budget_id) ? (
                                 <div className="flex items-center gap-2">
-                                  <input type="checkbox" name={orcamento.apelido + " " + orcamentoAno.ano} id={orcamentoAno.ano} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e, orcamentoAno.budget_id, orcamento.id)} />
+                                  <input type="checkbox" name={"ente_id"} value={orcamento.apelido + " " + orcamentoAno.ano} data-budget-id={orcamentoAno.budget_id} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e, orcamento.id, orcamentoAno.budget_id)} />
                                   <p key={orcamentoAno.id}>{orcamentoAno.ano}</p>
                                 </div>
                               ) : null
@@ -220,7 +242,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
               <div className={showMenu && menuType === 'empresa' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[165px] overflow-y-hidden transition-all cursor-default border-l' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l'}>
                 {empresas.map((empresa) => (
                   <div className="flex items-center gap-2">
-                    <input type="checkbox" name={empresa.nome} id={empresa.nome} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e)} />
+                    <input type="checkbox" name={'empresa'} id={empresa.nome} value={empresa.nome} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e)} />
                     <label htmlFor={empresa.nome} key={empresa.id}>{empresa.nome}</label>
                   </div>
 
@@ -242,7 +264,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                 <div className={showMenu && menuType === 'natureza' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[50px] overflow-y-hidden transition-all cursor-default border-l' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l'}>
                   {natureza.map((na) => (
                     <div className="flex items-center gap-2">
-                      <input type="checkbox" name={na.nome} id={na.nome} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e)} />
+                      <input type="checkbox" name={"natureza"} id={na.nome} value={na.nome} className="accent-black mb-[1px]" onClick={(e) => handleCheckboxChange(e)} />
                       <label htmlFor={na.nome} key={na.id}>{na.nome}</label>
                     </div>
 
