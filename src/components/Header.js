@@ -63,7 +63,7 @@ function Header() {
     <>
 
       <header className='bg-white fixed z-50 border-b dark:border-neutral-700 dark:bg-neutral-900  w-full top-0 '>
-        <div onClick={() => { setShowMenu((prevState) => !prevState) }} className={showMenu && menuType === 'navBar' ? 'fixed top-[52px] h-screen left-0 w-screen bg-neutral-700 opacity-60 z-[49] transition-opacity lg:opacity-0 lg:hidden' : showMenu && menuType === 'toolBar' ? 'fixed top-[52px] h-screen left-0 w-screen bg-white opacity-0 z-[49] transition-opacity lg:opacity-0' : ' fixed top-[-9999px] opacity-0 transition-opacity lg:hidden'}></div>
+        <div onClick={() => { setShowMenu((prevState) => !prevState) }} className={showMenu && menuType === 'navBar' ? 'fixed top-[50px] h-screen left-0 w-screen bg-neutral-700 opacity-60 z-[49] transition-opacity lg:opacity-0 lg:hidden' : showMenu && menuType === 'toolBar' ? 'fixed top-[52px] h-screen left-0 w-screen bg-white opacity-0 z-[49] transition-opacity lg:opacity-0' : ' fixed top-[-9999px] opacity-0 transition-opacity lg:hidden'}></div>
         <div className='lg:hidden'>
           {menuType === 'navBar' ? (auth?.user?.admin ? <NavBarAdmin show={showMenu} /> : <NavBarUser />) : null}
         </div>

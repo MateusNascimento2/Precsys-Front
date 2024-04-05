@@ -241,16 +241,19 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                         <div>
                           <div className="cursor-pointer">
                             <div className="flex items-center gap-2 ">
-                              <input type="checkbox" name={"ente_id"} id={orcamento.id} value={orcamento.apelido} className="peer relative h-[18px] w-[18px] cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleMarkAllCheckboxInEnte(e, orcamento.id)} />
-                              <span
-                                class="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
-                                  stroke="currentColor" stroke-width="1">
-                                  <path fill-rule="evenodd"
-                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                    clip-rule="evenodd"></path>
-                                </svg>
-                              </span>
+                              <div className="relative">
+                                <input type="checkbox" name={"ente_id"} id={orcamento.id} value={orcamento.apelido} className="peer relative h-[18px] w-[18px] cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleMarkAllCheckboxInEnte(e, orcamento.id)} />
+                                <span
+                                  class="absolute left-[1px] right-0 top-[2px] text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                                    stroke="currentColor" stroke-width="1">
+                                    <path fill-rule="evenodd"
+                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                      clip-rule="evenodd"></path>
+                                  </svg>
+                                </span>
+                              </div>
+
 
                               <div className="w-full flex items-center justify-between pr-3" onClick={() => handleSubMenu(orcamento.apelido)}>
                                 <p>{orcamento.apelido}</p>
@@ -268,16 +271,19 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
 
                               parseInt(orcamento.id) === parseInt(orcamentoAno.budget_id) ? (
                                 <div className="flex items-center gap-2 overflow-hidden">
-                                  <input type="checkbox" name={"ente_id"} value={orcamento.apelido + " " + orcamentoAno.ano} data-budget-id={orcamentoAno.budget_id} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e, orcamento.id, orcamentoAno.budget_id)} />
-                                  <span
-                                    className="absolute text-white transition-opacity hidden pointer-events-none peer-checked:block dark:text-black">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
-                                      stroke="currentColor" stroke-width="1">
-                                      <path fill-rule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clip-rule="evenodd"></path>
-                                    </svg>
-                                  </span>
+                                  <div className="relative">
+                                    <input type="checkbox" name={"ente_id"} value={orcamento.apelido + " " + orcamentoAno.ano} data-budget-id={orcamentoAno.budget_id} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e, orcamento.id, orcamentoAno.budget_id)} />
+                                    <span
+                                      className="absolute left-0 right-0 top-[1px] text-white transition-opacity hidden pointer-events-none peer-checked:block dark:text-black">
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                                        stroke="currentColor" stroke-width="1">
+                                        <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                      </svg>
+                                    </span>
+                                  </div>
+
                                   <p key={orcamentoAno.id}>{orcamentoAno.ano}</p>
                                 </div>
                               ) : null
