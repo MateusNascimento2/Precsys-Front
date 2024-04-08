@@ -21,7 +21,6 @@ function CPFLoginComponent() {
     setDarkMode(isDarkMode);
   }, []);
 
-  console.log(darkMode)
 
   const handleContinue = async (event) => {
 

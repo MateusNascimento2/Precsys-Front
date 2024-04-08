@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingSpinner from "./LoadingSpinner/LoadingSpinner";
 import DotsButton from "./DotsButton";
 import { List, AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache } from 'react-virtualized'
+import { Link } from "react-router-dom";
 
 
 export default function Lista({ searchQuery, selectedFilters }) {
@@ -78,7 +79,7 @@ export default function Lista({ searchQuery, selectedFilters }) {
     // Atualiza propriedades de ente_id
     const orcamentoAtualizado = orcamentos.find(o => parseInt(cessao.ente_id) === parseInt(o.id));
     if (orcamentoAtualizado && cessao.ano) {
-      cessao.ente_id = orcamentoAtualizado.apelido + " " + cessao.ano;
+      cessao.ente_id = orcamentoAtualizado.apelido + " - " + cessao.ano;
     } else if (orcamentoAtualizado) {
       cessao.ente_id = orcamentoAtualizado.apelido;
     }
@@ -183,8 +184,8 @@ export default function Lista({ searchQuery, selectedFilters }) {
                   <span className="font-[700] dark:text-white">{cessao.id}</span>
                 </div>
                 <div className="flex flex-col justify-center text-[12px] pl-2">
-                  <span className="font-bold dark:text-white">{cessao.precatorio}</span>
-                  <span className="text-neutral-400 font-medium line-clamp-1">{cessao.cedente}</span>
+                  <Link to={`/precatorio/${String(cessao.id)}`}><span className="font-bold dark:text-white hover:underline">{cessao.precatorio}</span></Link>
+                  <span className="text-neutral-400 font-medium line-clamp-1 dark:text-neutral-300">{cessao.cedente}</span>
                 </div>
               </div>
               <DotsButton listLength={listLength} cessaoID={cessao.id} requisitorioFile={cessao.requisitorio} escrituraFile={cessao.escritura} />
@@ -222,7 +223,7 @@ export default function Lista({ searchQuery, selectedFilters }) {
       ) : (
         <section className="container dark:bg-neutral-900" style={{ width: "100%" }} >
           <div className="dark:bg-neutral-900">
-            <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-400">Mostrando {filteredCessoes.length} de {cessoes.length} cessões</p>
+            <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">Mostrando {filteredCessoes.length} de {cessoes.length} cessões</p>
             <WindowScroller>
               {({ height, isScrolling, onChildScroll, scrollTop }) => (
                 <AutoSizer>

@@ -4,12 +4,13 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Cessoes from './pages/Cessoes';
 import AllCessoes from './pages/AllCessoes';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import PersistLogin from './components/PersistLogin';
 import { RequireAdminAuth, RequireNormalUserAuth } from './components/RequireAuth';
 import Unauthorized from './pages/Unauthorized';
 import Usuarios from './pages/Usuarios';
+import Precatorio from './pages/Precatorio';
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
           <Route element={<RequireNormalUserAuth />}>
             <Route path='dashboard' element={<Dashboard />} />
             <Route path='cessoes' element={<Cessoes />} />
+            <Route path='precatorio/:precId' element={<Precatorio />} />
           </Route>
 
           <Route element={<RequireAdminAuth />}>
