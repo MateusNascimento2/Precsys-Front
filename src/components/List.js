@@ -107,6 +107,7 @@ export default function Lista({ searchQuery, selectedFilters }) {
     if (falecido) {
       cessao.falecido = falecido;
     }
+
   });
 
   cessoes.forEach(cessao => {

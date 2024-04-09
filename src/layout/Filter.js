@@ -203,12 +203,12 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                   <div className="flex items-center gap-2">
                     <input type="checkbox" name={"status"} id={s.nome} value={s.nome} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
                     <span
-                      class={showMenu && menuType === 'status' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
-                        stroke="currentColor" stroke-width="1">
-                        <path fill-rule="evenodd"
+                      className={showMenu && menuType === 'status' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                        stroke="currentColor" strokeWidth="1">
+                        <path fillRule="evenodd"
                           d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clip-rule="evenodd"></path>
+                          clipRule="evenodd"></path>
                       </svg>
                     </span>
                     <label htmlFor={s.nome} key={s.id}>{s.nome}</label>
@@ -244,12 +244,12 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                               <div className="relative">
                                 <input type="checkbox" name={"ente_id"} id={orcamento.id} value={orcamento.apelido} className="peer relative h-[18px] w-[18px] cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleMarkAllCheckboxInEnte(e, orcamento.id)} />
                                 <span
-                                  class="absolute left-[1px] right-0 top-[2px] text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
-                                    stroke="currentColor" stroke-width="1">
-                                    <path fill-rule="evenodd"
+                                  className="absolute left-[1px] right-0 top-[2px] text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                                    stroke="currentColor" strokeWidth="1">
+                                    <path fillRule="evenodd"
                                       d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                      clip-rule="evenodd"></path>
+                                      clipRule="evenodd"></path>
                                   </svg>
                                 </span>
                               </div>
@@ -275,11 +275,11 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                                     <input type="checkbox" name={"ente_id"} value={orcamento.apelido + " " + orcamentoAno.ano} data-budget-id={orcamentoAno.budget_id} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e, orcamento.id, orcamentoAno.budget_id)} />
                                     <span
                                       className="absolute left-0 right-0 top-[1px] text-white transition-opacity hidden pointer-events-none peer-checked:block dark:text-black">
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
-                                        stroke="currentColor" stroke-width="1">
-                                        <path fill-rule="evenodd"
+                                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                                        stroke="currentColor" strokeWidth="1">
+                                        <path fillRule="evenodd"
                                           d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clip-rule="evenodd"></path>
+                                          clipRule="evenodd"></path>
                                       </svg>
                                     </span>
                                   </div>
@@ -318,11 +318,11 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                     <input type="checkbox" name={'empresa_id'} id={empresa.nome} value={empresa.nome} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
                     <span
                       className={showMenu && menuType === 'empresa' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px] dark:text-black" viewBox="0 0 20 20" fill="currentColor"
-                        stroke="currentColor" stroke-width="1">
-                        <path fill-rule="evenodd"
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px] dark:text-black" viewBox="0 0 20 20" fill="currentColor"
+                        stroke="currentColor" strokeWidth="1">
+                        <path fillRule="evenodd"
                           d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clip-rule="evenodd"></path>
+                          clipRule="evenodd"></path>
                       </svg>
                     </span>
                     <label htmlFor={empresa.nome} key={empresa.id}>{empresa.nome}</label>
@@ -348,12 +348,12 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                     <div className="flex items-center gap-2">
                       <input type="checkbox" name={"natureza"} id={na.nome} value={na.nome} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
                       <span
-                        class={showMenu && menuType === 'natureza' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
-                          stroke="currentColor" stroke-width="1">
-                          <path fill-rule="evenodd"
+                        className={showMenu && menuType === 'natureza' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                          stroke="currentColor" strokeWidth="1">
+                          <path fillRule="evenodd"
                             d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clip-rule="evenodd"></path>
+                            clipRule="evenodd"></path>
                         </svg>
                       </span>
                       <label htmlFor={na.nome} key={na.id}>{na.nome}</label>
@@ -380,12 +380,12 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                     <div className="flex items-center gap-2">
                       <input type="checkbox" name={"adv"} id={an} value={an} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
                       <span
-                        class={showMenu && menuType === 'anuencia' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
-                          stroke="currentColor" stroke-width="1">
-                          <path fill-rule="evenodd"
+                        className={showMenu && menuType === 'anuencia' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                          stroke="currentColor" strokeWidth="1">
+                          <path fillRule="evenodd"
                             d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clip-rule="evenodd"></path>
+                            clipRule="evenodd"></path>
                         </svg>
                       </span>
                       <label htmlFor={an} key={an}>{an}</label>
@@ -412,12 +412,12 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                     <div className="flex items-center gap-2">
                       <input type="checkbox" name={"falecido"} id={ob} value={ob} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
                       <span
-                        class={showMenu && menuType === 'obito' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
-                          stroke="currentColor" stroke-width="1">
-                          <path fill-rule="evenodd"
+                        className={showMenu && menuType === 'obito' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                          stroke="currentColor" strokeWidth="1">
+                          <path fillRule="evenodd"
                             d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clip-rule="evenodd"></path>
+                            clipRule="evenodd"></path>
                         </svg>
                       </span>
                       <label htmlFor={ob} key={ob}>{ob}</label>

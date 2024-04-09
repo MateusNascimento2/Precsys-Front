@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Header from '../components/Header';
 import SearchInput from '../components/SearchInput';
 import FilterButton from '../components/FilterButton';
-import Filter from '../layout/Filter';
+import NavMenu from '../components/NavMenu';
 import InfoPrec from '../components/InfoPrec';
 import Tags from '../components/Tags';
 import { useParams } from 'react-router-dom'
@@ -18,6 +18,11 @@ export default function Precatorio() {
   const [natureza, setNatureza] = useState([]);
   const [empresas, setEmpresas] = useState([]);
   const [varas, setVaras] = useState([]);
+  const [teles, setTeles] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [todasCessoes, setTodasCessoes] = useState([]);
+  const [escreventes, setEscreventes] = useState([]);
+  const [cessionarios, setCessionarios] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { precId } = useParams();
   const axiosPrivate = useAxiosPrivate()
@@ -50,6 +55,11 @@ export default function Precatorio() {
           fetchData('/natureza', setNatureza),
           fetchData('/empresas', setEmpresas),
           fetchData('/vara', setVaras),
+          fetchData('/tele', setTeles),
+          fetchData('/cessoes', setTodasCessoes),
+          fetchData('/escreventes', setEscreventes),
+          fetchData('/users', setUsers),
+          fetchData('/cessionarios', setCessionarios)
         ]);
       } finally {
         setIsLoading(false);
@@ -69,7 +79,6 @@ export default function Precatorio() {
     setShow((prevState) => !prevState)
   }
 
-  console.log(precData)
 
   const anuenciaValores = {
     "0": "Sem anuência",
@@ -84,8 +93,9 @@ export default function Precatorio() {
     "2": "Deixou bens",
   }
 
-  const orcamentoAtualizado = orcamentos.find(o => parseInt(precData.ente_id) === parseInt(o.id));
   const updatedPrecData = { ...precData };
+  const orcamentoAtualizado = orcamentos.find(o => parseInt(updatedPrecData.ente_id) === parseInt(o.id));
+
 
   if (orcamentoAtualizado && updatedPrecData.ano) {
     updatedPrecData.ente_id = orcamentoAtualizado.apelido + " - " + updatedPrecData.ano;
@@ -96,7 +106,10 @@ export default function Precatorio() {
   const naturezaAtualizada = natureza.find(n => parseInt(updatedPrecData.natureza) === parseInt(n.id));
   const empresaAtualizada = empresas.find(e => parseInt(updatedPrecData.empresa_id) === parseInt(e.id));
   const statusAtualizado = status.find(s => parseInt(updatedPrecData.status) === parseInt(s.id));
-  const varasAtualizada = varas.find(v => parseInt(updatedPrecData.vara_processo) === parseInt(v.id))
+  const varasAtualizada = varas.find(v => parseInt(updatedPrecData.vara_processo) === parseInt(v.id));
+  const telesAtualizado = users.find(u => parseInt(updatedPrecData.tele_id) === parseInt(u.id));
+  const escreventesAtualizado = escreventes.find(escrevente => parseInt(updatedPrecData.escrevente_id) === parseInt(escrevente.id));
+
 
   const anuencia = anuenciaValores[precData.adv];
   if (anuencia) {
@@ -125,10 +138,82 @@ export default function Precatorio() {
     updatedPrecData.vara_processo = varasAtualizada.nome
   }
 
-  console.log(orcamentoAtualizado)
-  console.log(naturezaAtualizada)
-  console.log(empresaAtualizada)
-  console.log(statusAtualizado)
+  if (telesAtualizado) {
+    updatedPrecData.tele_id = telesAtualizado.nome
+  }
+
+  if (escreventesAtualizado) {
+    updatedPrecData.escrevente_id = escreventesAtualizado.nome
+  }
+
+  const cessionarioRefPrec = cessionarios.filter(cessionario => parseInt(updatedPrecData.id) === parseInt(cessionario.cessao_id));
+
+
+  const updatedCessionario = [...cessionarioRefPrec];
+
+
+  updatedCessionario.forEach(cessionario => {
+    const nomeDoCessionario = users.find(user => parseInt(cessionario.user_id) === parseInt(user.id))
+
+    console.log(nomeDoCessionario)
+
+    if (nomeDoCessionario) {
+      cessionario.user_id = nomeDoCessionario.nome;
+      cessionario.cpfcnpj = nomeDoCessionario.cpfcnpj
+    }
+  })
+
+  const cessoesRelacionadas = todasCessoes.filter(cessao => {
+    if (updatedPrecData.id === cessao.id) {
+      return ''
+    }
+
+    return updatedPrecData.processo === cessao.processo || updatedPrecData.cedente === cessao.cedente || updatedPrecData.precatorio === cessao.precatorio
+  })
+
+  cessoesRelacionadas.forEach(cessao => {
+    // Atualiza propriedades de status
+    const statusAtualizado = status.find(s => parseInt(cessao.status) === parseInt(s.id));
+    if (statusAtualizado) {
+      cessao.status = statusAtualizado.nome;
+      cessao.statusColor = statusAtualizado.extra;
+    }
+
+    // Atualiza propriedades de ente_id
+    const orcamentoAtualizado = orcamentos.find(o => parseInt(cessao.ente_id) === parseInt(o.id));
+    if (orcamentoAtualizado && cessao.ano) {
+      cessao.ente_id = orcamentoAtualizado.apelido + " - " + cessao.ano;
+    } else if (orcamentoAtualizado) {
+      cessao.ente_id = orcamentoAtualizado.apelido;
+    }
+
+    // Atualiza propriedades de natureza
+    const naturezaAtualizada = natureza.find(n => parseInt(cessao.natureza) === parseInt(n.id));
+    if (naturezaAtualizada) {
+      cessao.natureza = naturezaAtualizada.nome;
+    }
+
+    // Atualiza propriedades de empresa_id
+    const empresaAtualizada = empresas.find(e => parseInt(cessao.empresa_id) === parseInt(e.id));
+    if (empresaAtualizada) {
+      cessao.empresa_id = empresaAtualizada.nome;
+    }
+
+    // Atualiza propriedades de adv
+    const anuencia = anuenciaValores[cessao.adv];
+    if (anuencia) {
+      cessao.adv = anuencia;
+    }
+
+    // Atualiza propriedades de falecido
+    const falecido = falecidoValores[cessao.falecido];
+    if (falecido) {
+      cessao.falecido = falecido;
+    }
+
+  });
+
+  console.log(updatedCessionario)
 
 
   return (
@@ -145,7 +230,7 @@ export default function Precatorio() {
                   </div>
                   <div className="flex flex-col justify-center text-[12px] pl-2">
                     <span className="font-bold dark:text-white text-[24px]">{updatedPrecData.precatorio}</span>
-                    <span className="text-neutral-400 font-medium line-clamp-1">{orcamentoAtualizado.ente}</span>
+                    <span className="text-neutral-400 font-medium line-clamp-1">{updatedPrecData.cedente}</span>
                   </div>
                 </div>
                 <div className='ml-auto'>
@@ -163,14 +248,13 @@ export default function Precatorio() {
           <div className='px-5 dark:bg-neutral-900 mt-[16px] max-w-full'>
             <div className='lg:flex lg:gap-4 lg:items-start max-w-full'>
               <div className='hidden lg:block'>
-                <Filter show={true} onSetShow={handleShow} />
+                <NavMenu/>
               </div>
               <div className='lg:w-[calc(100%-300px)]'>
-                <InfoPrec precInfo={updatedPrecData} status={status} />
+                <InfoPrec precInfo={updatedPrecData} status={status} cessionario={updatedCessionario} cessoes={cessoesRelacionadas} />
               </div>
             </div>
           </div>
-          <Filter show={show} onSetShow={handleShow} />
         </main>) : (<div className='w-screen h-screen flex items-center justify-center'><LoadingSpinner /></div>)}
     </>
   )
