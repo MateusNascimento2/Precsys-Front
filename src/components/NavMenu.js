@@ -56,13 +56,13 @@ export default function NavMenu() {
         <div className="p-4 lg:p-0 lg:px-2">
           <div className="">
             <span className="font-[700] dark:text-white">Navegação</span>
-            <ul className="flex flex-col mt-4 divide-y justify-center">
+            <ul className="flex flex-col mt-4 divide-y dark:divide-neutral-600 justify-center">
               <li className={hideInfo ? "py-2 px-1" : 'hidden'}>
                 <a
                   onClick={() => scroll('info-gerais')}
                   className={
                     hideInfo
-                      ? 'text-[14px] text-gray-600 cursor-pointer hover:underline'
+                      ? 'text-[14px] text-gray-600 dark:text-neutral-400 cursor-pointer hover:underline'
                       : 'hidden'
                   }
                 >
@@ -74,7 +74,7 @@ export default function NavMenu() {
                   onClick={() => scroll('cessionarios')}
                   className={
                     hideCessionarios
-                      ? 'text-[14px] text-gray-600 cursor-pointer hover:underline'
+                      ? 'text-[14px] text-gray-600 dark:text-neutral-400 cursor-pointer hover:underline'
                       : 'hidden'
                   }
                 >
@@ -86,7 +86,7 @@ export default function NavMenu() {
                   onClick={() => scroll('juridico')}
                   className={
                     hideJuridico
-                      ? 'text-[14px] text-gray-600 cursor-pointer hover:underline'
+                      ? 'text-[14px] text-gray-600 dark:text-neutral-400 cursor-pointer hover:underline'
                       : 'hidden'
                   }
                 >
@@ -98,7 +98,7 @@ export default function NavMenu() {
                   onClick={() => scroll('relacionados')}
                   className={
                     hideRelacionados
-                      ? 'text-[14px] text-gray-600 cursor-pointer hover:underline'
+                      ? 'text-[14px] text-gray-600 dark:text-neutral-400 cursor-pointer hover:underline'
                       : 'hidden'
                   }
                 >

@@ -224,10 +224,10 @@ export default function Precatorio() {
       {!isLoading ?
         (<main className={show ? 'container mx-auto px-2 overflow-hidden dark:bg-neutral-900' : 'container mx-auto px-2 pt-[120px] dark:bg-neutral-900'}>
           <div>
-            <div className='flex flex-col mx-[20px] border-b pb-[24px]'>
+            <div className='flex flex-col mx-[20px] border-b dark:border-neutral-600 pb-[24px]'>
               <div className='flex gap-1 items-center'>
                 <div className="flex">
-                  <div className="border-r dark:border-neutral-700 text-[36px] pr-2 my-3 flex items-center justify-center">
+                  <div className="border-r dark:border-neutral-600 text-[36px] pr-2 my-3 flex items-center justify-center">
                     <span className="font-[700] dark:text-white">{updatedPrecData.id}</span>
                   </div>
                   <div className="flex flex-col justify-center text-[12px] pl-2">
@@ -236,8 +236,10 @@ export default function Precatorio() {
                   </div>
                 </div>
               </div>
-              <div className='flex flex-wrap gap-1 mb-[13px]'>
-                {statusAtualizado ? (<Tags color={statusAtualizado.extra} text={updatedPrecData.status} />) : null}
+              <div className='flex flex-wrap gap-1 mb-[13px] '>
+                <span style={{ backgroundColor: statusAtualizado.extra }} className={`px-2 py-1 rounded text-[10px] flex gap-1 bg-neutral-100 dark:bg-neutral-700  `}>
+                  <span className="text-black font-bold dark:text-black">{updatedPrecData.status}</span>
+                </span>
                 {orcamentoAtualizado ? (<Tags text={updatedPrecData.ente_id} />) : null}
                 {naturezaAtualizada ? (<Tags text={naturezaAtualizada.nome} />) : null}
                 {empresaAtualizada ? (<Tags text={empresaAtualizada.nome} />) : null}
@@ -247,7 +249,7 @@ export default function Precatorio() {
           <div className='px-5 dark:bg-neutral-900 mt-[16px] max-w-full h-full'>
             <div className='lg:flex lg:gap-4 lg:items-start max-w-full h-full relative'>
               <div className='hidden lg:block lg:sticky lg:h-full lg:max-h-full lg:top-[8%]'>
-                <NavMenu/>
+                <NavMenu />
               </div>
               <div className='lg:w-[calc(100%-300px)]'>
                 <InfoPrec precInfo={updatedPrecData} status={status} cessionario={updatedCessionario} cessoes={cessoesRelacionadas} />

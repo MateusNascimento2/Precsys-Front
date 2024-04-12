@@ -63,38 +63,38 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
                     <div className='flex flex-col'>
                         <span className="font-[700] dark:text-white mb-[16px]" >Informações Gerais</span>
                         <div className='grid grid-cols-1 gap-2 mb-[20px]'>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Precatório: </span><span className='text-[#666]'>{precInfo.precatorio ? precInfo.precatorio : '-'}</span></div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Processo: </span><span className='text-[#666]'>{precInfo.processo ? precInfo.processo : '-'}</span></div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Cedente: </span><span className='text-[#666]'>{precInfo.cedente ? precInfo.cedente : '-'}</span></div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Vara: </span><span className='text-[#666]'>{precInfo.vara_processo ? precInfo.vara_processo : '-'}</span></div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Orçamento: </span><span className='text-[#666]'>{precInfo.ente_id ? precInfo.ente_id : '-'}</span></div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Natureza: </span><span className='text-[#666]'>{precInfo.natureza ? precInfo.natureza : '-'}</span></div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Empresa: </span><span className='text-[#666]'>{precInfo.empresa_id ? precInfo.empresa_id : '-'}</span></div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Data da Cessão: </span>
-                                <span className='text-[#666]'>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Precatório: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.precatorio ? precInfo.precatorio : '-'}</span></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Processo: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.processo ? precInfo.processo : '-'}</span></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Cedente: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.cedente ? precInfo.cedente : '-'}</span></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Vara: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.vara_processo ? precInfo.vara_processo : '-'}</span></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Orçamento: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.ente_id ? precInfo.ente_id : '-'}</span></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Natureza: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.natureza ? precInfo.natureza : '-'}</span></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Empresa: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.empresa_id ? precInfo.empresa_id : '-'}</span></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Data da Cessão: </span>
+                                <span className='text-[#666] dark:text-neutral-400'>
                                     {precInfo.data_cessao ?
                                         `${precInfo.data_cessao.split('-')[2]}/${precInfo.data_cessao.split('-')[1]}/${precInfo.data_cessao.split('-')[0]}`
                                         : '-'}
                                 </span>
                             </div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Rep. Comercial: </span><span className='text-[#666]'>{precInfo.tele_id ? precInfo.tele_id : '-'}</span></div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Escrevente: </span><span className='text-[#666]'>{precInfo.escrevente_id ? precInfo.escrevente_id : '-'}</span></div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Óbito: </span><span className='text-[#666]'>{precInfo.falecido ? precInfo.falecido : '-'}</span></div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Anuência: </span><span className='text-[#666]'>{precInfo.adv ? precInfo.adv : '-'}</span></div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Requisitório: </span><a className='text-[#666] hover:text-black hover:underline cursor-pointer'>Ver Requisitório</a></div>
-                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Escritura: </span><a className='text-[#666] hover:text-black hover:underline cursor-pointer'>Ver Escritura</a></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Rep. Comercial: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.tele_id ? precInfo.tele_id : '-'}</span></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Escrevente: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.escrevente_id ? precInfo.escrevente_id : '-'}</span></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Óbito: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.falecido ? precInfo.falecido : '-'}</span></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Anuência: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.adv ? precInfo.adv : '-'}</span></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Requisitório: </span><a className='text-[#666] dark:text-neutral-400 hover:text-black hover:underline cursor-pointer'>Ver Requisitório</a></div>
+                            <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Escritura: </span><a className='text-[#666] dark:text-neutral-400 hover:text-black hover:underline cursor-pointer'>Ver Escritura</a></div>
                         </div>
                     </div>
                     <div className='flex flex-col max-[700px]:mb-20px'>
                         <span className="font-[700] dark:text-white mb-[16px]">Status</span>
-                        <div className='border-l py-[10px] ml-[10px]'>
+                        <div className='border-l dark:border-[#808080] py-[10px] ml-[10px]'>
                             {
                                 status.map(s => (
                                     <div className='py-[10px] flex items-center'>
-                                        <div style={{ backgroundColor: s.nome === precInfo.status ? s.extra : '#E5E7EB' }} className={s.nome === precInfo.status ? 'min-w-[12px] min-h-[12px] rounded-full relative left-[-6px] border' : 'min-w-[12px] min-h-[12px] rounded-full  relative left-[-6px] border'}></div>
+                                        <div style={{ backgroundColor: s.nome === precInfo.status ? s.extra : '#D8D8D8' }} className={s.nome === precInfo.status ? 'min-w-[12px] min-h-[12px] rounded-full relative left-[-6px] border dark:border-[#808080]' : 'min-w-[12px] min-h-[12px] rounded-full  relative left-[-6px] border dark:border-[#808080]'}></div>
                                         <div className="flex flex-col justify-center text-[12px]">
-                                            <span className={s.nome === precInfo.status ? "font-bold dark:text-white" : "font-bold dark:text-white text-gray-300"}>{s.nome}</span>
-                                            <span className="text-neutral-600 font-medium mr-[15px]">{s.nome === precInfo.status ? precInfo.substatus : null}</span>
+                                            <span className={s.nome === precInfo.status ? "font-bold dark:text-white " : "font-bold dark:text-neutral-700 text-gray-300"}>{s.nome}</span>
+                                            <span className="text-neutral-600 dark:text-neutral-400 font-medium mr-[15px]">{s.nome === precInfo.status ? precInfo.substatus : null}</span>
                                         </div>
                                     </div>
                                 ))
@@ -107,29 +107,29 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
                 <div className='w-full mb-[60px] flex flex-col'>
                     <span className="font-[700] dark:text-white mb-[16px]" id='cessionarios'>Cessionários</span>
                     <div className='overflow-x-auto w-full'>
-                        <div className='w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111]'>
-                            <div class='min-w-[250px] w-[24%]'>Nome</div>
-                            <div class='min-w-[120px] w-[15%] text-center'>valor pago</div>
-                            <div class='min-w-[120px] w-[17%] text-center'>comissão</div>
-                            <div class='min-w-[60px] w-[5%] text-center'>%</div>
-                            <div class='min-w-[120px] w-[17%] text-center'>expectativa</div>
-                            <div class='min-w-[180px] w-[18%] text-center'>nota</div>
-                            <div class='min-w-[50px] w-[5%] ml-auto text-center'>.</div>
+                        <div className='w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-600'>
+                            <div class='min-w-[250px] w-[24%] dark:text-white'>Nome</div>
+                            <div class='min-w-[120px] w-[15%] text-center dark:text-white'>valor pago</div>
+                            <div class='min-w-[120px] w-[17%] text-center dark:text-white'>comissão</div>
+                            <div class='min-w-[60px] w-[5%] text-center dark:text-white'>%</div>
+                            <div class='min-w-[120px] w-[17%] text-center dark:text-white'>expectativa</div>
+                            <div class='min-w-[180px] w-[18%] text-center dark:text-white'>nota</div>
+                            <div class='min-w-[50px] w-[5%] ml-auto text-center dark:text-white'>.</div>
                         </div>
                         {cessionario.map(c => (
-                            <div className='w-max lg:w-full flex text-[12px] items-center border-b last:border-0 py-[10px] border-gray-300'>
+                            <div className='w-max lg:w-full flex text-[12px] items-center border-b dark:border-neutral-600 last:border-0 py-[10px] border-gray-300'>
                                 <div class='min-w-[250px] w-[24%]'>
                                     <div className="flex flex-col justify-center text-[12px]">
-                                        <span className="font-bold dark:text-white">{c.user_id} </span>
+                                        <span className="font-bold dark:text-neutral-200">{c.user_id} </span>
                                         <span className=" text-neutral-400 font-medium">{c.cpfcnpj}</span>
                                     </div>
                                 </div>
-                                <div class='min-w-[120px] w-[15%] text-center'>{c.valor_pago}</div>
-                                <div class='min-w-[120px] w-[17%] text-center'>{c.comissao}</div>
-                                <div class='min-w-[60px] w-[5%] text-center'>{c.percentual}</div>
-                                <div class='min-w-[120px] w-[17%] text-center'>{c.exp_recebimento}</div>
-                                <div class='min-w-[180px] w-[18%] text-center'><a href="" className='hover:underline'>{c.nota ? c.nota.split('/')[1] : ''}</a></div>
-                                <div class='min-w-[50px] w-[5%] ml-auto text-center'>.</div>
+                                <div class='min-w-[120px] w-[15%] text-center dark:text-neutral-200'>{c.valor_pago}</div>
+                                <div class='min-w-[120px] w-[17%] text-center dark:text-neutral-200'>{c.comissao}</div>
+                                <div class='min-w-[60px] w-[5%] text-center dark:text-neutral-200'>{c.percentual}</div>
+                                <div class='min-w-[120px] w-[17%] text-center dark:text-neutral-200'>{c.exp_recebimento}</div>
+                                <div class='min-w-[180px] w-[18%] text-center'><a href="" className='hover:underline dark:text-neutral-200'>{c.nota ? c.nota.split('/')[1] : ''}</a></div>
+                                <div class='min-w-[50px] w-[5%] ml-auto text-center dark:text-neutral-200'>.</div>
                             </div>
 
                         ))}
@@ -139,12 +139,12 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
                                     <span className="font-bold dark:text-white">TOTAL </span>
                                 </div>
                             </div>
-                            <div class='min-w-[120px] w-[15%] font-bold text-center'>R$ {localeTwoDecimals(valorPagoTotal)}</div>
-                            <div class='min-w-[120px] w-[17%] font-bold text-center'>R$ {localeTwoDecimals(valorComissaoTotal)}</div>
-                            <div class='min-w-[60px] w-[5%] font-bold text-center'>{valorPorcentagemTotal.toLocaleString()}%</div>
-                            <div class='min-w-[120px] w-[17%] font-bold text-center'>R$ {localeTwoDecimals(valorExpTotal)}</div>
-                            <div class='min-w-[180px] w-[18%] text-center'></div>
-                            <div class='min-w-[50px] w-[5%] ml-auto text-center'></div>
+                            <div class='min-w-[120px] w-[15%] font-bold text-center dark:text-neutral-200'>R$ {localeTwoDecimals(valorPagoTotal)}</div>
+                            <div class='min-w-[120px] w-[17%] font-bold text-center dark:text-neutral-200'>R$ {localeTwoDecimals(valorComissaoTotal)}</div>
+                            <div class='min-w-[60px] w-[5%] font-bold text-center dark:text-neutral-200'>{valorPorcentagemTotal.toLocaleString()}%</div>
+                            <div class='min-w-[120px] w-[17%] font-bold text-center dark:text-neutral-200'>R$ {localeTwoDecimals(valorExpTotal)}</div>
+                            <div class='min-w-[180px] w-[18%] text-center dark:text-neutral-200'></div>
+                            <div class='min-w-[50px] w-[5%] ml-auto text-center dark:text-neutral-200'></div>
                         </div>
 
                     </div>
@@ -174,11 +174,11 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
                         <span className="font-[700] dark:text-white mb-[16px]" id='relacionados'>Relacionados</span>
                         <div className="mb-4 dark:bg-neutral-900">
                             {cessoes.map(cessao => (
-                                <div className="flex flex-col mb-4 border dark:border-neutral-700 dark:bg-neutral-900 px-2 py-1 rounded-t">
+                                <div className="flex flex-col mb-4 border dark:border-neutral-600 dark:bg-neutral-900 px-2 py-1 rounded">
 
                                     <>
-                                        <div className="flex border-b">
-                                            <div className="border-r dark:border-neutral-700  pr-2 my-3 flex items-center justify-center">
+                                        <div className="flex border-b dark:border-neutral-600">
+                                            <div className="border-r dark:border-neutral-600  pr-2 my-3 flex items-center justify-center">
                                                 <span className="font-[700] dark:text-white">{cessao.id}</span>
                                             </div>
                                             <div className="flex flex-col justify-center text-[12px] pl-2">

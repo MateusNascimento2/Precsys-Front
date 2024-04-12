@@ -556,14 +556,14 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
                 </div>
 
                 <div className={showMenu && menuType === 'data_cessao' ? 'mt-2 pl-2 flex flex-col gap-2 h-[100px] transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2  border-l dark:border-neutral-600'}>
-                  <div className="flex flex-col gap-2 justify-between text-neutral-600 py-3">
-                    <div className="flex justify-between border rounded px-2 py-1 items-center">
+                  <div className="flex flex-col gap-2 justify-between text-neutral-600 dark:text-neutral-400 py-3">
+                    <div className="flex justify-between border dark:border-neutral-600 rounded px-2 py-1 items-center">
                       <label htmlFor="dataInicio" className="text-[12px] font-bold">Data Inicial:</label>
-                      <input className="text-[12px] outline-none" type="date" name="dataInicio" id="data_cessao_inicial" min={dataCessoes[0]} max={dataCessoes[dataCessoes.length - 1]} onChange={(e) => handleDataChange(e)} value={checkedStatus.dataInicio || false} />
+                      <input className="text-[12px] outline-none dark:bg-neutral-800 px-2 rounded" type="date" name="dataInicio" id="data_cessao_inicial" min={dataCessoes[0]} max={dataCessoes[dataCessoes.length - 1]} onChange={(e) => handleDataChange(e)} value={checkedStatus.dataInicio || false} />
                     </div>
-                    <div className="flex justify-between border rounded px-2 py-1 items-center">
+                    <div className="flex justify-between border dark:border-neutral-600 rounded px-2 py-1 items-center">
                       <label htmlFor="dataInicio" className="text-[12px] font-bold">Data Final:</label>
-                      <input className="text-[12px] outline-none" type="date" name="dataFim" id="data_cessao_final" min={dataCessoes[0]} max={dataCessoes[dataCessoes.length - 1]} onChange={(e) => handleDataChange(e)} value={checkedStatus.dataFim || false} />
+                      <input className="text-[12px] outline-none dark:bg-neutral-800 px-2 rounded" type="date" name="dataFim" id="data_cessao_final" min={dataCessoes[0]} max={dataCessoes[dataCessoes.length - 1]} onChange={(e) => handleDataChange(e)} value={checkedStatus.dataFim || false} />
                     </div>
 
 

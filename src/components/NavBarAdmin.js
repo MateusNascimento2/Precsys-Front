@@ -66,7 +66,7 @@ function NavBarAdmin({ show }) {
             <div className='flex justify-between items-center lg:gap-3'>
               <span className='font-[500] text-[#666666] hover:text-black hover:font-[600] dark:text-neutral-300 dark:hover:text-white'>Controle</span>
               <span className='text-[12px] dark:text-neutral-300  text-black'>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showMenu && menuType === 'logs' ? "w-3 h-3 inline-block rotate-180 transition-all " : 'w-3 h-3 inline-block'}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showMenu && menuType === 'controle' ? "w-3 h-3 inline-block rotate-180 transition-all " : 'w-3 h-3 inline-block'}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                 </svg>
               </span>
