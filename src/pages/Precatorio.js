@@ -24,7 +24,9 @@ export default function Precatorio() {
   const [escreventes, setEscreventes] = useState([]);
   const [cessionarios, setCessionarios] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { precId } = useParams();
+
+  const { precID } = useParams();
+
   const axiosPrivate = useAxiosPrivate()
   const navigate = useNavigate();
 
@@ -49,7 +51,7 @@ export default function Precatorio() {
     const fetchAllData = async () => {
       try {
         await Promise.all([
-          fetchData(`/cessoes/${String(precId)}`, setPrecData),
+          fetchData(`/cessoes/${String(precID)}`, setPrecData),
           fetchData('/status', setStatus),
           fetchData('/orcamentos', setOrcamentos),
           fetchData('/natureza', setNatureza),
@@ -73,7 +75,7 @@ export default function Precatorio() {
       controller.abort();
     };
 
-  }, []);
+  }, [precID]);
 
   const handleShow = () => {
     setShow((prevState) => !prevState)
@@ -233,9 +235,6 @@ export default function Precatorio() {
                     <span className="text-neutral-400 font-medium line-clamp-1">{updatedPrecData.cedente}</span>
                   </div>
                 </div>
-                <div className='ml-auto'>
-                  <FilterButton onSetShow={handleShow} />
-                </div>
               </div>
               <div className='flex flex-wrap gap-1 mb-[13px]'>
                 {statusAtualizado ? (<Tags color={statusAtualizado.extra} text={updatedPrecData.status} />) : null}
@@ -245,9 +244,9 @@ export default function Precatorio() {
               </div>
             </div>
           </div>
-          <div className='px-5 dark:bg-neutral-900 mt-[16px] max-w-full'>
-            <div className='lg:flex lg:gap-4 lg:items-start max-w-full'>
-              <div className='hidden lg:block'>
+          <div className='px-5 dark:bg-neutral-900 mt-[16px] max-w-full h-full'>
+            <div className='lg:flex lg:gap-4 lg:items-start max-w-full h-full relative'>
+              <div className='hidden lg:block lg:sticky lg:h-full lg:max-h-full lg:top-[8%]'>
                 <NavMenu/>
               </div>
               <div className='lg:w-[calc(100%-300px)]'>

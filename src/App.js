@@ -26,7 +26,7 @@ function App() {
           <Route element={<RequireNormalUserAuth />}>
             <Route path='dashboard' element={<Dashboard />} />
             <Route path='cessoes' element={<Cessoes />} />
-            <Route path='precatorio/:precId' element={<Precatorio />} />
+            <Route path='precatorio/:precID' element={<Precatorio />} />
           </Route>
 
           <Route element={<RequireAdminAuth />}>

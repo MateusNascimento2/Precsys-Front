@@ -4,17 +4,25 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import SearchInput from "../components/SearchInput";
 import FilterMenuItem from "../components/FilterMenuItem";
 
-export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) {
+export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, dataCessoes }) {
   const [status, setStatus] = useState([]);
   const [orcamentos, setOrcamentos] = useState([]);
   const [orcamentosAnos, setOrcamentosAnos] = useState([]);
   const [natureza, setNatureza] = useState([]);
   const [empresas, setEmpresas] = useState([]);
+  const [teles, setTeles] = useState([]);
+  const [users, setUsers] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
   const [showSubMenu, setShowSubMenu] = useState(false);
   const [subMenuType, setSubMenuType] = useState(null);
   const [menuType, setMenuType] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [todosOsInputsStatus, setTodosOsInputsStatus] = useState([]);
+  const [savedFilters, setSavedFilters] = useState([]);
+  const [checkedStatus, setCheckedStatus] = useState(() => {
+    const savedChecked = localStorage.getItem('checkedStatus');
+    return savedChecked ? JSON.parse(savedChecked) : [];
+  });
 
 
   const axiosPrivate = useAxiosPrivate()
@@ -41,12 +49,37 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
     fetchData('/orcamentosAnos', setOrcamentosAnos);
     fetchData('/natureza', setNatureza);
     fetchData('/empresas', setEmpresas);
+    fetchData('/tele', setTeles);
+    fetchData('/users', setUsers)
 
     return () => {
       isMounted = false;
       controller.abort();
     };
   }, []);
+
+
+  useEffect(() => {
+    // Salva o estado dos checkboxes no localStorage sempre que houver uma mudança
+    localStorage.setItem('checkedStatus', JSON.stringify(checkedStatus));
+  }, [checkedStatus]);
+
+  useEffect(() => {
+    // Recupera o estado salvo do localStorage quando o componente é montado
+    const savedCheckedStatus = JSON.parse(localStorage.getItem('checkedStatus')) || {};
+    setCheckedStatus(savedCheckedStatus);
+  }, []);
+
+
+  teles.forEach((tele) => {
+    const telesAtualizado = users.find(u => parseInt(tele.usuario_id) === parseInt(u.id));
+
+    if (telesAtualizado) {
+      tele.nome = telesAtualizado.nome;
+    }
+  })
+
+
 
   const handleShow = () => {
     onSetShow((prevState) => !prevState)
@@ -89,33 +122,71 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
     const checkboxValor = { [checkboxName]: checkboxValue }
 
     if (isChecked) {
-      onSelectedCheckboxesChange(prevState => [...prevState, checkboxValor])
+      const updatedCheckedStatus = { ...checkedStatus, [checkboxValue]: isChecked }; // Adiciona o novo valor ao estado
+      setCheckedStatus(updatedCheckedStatus); // Atualiza o estado com o novo valor marcado
+
+      onSelectedCheckboxesChange(prevState => [...prevState, checkboxValor]);
       checkboxesWithTheSameID.forEach(checkbox => {
-        checkbox.checked = true
-        const checkboxValorFilho = checkbox.value
-
-        const objCheckBoxFilho = { [checkboxName]: checkboxValorFilho }
-
-        onSelectedCheckboxesChange(prevState => [...prevState, objCheckBoxFilho])
-      })
-
-      console.log(checkboxesWithTheSameID)
+        checkbox.checked = true;
+        const checkboxValorFilho = checkbox.value;
+        const objCheckBoxFilho = { [checkboxName]: checkboxValorFilho };
+        onSelectedCheckboxesChange(prevState => [...prevState, objCheckBoxFilho]);
+        updatedCheckedStatus[checkboxValorFilho] = isChecked; // Atualize o objeto de estado temporário
+      });
+      setCheckedStatus(updatedCheckedStatus); // Atualize o estado com base na cópia atualizada
     } else {
-      onSelectedCheckboxesChange(prevState => prevState.filter(item => item.ente_id !== checkboxValor.ente_id))
+      const updatedCheckedStatus = { ...checkedStatus }; // Crie uma cópia do estado atual
+      updatedCheckedStatus[checkboxValue] = isChecked; // Atualize o estado temporário com o novo valor desmarcado
+      setCheckedStatus(updatedCheckedStatus); // Atualize o estado com o novo valor desmarcado
+
+      onSelectedCheckboxesChange(prevState => prevState.filter(item => item.ente_id !== checkboxValor.ente_id)); // Remova o item desmarcado do estado
       checkboxesWithTheSameID.forEach(checkbox => {
-        checkbox.checked = false
-
-        const checkboxValorFilho = checkbox.value
-
-        const objCheckBoxFilho = { [checkboxName]: checkboxValorFilho }
-
-        onSelectedCheckboxesChange(prevState => prevState.filter(item => item.ente_id !== objCheckBoxFilho.ente_id))
-      })
-
+        checkbox.checked = false;
+        const checkboxValorFilho = checkbox.value;
+        const objCheckBoxFilho = { [checkboxName]: checkboxValorFilho };
+        onSelectedCheckboxesChange(prevState => prevState.filter(item => item.ente_id !== objCheckBoxFilho.ente_id));
+        delete updatedCheckedStatus[checkboxValorFilho];// Remova o item desmarcado do estado
+      });
     }
 
 
   };
+
+
+  const handleDataChange = (event) => {
+    const checkboxName = event.target.name;
+    const checkboxValue = event.target.value;
+
+    console.log(checkboxName);
+
+    setCheckedStatus({ ...checkedStatus, [checkboxName]: checkboxValue });
+
+    // Cria o objeto checkbox
+    const checkbox = { [checkboxName]: checkboxValue };
+
+    console.log(checkbox);
+
+    onSelectedCheckboxesChange(prevState => {
+      // Verifica se o valor do checkbox é vazio ('')
+      if (checkboxValue === '') {
+        // Remove o objeto com a mesma chave, se existir
+        delete prevState[checkboxName];
+      } else {
+        // Verifica se o checkbox já existe no estado
+        const existingCheckbox = prevState.find(item => Object.keys(item)[0] === checkboxName);
+        // Se o checkbox já existe, atualiza seu valor
+        if (existingCheckbox) {
+          existingCheckbox[checkboxName] = checkboxValue;
+        } else {
+          // Caso contrário, adiciona o checkbox ao estado
+          prevState.push(checkbox);
+        }
+      }
+      // Retorna o novo estado
+      return [...prevState];
+    });
+  };
+
 
   const handleCheckboxChange = (event) => {
     const checkboxName = event.target.name;
@@ -124,7 +195,12 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
 
     console.log(checkboxValue)
 
+    setCheckedStatus({ ...checkedStatus, [checkboxValue]: isChecked });
+
+
     const checkbox = { [checkboxName]: checkboxValue }
+
+    console.log(checkbox)
 
     if (isChecked) {
       onSelectedCheckboxesChange(prevState => [...prevState, checkbox])
@@ -145,7 +221,11 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
       }
     })
 
+    document.getElementById('data_cessao_inicial').value = "";
+    document.getElementById('data_cessao_final').value = "";
+
     onSelectedCheckboxesChange([]);
+    setCheckedStatus({});
   }
 
   const filteredEnte = orcamentos.filter(orcamento =>
@@ -155,7 +235,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
   );
 
   const anuencia = ["Sem anuência", "Honorários", "Com anuência", "Quitação"]
-  const obito = ["Vivo", "Não deixou bens", "Deixou bens",]
+  const obito = ["Vivo", "Não deixou bens", "Deixou bens", "Herdeiros habilitados"]
 
   return (
     <>
@@ -200,8 +280,8 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
               </div>
               <div className={showMenu && menuType === 'status' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[210px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
                 {status.map((s) => (
-                  <div className="flex items-center gap-2">
-                    <input type="checkbox" name={"status"} id={s.nome} value={s.nome} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
+                  <div className="flex items-center gap-2" key={s.id}>
+                    <input type="checkbox" name={"status"} id={s.nome} value={s.nome} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleCheckboxChange(e)} checked={checkedStatus[s.nome] || false} />
                     <span
                       className={showMenu && menuType === 'status' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -237,12 +317,12 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
 
                     {filteredEnte.map((orcamento) => (
 
-                      <div>
+                      <div key={orcamento.id}>
                         <div>
                           <div className="cursor-pointer">
                             <div className="flex items-center gap-2 ">
                               <div className="relative">
-                                <input type="checkbox" name={"ente_id"} id={orcamento.id} value={orcamento.apelido} className="peer relative h-[18px] w-[18px] cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleMarkAllCheckboxInEnte(e, orcamento.id)} />
+                                <input type="checkbox" name={"ente_id"} id={orcamento.id} value={orcamento.apelido} className="peer relative h-[18px] w-[18px] cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleMarkAllCheckboxInEnte(e, orcamento.id)} checked={checkedStatus[orcamento.apelido] || false} />
                                 <span
                                   className="absolute left-[1px] right-0 top-[2px] text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -270,9 +350,9 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                             {orcamentosAnos.map((orcamentoAno) => (
 
                               parseInt(orcamento.id) === parseInt(orcamentoAno.budget_id) ? (
-                                <div className="flex items-center gap-2 overflow-hidden">
+                                <div className="flex items-center gap-2 overflow-hidden" key={orcamentoAno.id}>
                                   <div className="relative">
-                                    <input type="checkbox" name={"ente_id"} value={orcamento.apelido + " " + orcamentoAno.ano} data-budget-id={orcamentoAno.budget_id} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e, orcamento.id, orcamentoAno.budget_id)} />
+                                    <input type="checkbox" name={"ente_id"} id={orcamento.apelido + " - " + orcamentoAno.ano} value={orcamento.apelido + " - " + orcamentoAno.ano} data-budget-id={orcamentoAno.budget_id} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleCheckboxChange(e, orcamento.id, orcamentoAno.budget_id)} checked={checkedStatus[orcamento.apelido + " - " + orcamentoAno.ano] || false} />
                                     <span
                                       className="absolute left-0 right-0 top-[1px] text-white transition-opacity hidden pointer-events-none peer-checked:block dark:text-black">
                                       <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -314,8 +394,8 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
               </div>
               <div className={showMenu && menuType === 'empresa' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[165px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
                 {empresas.map((empresa) => (
-                  <div className="flex items-center gap-2">
-                    <input type="checkbox" name={'empresa_id'} id={empresa.nome} value={empresa.nome} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
+                  <div className="flex items-center gap-2" key={empresa.id}>
+                    <input type="checkbox" name={'empresa_id'} id={empresa.nome} value={empresa.nome} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleCheckboxChange(e)} checked={checkedStatus[empresa.nome] || false} />
                     <span
                       className={showMenu && menuType === 'empresa' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px] dark:text-black" viewBox="0 0 20 20" fill="currentColor"
@@ -345,8 +425,8 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
 
                 <div className={showMenu && menuType === 'natureza' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[50px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
                   {natureza.map((na) => (
-                    <div className="flex items-center gap-2">
-                      <input type="checkbox" name={"natureza"} id={na.nome} value={na.nome} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
+                    <div className="flex items-center gap-2" key={na.id}>
+                      <input type="checkbox" name={"natureza"} id={na.nome} value={na.nome} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleCheckboxChange(e)} checked={checkedStatus[na.nome] || false} />
                       <span
                         className={showMenu && menuType === 'natureza' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -377,8 +457,8 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
 
                 <div className={showMenu && menuType === 'anuencia' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[100px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
                   {anuencia.map((an) => (
-                    <div className="flex items-center gap-2">
-                      <input type="checkbox" name={"adv"} id={an} value={an} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
+                    <div className="flex items-center gap-2" key={an}>
+                      <input type="checkbox" name={"adv"} id={an} value={an} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleCheckboxChange(e)} checked={checkedStatus[an] || false} />
                       <span
                         className={showMenu && menuType === 'anuencia' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -407,10 +487,10 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
                   </span>
                 </div>
 
-                <div className={showMenu && menuType === 'obito' ? 'mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-[75px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
+                <div className={showMenu && menuType === 'obito' ? 'mt-2 pl-2 flex flex-col gap-2 text-[12px] h-[105px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
                   {obito.map((ob) => (
-                    <div className="flex items-center gap-2">
-                      <input type="checkbox" name={"falecido"} id={ob} value={ob} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onClick={(e) => handleCheckboxChange(e)} />
+                    <div className="flex items-center gap-2" key={ob}>
+                      <input type="checkbox" name={"falecido"} id={ob} value={ob} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleCheckboxChange(e)} checked={checkedStatus[ob] || false} />
                       <span
                         className={showMenu && menuType === 'obito' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -425,8 +505,77 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange }) 
 
                   ))}
                 </div>
+
+
               </div>
             </div>
+
+            <div className="px-2 py-1 text-gray-600 text-[14px] dark:text-neutral-300 ">
+              <div>
+                <div onClick={() => handleMenu('rep_comercial')} className="flex justify-between items-center cursor-pointer">
+                  <span>Rep. Comercial</span>
+                  <span className='text-[12px] '>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showMenu && menuType === 'rep_comercial' ? "w-3 h-3 inline-block rotate-180 transition-all" : 'w-3 h-3 inline-block'}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </span>
+                </div>
+
+                <div className={showMenu && menuType === 'rep_comercial' ? 'mt-2 pl-2 flex flex-col gap-2 text-[12px] h-[200px] lg:h-[250px] overflow-y-scroll transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
+                  {teles.map((tele) => (
+                    <div className="flex items-center gap-2 relative" key={tele.usuario_id}>
+                      <input type="checkbox" name={"tele_id"} id={tele.id} value={tele.usuario_id} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleCheckboxChange(e)} checked={checkedStatus[tele.usuario_id] || false} />
+                      <span
+                        className={showMenu && menuType === 'rep_comercial' ? "absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black" : 'hidden'}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                          stroke="currentColor" strokeWidth="1">
+                          <path fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"></path>
+                        </svg>
+                      </span>
+                      <label htmlFor={tele.nome} key={tele.id}>{tele.nome}</label>
+                    </div>
+
+                  ))}
+                </div>
+
+
+              </div>
+            </div>
+
+            <div className="px-2 py-1 text-gray-600 text-[14px] dark:text-neutral-300 ">
+              <div>
+                <div onClick={() => handleMenu('data_cessao')} className="flex justify-between items-center cursor-pointer">
+                  <span>Data da Cessão</span>
+                  <span className='text-[12px] '>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showMenu && menuType === 'data_cessao' ? "w-3 h-3 inline-block rotate-180 transition-all" : 'w-3 h-3 inline-block'}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </span>
+                </div>
+
+                <div className={showMenu && menuType === 'data_cessao' ? 'mt-2 pl-2 flex flex-col gap-2 h-[100px] transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2  border-l dark:border-neutral-600'}>
+                  <div className="flex flex-col gap-2 justify-between text-neutral-600 py-3">
+                    <div className="flex justify-between border rounded px-2 py-1 items-center">
+                      <label htmlFor="dataInicio" className="text-[12px] font-bold">Data Inicial:</label>
+                      <input className="text-[12px] outline-none" type="date" name="dataInicio" id="data_cessao_inicial" min={dataCessoes[0]} max={dataCessoes[dataCessoes.length - 1]} onChange={(e) => handleDataChange(e)} value={checkedStatus.dataInicio || false} />
+                    </div>
+                    <div className="flex justify-between border rounded px-2 py-1 items-center">
+                      <label htmlFor="dataInicio" className="text-[12px] font-bold">Data Final:</label>
+                      <input className="text-[12px] outline-none" type="date" name="dataFim" id="data_cessao_final" min={dataCessoes[0]} max={dataCessoes[dataCessoes.length - 1]} onChange={(e) => handleDataChange(e)} value={checkedStatus.dataFim || false} />
+                    </div>
+
+
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+
+
+
           </div>
         </div>
 

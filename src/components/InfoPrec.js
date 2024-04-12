@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Topics from '../components/Topics';
 import { Link } from 'react-router-dom';
 
@@ -8,7 +8,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
 
     function changeStringFloat(a) {
         const virgulaParaBarra = a.replace(',', '/');
-        const valorSemPonto = virgulaParaBarra.replace('.', '');
+        const valorSemPonto = virgulaParaBarra.replace(/\./g, '');
         const semMoeda = valorSemPonto.replace('R$ ', '');
         const barraParaPonto = semMoeda.replace('/', '.');
         const valorFloat = Number(barraParaPonto);
@@ -59,9 +59,9 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
                 <span className='text-gray-400 text-[10px]'><a className='hover:underline' href="">Dashboard</a> &gt; <a className='hover:underline' href="">Cessões</a> &gt; <a className='hover:underline' href="">0000.00000-0</a></span>
             </div>
             <div className='flex flex-col mb-[60px] max-[700px]:mb-60px'>
-                <div className='grid max-[700px]:grid-cols-1 grid-cols-2'>
+                <div className='grid max-[700px]:grid-cols-1 grid-cols-2' id='info-gerais'>
                     <div className='flex flex-col'>
-                        <span className="font-[700] dark:text-white mb-[16px]">Informações Gerais</span>
+                        <span className="font-[700] dark:text-white mb-[16px]" >Informações Gerais</span>
                         <div className='grid grid-cols-1 gap-2 mb-[20px]'>
                             <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Precatório: </span><span className='text-[#666]'>{precInfo.precatorio ? precInfo.precatorio : '-'}</span></div>
                             <div className='text-[14px] max-[700px]:col-span-2'><span className='font-[500]'>Processo: </span><span className='text-[#666]'>{precInfo.processo ? precInfo.processo : '-'}</span></div>
@@ -105,7 +105,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
             </div>
             {cessionario.length != 0 ? (
                 <div className='w-full mb-[60px] flex flex-col'>
-                    <span className="font-[700] dark:text-white mb-[16px]">Cessionários</span>
+                    <span className="font-[700] dark:text-white mb-[16px]" id='cessionarios'>Cessionários</span>
                     <div className='overflow-x-auto w-full'>
                         <div className='w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111]'>
                             <div class='min-w-[250px] w-[24%]'>Nome</div>
@@ -152,7 +152,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
             ) : null}
 
             <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
-                <span className="font-[700] dark:text-white mb-[16px]">Jurídico</span>
+                <span className="font-[700] dark:text-white mb-[16px]" id='juridico'>Jurídico</span>
                 <div className='grid grid-cols-1 lg:grid-cols-3 gap-2'>
                     <Topics texto={'Frontend cloud'} icone={(<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.332-7.257 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-10.233 2.33A4.502 4.502 0 0 0 2.25 15Z" />
@@ -168,10 +168,10 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
                     )} />
                 </div>
             </div>
-            <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
-                {cessoes.length != 0 ? (
+            {cessoes.length != 0 ? (
+                <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                     <>
-                        <span className="font-[700] dark:text-white mb-[16px]">Relacionados</span>
+                        <span className="font-[700] dark:text-white mb-[16px]" id='relacionados'>Relacionados</span>
                         <div className="mb-4 dark:bg-neutral-900">
                             {cessoes.map(cessao => (
                                 <div className="flex flex-col mb-4 border dark:border-neutral-700 dark:bg-neutral-900 px-2 py-1 rounded-t">
@@ -213,9 +213,10 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
                             ))}
                         </div>
                     </>
-                ) : null}
 
-            </div>
+
+                </div>
+            ) : null}
         </div>
     )
 }
