@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 export default function Modal() {
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
 
   function handleModalShow() {
     setShow(prevState => !prevState);
