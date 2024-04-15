@@ -5,6 +5,7 @@ import LoadingSpinner from "./LoadingSpinner/LoadingSpinner";
 import DotsButton from "./DotsButton";
 import { List, AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache } from 'react-virtualized'
 import { Link } from "react-router-dom";
+import { Tooltip } from 'react-tooltip';
 
 
 export default function Lista({ searchQuery, selectedFilters, setData }) {
@@ -243,8 +244,18 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
               </div>
               <DotsButton listLength={listLength} cessaoID={cessao.id} requisitorioFile={cessao.requisitorio} escrituraFile={cessao.escritura} />
             </div>
+
+
             <div className="text-[10px] rounded-b border-b border-r border-l dark:border-neutral-700  py-3 px-2 flex gap-2 flex-wrap items-center dark:bg-neutral-900 ">
-              <span style={{ backgroundColor: `${cessao.statusColor}` }} className={`px-2 py-1 rounded brightness-110`}><span className="text-black font-bold">{cessao.status}</span></span>
+
+              <a
+                style={{ backgroundColor: `${cessao.statusColor}` }}
+                data-tooltip-id="my-tooltip"
+                data-tooltip-content="Hello world!"
+                data-tooltip-place="top"
+                className={`px-2 py-1 rounded brightness-110`}>
+                <span className="text-black font-bold">{cessao.status}</span>
+              </a>
 
               <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 `}>
                 <span className="text-black font-bold dark:text-neutral-100">{cessao.ente_id}</span>
@@ -263,7 +274,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
               {cessao.falecido ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.falecido}</span></span>) : null}
             </div>
           </div>
-
+          <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
         </div>
       </CellMeasurer>
 

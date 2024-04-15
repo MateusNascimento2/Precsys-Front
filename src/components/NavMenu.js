@@ -16,7 +16,7 @@ export default function NavMenu() {
 
     if (section === null) {
       return false
-    } else { 
+    } else {
       return true
     }
   };
@@ -28,12 +28,27 @@ export default function NavMenu() {
     setHideRelacionados(checkIfIdExists('relacionados'));
   }, []);
 
-  const scroll = (id) => {
+  const scroll = (id, padding) => {
     const section = document.getElementById(id);
     if (!section) {
       return;
     }
-    section.scrollIntoView({ behavior: 'smooth' });
+    const paddingTop = padding || 0; // Define um padding padrão caso não seja fornecido
+    const { top } = section.getBoundingClientRect(); // Obtém a posição do elemento relativa à janela
+
+    // Verifica se o elemento já está visível na tela
+    if (top >= 0 && top <= window.innerHeight) {
+      return; // Se estiver visível, não faz nada
+    }
+
+    const scrollToPosition = top - paddingTop; // Adiciona o padding ao valor de posição do elemento
+    console.log(scrollToPosition)
+    window.scrollTo({
+      top: scrollToPosition,
+      behavior: 'smooth'
+    });
+
+
   };
 
   return (
@@ -59,7 +74,7 @@ export default function NavMenu() {
             <ul className="flex flex-col mt-4 divide-y dark:divide-neutral-600 justify-center">
               <li className={hideInfo ? "py-2 px-1" : 'hidden'}>
                 <a
-                  onClick={() => scroll('info-gerais')}
+                  onClick={() => scroll('info-gerais', 0)}
                   className={
                     hideInfo
                       ? 'text-[14px] text-gray-600 dark:text-neutral-400 cursor-pointer hover:underline'
@@ -71,7 +86,7 @@ export default function NavMenu() {
               </li>
               <li className={hideCessionarios ? "py-2 px-1" : 'hidden'}>
                 <a
-                  onClick={() => scroll('cessionarios')}
+                  onClick={() => scroll('cessionarios', 60)}
                   className={
                     hideCessionarios
                       ? 'text-[14px] text-gray-600 dark:text-neutral-400 cursor-pointer hover:underline'
@@ -83,7 +98,7 @@ export default function NavMenu() {
               </li>
               <li className={hideJuridico ? "py-2 px-1" : 'hidden'}>
                 <a
-                  onClick={() => scroll('juridico')}
+                  onClick={() => scroll('juridico', 60)}
                   className={
                     hideJuridico
                       ? 'text-[14px] text-gray-600 dark:text-neutral-400 cursor-pointer hover:underline'
@@ -95,7 +110,7 @@ export default function NavMenu() {
               </li>
               <li className={hideRelacionados ? "py-2 px-1" : 'hidden'}>
                 <a
-                  onClick={() => scroll('relacionados')}
+                  onClick={() => scroll('relacionados', 60)}
                   className={
                     hideRelacionados
                       ? 'text-[14px] text-gray-600 dark:text-neutral-400 cursor-pointer hover:underline'

@@ -76,7 +76,7 @@ function PasswordLoginComponent({ nome, userImage, cpfcnpj, darkMode }) {
           </button>
           <div className='flex gap-1 items-center justify-center'>
             <div className='relative mt-[6px]'>
-              <input type="checkbox" name="persist" id="persist" onChange={togglePersist} checked={persist} className="peer relative h-[18px] w-[18px] cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" />
+              <input type="checkbox" name="persist" id="persist" onChange={togglePersist} checked={persist} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" />
               <span
                 className="absolute right-[2px] top-[2px] text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
