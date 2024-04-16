@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Modal from '../components/Modal';
 
-export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
+export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas, orcamentos, naturezas, empresas, users, teles, escreventes }) {
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/dashboard";
@@ -15,6 +15,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
     }
 
     console.log(precInfo)
+  
 
     function changeStringFloat(a) {
         const virgulaParaBarra = a.replace(',', '/');
@@ -74,7 +75,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes }) {
                     <div className='flex flex-col'>
                         <div className='flex items-center gap-5 mb-[16px]'>
                             <span className="font-[700] dark:text-white" >Informações Gerais</span>
-                            <Modal />
+                            <Modal varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} />
                         </div>
 
                         <div className='grid grid-cols-1 gap-2 mb-[20px]'>

@@ -252,7 +252,8 @@ export default function Precatorio() {
                 <NavMenu />
               </div>
               <div className='lg:w-[calc(100%-300px)]'>
-                <InfoPrec precInfo={updatedPrecData} status={status} cessionario={updatedCessionario} cessoes={cessoesRelacionadas} />
+                <InfoPrec precInfo={updatedPrecData} status={status} cessionario={updatedCessionario} cessoes={cessoesRelacionadas} varas={varas} orcamentos={orcamentos}
+                naturezas={natureza} empresas={empresas} users={users} teles={teles} escreventes={escreventes}/>
               </div>
             </div>
           </div>
