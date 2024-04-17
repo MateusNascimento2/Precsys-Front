@@ -3,6 +3,7 @@ import Topics from '../components/Topics';
 import { Link } from 'react-router-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Modal from '../components/Modal';
+import ListaCessionarios from './ListaCessionarios';
 
 export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas, orcamentos, naturezas, empresas, users, teles, escreventes }) {
     const navigate = useNavigate();
@@ -15,54 +16,8 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
     }
 
     console.log(precInfo)
-  
-
-    function changeStringFloat(a) {
-        const virgulaParaBarra = a.replace(',', '/');
-        const valorSemPonto = virgulaParaBarra.replace(/\./g, '');
-        const semMoeda = valorSemPonto.replace('R$ ', '');
-        const barraParaPonto = semMoeda.replace('/', '.');
-        const valorFloat = Number(barraParaPonto);
-        return valorFloat;
-    }
-
-    function localeTwoDecimals(a) {
-
-        if (Number.isInteger(a)) {
-            return a.toLocaleString() + ",00";
-        } else {
-            return a.toLocaleString();
-        }
-
-    }
-
-    function changePorcentagemToFloat(numero) {
-        const valorSemPorcentagem = parseFloat(numero.replace(',', '.'))
-        return valorSemPorcentagem
-    }
-
-
-
 
     console.log(cessoes)
-
-
-    const valorPagoTotal = cessionario.reduce((previousValue, currentValue) => {
-        return (previousValue) + changeStringFloat(currentValue.valor_pago)
-    }, 0)
-
-    const valorComissaoTotal = cessionario.reduce((previousValue, currentValue) => {
-        return (previousValue) + changeStringFloat(currentValue.comissao)
-    }, 0)
-
-    const valorExpTotal = cessionario.reduce((previousValue, currentValue) => {
-        return (previousValue) + changeStringFloat(currentValue.exp_recebimento)
-    }, 0)
-
-    const valorPorcentagemTotal = cessionario.reduce((previousValue, currentValue) => {
-        return (previousValue) + changePorcentagemToFloat(currentValue.percentual);
-    }, 0)
-
 
 
     return (
@@ -107,7 +62,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                             {
                                 status.map(s => (
                                     <div className='py-[10px] flex items-center' key={s.id}>
-                                        <div style={{ backgroundColor: s.nome === precInfo.status ? s.extra : '#D8D8D8' }} className={s.nome === precInfo.status ? 'min-w-[12px] min-h-[12px] rounded-full relative left-[-6px] border dark:border-[#808080] brightness-110' : 'min-w-[12px] min-h-[12px] rounded-full  relative left-[-6px] border dark:border-[#808080]'}></div>
+                                        <div style={{ backgroundColor: s.nome === precInfo.status ? s.extra : '#808080' }} className={s.nome === precInfo.status ? 'min-w-[12px] min-h-[12px] rounded-full relative left-[-6px] border dark:border-[#808080] brightness-110' : 'min-w-[12px] min-h-[12px] rounded-full  relative left-[-6px] border dark:border-[#808080] opacity-90'}></div>
                                         <div className="flex flex-col justify-center text-[12px]">
                                             <span className={s.nome === precInfo.status ? "font-bold dark:text-white " : "font-bold dark:text-neutral-700 text-gray-300"}>{s.nome}</span>
                                             <span className="text-neutral-600 dark:text-neutral-400 font-medium mr-[15px]">{s.nome === precInfo.status ? precInfo.substatus : null}</span>
@@ -119,69 +74,14 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                     </div>
                 </div>
             </div>
-            {cessionario.length != 0 ? (
-                <div className='w-full mb-[60px] flex flex-col'>
-                    <span className="font-[700] dark:text-white mb-[16px]" id='cessionarios'>Cessionários</span>
-                    <div className='overflow-x-auto w-full'>
-                        <div className='w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-600'>
-                            <div className='min-w-[250px] w-[24%] dark:text-white'>Nome</div>
-                            <div className='min-w-[120px] w-[15%] text-center dark:text-white'>valor pago</div>
-                            <div className='min-w-[120px] w-[17%] text-center dark:text-white'>comissão</div>
-                            <div className='min-w-[60px] w-[5%] text-center dark:text-white'>%</div>
-                            <div className='min-w-[120px] w-[17%] text-center dark:text-white'>expectativa</div>
-                            <div className='min-w-[180px] w-[18%] text-center dark:text-white'>nota</div>
-                            <div className='min-w-[50px] w-[5%] ml-auto text-center dark:text-white'>.</div>
-                        </div>
-                        {cessionario.map(c => (
-                            <div className='w-max lg:w-full flex text-[12px] items-center border-b dark:border-neutral-600 last:border-0 py-[10px] border-gray-300' key={c.id}>
-                                <div className='min-w-[250px] w-[24%]'>
-                                    <div className="flex flex-col justify-center text-[12px]">
-                                        <span className="font-bold dark:text-neutral-200">{c.user_id} </span>
-                                        <span className=" text-neutral-400 font-medium">{c.cpfcnpj}</span>
-                                    </div>
-                                </div>
-                                <div className='min-w-[120px] w-[15%] text-center dark:text-neutral-200'>{c.valor_pago}</div>
-                                <div className='min-w-[120px] w-[17%] text-center dark:text-neutral-200'>{c.comissao}</div>
-                                <div className='min-w-[60px] w-[5%] text-center dark:text-neutral-200'>{c.percentual}</div>
-                                <div className='min-w-[120px] w-[17%] text-center dark:text-neutral-200'>{c.exp_recebimento}</div>
-                                <div className='min-w-[180px] w-[18%] text-center'><a href="" className='hover:underline dark:text-neutral-200'>{c.nota ? c.nota.split('/')[1] : ''}</a></div>
-                                <div className='min-w-[50px] w-[5%] ml-auto text-center dark:text-neutral-200'>.</div>
-                            </div>
-
-                        ))}
-                        <div className='w-max lg:w-full flex text-[12px] items-center border-b last:border-0 py-[10px] border-gray-300'>
-                            <div className='min-w-[250px] w-[24%]'>
-                                <div className="flex flex-col justify-center text-[12px]">
-                                    <span className="font-bold dark:text-white">TOTAL </span>
-                                </div>
-                            </div>
-                            <div className='min-w-[120px] w-[15%] font-bold text-center dark:text-neutral-200'>R$ {localeTwoDecimals(valorPagoTotal)}</div>
-                            <div className='min-w-[120px] w-[17%] font-bold text-center dark:text-neutral-200'>R$ {localeTwoDecimals(valorComissaoTotal)}</div>
-                            <div className='min-w-[60px] w-[5%] font-bold text-center dark:text-neutral-200'>{valorPorcentagemTotal.toLocaleString()}%</div>
-                            <div className='min-w-[120px] w-[17%] font-bold text-center dark:text-neutral-200'>R$ {localeTwoDecimals(valorExpTotal)}</div>
-                            <div className='min-w-[180px] w-[18%] text-center dark:text-neutral-200'></div>
-                            <div className='min-w-[50px] w-[5%] ml-auto text-center dark:text-neutral-200'></div>
-                        </div>
-
-                    </div>
-                </div>
-            ) : null}
-
+            <ListaCessionarios cessionario={cessionario} precInfo={precInfo} />
             <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                 <span className="font-[700] dark:text-white mb-[16px]" id='juridico'>Jurídico</span>
-                <div className='grid grid-cols-1 lg:grid-cols-3 gap-2'>
-                    <Topics texto={'Frontend cloud'} icone={(<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.332-7.257 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-10.233 2.33A4.502 4.502 0 0 0 2.25 15Z" />
-                    </svg>
-                    )} />
-                    <Topics texto={'Frontend cloud'} icone={(<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.332-7.257 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-10.233 2.33A4.502 4.502 0 0 0 2.25 15Z" />
-                    </svg>
-                    )} />
-                    <Topics texto={'Frontend cloud'} icone={(<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.332-7.257 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-10.233 2.33A4.502 4.502 0 0 0 2.25 15Z" />
-                    </svg>
-                    )} />
+                <div className='grid grid-cols-1 lg:grid-cols-4 gap-4'>
+                    <Topics texto={'Jurídico Feito'} data={precInfo.juridico_feito_data} atualizacaoJuridico={precInfo.juridico_feito} />
+                    <Topics texto={'Jurídico a Fazer'} data={precInfo.juridico_afazer_data} atualizacaoJuridico={precInfo.juridico_afazer} />
+                    <Topics texto={'Andamento Jurídico'} data={precInfo.juridico_andamentoatual_data} atualizacaoJuridico={precInfo.juridico_andamentoatual} />
+                    <Topics texto={'Obs Jurídico'} data={precInfo.juridico_obs_data} atualizacaoJuridico={precInfo.juridico_obs}/>
                 </div>
             </div>
             {cessoes.length != 0 ? (

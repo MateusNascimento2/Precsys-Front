@@ -11,6 +11,7 @@ import { RequireAdminAuth, RequireNormalUserAuth } from './components/RequireAut
 import Unauthorized from './pages/Unauthorized';
 import Usuarios from './pages/Usuarios';
 import Precatorio from './pages/Precatorio';
+import TabelaCalculo from './components/TabelaCalculo';
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
           <Route element={<RequireAdminAuth />}>
             <Route path='todas-cessoes' element={<AllCessoes />} />
             <Route path='users' element={<Usuarios />} />
+            <Route path='ferramentas/calculo' element={<TabelaCalculo />} />
           </Route>
         </Route>
 

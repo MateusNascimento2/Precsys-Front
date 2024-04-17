@@ -82,7 +82,9 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
     "0": "Vivo",
     "1": "Não deixou bens",
     "2": "Deixou bens",
-    "3": "Herdeiros habilitados"
+    "3": "Solicitada habilitação",
+    "4": "Herdeiros habilitados",
+    
   }
 
   console.log(cessoes)

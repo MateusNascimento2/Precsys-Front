@@ -50,11 +50,11 @@ export default function Modal({ varas, orcamentos, naturezas, empresas, users, t
       </button>
       <div className={show ? 'bg-white dark:bg-black fixed z-[80] left-0 top-0 w-screen h-screen opacity-80 transition-opacity' : 'opacity-0 transition-opacity'} onClick={() => handleModalShow()}>
       </div>
-      <div className={show ? 'bg-white dark:bg-neutral-900 dark:border-neutral-600 border rounded shadow absolute z-[90] left-0 right-0 lg:mx-auto mx-[20px] my-[40px] lg:w-[800px] py-2 md:pb-[30px]' : 'hidden'}>
+      <div className={show ? 'bg-white dark:bg-neutral-900 dark:border-neutral-600 border rounded shadow absolute z-[90] lg:left-1/2 lg:top-1/2 lg:-translate-x-2/4 lg:-translate-y-[85%] lg:w-[800px] py-2 md:pb-[30px]' : 'hidden'}>
         <div className='pt-[10px] md:py-[30px] md:px-[15px]'>
-          <div className='flex px-2 items-center justify-between'>
+          <div className='flex px-4 items-center justify-between'>
             <p className='dark:text-white text-black py-2'>Editar Cessão</p>
-            <button onClick={() => handleModalShow()}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 dark:text-white">
+            <button onClick={() => handleModalShow()} className='rounded hover:bg-neutral-100 dark:hover:bg-neutral-800'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
             </button>
@@ -65,15 +65,15 @@ export default function Modal({ varas, orcamentos, naturezas, empresas, users, t
               <div className='h-[400px] overflow-y-auto grid grid-cols-1 md:grid-cols-2'>
                 <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
                   <label className='text-[14px] font-medium' htmlFor="precatorio">Precatório</label>
-                  <input type='text' name='precatorio' id='precatorio' className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2  focus:outline-neutral-600 placeholder:text-[14px]' placeholder='Número do precatório'></input>
+                  <input type='text' name='precatorio' id='precatorio' className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2  focus:outline-none placeholder:text-[14px] text-gray-400 ' placeholder='Número do precatório'></input>
                 </div>
                 <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
                   <label className='text-[14px] font-medium' htmlFor="processo">Processo</label>
-                  <input type='text' name='processo' id='processo' className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-neutral-600 placeholder:text-[14px]' placeholder='Número do processo'></input>
+                  <input type='text' name='processo' id='processo' className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 ' placeholder='Número do processo'></input>
                 </div>
                 <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
                   <label className='text-[14px] font-medium' htmlFor="cedente">Cedente</label>
-                  <input type='text' name='cedente' id='cedente' className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-neutral-600 placeholder:text-[14px]' placeholder='Nome do cedente'></input>
+                  <input type='text' name='cedente' id='cedente' className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 ' placeholder='Nome do cedente'></input>
                 </div>
                 <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
                   <label className='text-[14px] font-medium' htmlFor="vara">Vara</label>
@@ -103,7 +103,7 @@ export default function Modal({ varas, orcamentos, naturezas, empresas, users, t
                         option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
                       }}
                     />
-                    <input type='text' name='ano' id='ano' className='dark:bg-neutral-800 border rounded-r flex-none  dark:border-neutral-600 py-1 px-2 focus:outline-neutral-600 placeholder:text-[14px] w-[30%]' placeholder='Ano'></input>
+                    <input type='text' name='ano' id='ano' className='dark:bg-neutral-800 border-t border-b border-r border-l rounded-r flex-none  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] w-[30%] h-[34px] text-gray-400 ' placeholder='Ano'></input>
                   </div>
                 </div>
                 <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
@@ -136,7 +136,7 @@ export default function Modal({ varas, orcamentos, naturezas, empresas, users, t
                 </div>
                 <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
                   <label className='text-[14px] font-medium' htmlFor="data_cessao">Data da Cessão</label>
-                  <input type='date' name='data_cessao' id='data_cessao' className='dark:bg-neutral-800 border rounded dark:text-gray-400  dark:border-neutral-600 py-1 px-2 focus:outline-neutral-600 text-[14px]' placeholder='Selecionar data da cessão'></input>
+                  <input type='date' name='data_cessao' id='data_cessao' className='dark:bg-neutral-800 border rounded dark:text-gray-400  dark:border-neutral-600 py-1 px-2 focus:outline-none text-[14px] text-gray-400' placeholder='Selecionar data da cessão'></input>
                 </div>
                 <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
                   <label className='text-[14px] font-medium' htmlFor="rep_comercial">Rep. Comercial</label>
@@ -172,7 +172,7 @@ export default function Modal({ varas, orcamentos, naturezas, empresas, users, t
             </div>
 
 
-            <button type="submit" className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>Enviar</button>
+            <button type="submit" className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>Salvar</button>
 
 
           </form>

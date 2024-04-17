@@ -235,7 +235,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
   );
 
   const anuencia = ["Sem anuência", "Honorários", "Com anuência", "Quitação"]
-  const obito = ["Vivo", "Não deixou bens", "Deixou bens", "Herdeiros habilitados"]
+  const obito = ["Vivo", "Não deixou bens", "Deixou bens", "Herdeiros habilitados", "Solicitada habilitação"]
 
   return (
     <>
@@ -487,7 +487,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
                   </span>
                 </div>
 
-                <div className={showMenu && menuType === 'obito' ? 'mt-2 pl-2 flex flex-col gap-2 text-[12px] h-[105px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
+                <div className={showMenu && menuType === 'obito' ? 'mt-2 pl-2 flex flex-col gap-2 text-[12px] h-[125px] overflow-y-hidden transition-all cursor-default border-l dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all flex flex-col gap-2 text-[12px] border-l dark:border-neutral-600'}>
                   {obito.map((ob) => (
                     <div className="flex items-center gap-2" key={ob}>
                       <input type="checkbox" name={"falecido"} id={ob} value={ob} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleCheckboxChange(e)} checked={checkedStatus[ob] || false} />
