@@ -155,11 +155,11 @@ export default function Precatorio() {
 
   const updatedCessionario = [...cessionarioRefPrec];
 
+  console.log(updatedCessionario)
+
 
   updatedCessionario.forEach(cessionario => {
     const nomeDoCessionario = users.find(user => parseInt(cessionario.user_id) === parseInt(user.id))
-
-    console.log(nomeDoCessionario)
 
     if (nomeDoCessionario) {
       cessionario.user_id = nomeDoCessionario.nome;
@@ -249,7 +249,7 @@ export default function Precatorio() {
             </div>
           </div>
           <div className='px-5 dark:bg-neutral-900 mt-[16px] max-w-full h-full'>
-            <div className='lg:flex lg:gap-4 lg:items-start max-w-full h-full relative'>
+            <div className='lg:flex lg:gap-4 lg:items-start max-w-full h-full'>
               <div className='hidden lg:block lg:sticky lg:h-full lg:max-h-full lg:top-[8%]'>
                 <NavMenu />
               </div>

@@ -48,54 +48,39 @@ export default function Modal({ varas, orcamentos, naturezas, empresas, users, t
           <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
         </svg>
       </button>
-      <div className={show ? 'bg-white dark:bg-black fixed z-[80] left-0 top-0 w-screen h-screen opacity-80 transition-opacity' : 'opacity-0 transition-opacity'} onClick={() => handleModalShow()}>
-      </div>
-      <div className={show ? 'bg-white dark:bg-neutral-900 dark:border-neutral-600 border rounded shadow absolute z-[90] lg:left-1/2 lg:top-1/2 lg:-translate-x-2/4 lg:-translate-y-[85%] lg:w-[800px] py-2 md:pb-[30px]' : 'hidden'}>
-        <div className='pt-[10px] md:py-[30px] md:px-[15px]'>
-          <div className='flex px-4 items-center justify-between'>
-            <p className='dark:text-white text-black py-2'>Editar Cessão</p>
-            <button onClick={() => handleModalShow()} className='rounded hover:bg-neutral-100 dark:hover:bg-neutral-800'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-            </button>
-          </div>
+      <div className={show ? 'fixed z-[100] w-dvw h-lvh left-0 top-0' : 'hidden'}>
+        <div className={show ? 'bg-white dark:bg-black absolute z-[80] left-0 top-0 w-full h-full opacity-80 transition-opacity' : 'opacity-0 transition-opacity'} onClick={() => handleModalShow()}></div>
+        <div className={show ? 'bg-white dark:bg-neutral-900 dark:border-neutral-600 border rounded shadow absolute z-[90] left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] w-[85%] lg:w-[800px] py-2 md:pb-[30px] md:w-[600px]' : 'hidden'}>
+          <div className='pt-[10px] md:py-[30px] md:px-[15px]'>
+            <div className='flex px-4 items-center justify-between'>
+              <p className='dark:text-white text-black py-2'>Editar Cessão</p>
+              <button onClick={() => handleModalShow()} className='rounded hover:bg-neutral-100 dark:hover:bg-neutral-800'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+              </button>
+            </div>
 
-          <form action="" className='mt-[20px]'>
-            <div className='px-3 '>
-              <div className='h-[400px] overflow-y-auto grid grid-cols-1 md:grid-cols-2'>
-                <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
-                  <label className='text-[14px] font-medium' htmlFor="precatorio">Precatório</label>
-                  <input type='text' name='precatorio' id='precatorio' className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2  focus:outline-none placeholder:text-[14px] text-gray-400 ' placeholder='Número do precatório'></input>
-                </div>
-                <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
-                  <label className='text-[14px] font-medium' htmlFor="processo">Processo</label>
-                  <input type='text' name='processo' id='processo' className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 ' placeholder='Número do processo'></input>
-                </div>
-                <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
-                  <label className='text-[14px] font-medium' htmlFor="cedente">Cedente</label>
-                  <input type='text' name='cedente' id='cedente' className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 ' placeholder='Nome do cedente'></input>
-                </div>
-                <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
-                  <label className='text-[14px] font-medium' htmlFor="vara">Vara</label>
-                  <Select options={handleSelectValues(varas, 'nome')} isClearable={true} name='vara' placeholder='Selecionar vara'
-                    noOptionsMessage={() => 'Nenhuma vara encontrada'} unstyled // Remove all non-essential styles
-                    classNames={{
-                      container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px]'),
-                      control: () => ('px-2 flex items-center'),
-                      input: () => ('text-gray-400 mb-1'),
-                      menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800   w-full'),
-                      menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
-                      option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
-                    }}
-                  />
-                </div>
-                <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
-                  <label className='text-[14px] font-medium' htmlFor="orcamento">Orçamento</label>
-                  <div className='flex'>
-                    <Select options={handleSelectValues(orcamentos, 'ente')} isClearable={true} name='ente' placeholder='Selecionar ente'
-                      noOptionsMessage={() => 'Nenhum ente encontrado'} unstyled // Remove all non-essential styles
+            <form action="" className='mt-[20px]'>
+              <div className='px-3 '>
+                <div className='h-[400px] overflow-y-auto grid grid-cols-1 md:grid-cols-2'>
+                  <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+                    <label className='text-[14px] font-medium' htmlFor="precatorio">Precatório</label>
+                    <input type='text' name='precatorio' id='precatorio' className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2  focus:outline-none placeholder:text-[14px] text-gray-400 ' placeholder='Número do precatório'></input>
+                  </div>
+                  <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+                    <label className='text-[14px] font-medium' htmlFor="processo">Processo</label>
+                    <input type='text' name='processo' id='processo' className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 ' placeholder='Número do processo'></input>
+                  </div>
+                  <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+                    <label className='text-[14px] font-medium' htmlFor="cedente">Cedente</label>
+                    <input type='text' name='cedente' id='cedente' className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 ' placeholder='Nome do cedente'></input>
+                  </div>
+                  <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+                    <label className='text-[14px] font-medium' htmlFor="vara">Vara</label>
+                    <Select options={handleSelectValues(varas, 'nome')} isClearable={true} name='vara' placeholder='Selecionar vara'
+                      noOptionsMessage={() => 'Nenhuma vara encontrada'} unstyled // Remove all non-essential styles
                       classNames={{
-                        container: () => ('border-t border-l border-b rounded-l dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px] w-[70%]'),
+                        container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px]'),
                         control: () => ('px-2 flex items-center'),
                         input: () => ('text-gray-400 mb-1'),
                         menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800   w-full'),
@@ -103,83 +88,106 @@ export default function Modal({ varas, orcamentos, naturezas, empresas, users, t
                         option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
                       }}
                     />
-                    <input type='text' name='ano' id='ano' className='dark:bg-neutral-800 border-t border-b border-r border-l rounded-r flex-none  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] w-[30%] h-[34px] text-gray-400 ' placeholder='Ano'></input>
+                  </div>
+                  <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+                    <label className='text-[14px] font-medium' htmlFor="orcamento">Orçamento</label>
+                    <div className='flex'>
+                      <Select options={handleSelectValues(orcamentos, 'ente')} isClearable={true} name='ente' placeholder='Selecionar ente'
+                        noOptionsMessage={() => 'Nenhum ente encontrado'} unstyled // Remove all non-essential styles
+                        classNames={{
+                          container: () => ('border-t border-l border-b rounded-l dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px] w-[70%]'),
+                          control: () => ('px-2 flex items-center'),
+                          input: () => ('text-gray-400 mb-1'),
+                          menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800   w-full'),
+                          menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
+                          option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
+                        }}
+                      />
+                      <input type='text' name='ano' id='ano' className='dark:bg-neutral-800 border-t border-b border-r border-l rounded-r flex-none  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] w-[30%] h-[34px] text-gray-400 ' placeholder='Ano'></input>
+                    </div>
+                  </div>
+                  <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+                    <label className='text-[14px] font-medium' htmlFor="natureza">Natureza</label>
+                    <Select options={handleSelectValues(naturezas, 'nome')} isClearable={true} name='natureza' placeholder='Selecionar natureza'
+                      noOptionsMessage={() => 'Nenhuma natureza encontrada'} unstyled  // Remove all non-essential styles
+                      classNames={{
+                        container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px]'),
+                        control: () => ('px-2 flex items-center'),
+                        input: () => ('text-gray-400 mb-1'),
+                        menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full'),
+                        menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[72px]'),
+                        option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
+                      }}
+                    />
+                  </div>
+                  <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+                    <label className='text-[14px] font-medium' htmlFor="empresa">Empresa</label>
+                    <Select options={handleSelectValues(empresas, 'nome')} isClearable={true} name='empresa' placeholder='Selecionar empresa'
+                      noOptionsMessage={() => 'Nenhuma empresa encontrada'} unstyled // Remove all non-essential styles
+                      classNames={{
+                        container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px]'),
+                        control: () => ('px-2 flex items-center'),
+                        input: () => ('text-gray-400 mb-1'),
+                        menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full'),
+                        menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
+                        option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
+                      }}
+                    />
+                  </div>
+                  <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+                    <label className='text-[14px] font-medium' htmlFor="data_cessao">Data da Cessão</label>
+                    <input type='date' name='data_cessao' id='data_cessao' className='dark:bg-neutral-800 border rounded dark:text-gray-400  dark:border-neutral-600 py-1 px-2 focus:outline-none text-[14px] text-gray-400' placeholder='Selecionar data da cessão'></input>
+                  </div>
+                  <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+                    <label className='text-[14px] font-medium' htmlFor="rep_comercial">Rep. Comercial</label>
+                    <Select options={teles} isClearable={true} name='rep_comercial' placeholder='Selecionar rep. comercial'
+                      noOptionsMessage={() => 'Nenhum Rep. Comercial encontrado'} unstyled// Remove all non-essential styles
+                      classNames={{
+                        container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px] relative'),
+                        control: () => ('px-2 flex items-center'),
+                        input: () => ('text-gray-400 mb-1'),
+                        menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full'),
+                        menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
+                        option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
+                      }}
+                    />
+                  </div>
+                  <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+                    <label className='text-[14px] font-medium' htmlFor="escrevente">Escrevente</label>
+                    <Select options={handleSelectValues(escreventes, 'nome')} isClearable={true} name='escrevente' placeholder='Selecionar escrevente'
+                      noOptionsMessage={() => 'Nenhum escrevente encontrado'} menuPosition='absolute' unstyled// Remove all non-essential styles
+                      classNames={{
+                        container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px]'),
+                        control: () => ('px-2 flex items-center'),
+                        input: () => ('text-gray-400 mb-1'),
+                        menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full z-[100] '),
+                        menuList: () => ('flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
+                        option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1'),
+
+                      }}
+                    />
                   </div>
                 </div>
-                <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
-                  <label className='text-[14px] font-medium' htmlFor="natureza">Natureza</label>
-                  <Select options={handleSelectValues(naturezas, 'nome')} isClearable={true} name='natureza' placeholder='Selecionar natureza'
-                    noOptionsMessage={() => 'Nenhuma natureza encontrada'} unstyled  // Remove all non-essential styles
-                    classNames={{
-                      container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px]'),
-                      control: () => ('px-2 flex items-center'),
-                      input: () => ('text-gray-400 mb-1'),
-                      menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full'),
-                      menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[72px]'),
-                      option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
-                    }}
-                  />
-                </div>
-                <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
-                  <label className='text-[14px] font-medium' htmlFor="empresa">Empresa</label>
-                  <Select options={handleSelectValues(empresas, 'nome')} isClearable={true} name='empresa' placeholder='Selecionar empresa'
-                    noOptionsMessage={() => 'Nenhuma empresa encontrada'} unstyled // Remove all non-essential styles
-                    classNames={{
-                      container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px]'),
-                      control: () => ('px-2 flex items-center'),
-                      input: () => ('text-gray-400 mb-1'),
-                      menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full'),
-                      menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
-                      option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
-                    }}
-                  />
-                </div>
-                <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
-                  <label className='text-[14px] font-medium' htmlFor="data_cessao">Data da Cessão</label>
-                  <input type='date' name='data_cessao' id='data_cessao' className='dark:bg-neutral-800 border rounded dark:text-gray-400  dark:border-neutral-600 py-1 px-2 focus:outline-none text-[14px] text-gray-400' placeholder='Selecionar data da cessão'></input>
-                </div>
-                <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
-                  <label className='text-[14px] font-medium' htmlFor="rep_comercial">Rep. Comercial</label>
-                  <Select options={teles} isClearable={true} name='rep_comercial' placeholder='Selecionar rep. comercial'
-                    noOptionsMessage={() => 'Nenhum Rep. Comercial encontrado'} unstyled// Remove all non-essential styles
-                    classNames={{
-                      container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px] relative'),
-                      control: () => ('px-2 flex items-center'),
-                      input: () => ('text-gray-400 mb-1'),
-                      menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full'),
-                      menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
-                      option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
-                    }}
-                  />
-                </div>
-                <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
-                  <label className='text-[14px] font-medium' htmlFor="escrevente">Escrevente</label>
-                  <Select options={handleSelectValues(escreventes, 'nome')} isClearable={true} name='escrevente' placeholder='Selecionar escrevente'
-                    noOptionsMessage={() => 'Nenhum escrevente encontrado'} menuPosition='absolute' unstyled// Remove all non-essential styles
-                    classNames={{
-                      container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px]'),
-                      control: () => ('px-2 flex items-center'),
-                      input: () => ('text-gray-400 mb-1'),
-                      menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full z-[100] '),
-                      menuList: () => ('flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
-                      option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1'),
-                      
-                    }}
-                  />
-                </div>
+
               </div>
 
-            </div>
+
+              <button type="submit" className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>Salvar</button>
 
 
-            <button type="submit" className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>Salvar</button>
+            </form>
 
 
-          </form>
-
-
+          </div>
         </div>
+
       </div>
+
+
+
+
+
+
     </>
 
 
