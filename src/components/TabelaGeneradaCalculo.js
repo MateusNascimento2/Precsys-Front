@@ -38,11 +38,11 @@ export default function TabelaGeneradaCalculo() {
 
     let juros = 0;
 
-    for(valor1; valor1 <= valor2; valor1++) {
+    for (valor1; valor1 <= valor2; valor1++) {
       juros += parseFloat(result[valor1].RemuneracaoBasicaAcumulada)
     }
 
-    
+
     console.log(juros);
   }
 
@@ -105,47 +105,69 @@ export default function TabelaGeneradaCalculo() {
   }
 
   return (
-    <div className='w-full mb-[60px] flex flex-col'>
-      <span className="font-[700] dark:text-white mb-[16px]" id='cessionarios'>Cessionários</span>
-      <div className='overflow-x-auto w-full'>
-        <div className='w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-600'>
-          <div className='min-w-[250px] w-[24%] dark:text-white'>Nome</div>
-          <div className='min-w-[120px] w-[15%] text-center dark:text-white'>valor pago</div>
-          <div className='min-w-[120px] w-[17%] text-center dark:text-white'>comissão</div>
-          <div className='min-w-[60px] w-[5%] text-center dark:text-white'>%</div>
-          <div className='min-w-[120px] w-[17%] text-center dark:text-white'>expectativa</div>
-          <div className='min-w-[180px] w-[18%] text-center dark:text-white'>nota</div>
-          <div className='min-w-[50px] w-[5%] ml-auto text-center dark:text-white'>.</div>
+    <div className="dark:bg-[#111] w-full mb-[60px] flex flex-col">
+      <span className="font-[700] dark:text-white mb-[16px]" id="cessionarios">
+        Cessionários
+      </span>
+      <div className="overflow-x-auto w-full">
+        <div className="w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-600">
+          <div className="min-w-[250px] w-[24%] dark:text-white">Calculo Inicial 11/11/2021</div>
         </div>
-
-        <div className='w-max lg:w-full flex text-[12px] items-center border-b dark:border-neutral-600 last:border-0 py-[10px] border-gray-300'>
-          <div className='min-w-[250px] w-[24%]'>
-            <div className="flex flex-col justify-center text-[12px]">
-              <span className="font-bold dark:text-neutral-200">Vail FIDC </span>
-              <span className=" text-neutral-400 font-medium">40.226.165/0001-09</span>
+        <div className='grid grid-cols-3'>
+          <div className="w-max lg:w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600  border-gray-300">
+            <div className="min-w-[250px] p-2 font-bold">
+              Data
+            </div>
+            <div className="min-w-[120px] p-2 font-bold  dark:text-neutral-200">
+              Regime
+            </div>
+            <div className="min-w-[120px] p-2 font-bold dark:text-neutral-200">
+              Valor Principal
+            </div>
+            <div className="min-w-[60px] p-2 font-bold   dark:text-neutral-200">
+              Valor Juros
+            </div>
+            <div className="min-w-[120px] p-2 font-bold  dark:text-neutral-200">
+              Valor Total
             </div>
           </div>
-          <div className='min-w-[120px] w-[15%] text-center dark:text-neutral-200'>R$ 100.000,00</div>
-          <div className='min-w-[120px] w-[17%] text-center dark:text-neutral-200'>R$ 5.000,00</div>
-          <div className='min-w-[60px] w-[5%] text-center dark:text-neutral-200'>20,00%</div>
-          <div className='min-w-[120px] w-[17%] text-center dark:text-neutral-200'>R$ 199.400,00</div>
-          <div className='min-w-[180px] w-[18%] text-center'><a href="" className='hover:underline dark:text-neutral-200'>.</a></div>
-          <div className='min-w-[50px] w-[5%] ml-auto text-center dark:text-neutral-200'>.</div>
-        </div>
 
-
-        <div className='w-max lg:w-full flex text-[12px] items-center border-b last:border-0 py-[10px] border-gray-300'>
-          <div className='min-w-[250px] w-[24%]'>
-            <div className="flex flex-col justify-center text-[12px]">
-              <span className="font-bold dark:text-white">TOTAL </span>
+          <div className="w-max lg:w-full flex flex-col border-r border-l border-b divide-y text-[12px]  border-gray-300">
+            <div className="min-w-[250px] p-2 w-[24%]">
+              11/11/2021
+            </div>
+            <div className="min-w-[120px] p-2 dark:text-neutral-200">
+              Não Tributário
+            </div>
+            <div className="min-w-[120px] p-2  dark:text-neutral-200">
+              R$ 41.476,91
+            </div>
+            <div className="min-w-[60px] p-2  dark:text-neutral-200">
+              R$ 28.513,75
+            </div>
+            <div className="min-w-[120px] p-2  dark:text-neutral-200">
+              R$ 69.990,66
             </div>
           </div>
-          <div className='min-w-[120px] w-[15%] font-bold text-center dark:text-neutral-200'>R$ 100.000,00</div>
-          <div className='min-w-[120px] w-[17%] font-bold text-center dark:text-neutral-200'>R$ 5.000,00</div>
-          <div className='min-w-[60px] w-[5%] font-bold text-center dark:text-neutral-200'>20,00%</div>
-          <div className='min-w-[120px] w-[17%] font-bold text-center dark:text-neutral-200'>R$ 199.400,00</div>
-          <div className='min-w-[180px] w-[18%] text-center dark:text-neutral-200'></div>
-          <div className='min-w-[50px] w-[5%] ml-auto text-center dark:text-neutral-200'></div>
+
+          <div className="w-max lg:w-full border-r divide-y flex flex-col text-[12px] border-b   border-gray-300">
+            <div className="min-w-[250px] p-2 w-[24%]">
+              -
+            </div>
+            <div className="min-w-[120px] p-2 dark:text-neutral-200">
+              -
+            </div>
+            <div className="min-w-[120px] p-2  dark:text-neutral-200">
+              -
+            </div>
+            <div className="min-w-[60px] p-2  dark:text-neutral-200">
+              -
+            </div>
+            <div className="min-w-[120px] p-2  dark:text-neutral-200">
+              -
+            </div>
+          </div>
+
         </div>
 
       </div>

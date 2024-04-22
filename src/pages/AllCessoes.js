@@ -30,6 +30,14 @@ export default function AllCessoes() {
 
   const handleShow = () => {
     setShow((prevState) => !prevState)
+
+    
+    if (document.body.style.overflow !== "hidden") {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = 'scroll';
+    }
+
   }
 
   const handleSelectedCheckboxesChange = (childData) => {
@@ -48,7 +56,7 @@ export default function AllCessoes() {
   return (
     <>
       <Header />
-      <main className={show ? 'container mx-auto overflow-hidden dark:bg-neutral-900 h-full relative' : 'relative container mx-auto pt-[120px] dark:bg-neutral-900 h-full'}>
+      <main className={show ? 'container mx-auto pt-[120px] dark:bg-neutral-900 h-full relative' : 'relative container mx-auto pt-[120px] dark:bg-neutral-900 h-full'}>
         <div className='px-[20px]'>
           <h2 className='font-[700] text-[32px] mt-[16px] dark:text-white' id='cessoes'>Cessões</h2>
         </div>

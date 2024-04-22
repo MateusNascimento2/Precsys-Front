@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function DotsButton({ listLength, cessaoID, requisitorioFile, escrituraFile }) {
+export default function DotsButton({ cessaoID, requisitorioFile, escrituraFile }) {
 
   const [menuState, setMenuState] = useState({});
   
@@ -14,7 +14,6 @@ export default function DotsButton({ listLength, cessaoID, requisitorioFile, esc
 
   return (
     <>
-        <div onClick={() => handleShow()} className={menuState[cessaoID] ? 'w-screen h-screen bg-transparent absolute z-[40] top-0 left-0' : 'hidden'}></div >
         <div className="relative">
           <div onClick={() => handleShow()} className={menuState[cessaoID] ? "cursor-pointer flex bg-neutral-200 items-center justify-center pt-3 pb-3 px-[2px] rounded dark:bg-neutral-800 dark:hover:bg-neutral-800 absolute z-[39] right-0 bottom-0 top-[-10px] " : "absolute z-[39] right-0 bottom-0 top-[-10px] cursor-pointer flex items-center justify-center pt-3 pb-3 px-[2px] rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 dark:text-white">

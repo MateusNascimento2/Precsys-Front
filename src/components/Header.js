@@ -28,6 +28,22 @@ function Header() {
     updateLogo(darkMode)
   }, [darkMode]);
 
+  useEffect(() => {
+    console.log(showMenu)
+
+    if (showMenu === true) {
+      if (document.body.style.overflow !== "hidden") {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = 'scroll';
+      }
+    } else {
+      if (document.body.style.overflow === "hidden") {
+        document.body.style.overflow = "scroll";
+      } 
+    }
+  }, [showMenu, menuType])
+
   const handleDarkModeChange = (newDarkMode) => {
     setDarkMode(newDarkMode);
   };
@@ -44,13 +60,17 @@ function Header() {
   const [menuType, setMenuType] = useState(null);
 
   function handleMenu(type) {
+
     if (menuType === type) {
       setShowMenu(prevState => !prevState);
-      console.log('showMenu ' + showMenu)
+
     } else {
       setShowMenu(true);
       setMenuType(type);
+
     }
+
+
   }
 
   const handleRoute = (route) => {
