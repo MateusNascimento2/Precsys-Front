@@ -217,8 +217,9 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
             <label className='text-[14px] font-medium' htmlFor="rep_comercial">Rep. Comercial</label>
-            <Select options={teles[parseInt(precInfo.tele_id)]}
-              defaultValue={teles}
+            <Select 
+              options={teles}
+              defaultValue={teles[parseInt(precInfo.tele_id)]}
               onChange={(selectedValue) => !selectedValue ? setRepComercialEditado('') : setRepComercialEditado(selectedValue.label)}
               isClearable={true}
               name='rep_comercial'
