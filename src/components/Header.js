@@ -31,7 +31,7 @@ function Header() {
   useEffect(() => {
     console.log(showMenu)
 
-    if (showMenu === true) {
+    if (showMenu === true && menuType !== 'toolBar') {
       if (document.body.style.overflow !== "hidden") {
         document.body.style.overflow = "hidden";
       } else {

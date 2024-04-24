@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Modal from '../components/Modal';
 import ListaCessionarios from './ListaCessionarios';
 import Select from 'react-select';
+import EditarPrec from './EditarPrec';
 
 export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas, orcamentos, naturezas, empresas, users, teles, escreventes }) {
     const [isDisabled, setIsDisabled] = useState(true);
@@ -17,19 +18,6 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
         window.history.back();
     }
 
-    function handleInputDisabled() {
-        setIsDisabled(prevState => !prevState)
-    }
-
-    const handleSelectValues = (array, value) => {
-        return array.map(item => {
-            return {
-                ...item,
-                value: item.id,
-                label: item[value]
-            };
-        });
-    }
 
     teles.forEach(tele => {
         users.forEach(user => {
@@ -64,11 +52,9 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                     <div className='flex flex-col '>
                         <div className='flex items-center gap-5 mb-[16px]'>
                             <span className="font-[700] dark:text-white" >Informações Gerais</span>
-                            <button onClick={() => handleInputDisabled()} className='hover:bg-neutral-100 flex items-center justify-center dark:hover:bg-neutral-800 rounded p-[1px]'>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[20px] h-[20px] dark:text-white ">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                </svg>
-                            </button>
+                            <Modal tituloModal={'Editar cessão'}>
+                                <EditarPrec precInfo={precInfo} varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} />
+                            </Modal>
                         </div>
 
                         <div className='grid grid-cols-1 gap-3 mb-[20px]'>
@@ -86,103 +72,29 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                             </div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'>
                                 <span className='font-[500] dark:text-neutral-200'>Vara: </span>
-                                {isDisabled
-                                    ? <span className='text-[#666] dark:text-neutral-400'>{precInfo.vara_processo ? precInfo.vara_processo : '-'}</span>
-                                    : <Select
-                                        defaultValue={precInfo.vara_processo}
-                                        options={handleSelectValues(varas, 'nome')}
-                                        isClearable={true}
-                                        name='vara'
-                                        placeholder={precInfo.vara_processo}
-                                        noOptionsMessage={() => 'Nenhuma vara encontrada'}
-                                        unstyled // Remove all non-essential styles
-                                        classNames={{
-                                            container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-[#666] dark:text-neutral-400 w-full text-[14px] h-[21px] min-h-[21px]'),
-                                            control: () => ('px-2 flex items-center h-[21px] min-h-[21px]'),
-                                            indicatorsContainer: () => ('h-[21px]'),
-                                            input: () => ('text-[#666] dark:text-neutral-400'),
-                                            menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800   w-full'),
-                                            menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
-                                            option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
-                                        }}
-                                        styles={customStyles}
-                                    />
-                                }
+
+                                <span className='text-[#666] dark:text-neutral-400'>{precInfo.nome_vara ? precInfo.nome_vara : '-'}</span>
                             </div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'>
                                 <span className='font-[500] dark:text-neutral-200'>Orçamento: </span>
-                                {isDisabled
-                                    ? <span className='text-[#666] dark:text-neutral-400'>{precInfo.ente_id ? precInfo.ente_id : '-'}</span>
-                                    : <div className='flex w-full'>
-                                        <Select
-                                            options={handleSelectValues(orcamentos, 'ente')}
-                                            isClearable={true}
-                                            name='ente'
-                                            placeholder={precInfo.ente_id}
-                                            noOptionsMessage={() => 'Nenhum ente encontrado'}
-                                            unstyled // Remove all non-essential styles
-                                            classNames={{
-                                                container: () => ('border-l border-t border-b rounded-l dark:bg-neutral-800 dark:border-neutral-600 text-[#666] dark:text-neutral-400 w-full text-[14px] h-[21px] w-[70%] min-h-[21px]'),
-                                                control: () => ('px-2 flex items-center h-[21px] min-h-[21px]'),
-                                                indicatorsContainer: () => ('h-[21px]'),
-                                                input: () => ('text-[#666] dark:text-neutral-400'),
-                                                menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800   w-full'),
-                                                menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
-                                                option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
-                                            }}
-                                            styles={customStyles}
-                                        />
-                                        <input type='text' name='ano' id='ano' disabled={isDisabled} className='dark:bg-neutral-800 border-t border-b border-r border-l rounded-r flex-none  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] w-[30%] text-[#666] dark:text-neutral-400 enabled:h-[21px] placeholder:text-[#666] placeholder:dark:text-neutral-400' placeholder='Ano'></input>
-                                    </div>
-                                }
+
+                                <span className='text-[#666] dark:text-neutral-400'>{precInfo.orcamento ? precInfo.orcamento : '-'}</span>
+
+
                             </div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'>
                                 <span className='font-[500] dark:text-neutral-200'>Natureza: </span>
-                                {isDisabled
-                                    ? <span className='text-[#666] dark:text-neutral-400'>{precInfo.natureza ? precInfo.natureza : '-'}</span>
-                                    : <Select
-                                        options={handleSelectValues(naturezas, 'nome')}
-                                        isClearable={true}
-                                        name='natureza'
-                                        placeholder={precInfo.natureza}
-                                        noOptionsMessage={() => 'Nenhuma natureza encontrada'}
-                                        unstyled  // Remove all non-essential styles
-                                        classNames={{
-                                            container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-[#666] dark:text-neutral-400 w-full text-[14px] h-[21px] min-h-[21px]'),
-                                            control: () => ('px-2 flex items-center h-[21px] min-h-[21px]'),
-                                            indicatorsContainer: () => ('h-[21px]'),
-                                            input: () => ('text-[#666] dark:text-neutral-400'),
-                                            menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800   w-full'),
-                                            menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
-                                            option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
-                                        }}
-                                        styles={customStyles}
-                                    />
-                                }
+
+                                <span className='text-[#666] dark:text-neutral-400'>{precInfo.nome_natureza ? precInfo.nome_natureza : '-'}</span>
+
+
                             </div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'>
                                 <span className='font-[500] dark:text-neutral-200'>Empresa: </span>
-                                {isDisabled
-                                    ? <span className='text-[#666] dark:text-neutral-400'>{precInfo.empresa_id ? precInfo.empresa_id : '-'}</span>
-                                    : <Select
-                                        options={handleSelectValues(empresas, 'nome')}
-                                        isClearable={true}
-                                        name='empresa'
-                                        placeholder={precInfo.empresa_id}
-                                        noOptionsMessage={() => 'Nenhuma empresa encontrada'}
-                                        unstyled // Remove all non-essential styles
-                                        classNames={{
-                                            container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-[#666] dark:text-neutral-400 w-full text-[14px] h-[21px] min-h-[21px]'),
-                                            control: () => ('px-2 flex items-center h-[21px] min-h-[21px]'),
-                                            indicatorsContainer: () => ('h-[21px]'),
-                                            input: () => ('text-[#666] dark:text-neutral-400'),
-                                            menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800   w-full'),
-                                            menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
-                                            option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
-                                        }}
-                                        styles={customStyles}
-                                    />
-                                }
+
+                                <span className='text-[#666] dark:text-neutral-400'>{precInfo.nome_empresa ? precInfo.nome_empresa : '-'}</span>
+
+
                             </div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'>
                                 <span className='font-[500] dark:text-neutral-200 shrink-0'>Data da Cessão: </span>
@@ -197,49 +109,17 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                             </div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'>
                                 <span className='font-[500] dark:text-neutral-200 shrink-0'>Rep. Comercial: </span>
-                                {isDisabled
-                                    ? <span className='text-[#666] dark:text-neutral-400'>{precInfo.tele_id ? precInfo.tele_id : '-'}</span>
-                                    : <Select options={teles}
-                                        isClearable={true}
-                                        name='rep_comercial'
-                                        placeholder={precInfo.tele_id}
-                                        noOptionsMessage={() => 'Nenhum Rep. Comercial encontrado'} unstyled// Remove all non-essential styles
-                                        classNames={{
-                                            container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-[#666] dark:text-neutral-400 w-full text-[14px] h-[21px] min-h-[21px]'),
-                                            control: () => ('px-2 flex items-center h-[21px] min-h-[21px]'),
-                                            indicatorsContainer: () => ('h-[21px]'),
-                                            input: () => ('text-[#666] dark:text-neutral-400'),
-                                            menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800   w-full'),
-                                            menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
-                                            option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
-                                        }}
-                                        styles={customStyles}
-                                    />
-                                }
+
+                                <span className='text-[#666] dark:text-neutral-400'>{precInfo.nome_tele ? precInfo.nome_tele : '-'}</span>
+
+
                             </div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'>
                                 <span className='font-[500] dark:text-neutral-200'>Escrevente: </span>
-                                {isDisabled
-                                    ? <span className='text-[#666] dark:text-neutral-400'>{precInfo.escrevente_id ? precInfo.escrevente_id : '-'}</span>
-                                    : <Select
-                                        options={handleSelectValues(escreventes, 'nome')}
-                                        isClearable={true}
-                                        name='escrevente'
-                                        placeholder={precInfo.escrevente_id}
-                                        noOptionsMessage={() => 'Nenhum escrevente encontrado'} menuPosition='absolute'
-                                        unstyled// Remove all non-essential styles
-                                        classNames={{
-                                            container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-[#666] dark:text-neutral-400 w-full text-[14px] h-[21px] min-h-[21px]'),
-                                            control: () => ('px-2 flex items-center h-[21px] min-h-[21px]'),
-                                            indicatorsContainer: () => ('h-[21px]'),
-                                            input: () => ('text-[#666] dark:text-neutral-400'),
-                                            menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800   w-full'),
-                                            menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-[120px]'),
-                                            option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
-                                        }}
-                                        styles={customStyles}
-                                    />
-                                }
+
+                                <span className='text-[#666] dark:text-neutral-400'>{precInfo.nome_escrevente ? precInfo.nome_escrevente : '-'}</span>
+
+
                             </div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Óbito: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.falecido ? precInfo.falecido : '-'}</span></div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Anuência: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.adv ? precInfo.adv : '-'}</span></div>

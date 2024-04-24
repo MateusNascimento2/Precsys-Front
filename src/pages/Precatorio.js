@@ -102,9 +102,11 @@ export default function Precatorio() {
 
 
   if (orcamentoAtualizado && updatedPrecData.ano) {
-    updatedPrecData.ente_id = orcamentoAtualizado.apelido + " - " + updatedPrecData.ano;
+    updatedPrecData.orcamento = orcamentoAtualizado.apelido + " - " + updatedPrecData.ano;
+    updatedPrecData.nome_ente = orcamentoAtualizado.ente;
   } else if (orcamentoAtualizado) {
-    updatedPrecData.ente_id = orcamentoAtualizado.apelido;
+    updatedPrecData.orcamento = orcamentoAtualizado.apelido;
+    updatedPrecData.nome_ente = orcamentoAtualizado.ente;
   }
 
   const naturezaAtualizada = natureza.find(n => parseInt(updatedPrecData.natureza) === parseInt(n.id));
@@ -127,11 +129,11 @@ export default function Precatorio() {
   }
 
   if (naturezaAtualizada) {
-    updatedPrecData.natureza = naturezaAtualizada.nome;
+    updatedPrecData.nome_natureza = naturezaAtualizada.nome;
   }
 
   if (empresaAtualizada) {
-    updatedPrecData.empresa_id = empresaAtualizada.nome;
+    updatedPrecData.nome_empresa = empresaAtualizada.nome;
   }
 
   if (statusAtualizado) {
@@ -139,15 +141,15 @@ export default function Precatorio() {
   }
 
   if (varasAtualizada) {
-    updatedPrecData.vara_processo = varasAtualizada.nome
+    updatedPrecData.nome_vara = varasAtualizada.nome
   }
 
   if (telesAtualizado) {
-    updatedPrecData.tele_id = telesAtualizado.nome
+    updatedPrecData.nome_tele = telesAtualizado.nome
   }
 
   if (escreventesAtualizado) {
-    updatedPrecData.escrevente_id = escreventesAtualizado.nome
+    updatedPrecData.nome_escrevente = escreventesAtualizado.nome
   }
 
   const cessionarioRefPrec = cessionarios.filter(cessionario => parseInt(updatedPrecData.id) === parseInt(cessionario.cessao_id));
@@ -242,7 +244,7 @@ export default function Precatorio() {
                 <span style={{ backgroundColor: statusAtualizado.extra }} className={`px-2 py-1 rounded text-[10px] flex gap-1 bg-neutral-100 dark:bg-neutral-700  `}>
                   <span className="text-black font-bold dark:text-black">{updatedPrecData.status}</span>
                 </span>
-                {orcamentoAtualizado ? (<Tags text={updatedPrecData.ente_id} />) : null}
+                {orcamentoAtualizado ? (<Tags text={updatedPrecData.orcamento} />) : null}
                 {naturezaAtualizada ? (<Tags text={naturezaAtualizada.nome} />) : null}
                 {empresaAtualizada ? (<Tags text={empresaAtualizada.nome} />) : null}
               </div>
