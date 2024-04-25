@@ -164,7 +164,7 @@ export default function Precatorio() {
     const nomeDoCessionario = users.find(user => parseInt(cessionario.user_id) === parseInt(user.id))
 
     if (nomeDoCessionario) {
-      cessionario.user_id = nomeDoCessionario.nome;
+      cessionario.nome_user = nomeDoCessionario.nome;
       cessionario.cpfcnpj = nomeDoCessionario.cpfcnpj
     }
   })
@@ -218,8 +218,6 @@ export default function Precatorio() {
     }
 
   });
-
-  console.log(updatedCessionario)
 
 
   return (

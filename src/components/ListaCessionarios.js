@@ -1,6 +1,8 @@
 import React from 'react';
+import Modal from './Modal';
+import EditarCessionario from './EditarCessionario';
 
-export default function ListaCessionarios({ cessionario, precInfo }) {
+export default function ListaCessionarios({ cessionario, precInfo, users }) {
   function changeStringFloat(a) {
     const virgulaParaBarra = a.replace(',', '/');
     const valorSemPonto = virgulaParaBarra.replace(/\./g, '');
@@ -42,10 +44,15 @@ export default function ListaCessionarios({ cessionario, precInfo }) {
     return (previousValue) + changePorcentagemToFloat(currentValue.percentual);
   }, 0)
 
+  console.log(cessionario)
+
   return (
     cessionario.length !== 0 ? (
       <div className='w-full mb-[60px] flex flex-col'>
-        <span className="font-[700] dark:text-white mb-[16px]" id='cessionarios'>Cessionários</span>
+        <div className='mb-[16px] flex items-center gap-5'>
+          <span className="font-[700] dark:text-white " id='cessionarios'>Cessionários</span>
+
+        </div>
         <div className='overflow-x-auto w-full'>
           <div className='w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-600'>
             <div className='min-w-[250px] w-[24%] dark:text-white'>Nome</div>
@@ -60,7 +67,7 @@ export default function ListaCessionarios({ cessionario, precInfo }) {
             <div className='w-max lg:w-full flex text-[12px] items-center border-b dark:border-neutral-600 last:border-0 py-[10px] border-gray-300' key={c.id}>
               <div className='min-w-[250px] w-[24%]'>
                 <div className="flex flex-col justify-center text-[12px]">
-                  <span className="font-bold dark:text-neutral-200">{c.user_id} </span>
+                  <span className="font-bold dark:text-neutral-200">{c.nome_user} </span>
                   <span className=" text-neutral-400 font-medium">{c.cpfcnpj}</span>
                 </div>
               </div>
@@ -69,7 +76,19 @@ export default function ListaCessionarios({ cessionario, precInfo }) {
               <div className='min-w-[60px] w-[5%] text-center dark:text-neutral-200'>{c.percentual}</div>
               <div className='min-w-[120px] w-[17%] text-center dark:text-neutral-200'>{c.exp_recebimento}</div>
               <div className='min-w-[180px] w-[18%] text-center'><a href="" className='hover:underline dark:text-neutral-200'>{c.nota ? c.nota.split('/')[1] : ''}</a></div>
-              <div className='min-w-[50px] w-[5%] ml-auto text-center dark:text-neutral-200'>.</div>
+              <div className='min-w-[50px] w-[5%] ml-auto flex justify-center dark:text-neutral-200'>
+                <Modal
+                  botaoAbrirModal={
+                    <button className='hover:bg-neutral-100 flex items-center text-center justify-center dark:hover:bg-neutral-800 rounded p-[1px]'>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[20px] h-[20px] dark:text-white ">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                      </svg>
+                    </button>
+                  }
+                  tituloModal={`Editar cessionário #${c.id}`}>
+                  <EditarCessionario cessionario={c} users={users}/>
+                </Modal>
+              </div>
             </div>
 
           ))}

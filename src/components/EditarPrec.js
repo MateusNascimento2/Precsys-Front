@@ -142,7 +142,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
                 noOptionsMessage={() => 'Nenhum ente encontrado'}
                 unstyled // Remove all non-essential styles
                 classNames={{
-                  container: () => ('border-l border-t border-b rounded-l dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 w-[70%] text-[15px] h-[34px]'),
+                  container: () => ('border-l border-t border-b border-r rounded-l dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 w-[70%] text-[15px] h-[34px]'),
                   control: () => ('px-2 mt-[6px] flex items-center'),
                   input: () => ('text-gray-400'),
                   menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full max-h-24'),
@@ -152,7 +152,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
                 styles={customStyles}
               />
 
-              <input type='text' name='ano' id='ano' placeholder='Ano' className='dark:bg-neutral-800 border rounded-r  dark:border-neutral-600 py-1 px-2 w-[30%] focus:outline-none placeholder:text-[14px] text-gray-400 ' value={anoEditado} onChange={(e) => setAnoEditado(e.target.value)}></input>
+              <input type='text' name='ano' id='ano' placeholder='Ano' className='dark:bg-neutral-800 border-r border-t border-b rounded-r  dark:border-neutral-600 py-1 px-2 w-[30%] focus:outline-none placeholder:text-[14px] text-gray-400 ' value={anoEditado} onChange={(e) => setAnoEditado(e.target.value)}></input>
             </div>
           </div>
 
@@ -182,6 +182,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
             <label className='text-[14px] font-medium' htmlFor="empresa">Empresa</label>
             <Select
+              menuPlacement='top'
               defaultValue={handleSelectValues(empresas, 'nome')[parseInt(precInfo.empresa_id) - 1]}
               options={handleSelectValues(empresas, 'nome')}
               onChange={(selectedValue) => !selectedValue ? setEmpresaEditado('') : setEmpresaEditado(selectedValue.label)}
@@ -194,7 +195,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
                 container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px]'),
                 control: () => ('px-2 mt-[6px] flex items-center'),
                 input: () => ('text-gray-400'),
-                menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full max-h-24'),
+                menu: () => ('mb-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full max-h-24'),
                 menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-24'),
                 option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
               }}
@@ -208,7 +209,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
               type='date'
               name='data_cessao'
               id='data_cessao'
-              className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 '
+              className='dark:bg-neutral-800 border rounded dark:[color-scheme:dark]  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 '
               placeholder='Selecionar data da cessão'
               value={dataCessaoEditado}
               onChange={(e) => setDataCessaoEditado(e.target.value)}>
@@ -218,6 +219,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
             <label className='text-[14px] font-medium' htmlFor="rep_comercial">Rep. Comercial</label>
             <Select 
+              menuPlacement='top'
               options={teles}
               defaultValue={teles[parseInt(precInfo.tele_id)]}
               onChange={(selectedValue) => !selectedValue ? setRepComercialEditado('') : setRepComercialEditado(selectedValue.label)}
@@ -230,7 +232,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
                 container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px]'),
                 control: () => ('px-2 mt-[6px] flex items-center'),
                 input: () => ('text-gray-400'),
-                menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full max-h-24'),
+                menu: () => ('mb-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full max-h-24'),
                 menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-24'),
                 option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
               }}
@@ -240,6 +242,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
             <label className='text-[14px] font-medium' htmlFor="escrevente">Escrevente</label>
             <Select
+              menuPlacement='top'
               defaultValue={handleSelectValues(escreventes, 'nome')[parseInt(precInfo.escrevente_id) - 1]}
               options={handleSelectValues(escreventes, 'nome')}
               onChange={(selectedValue) => !selectedValue ? setEscreventeEditado('') : setEscreventeEditado(selectedValue.label)}
@@ -252,7 +255,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
                 container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px]'),
                 control: () => ('px-2 mt-[6px] flex items-center'),
                 input: () => ('text-gray-400'),
-                menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full max-h-24'),
+                menu: () => ('mb-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full max-h-24'),
                 menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-24'),
                 option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
               }}

@@ -32,8 +32,6 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
 
     console.log(cessoes)
 
-    console.log(cessionario)
-
     const customStyles = {
         control: base => ({
             ...base,
@@ -52,7 +50,14 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                     <div className='flex flex-col '>
                         <div className='flex items-center gap-5 mb-[16px]'>
                             <span className="font-[700] dark:text-white" >Informações Gerais</span>
-                            <Modal tituloModal={'Editar cessão'}>
+                            <Modal
+                                botaoAbrirModal={
+                                    <button className='hover:bg-neutral-100 flex items-center justify-center dark:hover:bg-neutral-800 rounded p-[1px]'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[20px] h-[20px] dark:text-white ">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                        </svg>
+                                    </button>}
+                                tituloModal={'Editar cessão'}>
                                 <EditarPrec precInfo={precInfo} varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} />
                             </Modal>
                         </div>
@@ -145,7 +150,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                     </div>
                 </div>
             </div>
-            <ListaCessionarios cessionario={cessionario} precInfo={precInfo} />
+            <ListaCessionarios cessionario={cessionario} precInfo={precInfo} users={users}/>
             <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                 <span className="font-[700] dark:text-white mb-[16px]" id='juridico'>Jurídico</span>
                 <p className='text-[12px] text-neutral-600 dark:text-neutral-400 font-medium'>Data de Atualização: {precInfo.juridico_feito_data.split('/')[1]}/{precInfo.juridico_feito_data.split('/')[0]}/{precInfo.juridico_feito_data.split('/')[2]}</p>
@@ -157,55 +162,57 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                     <Topics texto={'Obs Jurídico'} atualizacaoJuridico={precInfo.juridico_obs} />
                 </div>
             </div>
-            {cessoes.length != 0 ? (
-                <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
-                    <>
-                        <span className="font-[700] dark:text-white mb-[16px]" id='relacionados'>Relacionados</span>
-                        <div className="mb-4 dark:bg-neutral-900">
-                            {cessoes.map(cessao => (
-                                <div className="flex flex-col mb-4 border dark:border-neutral-600 dark:bg-neutral-900 px-2 py-1 rounded" key={cessao.id}>
+            {
+                cessoes.length != 0 ? (
+                    <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
+                        <>
+                            <span className="font-[700] dark:text-white mb-[16px]" id='relacionados'>Relacionados</span>
+                            <div className="mb-4 dark:bg-neutral-900">
+                                {cessoes.map(cessao => (
+                                    <div className="flex flex-col mb-4 border dark:border-neutral-600 dark:bg-neutral-900 px-2 py-1 rounded" key={cessao.id}>
 
-                                    <>
-                                        <div className="flex border-b dark:border-neutral-600">
-                                            <div className="border-r dark:border-neutral-600  pr-2 my-3 flex items-center justify-center">
-                                                <span className="font-[700] dark:text-white">{cessao.id}</span>
+                                        <>
+                                            <div className="flex border-b dark:border-neutral-600">
+                                                <div className="border-r dark:border-neutral-600  pr-2 my-3 flex items-center justify-center">
+                                                    <span className="font-[700] dark:text-white">{cessao.id}</span>
+                                                </div>
+                                                <div className="flex flex-col justify-center text-[12px] pl-2">
+                                                    <Link to={`/precatorio/${String(cessao.id)}`}><span className="font-bold dark:text-white hover:underline">{cessao.precatorio}</span></Link>
+                                                    <span className="text-neutral-400 font-medium line-clamp-1">{cessao.cedente}</span>
+                                                </div>
                                             </div>
-                                            <div className="flex flex-col justify-center text-[12px] pl-2">
-                                                <Link to={`/precatorio/${String(cessao.id)}`}><span className="font-bold dark:text-white hover:underline">{cessao.precatorio}</span></Link>
-                                                <span className="text-neutral-400 font-medium line-clamp-1">{cessao.cedente}</span>
+                                            <div className="text-[10px] dark:border-neutral-700  py-3 px-2 flex gap-2 flex-wrap items-center dark:bg-neutral-900 ">
+                                                <span style={{ backgroundColor: `${cessao.statusColor}` }} className={`px-2 py-1 rounded brightness-110`}><span className="text-black font-bold">{cessao.status}</span></span>
+
+                                                <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 `}>
+                                                    <span className="text-black font-bold dark:text-neutral-100">{cessao.ente_id}</span>
+                                                </span>
+
+                                                <span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}>
+                                                    <span className="text-black font-bold dark:text-neutral-100">{cessao.natureza}</span>
+                                                </span>
+
+                                                {cessao.data_cessao ? (<span className="px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 font-bold dark:text-neutral-100 ">{cessao.data_cessao.split('-')[2]}/{cessao.data_cessao.split('-')[1]}/{cessao.data_cessao.split('-')[0]}</span>) : null}
+
+                                                {cessao.empresa_id ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.empresa_id}</span></span>) : null}
+
+                                                {cessao.adv ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.adv}</span></span>) : null}
+
+                                                {cessao.falecido ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.falecido}</span></span>) : null}
                                             </div>
-                                        </div>
-                                        <div className="text-[10px] dark:border-neutral-700  py-3 px-2 flex gap-2 flex-wrap items-center dark:bg-neutral-900 ">
-                                            <span style={{ backgroundColor: `${cessao.statusColor}` }} className={`px-2 py-1 rounded brightness-110`}><span className="text-black font-bold">{cessao.status}</span></span>
-
-                                            <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 `}>
-                                                <span className="text-black font-bold dark:text-neutral-100">{cessao.ente_id}</span>
-                                            </span>
-
-                                            <span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}>
-                                                <span className="text-black font-bold dark:text-neutral-100">{cessao.natureza}</span>
-                                            </span>
-
-                                            {cessao.data_cessao ? (<span className="px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 font-bold dark:text-neutral-100 ">{cessao.data_cessao.split('-')[2]}/{cessao.data_cessao.split('-')[1]}/{cessao.data_cessao.split('-')[0]}</span>) : null}
-
-                                            {cessao.empresa_id ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.empresa_id}</span></span>) : null}
-
-                                            {cessao.adv ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.adv}</span></span>) : null}
-
-                                            {cessao.falecido ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.falecido}</span></span>) : null}
-                                        </div>
-                                    </>
+                                        </>
 
 
 
-                                </div>
-                            ))}
-                        </div>
-                    </>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
 
 
-                </div>
-            ) : null}
-        </div>
+                    </div>
+                ) : null
+            }
+        </div >
     )
 }
