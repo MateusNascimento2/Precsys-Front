@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
+import CurrencyFormat from 'react-currency-format';
 
 export default function EditarCessionario({ cessionario, users }) {
   const [cessionarioEditado, setCessionarioEditado] = useState(cessionario.nome_user ? cessionario.nome_user : null);
@@ -7,7 +8,10 @@ export default function EditarCessionario({ cessionario, users }) {
   const [comissaoEditado, setComissaoEditado] = useState(cessionario.comissao ? cessionario.comissao : null);
   const [percentualEditado, setPercentualEditado] = useState(cessionario.percentual ? cessionario.percentual : null);
   const [expectativaEditado, setExpectativaEditado] = useState(cessionario.exp_recebimento ? cessionario.exp_recebimento : null);
-  const [obsEditado, setObsEditado] = useState(cessionario.obs ? cessionario.obs : '')
+  const [obsEditado, setObsEditado] = useState(cessionario.obs ? cessionario.obs : '');
+  const [assinaturaEditado, setAssinaturaEditado] = useState(cessionario.assinatura === '1' ? true : null);
+  const [expedidoEditado, setExpedidoEditado] = useState(cessionario.expedido === '1' ? true : null);
+  const [recebidoEditado, setRecebidoEditado] = useState(cessionario.recebido === '1' ? true : null);
   console.log(users)
 
   const handleSelectValues = (array, value) => {
@@ -25,6 +29,14 @@ export default function EditarCessionario({ cessionario, users }) {
     e.preventDefault();
     console.log('submitado')
     console.log(cessionarioEditado)
+    console.log(valorPagoEditado)
+    console.log(comissaoEditado)
+    console.log(percentualEditado)
+    console.log(expectativaEditado)
+    console.log(obsEditado)
+    console.log(assinaturaEditado)
+    console.log(expedidoEditado)
+    console.log(recebidoEditado)
   }
 
   const customStyles = {
@@ -33,6 +45,7 @@ export default function EditarCessionario({ cessionario, users }) {
       minHeight: 21
     })
   };
+
 
 
   return (
@@ -69,13 +82,20 @@ export default function EditarCessionario({ cessionario, users }) {
               htmlFor="valor_pago">
               Valor Pago
             </label>
-            <input
-              className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-              placeholder='Valor pago'
+            <CurrencyFormat
+              placeholder={'Valor pago'}
               value={valorPagoEditado}
-              onChange={(e) => setValorPagoEditado(e.target.value)}>
-
-            </input>
+              thousandSeparator={'.'}
+              decimalSeparator={','}
+              decimalScale={2}
+              fixedDecimalScale={true}
+              prefix={'R$ '}
+              className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
+              onValueChange={(values) => {
+                const {formattedValue, value} = values;
+                setValorPagoEditado(formattedValue)
+              }}
+            />
           </div>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
@@ -84,13 +104,20 @@ export default function EditarCessionario({ cessionario, users }) {
               htmlFor="comissao">
               Comissâo
             </label>
-            <input
-              className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-              placeholder='Valor pago'
+            <CurrencyFormat
+              placeholder={'Comissâo'}
               value={comissaoEditado}
-              onChange={(e) => setComissaoEditado(e.target.value)}>
-
-            </input>
+              thousandSeparator={'.'}
+              decimalSeparator={','}
+              decimalScale={2}
+              fixedDecimalScale={true}
+              prefix={'R$ '}
+              className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
+              onValueChange={(values) => {
+                const {formattedValue, value} = values;
+                setComissaoEditado(formattedValue)
+              }}
+            />
           </div>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
@@ -99,13 +126,20 @@ export default function EditarCessionario({ cessionario, users }) {
               htmlFor="comissao">
               Porcentagem
             </label>
-            <input
-              className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-              placeholder='Valor pago'
+            <CurrencyFormat
+              placeholder={'Percentual'}
               value={percentualEditado}
-              onChange={(e) => setPercentualEditado(e.target.value)}>
-
-            </input>
+              thousandSeparator={'.'}
+              decimalSeparator={','}
+              decimalScale={2}
+              fixedDecimalScale={true}
+              suffix={'%'}
+              className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
+              onValueChange={(values) => {
+                const {formattedValue, value} = values;
+                setPercentualEditado(formattedValue)
+              }}
+            />
           </div>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
@@ -114,34 +148,28 @@ export default function EditarCessionario({ cessionario, users }) {
               htmlFor="comissao">
               Expectativa
             </label>
-            <input
-              className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-              placeholder='Valor pago'
+            <CurrencyFormat
+              placeholder={'Comissâo'}
               value={expectativaEditado}
-              onChange={(e) => setExpectativaEditado(e.target.value)}>
-
-            </input>
-          </div>
-
-          <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
-            <label
-              className='text-[14px] font-medium'
-              htmlFor="comissao">
-              Expectativa
-            </label>
-            <input
+              thousandSeparator={'.'}
+              decimalSeparator={','}
+              decimalScale={2}
+              fixedDecimalScale={true}
+              prefix={'R$ '}
               className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-              placeholder='Valor pago'
-              value={expectativaEditado}
-              onChange={(e) => setExpectativaEditado(e.target.value)}>
-
-            </input>
+              onValueChange={(values) => {
+                const {formattedValue, value} = values;
+                setExpectativaEditado(formattedValue)
+              }}
+            />
           </div>
 
 
 
 
-          <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2 col-span-2'>
+
+
+          <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2 col-span-1'>
             <label
               className='text-[14px] font-medium'
               htmlFor="obs">
@@ -157,15 +185,15 @@ export default function EditarCessionario({ cessionario, users }) {
             </textarea>
           </div>
 
-          <div className='md:grid flex flex-col items-center justify-center gap-2 md:grid-cols-2 md:col-span-2 md:justify-between md:place-items-center'>
+          <div className='md:grid flex flex-col items-center justify-center gap-2 md:grid-cols-2 md:col-span-2 md:justify-between md:place-items-start'>
             <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
               <label
                 className='text-[14px] font-medium'
                 htmlFor="comissao">
                 Assinatura
               </label>
-              <div className="flex items-center justify-center gap-2 relative">
-                <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" />
+              <div className="flex items-center gap-2 relative">
+                <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={assinaturaEditado} onChange={() => setAssinaturaEditado(!assinaturaEditado)}/>
                 <span
                   className="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -201,8 +229,8 @@ export default function EditarCessionario({ cessionario, users }) {
                 htmlFor="comissao">
                 Ofício Expedido
               </label>
-              <div className="flex items-center justify-center gap-2 relative">
-                <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" />
+              <div className="flex items-center  gap-2 relative">
+                <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={expedidoEditado} onChange={() => setExpedidoEditado(!expedidoEditado)}/>
                 <span
                   className="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -238,8 +266,8 @@ export default function EditarCessionario({ cessionario, users }) {
                 htmlFor="comissao">
                 Recebido
               </label>
-              <div className="flex items-center justify-center gap-2 relative">
-                <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" />
+              <div className="flex items-center gap-2 relative">
+                <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={recebidoEditado} onChange={() => setRecebidoEditado(!recebidoEditado)}/>
                 <span
                   className="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -252,7 +280,7 @@ export default function EditarCessionario({ cessionario, users }) {
               </div>
             </div>
 
-            <div className='dark:text-white text-black flex flex-col items-center justify-center gap-2 py-2 px-2'>
+            <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
               <span className='text-[14px] font-medium mb-1'>Comprovante de Pagamento</span>
               <label htmlFor="nota">
 
