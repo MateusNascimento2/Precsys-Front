@@ -1,8 +1,10 @@
 import React from 'react';
 import Modal from './Modal';
 import EditarCessionario from './EditarCessionario';
+import AdicionarCessionario from './AdicionarCessionario';
 
 export default function ListaCessionarios({ cessionario, precInfo, users }) {
+
   function changeStringFloat(a) {
     const virgulaParaBarra = a.replace(',', '/');
     const valorSemPonto = virgulaParaBarra.replace(/\./g, '');
@@ -51,6 +53,18 @@ export default function ListaCessionarios({ cessionario, precInfo, users }) {
       <div className='w-full mb-[60px] flex flex-col'>
         <div className='mb-[16px] flex items-center gap-5'>
           <span className="font-[700] dark:text-white " id='cessionarios'>Cessionários</span>
+          <Modal
+            botaoAbrirModal={
+              <button title='Adicionar cessionário' className='hover:bg-neutral-100 flex items-center text-center justify-center dark:hover:bg-neutral-800 rounded p-[1px]'>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[20px] h-[20px] dark:text-white">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+
+              </button>
+            }
+            tituloModal={`Adicionar cessionário`}>
+            <AdicionarCessionario users={users} />
+          </Modal>
 
         </div>
         <div className='overflow-x-auto w-full'>
@@ -79,14 +93,14 @@ export default function ListaCessionarios({ cessionario, precInfo, users }) {
               <div className='min-w-[50px] w-[5%] ml-auto flex justify-center dark:text-neutral-200'>
                 <Modal
                   botaoAbrirModal={
-                    <button className='hover:bg-neutral-100 flex items-center text-center justify-center dark:hover:bg-neutral-800 rounded p-[1px]'>
+                    <button title='Editar cessionário' className='hover:bg-neutral-100 flex items-center text-center justify-center dark:hover:bg-neutral-800 rounded p-[1px]'>
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[20px] h-[20px] dark:text-white ">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                       </svg>
                     </button>
                   }
                   tituloModal={`Editar cessionário #${c.id}`}>
-                  <EditarCessionario cessionario={c} users={users}/>
+                  <EditarCessionario cessionario={c} users={users} />
                 </Modal>
               </div>
             </div>

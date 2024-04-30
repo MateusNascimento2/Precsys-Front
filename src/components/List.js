@@ -6,20 +6,17 @@ import DotsButton from "./DotsButton";
 import { List, AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache } from 'react-virtualized'
 import { Link } from "react-router-dom";
 import { Tooltip } from 'react-tooltip';
-import Modal from './Modal';
-import AdicionarCessao from "./AdicionarCessao";
+
 
 
 export default function Lista({ searchQuery, selectedFilters, setData }) {
+
   const [cessoes, setCessoes] = useState([]);
   const [status, setStatus] = useState([]);
   const [orcamentos, setOrcamentos] = useState([]);
   const [natureza, setNatureza] = useState([]);
   const [empresas, setEmpresas] = useState([]);
-  const [varas, setVaras] = useState([]);
-  const [teles, setTeles] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [escreventes, setEscreventes] = useState([]);
+  
   const [isLoading, setIsLoading] = useState(true);
   const [datas, setDatas] = useState([]);
   const axiosPrivate = useAxiosPrivate()
@@ -55,10 +52,6 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
     fetchData('/orcamentos', setOrcamentos);
     fetchData('/natureza', setNatureza);
     fetchData('/empresas', setEmpresas);
-    fetchData('/vara', setVaras);
-    fetchData('/tele', setTeles);
-    fetchData('/escreventes', setEscreventes);
-    fetchData('/users', setUsers);
 
 
     return () => {
@@ -294,6 +287,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
     );
   };
 
+
   return (
     <>
       {isLoading ? ( // Verifica se isLoading é verdadeiro
@@ -303,14 +297,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
           {({ height, isScrolling, onChildScroll, registerChild, scrollTop }) => (
             <section className="container dark:bg-neutral-900" style={{ width: "100%" }} >
               <div className="dark:bg-neutral-900 relative h-full">
-                <Modal
-                  botaoAbrirModal={
-                    <button className='hover:bg-neutral-100 flex items-center justify-center dark:text-white dark:bg-neutral-800 dark:border-neutral-600 dark:hover:bg-neutral-700 rounded border text-[14px] p-1 mb-3 lg:mb-0 lg:p-2 lg:text-[16px] '>
-                      Adicionar Cessão
-                    </button>}
-                  tituloModal={'Adicionar cessão'}>
-                  <AdicionarCessao varas={varas} orcamentos={orcamentos} naturezas={natureza} empresas={empresas} users={users} teles={teles} escreventes={escreventes} />
-                </Modal>
+               
                 <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">Mostrando {filteredCessoes.length} de {cessoes.length} cessões</p>
 
                 <AutoSizer style={{ width: '100%', height: '100%' }}>

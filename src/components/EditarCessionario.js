@@ -23,6 +23,7 @@ export default function EditarCessionario({ cessionario, users }) {
     });
   }
 
+
   console.log(handleSelectValues(users, 'nome'))
 
   const handleEditCessionarioForm = (e) => {
@@ -92,7 +93,7 @@ export default function EditarCessionario({ cessionario, users }) {
               prefix={'R$ '}
               className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
               onValueChange={(values) => {
-                const {formattedValue, value} = values;
+                const { formattedValue, value } = values;
                 setValorPagoEditado(formattedValue)
               }}
             />
@@ -102,10 +103,10 @@ export default function EditarCessionario({ cessionario, users }) {
             <label
               className='text-[14px] font-medium'
               htmlFor="comissao">
-              Comissâo
+              Comissão
             </label>
             <CurrencyFormat
-              placeholder={'Comissâo'}
+              placeholder={'Comissão'}
               value={comissaoEditado}
               thousandSeparator={'.'}
               decimalSeparator={','}
@@ -114,7 +115,7 @@ export default function EditarCessionario({ cessionario, users }) {
               prefix={'R$ '}
               className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
               onValueChange={(values) => {
-                const {formattedValue, value} = values;
+                const { formattedValue, value } = values;
                 setComissaoEditado(formattedValue)
               }}
             />
@@ -136,7 +137,7 @@ export default function EditarCessionario({ cessionario, users }) {
               suffix={'%'}
               className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
               onValueChange={(values) => {
-                const {formattedValue, value} = values;
+                const { formattedValue, value } = values;
                 setPercentualEditado(formattedValue)
               }}
             />
@@ -158,7 +159,7 @@ export default function EditarCessionario({ cessionario, users }) {
               prefix={'R$ '}
               className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
               onValueChange={(values) => {
-                const {formattedValue, value} = values;
+                const { formattedValue, value } = values;
                 setExpectativaEditado(formattedValue)
               }}
             />
@@ -185,15 +186,15 @@ export default function EditarCessionario({ cessionario, users }) {
             </textarea>
           </div>
 
-          <div className='md:grid flex flex-col items-center justify-center gap-2 md:grid-cols-2 md:col-span-2 md:justify-between md:place-items-start'>
-            <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+          <div className='md:grid flex flex-col justify-center gap-4 md:grid-cols-2 md:col-span-2 md:justify-between md:place-items-start'>
+            <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
               <label
                 className='text-[14px] font-medium'
-                htmlFor="comissao">
+                htmlFor="assinatura">
                 Assinatura
               </label>
               <div className="flex items-center gap-2 relative">
-                <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={assinaturaEditado} onChange={() => setAssinaturaEditado(!assinaturaEditado)}/>
+                <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={assinaturaEditado} onChange={() => setAssinaturaEditado(!assinaturaEditado)} />
                 <span
                   className="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -206,7 +207,7 @@ export default function EditarCessionario({ cessionario, users }) {
               </div>
             </div>
 
-            <div className='dark:text-white text-black flex flex-col items-center justify-center md:items-start gap-2 py-2 px-2'>
+            <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2'>
               <span className='text-[14px] font-medium mb-1'>Nota</span>
               <label htmlFor="nota">
 
@@ -223,14 +224,14 @@ export default function EditarCessionario({ cessionario, users }) {
 
             </div>
 
-            <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+            <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
               <label
                 className='text-[14px] font-medium'
-                htmlFor="comissao">
+                htmlFor="oficioExpedido">
                 Ofício Expedido
               </label>
               <div className="flex items-center  gap-2 relative">
-                <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={expedidoEditado} onChange={() => setExpedidoEditado(!expedidoEditado)}/>
+                <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={expedidoEditado} onChange={() => setExpedidoEditado(!expedidoEditado)} />
                 <span
                   className="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -243,14 +244,14 @@ export default function EditarCessionario({ cessionario, users }) {
               </div>
             </div>
 
-            <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+            <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
               <span className='text-[14px] font-medium mb-1'>Ofício de Transferência</span>
-              <label htmlFor="nota">
+              <label htmlFor="oficioTransferencia">
 
                 <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
                 <input
-                  name='nota'
-                  id='nota'
+                  name='oficioTransferencia'
+                  id='oficioTransferencia'
                   type='file'
                   className='hidden'>
                 </input>
@@ -260,14 +261,14 @@ export default function EditarCessionario({ cessionario, users }) {
 
             </div>
 
-            <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+            <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
               <label
                 className='text-[14px] font-medium'
-                htmlFor="comissao">
+                htmlFor="recebido">
                 Recebido
               </label>
               <div className="flex items-center gap-2 relative">
-                <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={recebidoEditado} onChange={() => setRecebidoEditado(!recebidoEditado)}/>
+                <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={recebidoEditado} onChange={() => setRecebidoEditado(!recebidoEditado)} />
                 <span
                   className="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -280,14 +281,31 @@ export default function EditarCessionario({ cessionario, users }) {
               </div>
             </div>
 
-            <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+            <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
               <span className='text-[14px] font-medium mb-1'>Comprovante de Pagamento</span>
-              <label htmlFor="nota">
+              <label htmlFor="comprovantePagamento">
 
                 <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
                 <input
-                  name='nota'
-                  id='nota'
+                  name='comprovantePagamento'
+                  id='comprovantePagamento'
+                  type='file'
+                  className='hidden'>
+                </input>
+
+              </label>
+
+
+            </div>
+
+            <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
+              <span className='text-[14px] font-medium mb-1'>Comprovante Cedente</span>
+              <label htmlFor="comprovanteCedente">
+
+                <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
+                <input
+                  name='comprovanteCedente'
+                  id='comprovanteCedente'
                   type='file'
                   className='hidden'>
                 </input>

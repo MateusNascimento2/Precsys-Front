@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import Select from 'react-select';
+import CurrencyFormat from 'react-currency-format';
 
 export default function AdicionarCessao({varas, orcamentos, naturezas, empresas, users, teles, escreventes}) {
-  const [precatorio, setPrecatorio] = useState(null);
-  const [processo, setProcesso] = useState(null);
-  const [cedente, setCedente] = useState(null);
+  const [precatorio, setPrecatorio] = useState('');
+  const [processo, setProcesso] = useState('');
+  const [cedente, setCedente] = useState('');
   const [vara, setVara] = useState(null);
   const [ente, setEnte] = useState(null);
   const [ano, setAno] = useState(null);
@@ -61,7 +62,7 @@ export default function AdicionarCessao({varas, orcamentos, naturezas, empresas,
 
     <form action="" onSubmit={(e) => handleEditCessaoForm(e)} className='mt-[20px]'>
       <div className='px-3 '>
-        <div className='h-[400px] overflow-y-auto grid grid-cols-1 md:grid-cols-2'>
+        <div className='grid grid-cols-1 md:grid-cols-2'>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
             <label
@@ -69,12 +70,16 @@ export default function AdicionarCessao({varas, orcamentos, naturezas, empresas,
               htmlFor="precatorio">
               Precatório
             </label>
-            <input
+            <CurrencyFormat
               className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 '
-              placeholder='Número do precatório'
+              placeholder={'Número do precatório'}
+              format={'####.#####-#'}
               value={precatorio}
-              onChange={(e) => setPrecatorio(e.target.value)}>
-            </input>
+              onValueChange={(values) => {
+                const {formattedValue, value} = values;
+                setPrecatorio(formattedValue)
+              }}>
+            </CurrencyFormat>
           </div>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
@@ -83,13 +88,17 @@ export default function AdicionarCessao({varas, orcamentos, naturezas, empresas,
               htmlFor="processo">
               Processo
             </label>
-            <input
+            <CurrencyFormat
               className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 '
-              placeholder='Número do processo'
+              placeholder={'Número do processo'}
+              format={'#######-##.####.#.##.####'}
               value={processo}
-              onChange={(e) => setProcesso(e.target.value)}>
+              onChange={(values) => {
+                const {formattedValue, value} = values;
+                setProcesso(formattedValue)
+              }}>
 
-            </input>
+            </CurrencyFormat>
           </div>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
@@ -259,14 +268,6 @@ export default function AdicionarCessao({varas, orcamentos, naturezas, empresas,
         </div>
 
       </div>
-
-
-      <button
-        type="submit"
-        className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
-        Salvar
-      </button>
-
 
     </form>
   )

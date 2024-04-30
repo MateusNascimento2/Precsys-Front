@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
+import CurrencyFormat from 'react-currency-format';
 
 export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, empresas, users, teles, escreventes }) {
   const [precatorioEditado, setPrecatorioEditado] = useState(precInfo.precatorio ? precInfo.precatorio : null);
@@ -69,12 +70,16 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
               htmlFor="precatorio">
               Precatório
             </label>
-            <input
+            <CurrencyFormat
               className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 '
-              placeholder='Número do precatório'
+              placeholder={'Número do precatório'}
+              format={'####.#####-#'}
               value={precatorioEditado}
-              onChange={(e) => setPrecatorioEditado(e.target.value)}>
-            </input>
+              onValueChange={(values) => {
+                const { formattedValue, value } = values;
+                setPrecatorioEditado(formattedValue)
+              }}>
+            </CurrencyFormat>
           </div>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
@@ -83,13 +88,17 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
               htmlFor="processo">
               Processo
             </label>
-            <input
+            <CurrencyFormat
               className='dark:bg-neutral-800 border rounded  dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 '
-              placeholder='Número do processo'
+              placeholder={'Número do processo'}
+              format={'#######-##.####.#.##.####'}
               value={processoEditado}
-              onChange={(e) => setProcessoEditado(e.target.value)}>
+              onChange={(values) => {
+                const {formattedValue, value} = values;
+                setProcessoEditado(formattedValue)
+              }}>
 
-            </input>
+            </CurrencyFormat>
           </div>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
@@ -218,7 +227,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
             <label className='text-[14px] font-medium' htmlFor="rep_comercial">Rep. Comercial</label>
-            <Select 
+            <Select
               menuPlacement='top'
               options={teles}
               defaultValue={teles[parseInt(precInfo.tele_id)]}
@@ -265,14 +274,6 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
         </div>
 
       </div>
-
-
-      <button
-        type="submit"
-        className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
-        Salvar
-      </button>
-
 
     </form>
 
