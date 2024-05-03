@@ -57,8 +57,18 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                                             <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                                         </svg>
                                     </button>}
-                                tituloModal={'Editar cessão'}>
-                                <EditarPrec precInfo={precInfo} varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} />
+                                tituloModal={'Editar cessão'}
+                                botaoSalvar={
+                                    <button
+                                        className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-1 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
+                                        Salvar
+                                    </button>
+                                }
+                            >
+                                <div className='h-[450px] overflow-auto'>
+                                    <EditarPrec precInfo={precInfo} varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} />
+                                </div>
+
                             </Modal>
                         </div>
 
@@ -150,7 +160,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                     </div>
                 </div>
             </div>
-            <ListaCessionarios cessionario={cessionario} precInfo={precInfo} users={users}/>
+            <ListaCessionarios cessionario={cessionario} precInfo={precInfo} users={users} />
             <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                 <span className="font-[700] dark:text-white mb-[16px]" id='juridico'>Jurídico</span>
                 <p className='text-[12px] text-neutral-600 dark:text-neutral-400 font-medium'>Data de Atualização: {precInfo.juridico_feito_data.split('/')[1]}/{precInfo.juridico_feito_data.split('/')[0]}/{precInfo.juridico_feito_data.split('/')[2]}</p>

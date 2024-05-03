@@ -11,6 +11,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function AllCessoes() {
+  const [voltarAdicionarCessao, setVoltarAdicionarCessao] = useState(false)
   const [varas, setVaras] = useState([]);
   const [teles, setTeles] = useState([]);
   const [users, setUsers] = useState([]);
@@ -67,8 +68,14 @@ export default function AllCessoes() {
 
   const addCessionario = () => {
     setShowModalAdicionarCessionario(true)
-    const novoCessionario = <AdicionarCessionario key={cessionarios.length} users={users} />;
-    setCessionarios([...cessionarios, novoCessionario]);
+    if (voltarAdicionarCessao) {
+      setVoltarAdicionarCessao(false)
+      return
+    } else {
+      const novoCessionario = <AdicionarCessionario key={cessionarios.length} users={users} />;
+      setCessionarios([...cessionarios, novoCessionario]);
+    }
+
   }
 
   const handleExcluirCessionario = (index) => {
@@ -107,30 +114,38 @@ export default function AllCessoes() {
     setSelectedCheckboxes(childData);
   };
 
-  const scroll = (id) => {
-    const section = document.getElementById(id);
-    if (!section) {
-      return;
-    }
-    section.scrollIntoView({ behavior: 'smooth' });
-  };
-
+  const handleVoltarAdicionarCessao = () => {
+    setVoltarAdicionarCessao(true)
+    setShowModalAdicionarCessionario(prevState => !prevState);
+  }
 
   return (
     <>
       <Header />
       <main className={show ? 'container mx-auto pt-[120px] dark:bg-neutral-900 h-full relative' : 'relative container mx-auto pt-[120px] dark:bg-neutral-900 h-full'}>
         <div className='px-[20px]'>
-          <div className='flex justify-between items-end'>
-            <h2 className='font-[700] text-[32px] mt-[16px] dark:text-white' id='cessoes'>Cessões</h2>
+          <div className='flex justify-between items-center md:items-end'>
+            <h2 className='font-[700] text-[32px] md:mt-[16px] dark:text-white' id='cessoes'>Cessões</h2>
             <Modal
               botaoAbrirModal={
-                <button title='Adicionar nova cessão' className='hover:bg-neutral-100 flex items-center justify-center dark:text-white dark:bg-neutral-800 dark:border-neutral-800 dark:hover:bg-neutral-700 rounded-full border text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[24px] w-[30px] h-[30px] md:w-[40px] md:h-[40px] '>
+                <button title='Adicionar nova cessão' className='hover:bg-neutral-100 flex items-center justify-center dark:text-white dark:bg-neutral-800 dark:border-neutral-800 dark:hover:bg-neutral-700 rounded-full border text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px] '>
                   +
                 </button>}
-              tituloModal={'Adicionar cessão'}
+              tituloModal=
+              {showModalAdicionarCessionario && cessionarios.length > 0 
+                ? (
+                  <div className='flex gap-2 items-center'>
+                    <button className='rounded hover:bg-neutral-100 dark:hover:bg-neutral-800' onClick={() => handleVoltarAdicionarCessao()}>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+                      </svg>
+                    </button>
+                    <span>Adicionar cessão</span>
+                  </div>
+                ) 
+                : (<span>Adicionar cessão</span>)
+              }
               botaoSalvar={<button
-                onClick={(e) => handleAddCessionario(e)}
                 className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
                 Salvar
               </button>
@@ -141,29 +156,33 @@ export default function AllCessoes() {
                 Adicionar cessionário
               </button>}
             >
-              <div className="">
-                <AdicionarCessao varas={varas} orcamentos={orcamentos} naturezas={natureza} empresas={empresas} users={users} teles={teles} escreventes={escreventes} />
-              </div>
+              <div className='h-[450px] overflow-auto relative'>
+                <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? 'absolute left-[-850px] transition-all ease-in-out duration-300 overflow-hidden' : 'absolute left-0 transition-all ease-in-out duration-300 overflow-y-hidden'}>
+                  <AdicionarCessao varas={varas} orcamentos={orcamentos} naturezas={natureza} empresas={empresas} users={users} teles={teles} escreventes={escreventes} />
+                </div>
 
-              <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "pt-2 mt-[40px] border-t" : 'hidden'}>
+                <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "absolute right-0 transition-all ease-in-out duration-300 overflow-y-auto w-full" : 'w-full absolute right-[850px] transition-all ease-in-out duration-300 overflow-y-hidden'}>
 
-                <div className="flex flex-col gap-10">
-                  {cessionarios.map((componente, index) => (
-                    <div key={index}>
-                      <div className='px-4 flex justify-between'>
-                        <p className='dark:text-white text-black font-medium py-2 text-[18px]'>Adicionar cessionário</p>
-                        <button onClick={() => handleExcluirCessionario(index)} className='rounded hover:bg-neutral-100 float-right dark:hover:bg-neutral-800'>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                          </svg>
-                        </button>
+                  <div className="flex flex-col gap-10">
+                    {cessionarios.map((componente, index) => (
+                      <div key={index}>
+                        <div className='px-4 flex justify-between items-center'>
+                          <p className='dark:text-white text-black font-medium py-2 text-[18px]'>Adicionar cessionário</p>
+                          <button onClick={() => handleExcluirCessionario(index)} className='rounded hover:bg-neutral-100 float-right w-4 h-4 dark:hover:bg-neutral-800'>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                        {componente}
                       </div>
-                      {componente}
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+
                 </div>
 
               </div>
+
 
 
             </Modal>

@@ -320,14 +320,6 @@ export default function EditarCessionario({ cessionario, users }) {
 
         </div>
 
-
-
-
-        <button
-          type="submit"
-          className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
-          Salvar
-        </button>
       </div>
 
 

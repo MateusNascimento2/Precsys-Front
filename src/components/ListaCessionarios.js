@@ -55,15 +55,25 @@ export default function ListaCessionarios({ cessionario, precInfo, users }) {
           <span className="font-[700] dark:text-white " id='cessionarios'>Cessionários</span>
           <Modal
             botaoAbrirModal={
-              <button title='Adicionar cessionário' className='hover:bg-neutral-100 flex items-center text-center justify-center dark:hover:bg-neutral-800 rounded p-[1px]'>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[20px] h-[20px] dark:text-white">
+              <button title='Adicionar cessionário' className='hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:bg-neutral-800 dark:border-neutral-800 dark:hover:bg-neutral-700 rounded-full border w-[25px] h-[25px] p-1'>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[15px] h-[15px] dark:text-white">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
 
               </button>
             }
-            tituloModal={`Adicionar cessionário`}>
-            <AdicionarCessionario users={users} />
+            tituloModal={`Adicionar cessionário`}
+            botaoSalvar={<button
+              className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
+              Salvar
+            </button>
+            }
+          >
+            <div className='h-[450px] overflow-auto'>
+              <AdicionarCessionario users={users} />
+
+            </div>
+
           </Modal>
 
         </div>
@@ -99,7 +109,12 @@ export default function ListaCessionarios({ cessionario, precInfo, users }) {
                       </svg>
                     </button>
                   }
-                  tituloModal={`Editar cessionário #${c.id}`}>
+                  tituloModal={`Editar cessionário #${c.id}`}
+                  botaoSalvar={<button
+                    className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
+                    Salvar
+                  </button>}
+                >
                   <EditarCessionario cessionario={c} users={users} />
                 </Modal>
               </div>

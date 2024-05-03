@@ -61,7 +61,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
 
 
     <form action="" onSubmit={(e) => handleEditCessaoForm(e)} className='mt-[20px]'>
-      <div className='px-3 '>
+      <div className='px-2'>
         <div className='h-[400px] overflow-y-auto grid grid-cols-1 md:grid-cols-2'>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
