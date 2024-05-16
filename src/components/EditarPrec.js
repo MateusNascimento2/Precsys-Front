@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import CurrencyFormat from 'react-currency-format';
 
-export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, empresas, users, teles, escreventes }) {
-  const [precatorioEditado, setPrecatorioEditado] = useState(precInfo.precatorio ? precInfo.precatorio : null);
-  const [processoEditado, setProcessoEditado] = useState(precInfo.processo ? precInfo.processo : null);
-  const [cedenteEditado, setCedenteEditado] = useState(precInfo.cedente ? precInfo.cedente : null);
-  const [varaEditado, setVaraEditado] = useState(precInfo.nome_vara ? precInfo.nome_vara : null);
-  const [enteEditado, setEnteEditado] = useState(precInfo.nome_ente ? precInfo.nome_ente : null);
-  const [anoEditado, setAnoEditado] = useState(precInfo.ano ? precInfo.ano : null);
-  const [naturezaEditado, setNaturezaEditado] = useState(precInfo.nome_natureza ? precInfo.nome_natureza : null);
-  const [empresaEditado, setEmpresaEditado] = useState(precInfo.nome_empresa ? precInfo.nome_empresa : null);
-  const [dataCessaoEditado, setDataCessaoEditado] = useState(precInfo.data_cessao ? precInfo.data_cessao : null);
-  const [repComercialEditado, setRepComercialEditado] = useState(precInfo.nome_tele ? precInfo.nome_tele : null);
-  const [escreventeEditado, setEscreventeEditado] = useState(precInfo.nome_escrevente ? precInfo.nome_escrevente : null);
+export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, empresas, users, teles, escreventes, enviarValores }) {
+  const [precatorioEditado, setPrecatorioEditado] = useState(precInfo.precatorio ? precInfo.precatorio : '');
+  const [processoEditado, setProcessoEditado] = useState(precInfo.processo ? precInfo.processo : '');
+  const [cedenteEditado, setCedenteEditado] = useState(precInfo.cedente ? precInfo.cedente : '');
+  const [varaEditado, setVaraEditado] = useState(precInfo.nome_vara ? precInfo.nome_vara : '');
+  const [enteEditado, setEnteEditado] = useState(precInfo.nome_ente ? precInfo.nome_ente : '');
+  const [anoEditado, setAnoEditado] = useState(precInfo.ano ? precInfo.ano : '');
+  const [naturezaEditado, setNaturezaEditado] = useState(precInfo.nome_natureza ? precInfo.nome_natureza : '');
+  const [empresaEditado, setEmpresaEditado] = useState(precInfo.nome_empresa ? precInfo.nome_empresa : '');
+  const [dataCessaoEditado, setDataCessaoEditado] = useState(precInfo.data_cessao ? precInfo.data_cessao : '');
+  const [repComercialEditado, setRepComercialEditado] = useState(precInfo.nome_tele ? precInfo.nome_tele : '');
+  const [escreventeEditado, setEscreventeEditado] = useState(precInfo.nome_escrevente ? precInfo.nome_escrevente : '');
+
+  useEffect(() => {
+    // Envia os valores dos estados para o componente pai sempre que eles forem alterados
+    const timer = setTimeout(() => {
+      enviarValores({ precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado });
+    }, 100)
+
+    return () => clearTimeout(timer)
+    
+  }, [precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado]);
 
 
   teles.forEach(tele => {

@@ -1,9 +1,67 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
 import EditarCessionario from './EditarCessionario';
 import AdicionarCessionario from './AdicionarCessionario';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function ListaCessionarios({ cessionario, precInfo, users }) {
+  const [valorPago, setValorPago] = useState('');
+  const [comissao, setComissao] = useState('');
+  const [percentual, setPercentual] = useState('');
+  const [expectativa, setExpectativa] = useState('');
+  const [obs, setObs] = useState('');
+  const [assinatura, setAssinatura] = useState(null);
+  const [expedido, setExpedido] = useState(null);
+  const [recebido, setRecebido] = useState(null);
+  const [cessionarios, setCessionarios] = useState([])
+  const [valoresCessionarios, setValoresCessionarios] = useState([]);
+
+  useEffect(() => {
+    addCessionario();
+  }, [])
+
+  const addCessionario = () => {
+    const id = uuidv4();
+    const novoCessionario = {
+      componente: <AdicionarCessionario valorPago={valorPago} setValorPago={setValorPago} comissao={comissao} setComissao={setComissao} percentual={percentual} setPercentual={setPercentual} expectativa={expectativa} setExpectativa={setExpectativa} key={id} users={users} enviarValores={(valores) => handleReceberValoresNovoCessionarios(valores, id)} />,
+      index: id,
+      valores: {} // Inicialmente os valores são um objeto vazio
+    };
+    setCessionarios([...cessionarios, novoCessionario]);
+    setValoresCessionarios([...valoresCessionarios, {}]);
+  }
+
+  const handleReceberValoresNovoCessionarios = (valores, id) => {
+    // Atualize apenas os valores do componente com o ID correspondente
+    setCessionarios(prev => {
+      return prev.map(cessionario => {
+        if (cessionario.index === id) {
+          return { ...cessionario, valores: valores };
+        } else {
+          return cessionario;
+        }
+      });
+    });
+  };
+
+  const handleReceberValoresCessionarioEditado = (valores) => {
+    console.log(valores)
+  }
+
+  const handleExcluirCessionario = (id) => {
+    // Filtra os cessionários com base no ID para removê-lo
+    const novaListaCessionarios = cessionarios.filter(cessionario => cessionario.index !== id);
+    setCessionarios(novaListaCessionarios);
+
+    // Filtra os valores correspondentes com base no ID para removê-los
+    setValoresCessionarios(prev => {
+      return prev.filter((_, index) => index !== id);
+    });
+  };
+
+  const handleSubmit = () => {
+    console.log(cessionarios)
+  }
 
   function changeStringFloat(a) {
     const virgulaParaBarra = a.replace(',', '/');
@@ -55,7 +113,7 @@ export default function ListaCessionarios({ cessionario, precInfo, users }) {
           <span className="font-[700] dark:text-white " id='cessionarios'>Cessionários</span>
           <Modal
             botaoAbrirModal={
-              <button title='Adicionar cessionário' className='hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:bg-neutral-800 dark:border-neutral-800 dark:hover:bg-neutral-700 rounded-full border w-[25px] h-[25px] p-1'>
+              <button title='Adicionar cessionário' className='hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:bg-neutral-800 dark:border-neutral-800 dark:hover:bg-neutral-700 rounded-full border w-[25px] h-[25px] p-1' >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[15px] h-[15px] dark:text-white">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
@@ -63,14 +121,32 @@ export default function ListaCessionarios({ cessionario, precInfo, users }) {
               </button>
             }
             tituloModal={`Adicionar cessionário`}
-            botaoSalvar={<button
+            botaoSalvar={<button onClick={() => handleSubmit()}
               className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
               Salvar
             </button>
             }
+            botaoAdicionarCessionario={<button
+              onClick={() => addCessionario()}
+              className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
+              Adicionar cessionário
+            </button>}
           >
             <div className='h-[450px] overflow-auto'>
-              <AdicionarCessionario users={users} />
+              <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
+                {cessionarios.map((componente) => (
+                  <div key={componente.index} className='w-full pt-5'>
+                    <div className='px-4 flex justify-end items-center'>
+                      <button onClick={() => handleExcluirCessionario(componente.index)} className={cessionarios.length > 1 ? 'rounded hover:bg-neutral-100 float-right w-4 h-4 dark:hover:bg-neutral-800' : 'hidden'}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    {componente.componente}
+                  </div>
+                ))}
+              </div>
 
             </div>
 
@@ -115,7 +191,7 @@ export default function ListaCessionarios({ cessionario, precInfo, users }) {
                     Salvar
                   </button>}
                 >
-                  <EditarCessionario cessionario={c} users={users} />
+                  <EditarCessionario cessionario={c} users={users} enviarValores={(valores) => handleReceberValoresCessionarioEditado(valores)} />
                 </Modal>
               </div>
             </div>

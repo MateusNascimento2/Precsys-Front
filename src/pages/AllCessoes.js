@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Header from '../components/Header';
 import SearchInput from '../components/SearchInput';
 import Lista from '../components/List';
@@ -9,6 +9,10 @@ import AdicionarCessao from "../components/AdicionarCessao";
 import AdicionarCessionario from "../components/AdicionarCessionario";
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { CessaoContext } from '../components/AdicionarCessao';
+
+import { v4 as uuidv4 } from 'uuid';
+
 
 export default function AllCessoes() {
   const [voltarAdicionarCessao, setVoltarAdicionarCessao] = useState(false)
@@ -17,8 +21,9 @@ export default function AllCessoes() {
   const [users, setUsers] = useState([]);
   const [escreventes, setEscreventes] = useState([]);
   const [orcamentos, setOrcamentos] = useState([]);
-  const [natureza, setNatureza] = useState([]);
+  const [naturezas, setNaturezas] = useState([]);
   const [empresas, setEmpresas] = useState([]);
+  const [juridicos, setJuridicos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showModalAdicionarCessionario, setShowModalAdicionarCessionario] = useState(false);
   const [cessionarios, setCessionarios] = useState([]);
@@ -32,6 +37,31 @@ export default function AllCessoes() {
   const axiosPrivate = useAxiosPrivate()
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [precatorio, setPrecatorio] = useState('');
+  const [processo, setProcesso] = useState('');
+  const [cedente, setCedente] = useState('');
+  const [vara, setVara] = useState(null);
+  const [ente, setEnte] = useState(null);
+  const [ano, setAno] = useState(null);
+  const [natureza, setNatureza] = useState(null);
+  const [empresa, setEmpresa] = useState(null);
+  const [dataCessao, setDataCessao] = useState(null);
+  const [repComercial, setRepComercial] = useState(null);
+  const [escrevente, setEscrevente] = useState(null);
+  const [juridico, setJuridico] = useState(null);
+  
+  const [cessionario, setCessionario] = useState(null);
+  const [valorPago, setValorPago] = useState('');
+  const [comissao, setComissao] = useState('');
+  const [percentual, setPercentual] = useState('');
+  const [expectativa, setExpectativa] = useState('');
+  const [obs, setObs] = useState('');
+  const [assinatura, setAssinatura] = useState(null);
+  const [expedido, setExpedido] = useState(null);
+  const [recebido, setRecebido] = useState(null);
+
+  const [valoresCessionarios, setValoresCessionarios] = useState([])
 
   useEffect(() => {
     let isMounted = true;
@@ -55,8 +85,10 @@ export default function AllCessoes() {
     fetchData('/escreventes', setEscreventes);
     fetchData('/users', setUsers);
     fetchData('/orcamentos', setOrcamentos);
-    fetchData('/natureza', setNatureza);
+    fetchData('/natureza', setNaturezas);
     fetchData('/empresas', setEmpresas);
+    fetchData('/juridicos', setJuridicos);
+
 
 
     return () => {
@@ -72,16 +104,42 @@ export default function AllCessoes() {
       setVoltarAdicionarCessao(false)
       return
     } else {
-      const novoCessionario = <AdicionarCessionario key={cessionarios.length} users={users} />;
+      const id = uuidv4();
+      const novoCessionario = {
+        componente: <AdicionarCessionario valorPago={valorPago} setValorPago={setValorPago} comissao={comissao} setComissao={setComissao} percentual={percentual} setPercentual={setPercentual} expectativa={expectativa} setExpectativa={setExpectativa} key={id} users={users} enviarValores={(valores) => handleReceberValoresCessionario(valores, id)} />,
+        index: id,
+        valores: {} // Inicialmente os valores são um objeto vazio
+      };
       setCessionarios([...cessionarios, novoCessionario]);
+      setValoresCessionarios([...valoresCessionarios, {}]);
     }
 
   }
 
-  const handleExcluirCessionario = (index) => {
-    const novaLista = [...cessionarios];
-    novaLista.splice(index, 1);
-    setCessionarios(novaLista);
+  const handleReceberValoresCessionario = (valores, id) => {
+    // Atualize apenas os valores do componente com o ID correspondente
+    setCessionarios(prev => {
+      return prev.map(cessionario => {
+        if (cessionario.index === id) {
+          return { ...cessionario, valores: valores };
+        } else {
+          return cessionario;
+        }
+      });
+    });
+  };
+
+
+
+  const handleExcluirCessionario = (id) => {
+    // Filtra os cessionários com base no ID para removê-lo
+    const novaListaCessionarios = cessionarios.filter(cessionario => cessionario.index !== id);
+    setCessionarios(novaListaCessionarios);
+
+    // Filtra os valores correspondentes com base no ID para removê-los
+    setValoresCessionarios(prev => {
+      return prev.filter((_, index) => index !== id);
+    });
   };
 
 
@@ -119,6 +177,37 @@ export default function AllCessoes() {
     setShowModalAdicionarCessionario(prevState => !prevState);
   }
 
+  const handleReceberValoresCessao = (valores) => {
+    // Atualiza os estados com os valores recebidos
+    setPrecatorio(valores.precatorio);
+    setProcesso(valores.processo);
+    setCedente(valores.cedente);
+    setVara(valores.vara);
+    setEnte(valores.ente);
+    setAno(valores.ano);
+    setNatureza(valores.natureza);
+    setEmpresa(valores.empresa);
+    setDataCessao(valores.dataCessao);
+    setRepComercial(valores.repComercial);
+    setEscrevente(valores.escrevente);
+    setJuridico(valores.juridico)
+    // Atualize os outros estados conforme necessário
+    
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    const cessao = {
+      precatorio, processo, cedente, vara, ente, ano, natureza, empresa, dataCessao, repComercial, escrevente, juridico
+    }
+
+    console.log('submitado', cessao)
+
+    console.log(cessionarios)
+  }
+
+
   return (
     <>
       <Header />
@@ -132,7 +221,7 @@ export default function AllCessoes() {
                   +
                 </button>}
               tituloModal=
-              {showModalAdicionarCessionario && cessionarios.length > 0 
+              {showModalAdicionarCessionario && cessionarios.length > 0
                 ? (
                   <div className='flex gap-2 items-center'>
                     <button className='rounded hover:bg-neutral-100 dark:hover:bg-neutral-800' onClick={() => handleVoltarAdicionarCessao()}>
@@ -142,11 +231,11 @@ export default function AllCessoes() {
                     </button>
                     <span>Adicionar cessão</span>
                   </div>
-                ) 
+                )
                 : (<span>Adicionar cessão</span>)
               }
               botaoSalvar={<button
-                className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
+                className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700' onClick={(e) => handleSubmit(e)}>
                 Salvar
               </button>
               }
@@ -157,24 +246,24 @@ export default function AllCessoes() {
               </button>}
             >
               <div className='h-[450px] overflow-auto relative'>
-                <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? 'absolute left-[-850px] transition-all ease-in-out duration-300 overflow-hidden' : 'absolute left-0 transition-all ease-in-out duration-300 overflow-y-hidden'}>
-                  <AdicionarCessao varas={varas} orcamentos={orcamentos} naturezas={natureza} empresas={empresas} users={users} teles={teles} escreventes={escreventes} />
+                <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? 'absolute left-[-1100px] transition-all ease-in-out duration-300 overflow-hidden' : 'absolute left-0 transition-all ease-in-out duration-300 overflow-y-hidden'}>
+                  <AdicionarCessao varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridicos={juridicos} enviarValores={handleReceberValoresCessao} />
                 </div>
 
-                <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "absolute right-0 transition-all ease-in-out duration-300 overflow-y-auto w-full" : 'w-full absolute right-[850px] transition-all ease-in-out duration-300 overflow-y-hidden'}>
+                <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "absolute right-0 transition-all ease-in-out duration-300 overflow-y-auto w-full" : 'w-full absolute right-[1100px] transition-all ease-in-out duration-300 overflow-y-hidden'}>
 
-                  <div className="flex flex-col gap-10">
-                    {cessionarios.map((componente, index) => (
-                      <div key={index}>
+                  <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
+                    {cessionarios.map((componente) => (
+                      <div key={componente.index} className='w-full pt-5'>
                         <div className='px-4 flex justify-between items-center'>
-                          <p className='dark:text-white text-black font-medium py-2 text-[18px]'>Adicionar cessionário</p>
-                          <button onClick={() => handleExcluirCessionario(index)} className='rounded hover:bg-neutral-100 float-right w-4 h-4 dark:hover:bg-neutral-800'>
+                          <span className='dark:text-white text-black font-medium py-2 text-[18px]'>Adicionar cessionário</span>
+                          <button onClick={() => handleExcluirCessionario(componente.index)} className='rounded hover:bg-neutral-100 float-right w-4 h-4 dark:hover:bg-neutral-800'>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                             </svg>
                           </button>
                         </div>
-                        {componente}
+                        {componente.componente}
                       </div>
                     ))}
                   </div>

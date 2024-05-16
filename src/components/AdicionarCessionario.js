@@ -1,18 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import CurrencyFormat from 'react-currency-format';
 
-export default function AdicionarCessionario({ users }) {
+export default function AdicionarCessionario({ users, enviarValores, valorPago, setValorPago, comissao, setComissao, percentual, setPercentual, expectativa, setExpectativa  }) {
   const [cessionario, setCessionario] = useState(null);
-  const [valorPago, setValorPago] = useState('');
-  const [comissao, setComissao] = useState('');
-  const [percentual, setPercentual] = useState('');
-  const [expectativa, setExpectativa] = useState('');
+  //const [valorPago, setValorPago] = useState(valorPago ? valorPago : '');
+  //const [comissao, setComissao] = useState(comissao ? comissao : '');
+  //const [percentual, setPercentual] = useState(percentual ? percentual : '');
+  //const [expectativa, setExpectativa] = useState(expectativa ? expectativa : '');
   const [obs, setObs] = useState('');
-  const [assinatura, setAssinatura] = useState(null);
-  const [expedido, setExpedido] = useState(null);
-  const [recebido, setRecebido] = useState(null);
-  console.log(users)
+  const [assinatura, setAssinatura] = useState(false);
+  const [expedido, setExpedido] = useState(false);
+  const [recebido, setRecebido] = useState(false);
+  
+  const [localValorPago, setLocalValorPago] = useState(valorPago ? valorPago : '');
+  const [localComissao, setLocalComissao] = useState(comissao ? comissao : '');
+  const [localPercentual, setLocalPercentual] = useState(percentual ? percentual : '');
+  const [localExpectativa, setLocalExpectativa] = useState(expectativa ? expectativa : '');
+
+  useEffect(() => {
+    console.log(localValorPago)
+    // Envia os valores dos estados para o componente pai sempre que eles forem alterados
+    const timer = setTimeout(() => {
+      enviarValores({ cessionario, valorPago: localValorPago, comissao: localComissao, percentual: localPercentual, expectativa: localExpectativa, obs, assinatura, expedido, recebido });
+    }, 100)
+
+    return () => clearTimeout(timer)
+    
+  }, [cessionario, localValorPago, localComissao, localPercentual, localExpectativa, obs, assinatura, expedido, recebido]);
 
   const handleSelectValues = (array, value) => {
     return array.map(item => {
@@ -60,7 +75,7 @@ export default function AdicionarCessionario({ users }) {
                 placeholder={'Selecionar cessionário'}
                 options={handleSelectValues(users, 'nome')}
                 isClearable={true}
-                onChange={(selectedValue) => !selectedValue ? setCessionario('') : setCessionario(selectedValue.label)}
+                onChange={(selectedValue) => !selectedValue ? setCessionario('') : setCessionario(selectedValue.value)}
                 name='cessionario'
                 noOptionsMessage={() => 'Nenhum usuário encontrado'}
                 unstyled // Remove all non-essential styles
@@ -79,12 +94,13 @@ export default function AdicionarCessionario({ users }) {
             <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
               <label
                 className='text-[14px] font-medium'
-                htmlFor="valor_pago">
+                htmlFor="valorPago">
                 Valor Pago
               </label>
               <CurrencyFormat
+                name={'valorPago'}
                 placeholder={'Valor pago'}
-                value={valorPago}
+                value={localValorPago}
                 thousandSeparator={'.'}
                 decimalSeparator={','}
                 decimalScale={2}
@@ -93,6 +109,7 @@ export default function AdicionarCessionario({ users }) {
                 className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
                 onValueChange={(values) => {
                   const { formattedValue, value } = values;
+                  setLocalValorPago(formattedValue)
                   setValorPago(formattedValue)
                 }}
               />
@@ -105,8 +122,9 @@ export default function AdicionarCessionario({ users }) {
                 Comissão
               </label>
               <CurrencyFormat
+                name={'comissao'}
                 placeholder={'Comissão'}
-                value={comissao}
+                value={localComissao}
                 thousandSeparator={'.'}
                 decimalSeparator={','}
                 decimalScale={2}
@@ -115,6 +133,7 @@ export default function AdicionarCessionario({ users }) {
                 className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
                 onValueChange={(values) => {
                   const { formattedValue, value } = values;
+                  setLocalComissao(formattedValue)
                   setComissao(formattedValue)
                 }}
               />
@@ -123,12 +142,13 @@ export default function AdicionarCessionario({ users }) {
             <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
               <label
                 className='text-[14px] font-medium'
-                htmlFor="comissao">
+                htmlFor="percentual">
                 Porcentagem
               </label>
               <CurrencyFormat
+                name={'percentual'}
                 placeholder={'Percentual'}
-                value={percentual}
+                value={localPercentual}
                 thousandSeparator={'.'}
                 decimalSeparator={','}
                 decimalScale={2}
@@ -137,6 +157,7 @@ export default function AdicionarCessionario({ users }) {
                 className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
                 onValueChange={(values) => {
                   const { formattedValue, value } = values;
+                  setLocalPercentual(formattedValue)
                   setPercentual(formattedValue)
                 }}
               />
@@ -145,12 +166,13 @@ export default function AdicionarCessionario({ users }) {
             <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
               <label
                 className='text-[14px] font-medium'
-                htmlFor="comissao">
+                htmlFor="expectativa">
                 Expectativa
               </label>
               <CurrencyFormat
-                placeholder={'Comissâo'}
-                value={expectativa}
+                name={'expectativa'}
+                placeholder={'Expectativa'}
+                value={localExpectativa}
                 thousandSeparator={'.'}
                 decimalSeparator={','}
                 decimalScale={2}
@@ -159,6 +181,7 @@ export default function AdicionarCessionario({ users }) {
                 className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
                 onValueChange={(values) => {
                   const { formattedValue, value } = values;
+                  setLocalExpectativa(formattedValue)
                   setExpectativa(formattedValue)
                 }}
               />
@@ -172,6 +195,7 @@ export default function AdicionarCessionario({ users }) {
                 Obs
               </label>
               <textarea
+                name='obs'
                 className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] h-[60px]'
                 value={obs}
                 rows={12}
@@ -188,11 +212,11 @@ export default function AdicionarCessionario({ users }) {
               <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
                 <label
                   className='text-[14px] font-medium'
-                  htmlFor="comissao">
+                  htmlFor="assinatura">
                   Assinatura
                 </label>
                 <div className="flex items-center gap-2 relative">
-                  <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={assinatura} onChange={() => setAssinatura(!assinatura)} />
+                  <input type="checkbox" name='assinatura' className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={assinatura} onChange={() => setAssinatura(!assinatura)} />
                   <span
                     className="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -225,11 +249,11 @@ export default function AdicionarCessionario({ users }) {
               <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
                 <label
                   className='text-[14px] font-medium'
-                  htmlFor="comissao">
+                  htmlFor="expedido">
                   Ofício Expedido
                 </label>
                 <div className="flex items-center  gap-2 relative">
-                  <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={expedido} onChange={() => setExpedido(!expedido)} />
+                  <input type="checkbox" name='expedido' className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={expedido} onChange={() => setExpedido(!expedido)} />
                   <span
                     className="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -262,11 +286,11 @@ export default function AdicionarCessionario({ users }) {
               <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
                 <label
                   className='text-[14px] font-medium'
-                  htmlFor="comissao">
+                  htmlFor="recebido">
                   Recebido
                 </label>
                 <div className="flex items-center gap-2 relative">
-                  <input type="checkbox" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={recebido} onChange={() => setRecebido(!recebido)} />
+                  <input type="checkbox" name='recebido' className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={recebido} onChange={() => setRecebido(!recebido)} />
                   <span
                     className="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"

@@ -6,9 +6,9 @@ export default function TabelaCalculo() {
   return (
     <>
       <Header />
-      <main className='container max-w-[968px] mx-auto px-2 py-[120px]'>
+      <main className='container max-w-[1024px] mx-auto px-2 py-[120px]'>
         <TabelaGeneradaCalculo />
-        <form class="p-2 ">
+        {/* <form class="p-2 ">
           <h2 class="text-lg font-bold mb-4 text-center">Modelo de Cálculo</h2>
           <div>
             <input class="border-b-[1px] border-gray-200 px-2 py-1 mb-4 w-full" type="text" name="numeroPrecatorio"
@@ -189,7 +189,7 @@ export default function TabelaCalculo() {
               <td class="py-2 px-8 text-center text-zinc-600">154.434,24</td>
             </tr>
           </table>
-        </div>
+        </div> */}
       </main>
 
     </>

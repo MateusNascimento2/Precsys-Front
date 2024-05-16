@@ -90,13 +90,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
 
   }
 
-  console.log(cessoes)
-
-
   cessoes.forEach(cessao => {
-
-
-
 
     // Atualiza propriedades de status
     const statusAtualizado = status.find(s => parseInt(cessao.status) === parseInt(s.id));

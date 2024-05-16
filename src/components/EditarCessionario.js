@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import CurrencyFormat from 'react-currency-format';
 
-export default function EditarCessionario({ cessionario, users }) {
+export default function EditarCessionario({ cessionario, users, enviarValores }) {
   const [cessionarioEditado, setCessionarioEditado] = useState(cessionario.nome_user ? cessionario.nome_user : null);
   const [valorPagoEditado, setValorPagoEditado] = useState(cessionario.valor_pago ? cessionario.valor_pago : null);
   const [comissaoEditado, setComissaoEditado] = useState(cessionario.comissao ? cessionario.comissao : null);
@@ -22,6 +22,16 @@ export default function EditarCessionario({ cessionario, users }) {
       };
     });
   }
+
+  useEffect(() => {
+    // Envia os valores dos estados para o componente pai sempre que eles forem alterados
+    const timer = setTimeout(() => {
+      enviarValores({ cessionarioEditado, valorPagoEditado, comissaoEditado, percentualEditado, expectativaEditado, obsEditado, assinaturaEditado, expedidoEditado, recebidoEditado });
+    }, 100)
+
+    return () => clearTimeout(timer)
+    
+  }, [cessionarioEditado, valorPagoEditado, comissaoEditado, percentualEditado, expectativaEditado, obsEditado, assinaturaEditado, expedidoEditado, recebidoEditado]);
 
 
   console.log(handleSelectValues(users, 'nome'))

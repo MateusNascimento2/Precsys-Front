@@ -39,6 +39,10 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
         })
     };
 
+    const handleReceberValores = (valores) => {
+        console.log(valores)
+    }
+
 
     return (
         <div className='max-w-full flex flex-col mb-[60px]'>
@@ -66,7 +70,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                                 }
                             >
                                 <div className='h-[450px] overflow-auto'>
-                                    <EditarPrec precInfo={precInfo} varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} />
+                                    <EditarPrec precInfo={precInfo} varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} enviarValores={(valores) => handleReceberValores(valores)} />
                                 </div>
 
                             </Modal>
