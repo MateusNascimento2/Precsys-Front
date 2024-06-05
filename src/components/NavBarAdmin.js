@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import TabelaGeneradaCalculo from './TabelaGeneradaCalculo';
+import Modal from './Modal';
 
 
 function NavBarAdmin({ show }) {
   const [showMenu, setShowMenu] = useState(false);
   const [menuType, setMenuType] = useState(null);
+  const [showFromModal, setShowFromModal] = useState(false);
 
 
 
@@ -104,7 +107,7 @@ function NavBarAdmin({ show }) {
 
           </li>
 
-        
+
 
           <li onClick={() => handleShow('cessoes')} className='cursor-pointer w-full p-2 lg:px-2  lg:border-0'>
             <div className='flex justify-between items-center lg:gap-3'>
@@ -136,6 +139,41 @@ function NavBarAdmin({ show }) {
               </ul>
             </div>
           </li>
+
+
+          <li onClick={() => handleShow('ferramentas')} className='cursor-pointer w-full p-2 lg:px-2  lg:border-0'>
+            <div className='flex justify-between items-center lg:gap-3'>
+              <span className='font-[500] text-[#666666] hover:text-black hover:font-[600] dark:text-neutral-300 dark:hover:text-white'>Ferramentas</span>
+              <span className='text-[12px] dark:text-neutral-300'>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showMenu && menuType === 'ferramentas' ? "w-3 h-3 inline-block rotate-180 transition-all" : 'w-3 h-3 inline-block'}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+              </span>
+            </div>
+            <div className={showMenu && menuType === 'ferramentas' ? 'lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 h-[120px] lg:w-[300px] overflow-y-hidden transition-all lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600' : 'h-0 overflow-y-hidden lg:w-[300px] transition-all lg:absolute lg:z-50 lg:bg-white lg:right-auto xl:right-auto dark:bg-neutral-900 dark:border-neutral-600'}>
+              <ul className='lg:ml-0 '>
+                <li className='mb-3 mt-2'>
+                  <span className='font-[600] text-[12px] text-[#666666]'>Categorias</span>
+                </li>
+
+                <Modal botaoAbrirModal={
+                  <button title='Adicionar nova cessão' className='w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                    Cálculo
+                    <p className='font-[500] text-[#666666] dark:text-neutral-500'>Fazer Cálculo </p>
+                  </button>}>
+                  <div className='h-[450px] overflow-auto relative'>
+                    <TabelaGeneradaCalculo />
+                  </div>
+
+
+                </Modal>
+
+
+              </ul>
+            </div>
+
+          </li>
+
 
         </ul>
       </nav>

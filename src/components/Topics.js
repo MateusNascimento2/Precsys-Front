@@ -16,7 +16,7 @@ function Topics({ texto, data, atualizacaoJuridico }) {
   }
 
   useEffect(() => {
-    setTextoAtt(atualizacaoJuridico.split('-'))
+    setTextoAtt(atualizacaoJuridico ? atualizacaoJuridico.split('-') : [])
 
     console.log(textoAtt)
   }, [])

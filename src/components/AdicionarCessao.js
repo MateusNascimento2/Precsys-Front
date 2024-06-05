@@ -17,6 +17,10 @@ export default function AdicionarCessao({ varas, orcamentos, naturezas, empresas
   const [escrevente, setEscrevente] = useState(null);
   const [juridico, setJuridico] = useState(null);
 
+  const [precatorioError, setPrecatorioError] = useState(false);
+  const [processoError, setProcessoError] = useState(false);
+
+
   console.log(juridicos)
 
   useEffect(() => {
@@ -75,11 +79,15 @@ export default function AdicionarCessao({ varas, orcamentos, naturezas, empresas
               name={'precatorio'}
               format={'####.#####-#'}
               value={precatorio}
+              required={true}
               onValueChange={(values) => {
                 const { formattedValue, value } = values;
                 setPrecatorio(formattedValue)
+
+                value.length < 10 ? setPrecatorioError(true) : setPrecatorioError(false)
               }}>
             </CurrencyFormat>
+            {precatorioError && <p className='text-red-600 text-[11px]'>Número do precatório inválido</p>}
           </div>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
@@ -98,9 +106,13 @@ export default function AdicionarCessao({ varas, orcamentos, naturezas, empresas
                 const { formattedValue, value } = values;
                 console.log(formattedValue)
                 setProcesso(formattedValue)
+                console.log(value.length)
+
+                value.length < 20 ? setProcessoError(true) : setProcessoError(false)
               }}>
 
             </CurrencyFormat>
+            {processoError && <p className='text-red-600 text-[11px]'>Número do processo inválido</p>}
           </div>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
 import EditarCessionario from './EditarCessionario';
 import AdicionarCessionario from './AdicionarCessionario';
+import DotsButton from './DotsButton';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function ListaCessionarios({ cessionario, precInfo, users }) {
@@ -109,7 +110,7 @@ export default function ListaCessionarios({ cessionario, precInfo, users }) {
   return (
     cessionario.length !== 0 ? (
       <div className='w-full mb-[60px] flex flex-col'>
-        <div className='mb-[16px] flex items-center gap-5'>
+        <div className='mb-[16px] flex items-center gap-10'>
           <span className="font-[700] dark:text-white " id='cessionarios'>Cessionários</span>
           <Modal
             botaoAbrirModal={
@@ -161,7 +162,7 @@ export default function ListaCessionarios({ cessionario, precInfo, users }) {
             <div className='min-w-[60px] w-[5%] text-center dark:text-white'>%</div>
             <div className='min-w-[120px] w-[17%] text-center dark:text-white'>expectativa</div>
             <div className='min-w-[180px] w-[18%] text-center dark:text-white'>nota</div>
-            <div className='min-w-[50px] w-[5%] ml-auto text-center dark:text-white'>.</div>
+            <div className='min-w-[50px] w-[5%] ml-auto text-center dark:text-white'></div>
           </div>
           {cessionario.map(c => (
             <div className='w-max lg:w-full flex text-[12px] items-center border-b dark:border-neutral-600 last:border-0 py-[10px] border-gray-300' key={c.id}>
@@ -177,22 +178,23 @@ export default function ListaCessionarios({ cessionario, precInfo, users }) {
               <div className='min-w-[120px] w-[17%] text-center dark:text-neutral-200'>{c.exp_recebimento}</div>
               <div className='min-w-[180px] w-[18%] text-center'><a href="" className='hover:underline dark:text-neutral-200'>{c.nota ? c.nota.split('/')[1] : ''}</a></div>
               <div className='min-w-[50px] w-[5%] ml-auto flex justify-center dark:text-neutral-200'>
-                <Modal
-                  botaoAbrirModal={
-                    <button title='Editar cessionário' className='hover:bg-neutral-100 flex items-center text-center justify-center dark:hover:bg-neutral-800 rounded p-[1px]'>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[20px] h-[20px] dark:text-white ">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                      </svg>
-                    </button>
-                  }
-                  tituloModal={`Editar cessionário #${c.id}`}
-                  botaoSalvar={<button
-                    className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
-                    Salvar
-                  </button>}
-                >
-                  <EditarCessionario cessionario={c} users={users} enviarValores={(valores) => handleReceberValoresCessionarioEditado(valores)} />
-                </Modal>
+                <DotsButton>
+                  <Modal
+                    botaoAbrirModal={
+                      <button title='Editar cessionário' className='hover:bg-neutral-100 flex items-center text-center justify-center dark:hover:bg-neutral-800 rounded p-2'>
+                        Editar
+                      </button>
+                    }
+                    tituloModal={`Editar cessionário #${c.id}`}
+                    botaoSalvar={<button
+                      className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
+                      Salvar
+                    </button>}
+                  >
+                    <EditarCessionario cessionario={c} users={users} enviarValores={(valores) => handleReceberValoresCessionarioEditado(valores)} />
+                  </Modal>
+                </DotsButton>
+
               </div>
             </div>
 

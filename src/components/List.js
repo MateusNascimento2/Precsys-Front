@@ -16,7 +16,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
   const [orcamentos, setOrcamentos] = useState([]);
   const [natureza, setNatureza] = useState([]);
   const [empresas, setEmpresas] = useState([]);
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [datas, setDatas] = useState([]);
   const axiosPrivate = useAxiosPrivate()
@@ -218,12 +218,6 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
 
   const renderRow = ({ index, parent, key, style }) => {
     const cessao = filteredCessoes[index];
-    const listLength = filteredCessoes.length;
-
-
-
-
-
 
     return (
 
@@ -241,7 +235,10 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
                   <span className="text-neutral-400 font-medium line-clamp-1 dark:text-neutral-300">{cessao.cedente}</span>
                 </div>
               </div>
-              <DotsButton listLength={listLength} cessaoID={cessao.id} requisitorioFile={cessao.requisitorio} escrituraFile={cessao.escritura} />
+              <DotsButton>
+                <span className="cursor-pointer text-[12px] rounded p-1 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"><a href={cessao.requisitorio} download target="_blank">Requisitório</a></span>
+                <span className="cursor-pointer text-[12px] rounded p-1 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"><a href={cessao.escritura} download target="_blank">Escritura</a></span>
+              </DotsButton>
             </div>
 
 
@@ -291,7 +288,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
           {({ height, isScrolling, onChildScroll, registerChild, scrollTop }) => (
             <section className="container dark:bg-neutral-900" style={{ width: "100%" }} >
               <div className="dark:bg-neutral-900 relative h-full">
-               
+
                 <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">Mostrando {filteredCessoes.length} de {cessoes.length} cessões</p>
 
                 <AutoSizer style={{ width: '100%', height: '100%' }}>

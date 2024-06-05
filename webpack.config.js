@@ -15,6 +15,7 @@ module.exports = {
       }
     ),
     new CleanWebpackPlugin(),
+    
   ],
   module: {
     rules: [

@@ -5,11 +5,13 @@ import Lista from '../components/List';
 import FilterButton from '../components/FilterButton';
 import Filter from '../layout/Filter';
 import Modal from '../components/Modal';
+import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import AdicionarCessao from "../components/AdicionarCessao";
 import AdicionarCessionario from "../components/AdicionarCessionario";
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CessaoContext } from '../components/AdicionarCessao';
+import { ToastContainer, toast, Bounce } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -50,7 +52,7 @@ export default function AllCessoes() {
   const [repComercial, setRepComercial] = useState(null);
   const [escrevente, setEscrevente] = useState(null);
   const [juridico, setJuridico] = useState(null);
-  
+
   const [cessionario, setCessionario] = useState(null);
   const [valorPago, setValorPago] = useState('');
   const [comissao, setComissao] = useState('');
@@ -192,19 +194,129 @@ export default function AllCessoes() {
     setEscrevente(valores.escrevente);
     setJuridico(valores.juridico)
     // Atualize os outros estados conforme necessário
-    
+
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const cessao = {
-      precatorio, processo, cedente, vara, ente, ano, natureza, empresa, dataCessao, repComercial, escrevente, juridico
+    const isDarkMode = localStorage.getItem('darkMode');
+
+
+    if (cessionarios.length > 0) {
+      for (const cessionario of cessionarios) {
+        if (!cessionario.valores.cessionario) {
+          toast.error(`Adicione um cessionário!`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: false,
+            theme: isDarkMode === 'true' ? 'dark' : 'light',
+            transition: Bounce,
+          });
+
+          return
+        }
+      }
     }
 
-    console.log('submitado', cessao)
 
-    console.log(cessionarios)
+    const cessao = {
+      precatorio, processo, cedente, vara, ente, ano, natureza, empresa, dataCessao, repComercial, escrevente, juridico, status: "1"
+    };
+
+
+    if (precatorio.length < 12 || processo.length < 12 || !cedente || !vara || !ente || !ano || !natureza || !empresa || !dataCessao || !repComercial || !escrevente || !juridico) {
+      toast.error('Todos os campos da cessão precisam ser preenchidos!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+
+      return;
+    }
+
+    let cessaoId;
+
+    try {
+      setIsLoading(true)
+      const response = await axiosPrivate.post('/cessoes', cessao);
+      console.log(response);
+      cessaoId = response.data.insertId; // Certifique-se de que a API retorna { id: <id da cessao> }
+      console.log(cessaoId);
+    } catch (err) {
+      toast.error(`Erro ao adicionar Cessão: ${err}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+      setIsLoading(false)
+      console.log(err);
+      return; // Se a inserção da cessão falhar, sair da função
+    }
+
+    for (const cessionario of cessionarios) {
+      console.log(cessionario.valores);
+    }
+
+    if (cessionarios.length > 0) {
+      try {
+        for (const cessionario of cessionarios) {
+          cessionario.valores.id_cessao = cessaoId; // Associa o ID da cessão ao cessionário
+          try {
+            await axiosPrivate.post('/cessionarios', cessionario.valores);
+            console.log(`Cessionario ${cessionario.valores} adicionado com sucesso.`);
+          } catch (err) {
+            toast.error(`Erro ao adicionar cessionario: ${err}`, {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: false,
+              theme: isDarkMode === 'true' ? 'dark' : 'light',
+              transition: Bounce,
+            });
+            setIsLoading(false)
+            console.error('Erro ao adicionar cessionario:', err);
+          }
+        }
+      } catch (err) {
+        setIsLoading(false)
+        console.log(err);
+      }
+    }
+
+    toast.success('Cessão cadastrada com sucesso!', {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: false,
+      theme: isDarkMode === 'true' ? 'dark' : 'light',
+      transition: Bounce,
+    });
+
+    setIsLoading(false)
+    console.log('Submitado', cessao);
+    console.log('Cessionarios:', cessionarios);
   }
 
 
@@ -212,6 +324,7 @@ export default function AllCessoes() {
     <>
       <Header />
       <main className={show ? 'container mx-auto pt-[120px] dark:bg-neutral-900 h-full relative' : 'relative container mx-auto pt-[120px] dark:bg-neutral-900 h-full'}>
+        <ToastContainer />
         <div className='px-[20px]'>
           <div className='flex justify-between items-center md:items-end'>
             <h2 className='font-[700] text-[32px] md:mt-[16px] dark:text-white' id='cessoes'>Cessões</h2>
@@ -246,14 +359,27 @@ export default function AllCessoes() {
               </button>}
             >
               <div className='h-[450px] overflow-auto relative'>
+
                 <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? 'absolute left-[-1100px] transition-all ease-in-out duration-300 overflow-hidden' : 'absolute left-0 transition-all ease-in-out duration-300 overflow-y-hidden'}>
+                  {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
+                    <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30'>
+                      <LoadingSpinner />
+                    </div>
+                  </div>)}
+
                   <AdicionarCessao varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridicos={juridicos} enviarValores={handleReceberValoresCessao} />
                 </div>
 
                 <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "absolute right-0 transition-all ease-in-out duration-300 overflow-y-auto w-full" : 'w-full absolute right-[1100px] transition-all ease-in-out duration-300 overflow-y-hidden'}>
 
                   <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
+                    {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
+                      <div className='absolute left-1/2 top-[33%] -translate-x-[50%] -translate-y-[50%] z-30'>
+                        <LoadingSpinner />
+                      </div>
+                    </div>)}
                     {cessionarios.map((componente) => (
+
                       <div key={componente.index} className='w-full pt-5'>
                         <div className='px-4 flex justify-between items-center'>
                           <span className='dark:text-white text-black font-medium py-2 text-[18px]'>Adicionar cessionário</span>
