@@ -1,17 +1,27 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingSpinner from "./LoadingSpinner/LoadingSpinner";
 import DotsButton from "./DotsButton";
 import { List, AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache } from 'react-virtualized'
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Tooltip } from 'react-tooltip';
+import useAuth from "../hooks/useAuth";
 
 
 
 export default function Lista({ searchQuery, selectedFilters, setData }) {
 
+  const { minhascessoes } = useParams()
+  const { auth } = useAuth();
+  const userID = String(auth.user.id)
+  console.log(userID)
+
+  console.log(minhascessoes);
+
   const [cessoes, setCessoes] = useState([]);
+  const [minhasCessoes, setMinhasCessoes] = useState([])
+  const [cessionarios, setCessionarios] = useState([])
   const [status, setStatus] = useState([]);
   const [orcamentos, setOrcamentos] = useState([]);
   const [natureza, setNatureza] = useState([]);
@@ -23,42 +33,78 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const elementRef = useRef(null);
-
   const cache = new CellMeasurerCache({
     fixedWidth: true,
     defaultHeight: 50
   })
 
   useEffect(() => {
-    let isMounted = true;
     const controller = new AbortController();
 
     const fetchData = async (url, setter) => {
       try {
         const { data } = await axiosPrivate.get(url, {
-          signal: controller.signal
+          signal: controller.signal,
         });
-        if (isMounted) setter(data);
-        setIsLoading(false);
+        setter(data);
       } catch (err) {
         console.log(err);
         navigate('/', { state: { from: location }, replace: true });
       }
     };
 
-    fetchData('/cessoes', setCessoes);
-    fetchData('/status', setStatus);
-    fetchData('/orcamentos', setOrcamentos);
-    fetchData('/natureza', setNatureza);
-    fetchData('/empresas', setEmpresas);
+    const fetchAllData = async () => {
+      setIsLoading(true);
+      await Promise.all([
+        fetchData('/cessionarios', setCessionarios),
+        fetchData('/cessoes', setCessoes),
+        fetchData('/status', setStatus),
+        fetchData('/orcamentos', setOrcamentos),
+        fetchData('/natureza', setNatureza),
+        fetchData('/empresas', setEmpresas),
+      ]);
+      setIsLoading(false);
+    };
 
+    fetchAllData();
 
     return () => {
-      isMounted = false;
       controller.abort();
     };
-  }, []);
+  }, [axiosPrivate, navigate, location]);
+
+  useEffect(() => {
+    if (minhascessoes && cessionarios.length > 0 && cessoes.length > 0) {
+      const cessionariosPorIDdoUsuarios = cessionarios.filter(
+        (cessionario) => cessionario.user_id === userID
+      );
+  
+      const filteredCessoes = cessionariosPorIDdoUsuarios
+        .map((cessionario) => cessoes.find((cessao) => cessao.id === cessionario.cessao_id))
+        .filter((cessao) => cessao !== undefined);
+  
+      // Verificar se filteredCessoes é diferente de cessoes para evitar loop infinito
+      if (!arraysAreEqual(filteredCessoes, cessoes)) {
+        setCessoes(filteredCessoes);
+      }
+  
+      console.log('cessoes do usuario:', filteredCessoes);
+    }
+  }, [minhascessoes, cessionarios, cessoes, userID]);
+  
+  // Função auxiliar para comparar arrays de objetos
+  function arraysAreEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+    for (let i = 0; i < arr1.length; i++) {
+      if (arr1[i].id !== arr2[i].id) {
+        return false;
+      }
+    }
+    return true;
+  }
+
 
   useEffect(() => {
     let dataCessoes = [];
@@ -213,7 +259,8 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
     )
   );
 
-
+  console.log(cessoes)
+  console.log(cessionarios)
 
 
   const renderRow = ({ index, parent, key, style }) => {
@@ -247,7 +294,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
               <a
                 style={{ backgroundColor: `${cessao.statusColor}` }}
                 data-tooltip-id="my-tooltip"
-                data-tooltip-content="Hello world!"
+                data-tooltip-content={`${cessao.substatus ? cessao.substatus : ''}`}
                 data-tooltip-place="top"
                 className={`px-2 py-1 rounded brightness-110`}>
                 <span className="text-black font-bold">{cessao.status}</span>

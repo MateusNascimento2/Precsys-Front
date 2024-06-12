@@ -3,9 +3,11 @@ import Header from '../components/Header';
 import PieChart from '../components/PieChart';
 import Topics from '../components/Topics';
 import TextBox from '../components/TextBox';
+import useAuth from "../hooks/useAuth";
 
 function Dashboard() {
   const [show, setShow] = useState(false)
+  const { auth } = useAuth();
 
   const handleShow = () => {
     setShow((prevState) => !prevState)
@@ -19,7 +21,7 @@ function Dashboard() {
       <main className='px-2 container mx-auto mt-[120px]'>
         <div className='mt-[120px] mb-[120px] flex flex-col gap-6 justify-between px-2 lg:flex-row lg:mt-[150px] lg:mb-[200px]'>
           <div className='flex flex-col gap-4'>
-            <h2 className='font-[800] text-[24px] text-center md:text-left lg:text-[34px]'>Develop.Preview.Ship.</h2>
+            <h2 className='font-[800] text-[24px] text-center md:text-left lg:text-[34px]'>Bem-vindo, {auth.user.nome.split(' ')[0]}.</h2>
             <p className='text-[#666666] text-center text-[15px] md:text-left lg:text-[16px] md:w-[650px]'>Vercel is the platform for frontend developers, providing the speed and reliability innovators need to create at the moment of inspiration.</p>
           </div>
           <div className='flex flex-col items-center justify-center gap-4 lg:gap-2'>

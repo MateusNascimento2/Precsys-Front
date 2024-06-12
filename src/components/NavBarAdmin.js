@@ -118,10 +118,15 @@ function NavBarAdmin({ show }) {
                 </svg>
               </span>
             </div>
-            <div className={showMenu && menuType === 'cessoes' ? 'lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 h-[230px] lg:w-[300px] overflow-y-hidden transition-all lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all lg:absolute lg:z-50 lg:bg-white lg:right-auto xl:right-auto dark:bg-neutral-900 dark:border-neutral-600'}>
+            <div className={showMenu && menuType === 'cessoes' ? 'lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 h-[280px] lg:w-[300px] overflow-y-hidden transition-all lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all lg:absolute lg:z-50 lg:bg-white lg:right-auto xl:right-auto dark:bg-neutral-900 dark:border-neutral-600'}>
               <ul className='lg:ml-0 '>
                 <li className='mb-3 mt-2'>
                   <span className='font-[600] text-[12px] text-[#666666]'>Categorias</span>
+                </li>
+                <li className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800' onClick={() => handleRoute('/minhas-cessoes')}>
+                  <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Minhas Cessões</span>
+                  <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver as Minhas Cessões
+                  </p>
                 </li>
                 <li className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800' onClick={() => handleRoute('/todas-cessoes')}>
                   <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Todas as Cessões</span>

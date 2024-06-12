@@ -5,15 +5,11 @@ import AdicionarCessionario from './AdicionarCessionario';
 import DotsButton from './DotsButton';
 import { v4 as uuidv4 } from 'uuid';
 
-export default function ListaCessionarios({ cessionario, precInfo, users }) {
+export default function ListaCessionarios({ cessionario, users }) {
   const [valorPago, setValorPago] = useState('');
   const [comissao, setComissao] = useState('');
   const [percentual, setPercentual] = useState('');
   const [expectativa, setExpectativa] = useState('');
-  const [obs, setObs] = useState('');
-  const [assinatura, setAssinatura] = useState(null);
-  const [expedido, setExpedido] = useState(null);
-  const [recebido, setRecebido] = useState(null);
   const [cessionarios, setCessionarios] = useState([])
   const [valoresCessionarios, setValoresCessionarios] = useState([]);
 
@@ -110,12 +106,12 @@ export default function ListaCessionarios({ cessionario, precInfo, users }) {
   return (
     cessionario.length !== 0 ? (
       <div className='w-full mb-[60px] flex flex-col'>
-        <div className='mb-[16px] flex items-center gap-10'>
+        <div className='mb-[16px] flex items-center justify-between'>
           <span className="font-[700] dark:text-white " id='cessionarios'>Cessionários</span>
           <Modal
             botaoAbrirModal={
-              <button title='Adicionar cessionário' className='hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:bg-neutral-800 dark:border-neutral-800 dark:hover:bg-neutral-700 rounded-full border w-[25px] h-[25px] p-1' >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[15px] h-[15px] dark:text-white">
+              <button title='Adicionar cessionário' className='hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:hover:bg-neutral-700 w-[25px] h-[25px] p-[2px]' >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[18px] h-[18px] dark:text-white">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
 

@@ -487,64 +487,103 @@ export default function TabelaGeneradaCalculo() {
       <div className="w-full mb-[60px] flex flex-col gap-5">
         <form
           action=""
-          className="flex flex-col gap-2"
+
           onSubmit={(e) => handleSubmit(e)}
         >
-          <input
-            className="p-1 border bg-neutral-100 rounded"
-            type="text"
-            placeholder="Precatório"
-            value={precatorio}
-            onChange={(e) => setPrecatorio(e.target.value)}
-          />
-          <input
-            className="p-1 border bg-neutral-100 rounded"
-            type="text"
-            placeholder="Orçamento"
-            value={orcamento}
-            onChange={(e) => setOrcamento(e.target.value)}
-          />
-          <input
-            className="p-1 border bg-neutral-100 rounded"
-            type="text"
-            placeholder="Valor Principal"
-            value={valorPrincipal}
-            onChange={(e) => setValorPrincipal(e.target.value)}
-          />
-          <input
-            className="p-1 border bg-neutral-100 rounded"
-            type="text"
-            placeholder="Valor Juros"
-            value={valorJuros}
-            onChange={(e) => setValorJuros(e.target.value)}
-          />
-          <input
-            className="p-1 border bg-neutral-100 rounded"
-            type="text"
-            placeholder="Rioprêvidencia"
-            value={rioPrevidencia}
-            onChange={(e) => setRioPrevidencia(e.target.value)}
-          />
-          <label>Data Base</label>
-          <input
-            className="p-1 border bg-neutral-100 rounded"
-            type="date"
-            placeholder="Data Base"
-            value={dataBase}
-            onChange={(e) => handleDate(e.target.value, setDataBase)}
-          />
-          <label>Data de Atualização</label>
-          <input
-            className="p-1 border bg-neutral-100 rounded"
-            type="date"
-            placeholder="Data de Atualização"
-            value={dataAtualizacao}
-            onChange={(e) => handleDate(e.target.value, setDataAtualizacao)}
-          />
+          <div className="flex flex-col gap-2  lg:grid lg:grid-cols-2 lg:gap-4">
+            <div className='flex flex-col gap-1'>
+              <label htmlFor="precatorio">Precatório</label>
+              <input
+                className="p-1 border bg-neutral-100 rounded"
+                type="text"
+                placeholder="Numero do precatório"
+                name="precatorio"
+                value={precatorio}
+                onChange={(e) => setPrecatorio(e.target.value)}
+              />
+            </div>
+
+            <div className='flex flex-col gap-1'>
+              <label htmlFor="orcamento">Orçamento</label>
+              <input
+                className="p-1 border bg-neutral-100 rounded"
+                type="text"
+                placeholder="Orçamento"
+                name="orcamento"
+                value={orcamento}
+                onChange={(e) => setOrcamento(e.target.value)}
+              />
+            </div>
+
+            <div className='flex flex-col gap-1'>
+              <label htmlFor="valorPrincipal">Valor principal</label>
+              <input
+                className="p-1 border bg-neutral-100 rounded"
+                type="text"
+                name="valorPrincipal"
+                placeholder="Valor Principal"
+                value={valorPrincipal}
+                onChange={(e) => setValorPrincipal(e.target.value)}
+              />
+            </div>
+
+            <div className='flex flex-col gap-1'>
+              <label htmlFor="valorJuros">Valor dos Juros</label>
+              <input
+                className="p-1 border bg-neutral-100 rounded"
+                type="text"
+                name="valorJuros"
+                placeholder="Valor dos Juros"
+                value={valorJuros}
+                onChange={(e) => setValorJuros(e.target.value)}
+              />
+            </div>
+
+            <div className='flex flex-col gap-1'>
+              <label htmlFor="rioPrevidencia">Rioprêvidencia</label>
+              <input
+                className="p-1 border bg-neutral-100 rounded"
+                type="text"
+                name="rioPrevidencia"
+                placeholder="Rioprêvidencia"
+                value={rioPrevidencia}
+                onChange={(e) => setRioPrevidencia(e.target.value)}
+              />
+            </div>
+
+            <div className='flex flex-col gap-1'>
+              <label htmlFor="dataBase">Data Base</label>
+              <input
+                className="p-1 border bg-neutral-100 rounded"
+                type="date"
+                name="dataBase"
+                placeholder="Data Base"
+                value={dataBase}
+                onChange={(e) => handleDate(e.target.value, setDataBase)}
+              />
+            </div>
+
+            <div className='flex flex-col gap-1'>
+              <label htmlFor="dataAtualizacao">Data de Atualização</label>
+              <input
+                className="p-1 border bg-neutral-100 rounded"
+                type="date"
+                name="dataAtualizacao"
+                placeholder="Data de Atualização"
+                value={dataAtualizacao}
+                onChange={(e) => handleDate(e.target.value, setDataAtualizacao)}
+              />
+            </div>
+
+
+
+          </div>
+
           <input
             type="submit"
-            className="bg-neutral-200 rounded p-1 font-medium cursor-pointer"
+            className="bg-neutral-200 w-full mt-4 rounded p-1 font-medium cursor-pointer"
           ></input>
+
         </form>
         {calculoInicialDataBase !== "" ? (
           // Calculo Inicial
@@ -935,7 +974,6 @@ export default function TabelaGeneradaCalculo() {
                   </div>
                 </div>
               </div>
-              ;
             </>
           ) : (
             ""

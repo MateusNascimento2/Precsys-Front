@@ -21,7 +21,7 @@ function PieChart() {
     <div className='w-[300px]'>
       <VictoryPie
         data={[
-          { x: "Cats", y: 35 },
+          { x: "Cats", y: 150 },
           { x: "Dogs", y: 40 },
           { x: "Birds", y: 55 }
         ]}

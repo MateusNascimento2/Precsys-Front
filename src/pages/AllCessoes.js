@@ -330,7 +330,7 @@ export default function AllCessoes() {
             <h2 className='font-[700] text-[32px] md:mt-[16px] dark:text-white' id='cessoes'>Cessões</h2>
             <Modal
               botaoAbrirModal={
-                <button title='Adicionar nova cessão' className='hover:bg-neutral-100 flex items-center justify-center dark:text-white dark:bg-neutral-800 dark:border-neutral-800 dark:hover:bg-neutral-700 rounded-full border text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px] '>
+                <button title='Adicionar nova cessão' className='hover:bg-neutral-100 flex items-center justify-center dark:text-white  dark:hover:bg-neutral-700 rounded-full  text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px] '>
                   +
                 </button>}
               tituloModal=
