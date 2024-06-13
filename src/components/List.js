@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingSpinner from "./LoadingSpinner/LoadingSpinner";
@@ -20,7 +20,6 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
   console.log(minhascessoes);
 
   const [cessoes, setCessoes] = useState([]);
-  const [minhasCessoes, setMinhasCessoes] = useState([])
   const [cessionarios, setCessionarios] = useState([])
   const [status, setStatus] = useState([]);
   const [orcamentos, setOrcamentos] = useState([]);
@@ -39,60 +38,72 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
   })
 
   useEffect(() => {
+    let isMounted = true;
     const controller = new AbortController();
 
     const fetchData = async (url, setter) => {
       try {
         const { data } = await axiosPrivate.get(url, {
-          signal: controller.signal,
+          signal: controller.signal, // Pass the abort signal to the Axios request
         });
-        setter(data);
+        if (isMounted) setter(data);
       } catch (err) {
-        console.log(err);
-        navigate('/', { state: { from: location }, replace: true });
+        console.error(`Failed to fetch ${url}:`, err);
+        // Check if the error is an abort error
+        if (err.name === 'AbortError') {
+          console.log('Fetch aborted due to route change or unmount:', err);
+        } else if (isMounted) {
+          // Handle other types of errors, log them or manage them accordingly without navigating
+          console.error('Error fetching data:', err);
+          // Only navigate if it's a critical error and component is still mounted
+          // navigate('/', { state: { from: location }, replace: true });
+        }
       }
     };
 
     const fetchAllData = async () => {
       setIsLoading(true);
-      await Promise.all([
-        fetchData('/cessionarios', setCessionarios),
-        fetchData('/cessoes', setCessoes),
-        fetchData('/status', setStatus),
-        fetchData('/orcamentos', setOrcamentos),
-        fetchData('/natureza', setNatureza),
-        fetchData('/empresas', setEmpresas),
-      ]);
-      setIsLoading(false);
+      try {
+        await Promise.all([
+          fetchData('/cessionarios', setCessionarios),
+          fetchData('/cessoes', setCessoes),
+          fetchData('/status', setStatus),
+          fetchData('/orcamentos', setOrcamentos),
+          fetchData('/natureza', setNatureza),
+          fetchData('/empresas', setEmpresas),
+        ]);
+      } catch (err) {
+        console.error('Error with fetching data:', err);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
     };
 
     fetchAllData();
 
     return () => {
+      isMounted = false;
       controller.abort();
     };
   }, [axiosPrivate, navigate, location]);
 
-  useEffect(() => {
-    if (minhascessoes && cessionarios.length > 0 && cessoes.length > 0) {
-      const cessionariosPorIDdoUsuarios = cessionarios.filter(
-        (cessionario) => cessionario.user_id === userID
-      );
+  const filterCessions = useCallback(() => {
+    if (!minhascessoes) return;
   
-      const filteredCessoes = cessionariosPorIDdoUsuarios
-        .map((cessionario) => cessoes.find((cessao) => cessao.id === cessionario.cessao_id))
-        .filter((cessao) => cessao !== undefined);
+    const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => cessionario.user_id === userID);
+    const filteredCessoes = cessionariosPorIDdoUsuarios
+      .map(cessionario => cessoes.find(cessao => cessao.id === cessionario.cessao_id))
+      .filter(cessao => cessao !== undefined);
   
-      // Verificar se filteredCessoes é diferente de cessoes para evitar loop infinito
-      if (!arraysAreEqual(filteredCessoes, cessoes)) {
-        setCessoes(filteredCessoes);
-      }
-  
-      console.log('cessoes do usuario:', filteredCessoes);
+    if (!arraysAreEqual(filteredCessoes, cessoes)) {
+      setCessoes(filteredCessoes);
     }
   }, [minhascessoes, cessionarios, cessoes, userID]);
   
-  // Função auxiliar para comparar arrays de objetos
+  useEffect(() => {
+    filterCessions();
+  }, [filterCessions]);
+
   function arraysAreEqual(arr1, arr2) {
     if (arr1.length !== arr2.length) {
       return false;

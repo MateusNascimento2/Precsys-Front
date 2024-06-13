@@ -44,7 +44,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
         if (isMounted) setter(data);
       } catch (err) {
         console.log(err);
-        navigate('/', { state: { from: location }, replace: true });
+        //navigate('/', { state: { from: location }, replace: true });
       }
     };
     fetchData('/status', setStatus);

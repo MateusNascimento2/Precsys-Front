@@ -78,7 +78,7 @@ export default function AllCessoes() {
         setIsLoading(false);
       } catch (err) {
         console.log(err);
-        navigate('/', { state: { from: location }, replace: true });
+        //navigate('/', { state: { from: location }, replace: true });
       }
     };
 

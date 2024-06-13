@@ -26,14 +26,13 @@ function App() {
         <Route element={<PersistLogin />}>
           <Route element={<RequireNormalUserAuth />}>
             <Route path='dashboard' element={<Dashboard />} />
-            <Route path='cessoes' element={<Cessoes />} />
             <Route path=':minhascessoes' element={<AllCessoes />} />
             <Route path='precatorio/:precID' element={<Precatorio />} />
           </Route>
 
           <Route element={<RequireAdminAuth />}>
             <Route path='todas-cessoes' element={<AllCessoes />} />
-            <Route path='users' element={<Usuarios />} />
+            <Route path='usuarios' element={<Usuarios />} />
             <Route path='calculo' element={<Calculo />} />
           </Route>
         </Route>

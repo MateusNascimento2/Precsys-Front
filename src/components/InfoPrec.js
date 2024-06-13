@@ -47,7 +47,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
     return (
         <div className='max-w-full flex flex-col mb-[60px]'>
             <div className='flex flex-col mb-[16px] max-[700px]:mb-16px'>
-                <span className='text-gray-400 text-[10px]'><a className='hover:underline cursor-pointer' href="">Dashboard</a> &gt; <a className='hover:underline cursor-pointer' onClick={navigation}>Cessões</a> &gt; <span>{precInfo.precatorio}</span></span>
+                <span className='text-gray-400 text-[10px]'><Link className='hover:underline cursor-pointer' to={'/dashboard'}>Dashboard</Link> &gt; <a className='hover:underline cursor-pointer' onClick={navigation}>Cessões</a> &gt; <span>{precInfo.precatorio}</span></span>
             </div>
             <div className='flex flex-col mb-[60px] max-[700px]:mb-60px'>
                 <div className='grid max-[700px]:grid-cols-1 grid-cols-2' id='info-gerais'>
@@ -167,7 +167,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
             <ListaCessionarios cessionario={cessionario} precInfo={precInfo} users={users} />
             <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                 <span className="font-[700] dark:text-white mb-[16px]" id='juridico'>Jurídico</span>
-                <p className='text-[12px] text-neutral-600 dark:text-neutral-400 font-medium'>Data de Atualização: {precInfo.juridico_feito_data ? `${precInfo.juridico_feito_data.split('/')[1]}/${precInfo.juridico_feito_data.split('/')[0]}/${precInfo.juridico_feito_data.split('/')[2]}` : null}</p>
+                <p className='text-[12px] text-neutral-600 dark:text-neutral-400 font-medium'>Data de Atualização: {precInfo.juridico_feito_data ? `${precInfo.juridico_feito_data.split('/')[1]}/${precInfo.juridico_feito_data.split('/')[0]}/${precInfo.juridico_feito_data.split('/')[2]}` : <span className='text-[11px] text-neutral-600 dark:text-neutral-400 font-light '>TBA</span>}</p>
                 <div className='grid grid-cols-1 lg:grid-cols-4 gap-4'>
 
                     <Topics texto={'Jurídico Feito'} atualizacaoJuridico={precInfo.juridico_feito} />

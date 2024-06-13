@@ -107,7 +107,7 @@ function Header() {
             {auth?.user.admin ? <NavBarAdmin show={true} /> : <NavBarUser />}
           </div>
 
-          <div className='relative w-[35px] lg:w-[45px] bg-neutral-200 rounded ' >
+          <div className='relative w-[35px] lg:w-[45px] bg-neutral-100 rounded ' >
 
             <div className='cursor-pointer' onClick={() => handleMenu('toolBar')}>
               <ProfileImage userImage={auth?.userImage} />
