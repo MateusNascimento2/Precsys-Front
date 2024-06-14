@@ -9,7 +9,7 @@ import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import AdicionarCessao from "../components/AdicionarCessao";
 import AdicionarCessionario from "../components/AdicionarCessionario";
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { ToastContainer, toast, Bounce } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -64,6 +64,8 @@ export default function AllCessoes() {
   const [recebido, setRecebido] = useState(null);
 
   const [valoresCessionarios, setValoresCessionarios] = useState([])
+
+  const { minhascessoes } = useParams();
 
   useEffect(() => {
     let isMounted = true;
@@ -328,79 +330,81 @@ export default function AllCessoes() {
         <div className='px-[20px]'>
           <div className='flex justify-between items-center md:items-end'>
             <h2 className='font-[700] text-[32px] md:mt-[16px] dark:text-white' id='cessoes'>Cessões</h2>
-            <Modal
-              botaoAbrirModal={
-                <button title='Adicionar nova cessão' className='hover:bg-neutral-100 flex items-center justify-center dark:text-white  dark:hover:bg-neutral-700 rounded-full  text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px] '>
-                  +
-                </button>}
-              tituloModal=
-              {showModalAdicionarCessionario && cessionarios.length > 0
-                ? (
-                  <div className='flex gap-2 items-center'>
-                    <button className='rounded hover:bg-neutral-100 dark:hover:bg-neutral-800' onClick={() => handleVoltarAdicionarCessao()}>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
-                      </svg>
-                    </button>
-                    <span>Adicionar cessão</span>
-                  </div>
-                )
-                : (<span>Adicionar cessão</span>)
-              }
-              botaoSalvar={<button
-                className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700' onClick={(e) => handleSubmit(e)}>
-                Salvar
-              </button>
-              }
-              botaoAdicionarCessionario={<button
-                onClick={() => addCessionario()}
-                className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
-                Adicionar cessionário
-              </button>}
-            >
-              <div className='h-[450px] overflow-auto relative'>
-
-                <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? 'absolute left-[-1100px] transition-all ease-in-out duration-300 overflow-hidden' : 'absolute left-0 transition-all ease-in-out duration-300 overflow-y-hidden'}>
-                  {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
-                    <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30'>
-                      <LoadingSpinner />
+            {!minhascessoes ?
+              <Modal
+                botaoAbrirModal={
+                  <button title='Adicionar nova cessão' className='hover:bg-neutral-100 flex items-center justify-center dark:text-white  dark:hover:bg-neutral-700 rounded-full  text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px] '>
+                    +
+                  </button>}
+                tituloModal=
+                {showModalAdicionarCessionario && cessionarios.length > 0
+                  ? (
+                    <div className='flex gap-2 items-center'>
+                      <button className='rounded hover:bg-neutral-100 dark:hover:bg-neutral-800' onClick={() => handleVoltarAdicionarCessao()}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+                        </svg>
+                      </button>
+                      <span>Adicionar cessão</span>
                     </div>
-                  </div>)}
+                  )
+                  : (<span>Adicionar cessão</span>)
+                }
+                botaoSalvar={<button
+                  className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700' onClick={(e) => handleSubmit(e)}>
+                  Salvar
+                </button>
+                }
+                botaoAdicionarCessionario={<button
+                  onClick={() => addCessionario()}
+                  className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
+                  Adicionar cessionário
+                </button>}
+              >
+                <div className='h-[450px] overflow-auto relative'>
 
-                  <AdicionarCessao varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridicos={juridicos} enviarValores={handleReceberValoresCessao} />
-                </div>
-
-                <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "absolute right-0 transition-all ease-in-out duration-300 overflow-y-auto w-full" : 'w-full absolute right-[1100px] transition-all ease-in-out duration-300 overflow-y-hidden'}>
-
-                  <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
+                  <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? 'absolute left-[-1100px] transition-all ease-in-out duration-300 overflow-hidden' : 'absolute left-0 transition-all ease-in-out duration-300 overflow-y-hidden'}>
                     {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
-                      <div className='absolute left-1/2 top-[33%] -translate-x-[50%] -translate-y-[50%] z-30'>
+                      <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30'>
                         <LoadingSpinner />
                       </div>
                     </div>)}
-                    {cessionarios.map((componente) => (
 
-                      <div key={componente.index} className='w-full pt-5'>
-                        <div className='px-4 flex justify-between items-center'>
-                          <span className='dark:text-white text-black font-medium py-2 text-[18px]'>Adicionar cessionário</span>
-                          <button onClick={() => handleExcluirCessionario(componente.index)} className='rounded hover:bg-neutral-100 float-right w-4 h-4 dark:hover:bg-neutral-800'>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                            </svg>
-                          </button>
+                    <AdicionarCessao varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridicos={juridicos} enviarValores={handleReceberValoresCessao} />
+                  </div>
+
+                  <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "absolute right-0 transition-all ease-in-out duration-300 overflow-y-auto w-full" : 'w-full absolute right-[1100px] transition-all ease-in-out duration-300 overflow-y-hidden'}>
+
+                    <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
+                      {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
+                        <div className='absolute left-1/2 top-[33%] -translate-x-[50%] -translate-y-[50%] z-30'>
+                          <LoadingSpinner />
                         </div>
-                        {componente.componente}
-                      </div>
-                    ))}
+                      </div>)}
+                      {cessionarios.map((componente) => (
+
+                        <div key={componente.index} className='w-full pt-5'>
+                          <div className='px-4 flex justify-between items-center'>
+                            <span className='dark:text-white text-black font-medium py-2 text-[18px]'>Adicionar cessionário</span>
+                            <button onClick={() => handleExcluirCessionario(componente.index)} className='rounded hover:bg-neutral-100 float-right w-4 h-4 dark:hover:bg-neutral-800'>
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                          {componente.componente}
+                        </div>
+                      ))}
+                    </div>
+
                   </div>
 
                 </div>
 
-              </div>
 
 
+              </Modal> : null}
 
-            </Modal>
           </div>
 
         </div>

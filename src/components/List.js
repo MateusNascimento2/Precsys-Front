@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingSpinner from "./LoadingSpinner/LoadingSpinner";
@@ -87,22 +87,19 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
     };
   }, [axiosPrivate, navigate, location]);
 
-  const filterCessions = useCallback(() => {
+  useEffect(() => {
     if (!minhascessoes) return;
-  
+
     const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => cessionario.user_id === userID);
     const filteredCessoes = cessionariosPorIDdoUsuarios
       .map(cessionario => cessoes.find(cessao => cessao.id === cessionario.cessao_id))
       .filter(cessao => cessao !== undefined);
-  
+
     if (!arraysAreEqual(filteredCessoes, cessoes)) {
       setCessoes(filteredCessoes);
     }
   }, [minhascessoes, cessionarios, cessoes, userID]);
-  
-  useEffect(() => {
-    filterCessions();
-  }, [filterCessions]);
+
 
   function arraysAreEqual(arr1, arr2) {
     if (arr1.length !== arr2.length) {
@@ -328,7 +325,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
               {cessao.falecido ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.falecido}</span></span>) : null}
             </div>
           </div>
-          <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
+          <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500', maxWidth:'220px' }} border="1px solid #d4d4d4" opacity={100} place="top" />
         </div>
       </CellMeasurer>
 

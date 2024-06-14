@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Modal from '../components/Modal';
 import ListaCessionarios from './ListaCessionarios';
-import Select from 'react-select';
 import EditarPrec from './EditarPrec';
+import { Tooltip } from 'react-tooltip';
 
 export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas, orcamentos, naturezas, empresas, users, teles, escreventes }) {
     const [isDisabled, setIsDisabled] = useState(true);
@@ -166,14 +166,21 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
             </div>
             <ListaCessionarios cessionario={cessionario} precInfo={precInfo} users={users} />
             <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
-                <span className="font-[700] dark:text-white mb-[16px]" id='juridico'>Jurídico</span>
-                <p className='text-[12px] text-neutral-600 dark:text-neutral-400 font-medium'>Data de Atualização: {precInfo.juridico_feito_data ? `${precInfo.juridico_feito_data.split('/')[1]}/${precInfo.juridico_feito_data.split('/')[0]}/${precInfo.juridico_feito_data.split('/')[2]}` : <span className='text-[11px] text-neutral-600 dark:text-neutral-400 font-light '>TBA</span>}</p>
-                <div className='grid grid-cols-1 lg:grid-cols-4 gap-4'>
+                {/*                 <p className='text-[12px] text-neutral-600 dark:text-neutral-400 font-medium'>Data de Atualização: {precInfo.juridico_feito_data ? `${precInfo.juridico_feito_data.split('/')[1]}/${precInfo.juridico_feito_data.split('/')[0]}/${precInfo.juridico_feito_data.split('/')[2]}` : <span className='text-[11px] text-neutral-600 dark:text-neutral-400 font-light '>TBA</span>}</p> */}
+                <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 dark:bg-neutral-900 xl:divide-x-[1px] dark:divide-neutral-600 mt-2 lg:mt-0'>
+                    <div className='cursor-pointer lg:px-4 lg:py-2 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-r lg:border-b xl:border-r-0 xl:border-b-0 dark:border-neutral-600' id='juridico'>
+                        <Topics texto={'Jurídico Feito'} atualizacaoJuridico={precInfo.juridico_feito} textoExplicativo={'A etapa "Jurídico Feito" representa a conclusão bem-sucedida de todos os procedimentos legais necessários na gestão e transferência de precatórios.'} />
+                    </div>
+                    <div className='cursor-pointer  pt-4 lg:px-4 lg:py-2 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-b xl:border-b-0 dark:border-neutral-600'>
+                        <Topics texto={'Jurídico a Fazer'} atualizacaoJuridico={precInfo.juridico_afazer} textoExplicativo={'A etapa "Jurídico a Fazer" engloba todas as ações jurídicas necessárias que ainda precisam ser completadas para assegurar a legalidade e eficácia da cessão de precatórios.'} />
+                    </div>
+                    <div className='cursor-pointer  pt-4 lg:py-2 lg:px-4 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-r xl:border-r-0 dark:border-neutral-600'>
+                        <Topics texto={'Andamento Jurídico'} atualizacaoJuridico={precInfo.juridico_andamentoatual} textoExplicativo={'A etapa "Andamento Jurídico" é uma fase crítica na gestão de precatórios, onde o progresso dos procedimentos legais é monitorado e revisado continuamente.'} />
+                    </div>
+                    <div className='cursor-pointer  pt-4 lg:py-2 lg:px-4 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 dark:border-neutral-600'>
+                        <Topics texto={'Obs Jurídico'} atualizacaoJuridico={precInfo.juridico_obs} textoExplicativo={'A etapa "Obs Jurídico" envolve a coleta e o registro de observações e recomendações da equipe jurídica, essenciais para orientar e gerenciar o processo de cessão de precatórios de forma eficaz.'} />
+                    </div>
 
-                    <Topics texto={'Jurídico Feito'} atualizacaoJuridico={precInfo.juridico_feito} />
-                    <Topics texto={'Jurídico a Fazer'} atualizacaoJuridico={precInfo.juridico_afazer} />
-                    <Topics texto={'Andamento Jurídico'} atualizacaoJuridico={precInfo.juridico_andamentoatual} />
-                    <Topics texto={'Obs Jurídico'} atualizacaoJuridico={precInfo.juridico_obs} />
                 </div>
             </div>
             {
@@ -196,7 +203,14 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                                                 </div>
                                             </div>
                                             <div className="text-[10px] dark:border-neutral-700  py-3 px-2 flex gap-2 flex-wrap items-center dark:bg-neutral-900 ">
-                                                <span style={{ backgroundColor: `${cessao.statusColor}` }} className={`px-2 py-1 rounded brightness-110`}><span className="text-black font-bold">{cessao.status}</span></span>
+                                                <a
+                                                    style={{ backgroundColor: `${cessao.statusColor}` }}
+                                                    data-tooltip-id="status"
+                                                    data-tooltip-content={`${cessao.substatus ? cessao.substatus : ''}`}
+                                                    data-tooltip-place="top"
+                                                    className={`px-2 py-1 rounded brightness-110`}>
+                                                    <span className="text-black font-bold">{cessao.status}</span>
+                                                </a>
 
                                                 <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 `}>
                                                     <span className="text-black font-bold dark:text-neutral-100">{cessao.ente_id}</span>
@@ -214,6 +228,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
 
                                                 {cessao.falecido ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 `}><span className="text-black font-bold dark:text-neutral-100">{cessao.falecido}</span></span>) : null}
                                             </div>
+                                            <Tooltip id="status" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500', maxWidth:'220px' }} border="1px solid #d4d4d4" opacity={100} place="top" />
                                         </>
 
 

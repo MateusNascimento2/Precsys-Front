@@ -117,45 +117,54 @@ function Users({ searchQuery }) {
                   <span className="text-neutral-400 font-medium line-clamp-1 dark:text-neutral-300">{user.cpfcnpj}</span>
                 </div>
               </div>
-              <DotsButton>
-                <span className="cursor-pointer text-[12px] rounded p-1 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"><a href={'#'} download target="_blank">Requisitório</a></span>
-                <span className="cursor-pointer text-[12px] rounded p-1 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"><a href={'#'} download target="_blank">Escritura</a></span>
-              </DotsButton>
             </div>
             <div>
               <div className="text-[10px] rounded-b border-b border-r border-l dark:border-neutral-700  py-3 px-2 flex gap-2 flex-wrap items-center dark:bg-neutral-900 ">
 
-{/*                 <a
-                  style={{ backgroundColor: '#000' }}
-                  data-tooltip-id="my-tooltip"
-                  data-tooltip-content={`${user.qtdCessoes}`}
+                <a
+                  data-tooltip-id="qtdCessoes"
+                  data-tooltip-content={`Quantidade de cessões`}
                   data-tooltip-place="top"
-                  className={`px-2 py-1 rounded brightness-110`}>
-                </a> */}
-                <span>
-                  <span className="bg-[#181c32] dark:bg-white dark:text-[#181c32] text-white font-bold px-2 py-1 rounded flex gap-1">{user.qtdCessoes}</span>
-                </span>
+                >
+                  <span>
+                    <span className="bg-[#181c32] dark:bg-white dark:text-[#181c32] text-white font-bold px-2 py-1 rounded flex gap-1">{user.qtdCessoes}</span>
+                  </span>
+                </a>
 
-                <div>
+
+                <a
+                  data-tooltip-id='tipoUsuario'
+                  data-tooltip-content={'Tipo de usuário'}
+                  data-tooltip-place='right'
+                >
+
+
                   {user.admin
                     ?
                     <span className='bg-[#181c32] dark:bg-white dark:text-[#181c32] text-white font-bold px-2 py-1 rounded flex gap-1'>ADM</span>
                     :
                     <span className='text-black font-bold dark:text-neutral-100 px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700'>Usuário</span>}
-                </div>
+                </a>
 
-                <div>
+                <a
+                  data-tooltip-id='statusUsuario'
+                  data-tooltip-content={'Status do usuário'}
+                  data-tooltip-place='right'
+
+                >
                   {user.ativo
                     ?
                     <span className='bg-[#181c32] dark:bg-white dark:text-[#181c32] text-white font-bold px-2 py-1 rounded flex gap-1'>Ativo</span>
                     :
                     <span className='text-black font-bold dark:text-neutral-100 px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700'>Desativado</span>}
-                </div>
+                </a>
               </div>
             </div>
           </div>
         </div>
-        <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
+        <Tooltip id="qtdCessoes" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
+        <Tooltip id="tipoUsuario" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
+        <Tooltip id="statusUsuario" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
       </CellMeasurer >
     );
   };

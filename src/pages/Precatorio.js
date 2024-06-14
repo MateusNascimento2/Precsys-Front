@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom'
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
+import { Tooltip } from 'react-tooltip';
 
 export default function Precatorio() {
   const [show, setShow] = useState(false)
@@ -225,6 +226,7 @@ export default function Precatorio() {
       <Header />
       {!isLoading ?
         (<main className={show ? 'container mx-auto px-2 overflow-hidden dark:bg-neutral-900' : 'container mx-auto px-2 pt-[120px] dark:bg-neutral-900'}>
+          <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500', maxWidth: '220px'}} border="1px solid #d4d4d4" opacity={100} place="top" />
           <div>
             <div className='flex flex-col mx-[20px] border-b dark:border-neutral-600 pb-[24px]'>
               <div className='flex gap-1 items-center'>
@@ -239,9 +241,14 @@ export default function Precatorio() {
                 </div>
               </div>
               <div className='flex flex-wrap gap-1 mb-[13px] '>
-                <span style={{ backgroundColor: statusAtualizado.extra }} className={`px-2 py-1 rounded text-[10px] flex gap-1 bg-neutral-100 dark:bg-neutral-700  `}>
-                  <span className="text-black font-bold dark:text-black">{updatedPrecData.status}</span>
-                </span>
+                <a
+                  style={{ backgroundColor: `${statusAtualizado.extra}` }}
+                  data-tooltip-id="my-tooltip"
+                  data-tooltip-content={`${updatedPrecData.substatus ? updatedPrecData.substatus : ''}`}
+                  data-tooltip-place="top"
+                  className={`px-2 py-1 rounded text-[10px] flex gap-1 bg-neutral-100 dark:bg-neutral-700 dark:text-neutral-100`}>
+                  <span className="text-black font-bold">{updatedPrecData.status}</span>
+                </a>
                 {orcamentoAtualizado ? (<Tags text={updatedPrecData.orcamento} />) : null}
                 {naturezaAtualizada ? (<Tags text={naturezaAtualizada.nome} />) : null}
                 {empresaAtualizada ? (<Tags text={empresaAtualizada.nome} />) : null}
@@ -255,7 +262,7 @@ export default function Precatorio() {
               </div>
               <div className='lg:w-[calc(100%-300px)]'>
                 <InfoPrec precInfo={updatedPrecData} status={status} cessionario={updatedCessionario} cessoes={cessoesRelacionadas} varas={varas} orcamentos={orcamentos}
-                naturezas={natureza} empresas={empresas} users={users} teles={teles} escreventes={escreventes}/>
+                  naturezas={natureza} empresas={empresas} users={users} teles={teles} escreventes={escreventes} />
               </div>
             </div>
           </div>

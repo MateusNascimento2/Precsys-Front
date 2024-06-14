@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function Topics({ texto, data, atualizacaoJuridico }) {
+function Topics({ texto, data, atualizacaoJuridico, textoExplicativo }) {
   const [show, setShow] = useState(false);
   const [textoAtt, setTextoAtt] = useState([])
 
@@ -26,9 +26,19 @@ function Topics({ texto, data, atualizacaoJuridico }) {
 
   return (
     <>
-      <div onClick={() => handleClick()} className="cursor-pointer relative ring-1 ring-neutral-200 dark:ring-neutral-600 drop-shadow h-[78px] overflow-hidden">
-        <div className='hover:bg-neutral-50 dark:hover:bg-neutral-700 absolute top-0 left-0 right-0 px-4 py-3 flex gap-2 items-center font-semibold text-sm text-slate-900 h-full bg-slate-50/90 dark:bg-neutral-800 backdrop-blur-sm dark:text-white justify-center'>
-          <span className="font-[600] text-[15px] lg:text-[16px]">{texto}</span>
+      <div onClick={() => handleClick()}>
+        <div className='font-semibold lg:pt-2 xl:pt-0 text-sm text-slate-900 h-full dark:text-white justify-between'>
+          <div className='mb-2'>
+            <span className="font-[700] dark:text-white">{texto}</span>
+          </div>
+          <div className='flex items-center mb-2'>
+            <span className="font-[500] text-[12px] lg:text-[12px] h-[100px]">{textoExplicativo}</span>
+          </div>
+          <div className='flex justify-end'>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </div>
         </div>
       </div>
       <div className={show ? 'fixed z-[100] w-dvw h-lvh left-0 top-0' : 'hidden'}>
