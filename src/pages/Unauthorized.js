@@ -7,8 +7,7 @@ export default function Unauthorized() {
 
   return (
     <section className='flex flex-col justify-center items-center'>
-      <h1>401</h1>
-      <h2>Unauthorized</h2>
+      <h1>401 Unauthorized</h1>
       <br />
       <p>Você não possui autorização para acessar a página requisitada !</p>
       <div>

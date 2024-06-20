@@ -1,21 +1,37 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import Users from '../components/Users';
 import Header from '../components/Header';
 import SearchInput from '../components/SearchInput';
 import FilterButton from '../components/FilterButton';
-import Filter from '../layout/Filter';
-
-
+import UserFilter from '../components/UserFilter';
 
 
 function Usuarios() {
   const [searchQuery, setSearchQuery] = useState('');
   const [show, setShow] = useState(false);
-  const [dataCessoes, setDataCessoes] = useState([])
-  const [selectedCheckboxes, setSelectedCheckboxes] = useState(() => {
-    const savedFilters = localStorage.getItem('filters');
-    return savedFilters ? JSON.parse(savedFilters) : [];
-  });
+
+
+  const initialFilters = {
+    status: {
+      Ativo: false,
+      Desativado: false,
+    },
+    tipo: {
+      Usuário: false,
+      Administrador: false,
+    },
+  };
+
+  const [filters, setFilters] = useState(initialFilters)
+
+  const updateFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  const resetFilters = () => {
+    setFilters(initialFilters);
+  };
+
 
   const handleInputChange = (query) => {
     setSearchQuery(query);
@@ -32,16 +48,6 @@ function Usuarios() {
     }
 
   }
-
-  const handleSelectedCheckboxesChange = (childData) => {
-    setSelectedCheckboxes(childData);
-  };
-
-  const handleData = (data) => {
-    setDataCessoes(data)
-  }
-
-
   return (
     <>
       <Header />
@@ -55,18 +61,18 @@ function Usuarios() {
 
           <div className={`lg:flex lg:gap-4 lg:items-start`}>
             <div className='hidden lg:block lg:sticky lg:top-[5%]'>
-              <Filter show={true} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} />
+              <UserFilter show={true} onSetShow={handleShow} filters={filters} onSelectedCheckboxesChange={updateFilters} resetFilters={resetFilters} />
 
             </div>
             <div className='w-full h-full max-h-full'>
-              <Users searchQuery={searchQuery} />
+              <Users searchQuery={searchQuery} selectedFilters={filters} />
 
             </div>
           </div>
 
 
         </div>
-        <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} />
+        <UserFilter show={show} onSetShow={handleShow} filters={filters} onSelectedCheckboxesChange={updateFilters} resetFilters={resetFilters} />
 
       </main>
 

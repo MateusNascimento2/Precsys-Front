@@ -12,6 +12,7 @@ import Unauthorized from './pages/Unauthorized';
 import Usuarios from './pages/Usuarios';
 import Precatorio from './pages/Precatorio';
 import Calculo from './pages/Calculo';
+import LoginLogs from './pages/LoginLogs';
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
             <Route path='todas-cessoes' element={<AllCessoes />} />
             <Route path='usuarios' element={<Usuarios />} />
             <Route path='calculo' element={<Calculo />} />
+            <Route path ='logs/login' element={<LoginLogs />}/>
           </Route>
         </Route>
 
