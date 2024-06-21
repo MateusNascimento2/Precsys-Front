@@ -39,7 +39,7 @@ function UserToolbar({ show, updateLogo, darkMode, onDarkModeChange }) {
             <p className='font-[500] text-[#666666] dark:text-neutral-500 text-[12px]'>Configurações de Perfil</p>
           </li>
         </ul>
-        <div className="w-full py-2 pl-2 gap-2 flex justify-between">
+        <div className="w-full py-2 pl-2 gap-2 flex justify-between ">
           <LogoutButton />
           <ThemeSwitcher updateLogo={updateLogo} darkMode={darkMode} onDarkModeChange={onDarkModeChange} />
         </div>
