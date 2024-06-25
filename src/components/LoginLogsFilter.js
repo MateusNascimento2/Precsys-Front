@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 
-export default function LoginLogsFilter({ show, onSetShow, filters, onSelectedCheckboxesChange, resetFilters, users }) {
+export default function LoginLogsFilter({ show, onSetShow, filters, onSelectedCheckboxesChange, resetFilters }) {
   const [showMenu, setShowMenu] = useState(false);
   const [menuType, setMenuType] = useState(null);
   const [userFilterQuery, setUserFilterQuery] = useState('');

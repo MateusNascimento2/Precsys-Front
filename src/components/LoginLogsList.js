@@ -4,15 +4,13 @@ import { Link } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import { Tooltip } from 'react-tooltip';
 
-export default function LoginLogsList({ searchQuery, logs, users, isLoading, filters }) {
+const LoginLogsList = ({ searchQuery, logs, users, isLoading, filters }) => {
   const listRef = useRef();
 
   const cache = useMemo(() => new CellMeasurerCache({
     fixedWidth: true,
     defaultHeight: 50,
   }), []);
-
-  console.log(filters)
 
   const updatedLogs = useMemo(() => {
     if (users.length > 0 && logs.length > 0) {
@@ -54,7 +52,6 @@ export default function LoginLogsList({ searchQuery, logs, users, isLoading, fil
 
     const data = log.data.split('T')[0];
     const dataFormatada = data.split('-');
-
     const hora = log.data.split('T')[1];
     const horaFormatada = hora.replace('.000Z', '');
 
@@ -80,13 +77,11 @@ export default function LoginLogsList({ searchQuery, logs, users, isLoading, fil
                 >
                   {log.ip}
                 </span>
-
                 <span data-tooltip-id="Data do acesso"
                   data-tooltip-content="Data do acesso"
                   data-tooltip-place="bottom" className='text-[12px] lg:text-[14px] text-center dark:text-white'>
                   {dataFormatada[2]}/{dataFormatada[1]}/{dataFormatada[0]}
                 </span>
-
                 <span data-tooltip-id="Hora do acesso"
                   data-tooltip-content="Hora do acesso"
                   data-tooltip-place="bottom" className='text-[12px] lg:text-[14px] text-center dark:text-white'>
@@ -141,4 +136,6 @@ export default function LoginLogsList({ searchQuery, logs, users, isLoading, fil
       )}
     </>
   );
-}
+};
+
+export default React.memo(LoginLogsList);

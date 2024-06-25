@@ -13,6 +13,7 @@ import Usuarios from './pages/Usuarios';
 import Precatorio from './pages/Precatorio';
 import Calculo from './pages/Calculo';
 import LoginLogs from './pages/LoginLogs';
+import PropostasLogs from './pages/PropostasLogs'
 
 function App() {
 
@@ -28,7 +29,7 @@ function App() {
           <Route element={<RequireNormalUserAuth />}>
             <Route path='dashboard' element={<Dashboard />} />
             <Route path=':minhascessoes' element={<AllCessoes />} />
-            <Route path='precatorio/:precID' element={<Precatorio />} />
+            <Route path='cessao/:precID' element={<Precatorio />} />
           </Route>
 
           <Route element={<RequireAdminAuth />}>
@@ -36,6 +37,7 @@ function App() {
             <Route path='usuarios' element={<Usuarios />} />
             <Route path='calculo' element={<Calculo />} />
             <Route path ='logs/login' element={<LoginLogs />}/>
+            <Route path='logs/propostas' element={<PropostasLogs />} />
           </Route>
         </Route>
 

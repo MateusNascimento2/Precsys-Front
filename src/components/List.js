@@ -286,7 +286,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
                   <span className="font-[700] dark:text-white">{cessao.id}</span>
                 </div>
                 <div className="flex flex-col justify-center text-[12px] pl-2">
-                  <Link to={`/precatorio/${String(cessao.id)}`}><span className="font-bold dark:text-white hover:underline">{cessao.precatorio}</span></Link>
+                  <Link to={`/cessao/${String(cessao.id)}`}><span className="font-bold dark:text-white hover:underline">{cessao.precatorio}</span></Link>
                   <span className="text-neutral-400 font-medium line-clamp-1 dark:text-neutral-300">{cessao.cedente}</span>
                 </div>
               </div>

@@ -39,7 +39,7 @@ function NavBarAdmin({ show }) {
       <nav className={show ? 'shadow border-r border-neutral-300 transition-all duration-[0.3s] ease-in-out fixed flex items-start bg-white w-[300px] z-50 h-screen top-[50px] left-0 px-4 lg:static lg:w-full lg:h-full lg:shadow-none lg:border-0 dark:bg-neutral-900 dark:border-neutral-700 lg:transition-none lg:duration-0 lg:flex lg:items-center' : 'border-r dark:border-neutral-700 transition-all duration-[0.3s] ease-in-out px-4 flex items-start bg-[#FFF] w-[300px] z-50 fixed top-[52px] left-[-300px] h-screen dark:bg-neutral-900 lg:transition-none lg:duration-0'}>
         <ul className='divide-y divide-neutral-300 dark:divide-neutral-700 flex w-full px-2 flex-col items-center gap-2 text-[13px] lg:flex-row lg:divide-y-0'>
 
-          <li onClick={() => handleShow('pessoal')} className='cursor-pointer w-full p-2 lg:px-2  lg:border-0 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:rounded transition-all'>
+          <li onClick={() => handleShow('pessoal')} className='cursor-pointer w-full p-2 lg:px-2  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded transition-all'>
             <div className='flex justify-between items-center lg:gap-3'>
               <span className='font-[500] text-[#666666] dark:text-neutral-300 '>Pessoal</span>
               <span className='text-[12px] dark:text-neutral-300'>
@@ -48,7 +48,7 @@ function NavBarAdmin({ show }) {
                 </svg>
               </span>
             </div>
-            <div className={showMenu && menuType === 'pessoal' ? 'lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 h-[170px] lg:w-[300px] overflow-y-hidden transition-all lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all lg:absolute lg:z-50 lg:bg-white lg:right-auto xl:right-auto dark:bg-neutral-900 dark:border-neutral-600'}>
+            <div className={showMenu && menuType === 'pessoal' ? 'lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 h-[160px] lg:h-[170px] lg:w-[300px] overflow-y-hidden transition-all lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all lg:absolute lg:z-50 lg:bg-white lg:right-auto xl:right-auto dark:bg-neutral-900 dark:border-neutral-600'}>
               <ul className='lg:ml-0 '>
                 <li className='mb-3 mt-2'>
                   <span className='font-[600] text-[12px] text-[#666666]'>Categorias</span>
@@ -66,7 +66,7 @@ function NavBarAdmin({ show }) {
             </div>
           </li>
 
-          <li onClick={() => handleShow('controle')} className='cursor-pointer w-full p-2 lg:px-2  lg:border-0 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:rounded transition-all'>
+          <li onClick={() => handleShow('controle')} className='cursor-pointer w-full p-2 lg:px-2  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded transition-all'>
             <div className='flex justify-between items-center lg:gap-3'>
               <span className='font-[500] text-[#666666]  dark:text-neutral-300 '>Controle</span>
               <span className='text-[12px] dark:text-neutral-300'>
@@ -75,8 +75,8 @@ function NavBarAdmin({ show }) {
                 </svg>
               </span>
             </div>
-            <div className={showMenu && menuType === 'controle' ? 'lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 h-[345px] lg:h-[245px] lg:w-[430px] overflow-y-hidden transition-all lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all lg:absolute lg:z-50 lg:bg-white lg:right-auto xl:right-auto dark:bg-neutral-900 dark:border-neutral-600'}>
-              <ul className='lg:ml-0 '>
+            <div className={showMenu && menuType === 'controle' ? 'lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 h-[360px] lg:h-[245px] lg:w-[430px] overflow-y-hidden transition-all lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all lg:absolute lg:z-50 lg:bg-white lg:right-auto xl:right-auto dark:bg-neutral-900 dark:border-neutral-600'}>
+              <ul className='lg:ml-0'>
                 <li className='mb-3 mt-2'>
                   <span className='font-[600] text-[12px] text-[#666666]'>Administração</span>
                 </li>
@@ -120,7 +120,7 @@ function NavBarAdmin({ show }) {
             </div>
           </li>
 
-          <li onClick={() => handleShow('logs')} className='cursor-pointer w-full p-2 lg:px-2 lg:border-0 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:rounded transition-all'>
+          <li onClick={() => handleShow('logs')} className='cursor-pointer w-full p-2 lg:px-2 lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded transition-all'>
             <div className='flex justify-between items-center lg:gap-3 '>
               <span className='font-[500] text-[#666666] dark:text-neutral-300 '>Logs</span>
               <span className='text-[12px] dark:text-neutral-300 '>
@@ -139,7 +139,7 @@ function NavBarAdmin({ show }) {
                   <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Logins</span>
                   <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todos os Logins</p>
                 </li>
-                <li className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                <li className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800' onClick={() => handleRoute('/logs/propostas')}>
                   <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Propostas</span>
                   <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todas as Propostas</p>
                 </li>
@@ -148,7 +148,7 @@ function NavBarAdmin({ show }) {
           </li>
 
 
-          <li onClick={() => handleShow('ferramentas')} className='cursor-pointer w-full p-2 lg:px-2  lg:border-0 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:rounded transition-all'>
+          <li onClick={() => handleShow('ferramentas')} className='cursor-pointer w-full p-2 lg:px-2  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded transition-all'>
             <div className='flex justify-between items-center lg:gap-3'>
               <span className='font-[500] text-[#666666] dark:text-neutral-300 '>Ferramentas</span>
               <span className='text-[12px] dark:text-neutral-300'>

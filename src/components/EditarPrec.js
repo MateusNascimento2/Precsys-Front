@@ -2,38 +2,52 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import CurrencyFormat from 'react-currency-format';
 
-export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, empresas, users, teles, escreventes, enviarValores }) {
+export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, empresas, users, teles, escreventes, juridico, enviarValores }) {
   const [precatorioEditado, setPrecatorioEditado] = useState(precInfo.precatorio ? precInfo.precatorio : '');
   const [processoEditado, setProcessoEditado] = useState(precInfo.processo ? precInfo.processo : '');
   const [cedenteEditado, setCedenteEditado] = useState(precInfo.cedente ? precInfo.cedente : '');
-  const [varaEditado, setVaraEditado] = useState(precInfo.nome_vara ? precInfo.nome_vara : '');
-  const [enteEditado, setEnteEditado] = useState(precInfo.nome_ente ? precInfo.nome_ente : '');
+  const [varaEditado, setVaraEditado] = useState(precInfo.vara_processo ? precInfo.vara_processo : '');
+  const [enteEditado, setEnteEditado] = useState(precInfo.ente_id ? precInfo.ente_id : '');
   const [anoEditado, setAnoEditado] = useState(precInfo.ano ? precInfo.ano : '');
-  const [naturezaEditado, setNaturezaEditado] = useState(precInfo.nome_natureza ? precInfo.nome_natureza : '');
-  const [empresaEditado, setEmpresaEditado] = useState(precInfo.nome_empresa ? precInfo.nome_empresa : '');
+  const [naturezaEditado, setNaturezaEditado] = useState(precInfo.natureza ? precInfo.natureza : '');
+  const [empresaEditado, setEmpresaEditado] = useState(precInfo.empresa_id ? precInfo.empresa_id : '');
   const [dataCessaoEditado, setDataCessaoEditado] = useState(precInfo.data_cessao ? precInfo.data_cessao : '');
-  const [repComercialEditado, setRepComercialEditado] = useState(precInfo.nome_tele ? precInfo.nome_tele : '');
-  const [escreventeEditado, setEscreventeEditado] = useState(precInfo.nome_escrevente ? precInfo.nome_escrevente : '');
+  const [repComercialEditado, setRepComercialEditado] = useState(precInfo.tele_id ? precInfo.tele_id : '');
+  const [escreventeEditado, setEscreventeEditado] = useState(precInfo.escrevente_id ? precInfo.escrevente_id : '');
+  const [juridicoEditado, setJuridicoEditado] = useState(precInfo.juridico_id ? precInfo.juridico_id : '');
 
   useEffect(() => {
     // Envia os valores dos estados para o componente pai sempre que eles forem alterados
     const timer = setTimeout(() => {
-      enviarValores({ precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado });
+      enviarValores({ precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado, juridicoEditado });
     }, 100)
 
     return () => clearTimeout(timer)
-    
-  }, [precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado]);
+
+  }, [precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado, juridicoEditado]);
 
 
-  teles.forEach(tele => {
-    users.forEach(user => {
-      if (String(tele.usuario_id) === String(user.id)) {
-        tele.value = parseInt(user.id)
-        tele.label = user.nome
-      }
-    })
-  })
+  const handleTeleValues = (teles, users) => {
+    return teles
+      .map(tele => {
+        const user = users.find(user => String(tele.usuario_id) === String(user.id));
+        if (user) {
+          return {
+            value: parseInt(user.id),
+            label: user.nome
+          };
+        }
+        return null;
+      })
+      .filter(tele => tele !== null); // Filtra os valores que não foram transformados
+  };
+  
+  // Uso da função
+  const updatedTeles = handleTeleValues(teles, users);
+
+  const tele = updatedTeles.find(tele => String(precInfo.tele_id) === String(tele.value))
+
+  console.log(tele)
 
   const handleSelectValues = (array, value) => {
     return array.map(item => {
@@ -51,26 +65,10 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
     })
   };
 
-  const handleEditCessaoForm = (e) => {
-    e.preventDefault();
-    console.log('submitado')
-    console.log(precatorioEditado)
-    console.log(processoEditado)
-    console.log(varaEditado)
-    console.log(enteEditado)
-    console.log(anoEditado)
-    console.log(naturezaEditado)
-    console.log(empresaEditado)
-    console.log(dataCessaoEditado)
-    console.log(repComercialEditado)
-    console.log(escreventeEditado)
-  }
-
+  console.log(handleTeleValues(teles, users))
 
   return (
-
-
-    <form action="" onSubmit={(e) => handleEditCessaoForm(e)} className='mt-[20px]'>
+    <form className='mt-[20px]'>
       <div className='px-2'>
         <div className='h-[400px] overflow-y-auto grid grid-cols-1 md:grid-cols-2'>
 
@@ -103,8 +101,9 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
               placeholder={'Número do processo'}
               format={'#######-##.####.#.##.####'}
               value={processoEditado}
-              onChange={(values) => {
-                const {formattedValue, value} = values;
+              onValueChange={(values) => {
+                const { formattedValue, value } = values;
+                console.log(formattedValue)
                 setProcessoEditado(formattedValue)
               }}>
 
@@ -132,7 +131,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
               placeholder={'Selecionar vara'}
               options={handleSelectValues(varas, 'nome')}
               isClearable={true}
-              onChange={(selectedValue) => !selectedValue ? setVaraEditado('') : setVaraEditado(selectedValue.label)}
+              onChange={(selectedValue) => !selectedValue ? setVaraEditado('') : setVaraEditado(String(selectedValue.value))}
               name='vara'
               noOptionsMessage={() => 'Nenhuma vara encontrada'}
               unstyled // Remove all non-essential styles
@@ -155,7 +154,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
                 defaultValue={handleSelectValues(orcamentos, 'ente')[parseInt(precInfo.ente_id) - 1]}
                 options={handleSelectValues(orcamentos, 'ente')}
                 isClearable={true}
-                onChange={(selectedValue) => !selectedValue ? setEnteEditado('') : setEnteEditado(selectedValue.label)}
+                onChange={(selectedValue) => !selectedValue ? setEnteEditado('') : setEnteEditado(String(selectedValue.value))}
                 name='ente'
                 placeholder={'Selecionar ente'}
                 noOptionsMessage={() => 'Nenhum ente encontrado'}
@@ -180,7 +179,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
             <Select
               defaultValue={handleSelectValues(naturezas, 'nome')[parseInt(precInfo.natureza) - 1]}
               options={handleSelectValues(naturezas, 'nome')}
-              onChange={(selectedValue) => !selectedValue ? setNaturezaEditado('') : setNaturezaEditado(selectedValue.label)}
+              onChange={(selectedValue) => !selectedValue ? setNaturezaEditado('') : setNaturezaEditado(String(selectedValue.value))}
               isClearable={true}
               name='natureza'
               placeholder={"Selecionar natureza"}
@@ -204,7 +203,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
               menuPlacement='top'
               defaultValue={handleSelectValues(empresas, 'nome')[parseInt(precInfo.empresa_id) - 1]}
               options={handleSelectValues(empresas, 'nome')}
-              onChange={(selectedValue) => !selectedValue ? setEmpresaEditado('') : setEmpresaEditado(selectedValue.label)}
+              onChange={(selectedValue) => !selectedValue ? setEmpresaEditado('') : setEmpresaEditado(String(selectedValue.value))}
               isClearable={true}
               name='empresa'
               placeholder={'Selecionar empresa'}
@@ -240,8 +239,8 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
             <Select
               menuPlacement='top'
               options={teles}
-              defaultValue={teles[parseInt(precInfo.tele_id)]}
-              onChange={(selectedValue) => !selectedValue ? setRepComercialEditado('') : setRepComercialEditado(selectedValue.label)}
+              defaultValue={tele}
+              onChange={(selectedValue) => !selectedValue ? setRepComercialEditado('') : setRepComercialEditado(String(selectedValue.value))}
               isClearable={true}
               name='rep_comercial'
               placeholder={'Selecionar Rep. Comercial'}
@@ -264,7 +263,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
               menuPlacement='top'
               defaultValue={handleSelectValues(escreventes, 'nome')[parseInt(precInfo.escrevente_id) - 1]}
               options={handleSelectValues(escreventes, 'nome')}
-              onChange={(selectedValue) => !selectedValue ? setEscreventeEditado('') : setEscreventeEditado(selectedValue.label)}
+              onChange={(selectedValue) => !selectedValue ? setEscreventeEditado('') : setEscreventeEditado(String(selectedValue.value))}
               isClearable={true}
               name='escrevente'
               placeholder={'Selecionar escrevente'}
@@ -280,6 +279,61 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
               }}
               styles={customStyles}
             />
+          </div>
+
+          <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
+            <label className='text-[14px] font-medium' htmlFor="juridico">Jurídico</label>
+            <Select
+              options={handleSelectValues(juridico, 'nome')}
+              defaultValue={handleSelectValues(juridico, 'nome')[parseInt(precInfo.juridico_id) - 1]}
+              onChange={(selectedValue) => !selectedValue ? setJuridicoEditado('') : setJuridicoEditado(String(selectedValue.value))}
+              isClearable={true}
+              name='juridico'
+              placeholder={"Selecionar jurídico"}
+              noOptionsMessage={() => 'Nenhum jurídico encontrado'}
+              unstyled  // Remove all non-essential styles
+              classNames={{
+                container: () => ('border rounded dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 text-[15px] h-[34px]'),
+                control: () => ('px-2 mt-[6px] flex items-center'),
+                input: () => ('text-gray-400'),
+                menu: () => ('mb-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full max-h-24'),
+                menuList: () => (' flex flex-col gap-2 px-2 py-1 text-[13px] h-24'),
+                option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
+              }}
+              styles={customStyles}
+            />
+          </div>
+
+          <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2'>
+            <span className='text-[14px] font-medium mb-1'>Requisitório</span>
+            <label htmlFor="requisitorio">
+
+              <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
+              <input
+                name='requisitorio'
+                id='requisitorio'
+                type='file'
+                className='hidden'>
+              </input>
+
+            </label>
+
+
+          </div>
+
+          <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2'>
+            <span className='text-[14px] font-medium mb-1'>Escritura</span>
+            <label htmlFor="escritura">
+
+              <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
+              <input
+                name='escritura'
+                id='escritura'
+                type='file'
+                className='hidden'>
+              </input>
+
+            </label>
           </div>
         </div>
 

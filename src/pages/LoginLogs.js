@@ -102,7 +102,7 @@ export default function LoginLogs() {
 
           <div className={`lg:flex lg:gap-4 lg:items-start`}>
             <div className="hidden lg:block lg:sticky lg:top-[5%]">
-              <LoginLogsFilter show={true} onSetShow={handleShow} filters={filters} onSelectedCheckboxesChange={updateFilters} resetFilters={resetFilters} users={users} />
+              <LoginLogsFilter show={true} onSetShow={handleShow} filters={filters} onSelectedCheckboxesChange={updateFilters} resetFilters={resetFilters} />
             </div>
 
             <div className="w-full h-full max-h-full">
@@ -110,7 +110,7 @@ export default function LoginLogs() {
             </div>
           </div>
         </div>
-        <LoginLogsFilter show={show} onSetShow={handleShow} filters={filters} onSelectedCheckboxesChange={updateFilters} resetFilters={resetFilters} users={users} />
+        <LoginLogsFilter show={show} onSetShow={handleShow} filters={filters} onSelectedCheckboxesChange={updateFilters} resetFilters={resetFilters} />
       </main>
     </>
   );

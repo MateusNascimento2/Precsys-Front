@@ -211,6 +211,50 @@ export default function ListaCessionarios({ cessionario, users }) {
 
         </div>
       </div>
-    ) : null
+    ) : (<>
+      <div className='mb-[16px] flex items-center gap-4'>
+        <span className="font-[400] text-[12px] dark:text-white " id='cessionarios'>Não há cessionários</span>
+        <Modal
+          botaoAbrirModal={
+            <button title='Adicionar cessionário' className='hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:hover:bg-neutral-800 rounded w-[20px] h-[20px] p-[1px]' >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[18px] h-[18px] dark:text-white">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+
+            </button>
+          }
+          tituloModal={`Adicionar cessionário`}
+          botaoSalvar={<button onClick={() => handleSubmit()}
+            className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
+            Salvar
+          </button>
+          }
+          botaoAdicionarCessionario={<button
+            onClick={() => addCessionario()}
+            className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
+            Adicionar cessionário
+          </button>}
+        >
+          <div className='h-[450px] overflow-auto'>
+            <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
+              {cessionarios.map((componente) => (
+                <div key={componente.index} className='w-full pt-5'>
+                  <div className='px-4 flex justify-end items-center'>
+                    <button onClick={() => handleExcluirCessionario(componente.index)} className={cessionarios.length > 1 ? 'rounded hover:bg-neutral-100 float-right w-4 h-4 dark:hover:bg-neutral-800' : 'hidden'}>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  {componente.componente}
+                </div>
+              ))}
+            </div>
+
+          </div>
+
+        </Modal>
+      </div>
+    </>)
   )
 }
