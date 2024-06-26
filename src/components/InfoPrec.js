@@ -22,7 +22,7 @@ function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
     };
 
     return (
-        <div onClick={handleOverlayClick} className="fixed inset-0 bg-white dark:bg-black bg-opacity-80 dark:bg-opacity-80 flex justify-center items-center z-50">
+        <div onClick={handleOverlayClick} className="fixed inset-0 bg-white dark:bg-black bg-opacity-80 dark:bg-opacity-80 flex justify-center items-center z-50 p-2">
             <div onClick={(e) => e.stopPropagation()} className="bg-white border dark:border-neutral-600 dark:bg-neutral-900 p-6 rounded shadow-lg relative w-full max-w-md">
                 <h2 className="text-lg text-black dark:text-white font-semibold">Deseja excluir a cessão?</h2>
                 <div className="flex justify-between mt-4">
@@ -332,7 +332,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                     </div>
                 </div>
             </div>
-            <ListaCessionarios cessionario={cessionario} precInfo={precInfo} users={users} />
+            <ListaCessionarios cessionario={cessionario} precInfo={precInfo} users={users} precID={precID} />
             <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                 <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 dark:bg-neutral-900 xl:divide-x-[1px] dark:divide-neutral-600 mt-2 lg:mt-0'>
                     <div className='cursor-pointer lg:px-4 lg:py-2 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-r lg:border-b xl:border-r-0 xl:border-b-0 dark:border-neutral-600' id='juridico'>

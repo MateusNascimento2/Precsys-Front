@@ -3,7 +3,7 @@ import Select from 'react-select';
 import CurrencyFormat from 'react-currency-format';
 
 export default function EditarCessionario({ cessionario, users, enviarValores }) {
-  const [cessionarioEditado, setCessionarioEditado] = useState(cessionario.nome_user ? cessionario.nome_user : null);
+  const [cessionarioEditado, setCessionarioEditado] = useState(cessionario.user_id ? cessionario.user_id : null);
   const [valorPagoEditado, setValorPagoEditado] = useState(cessionario.valor_pago ? cessionario.valor_pago : null);
   const [comissaoEditado, setComissaoEditado] = useState(cessionario.comissao ? cessionario.comissao : null);
   const [percentualEditado, setPercentualEditado] = useState(cessionario.percentual ? cessionario.percentual : null);
@@ -12,7 +12,6 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
   const [assinaturaEditado, setAssinaturaEditado] = useState(cessionario.assinatura === '1' ? true : null);
   const [expedidoEditado, setExpedidoEditado] = useState(cessionario.expedido === '1' ? true : null);
   const [recebidoEditado, setRecebidoEditado] = useState(cessionario.recebido === '1' ? true : null);
-  console.log(users)
 
   const handleSelectValues = (array, value) => {
     return array.map(item => {
@@ -34,21 +33,6 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
   }, [cessionarioEditado, valorPagoEditado, comissaoEditado, percentualEditado, expectativaEditado, obsEditado, assinaturaEditado, expedidoEditado, recebidoEditado]);
 
 
-  console.log(handleSelectValues(users, 'nome'))
-
-  const handleEditCessionarioForm = (e) => {
-    e.preventDefault();
-    console.log('submitado')
-    console.log(cessionarioEditado)
-    console.log(valorPagoEditado)
-    console.log(comissaoEditado)
-    console.log(percentualEditado)
-    console.log(expectativaEditado)
-    console.log(obsEditado)
-    console.log(assinaturaEditado)
-    console.log(expedidoEditado)
-    console.log(recebidoEditado)
-  }
 
   const customStyles = {
     control: base => ({
@@ -58,9 +42,8 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
   };
 
 
-
   return (
-    <form action="" onSubmit={(e) => handleEditCessionarioForm(e)} className='mt-[20px]'>
+    <form className='mt-[20px]'>
       <div className='px-3 '>
         <div className='h-[400px] overflow-y-auto md:grid flex flex-col md:grid-cols-2'>
 
@@ -71,7 +54,7 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
               placeholder={'Selecionar cessionário'}
               options={handleSelectValues(users, 'nome')}
               isClearable={true}
-              onChange={(selectedValue) => !selectedValue ? setCessionarioEditado('') : setCessionarioEditado(selectedValue.label)}
+              onChange={(selectedValue) => !selectedValue ? setCessionarioEditado('') : setCessionarioEditado(String(selectedValue.value))}
               name='cessionario'
               noOptionsMessage={() => 'Nenhum usuário encontrado'}
               unstyled // Remove all non-essential styles

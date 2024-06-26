@@ -1,32 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 function Topics({ texto, data, atualizacaoJuridico, textoExplicativo }) {
   const [show, setShow] = useState(false);
-  const [textoAtt, setTextoAtt] = useState([])
 
-  const handleClick = () => {
-    setShow(prevState => !prevState);
-    console.log(show)
+  const handleClick = (textoAtt) => {
+    if (textoAtt) {
+      setShow(prevState => !prevState);
 
-    if (document.body.style.overflow !== "hidden") {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = 'scroll';
+      if (document.body.style.overflow !== "hidden") {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = 'scroll';
+      }
     }
   }
 
-  useEffect(() => {
-    setTextoAtt(atualizacaoJuridico ? atualizacaoJuridico.split('-') : [])
-
-    console.log(textoAtt)
-  }, [])
-
-
-
-
   return (
     <>
-      <div onClick={() => handleClick()}>
+      <div onClick={() => handleClick(atualizacaoJuridico)}>
         <div className='font-semibold lg:pt-2 xl:pt-0 text-sm text-slate-900 h-full dark:text-white justify-between'>
           <div className='mb-2'>
             <span className="font-[700] dark:text-white">{texto}</span>
@@ -42,10 +33,10 @@ function Topics({ texto, data, atualizacaoJuridico, textoExplicativo }) {
         </div>
       </div>
       <div className={show ? 'fixed z-[100] w-dvw h-lvh left-0 top-0' : 'hidden'}>
-        <div className={show ? 'bg-white dark:bg-black fixed z-[80] left-0 top-0 w-screen h-screen opacity-80 transition-opacity' : 'fixed left-[-9999px] opacity-0 transition-opacity'} onClick={() => handleClick()}></div>
+        <div className={show ? 'bg-white dark:bg-black fixed z-[80] left-0 top-0 w-screen h-screen opacity-80 transition-opacity' : 'fixed left-[-9999px] opacity-0 transition-opacity'} onClick={() => handleClick(atualizacaoJuridico)}></div>
         <div className={show ? 'bg-white dark:bg-neutral-900 dark:border-neutral-600 border rounded shadow absolute z-[90] left-1/2 top-1/2 -translate-x-2/4 -translate-y-2/4 w-[85%] lg:w-[400px] p-4 ' : 'hidden'}>
           <div className='max-h-[400px] overflow-y-auto'>
-            {textoAtt.length === 1 ? (<p className='text-black dark:text-white'>{textoAtt[0]}</p>) : textoAtt.map((textoAtt) => (<p className='text-black dark:text-white mb-4'>{textoAtt}</p>))}
+            <p className='text-black dark:text-white mb-4'>{atualizacaoJuridico}</p>
           </div>
         </div>
       </div>

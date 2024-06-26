@@ -53,15 +53,11 @@ export default function AllCessoes() {
   const [escrevente, setEscrevente] = useState(null);
   const [juridico, setJuridico] = useState(null);
 
-  const [cessionario, setCessionario] = useState(null);
   const [valorPago, setValorPago] = useState('');
   const [comissao, setComissao] = useState('');
   const [percentual, setPercentual] = useState('');
   const [expectativa, setExpectativa] = useState('');
-  const [obs, setObs] = useState('');
-  const [assinatura, setAssinatura] = useState(null);
-  const [expedido, setExpedido] = useState(null);
-  const [recebido, setRecebido] = useState(null);
+
 
   const [valoresCessionarios, setValoresCessionarios] = useState([])
 
@@ -317,6 +313,7 @@ export default function AllCessoes() {
     });
 
     setIsLoading(false)
+
     console.log('Submitado', cessao);
     console.log('Cessionarios:', cessionarios);
   }
@@ -333,7 +330,7 @@ export default function AllCessoes() {
             {!minhascessoes ?
               <Modal
                 botaoAbrirModal={
-                  <button title='Adicionar nova cessão' className='hover:bg-neutral-100 flex items-center justify-center dark:text-white  dark:hover:bg-neutral-700 rounded-full  text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px] '>
+                  <button title='Adicionar nova cessão' className='hover:bg-neutral-100 flex items-center justify-center dark:text-white  dark:hover:bg-neutral-800 rounded-full  text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px] '>
                     +
                   </button>}
                 tituloModal=

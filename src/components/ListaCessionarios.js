@@ -4,14 +4,110 @@ import EditarCessionario from './EditarCessionario';
 import AdicionarCessionario from './AdicionarCessionario';
 import DotsButton from './DotsButton';
 import { v4 as uuidv4 } from 'uuid';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 
-export default function ListaCessionarios({ cessionario, users }) {
+function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
+  if (!isOpen) return null;
+
+  const handleOverlayClick = (event) => {
+    if (event.target === event.currentTarget) {
+      onRequestClose();
+    }
+  };
+
+  return (
+    <div onClick={handleOverlayClick} className="fixed inset-0 bg-white dark:bg-black bg-opacity-40 dark:bg-opacity-40 flex justify-center items-center z-50 p-2">
+      <div onClick={(e) => e.stopPropagation()} className="bg-white border dark:border-neutral-600 dark:bg-neutral-900 p-6 rounded shadow-lg relative w-full max-w-md">
+        <h2 className="text-lg text-black dark:text-white font-semibold">Deseja excluir o cessionário?</h2>
+        <div className="flex justify-between mt-4">
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+            onClick={onConfirm}
+          >
+            Confirmar
+          </button>
+          <button
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-800"
+            onClick={onRequestClose}
+          >
+            Cancelar
+          </button>
+        </div>
+        <button
+          className="absolute top-3 right-3 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"
+          onClick={onRequestClose}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[20px] h-[20px] dark:text-white">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default function ListaCessionarios({ cessionario, users, precID }) {
   const [valorPago, setValorPago] = useState('');
   const [comissao, setComissao] = useState('');
   const [percentual, setPercentual] = useState('');
   const [expectativa, setExpectativa] = useState('');
   const [cessionarios, setCessionarios] = useState([])
   const [valoresCessionarios, setValoresCessionarios] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [valorPagoEditado, setValorPagoEditado] = useState('');
+  const [comissaoEditado, setComissaoEditado] = useState('');
+  const [percentualEditado, setPercentualEditado] = useState('');
+  const [expectativaEditado, setExpectativaEditado] = useState('');
+  const [cessionarioEditado, setCessionarioEditado] = useState('');
+  const [obsEditado, setObsEditado] = useState('');
+  const [assinaturaEditado, setAssinaturaEditado] = useState(false);
+  const [expedidoEditado, setExpedidoEditado] = useState(false);
+  const [recebidoEditado, setRecebidoEditado] = useState(false);
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const openModal = () => setModalIsOpen(true);
+  const closeModal = () => setModalIsOpen(false);
+
+  const confirmDelete = async (id) => {
+    const isDarkMode = localStorage.getItem('darkMode');
+
+    try {
+      setIsLoading(true);
+      const response = await axiosPrivate.delete(`/cessionarios/${id}`);
+      toast.success('Cessionário excluído com sucesso!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+    } catch (err) {
+      toast.error(`Erro ao deletar cessionário: ${err}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+      setIsLoading(false);
+      return;
+    }
+    closeModal();
+  };
+
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     addCessionario();
@@ -43,6 +139,16 @@ export default function ListaCessionarios({ cessionario, users }) {
 
   const handleReceberValoresCessionarioEditado = (valores) => {
     console.log(valores)
+    setValorPagoEditado(valores.valorPagoEditado)
+    setComissaoEditado(valores.comissaoEditado)
+    setPercentualEditado(valores.percentualEditado)
+    setExpectativaEditado(valores.expectativaEditado)
+    setCessionarioEditado(valores.cessionarioEditado)
+    setObsEditado(valores.obsEditado)
+    setAssinaturaEditado(valores.assinaturaEditado)
+    setExpedidoEditado(valores.expedidoEditado)
+    setRecebidoEditado(valores.recebidoEditado)
+
   }
 
   const handleExcluirCessionario = (id) => {
@@ -56,8 +162,143 @@ export default function ListaCessionarios({ cessionario, users }) {
     });
   };
 
-  const handleSubmit = () => {
-    console.log(cessionarios)
+  const handleEditarCessionarioSubmit = async (id) => {
+    const isDarkMode = localStorage.getItem('darkMode');
+    console.log(id, valorPagoEditado, comissaoEditado, percentualEditado, expectativaEditado, cessionarioEditado, obsEditado, assinaturaEditado, expedidoEditado, recebidoEditado)
+
+    try {
+      setIsLoading(true)
+
+      if (!valorPagoEditado || !comissaoEditado || !percentualEditado || !expectativaEditado || !cessionarioEditado) {
+        toast.error(`Os campos (cessionário, valor pago, comissão, porcentagem e expectativa) precisam ser preenchidos!`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
+        });
+
+        setIsLoading(false)
+        return
+      }
+
+      const cessionariosEditados = { valorPagoEditado, comissaoEditado, percentualEditado, expectativaEditado, cessionarioEditado, obsEditado, assinaturaEditado, expedidoEditado, recebidoEditado };
+
+      await axiosPrivate.put(`/cessionarios/${id}`, cessionariosEditados);
+      console.log(`Cessionario editado com sucesso.`);
+    } catch (err) {
+      toast.error(`Erro ao editar cessionário: ${err}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+      setIsLoading(false)
+      console.error('Erro ao editar cessionario:', err);
+      return
+    }
+
+    toast.success('Cessionário editado com sucesso!', {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: false,
+      theme: isDarkMode === 'true' ? 'dark' : 'light',
+      transition: Bounce,
+    });
+    setIsLoading(false)
+
+  }
+
+  const handleSubmit = async () => {
+    console.log('asdass', cessionarios)
+    const isDarkMode = localStorage.getItem('darkMode');
+    setIsLoading(true)
+
+    if (cessionarios.length > 0) {
+      for (const cessionario of cessionarios) {
+        console.log(cessionario)
+        if (!cessionario.valores.valorPago || !cessionario.valores.comissao || !cessionario.valores.percentual || !cessionario.valores.expectativa || !cessionario.valores.cessionario) {
+          toast.error(`Os campos (cessionário, valor pago, comissão, porcentagem e expectativa) precisam ser preenchidos!`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: false,
+            theme: isDarkMode === 'true' ? 'dark' : 'light',
+            transition: Bounce,
+          });
+
+          setIsLoading(false)
+          return
+        }
+
+      }
+
+      try {
+        for (const cessionario of cessionarios) {
+          cessionario.valores.id_cessao = precID; // Associa o ID da cessão ao cessionário
+          try {
+            await axiosPrivate.post('/cessionarios', cessionario.valores);
+            console.log(`Cessionario ${cessionario.valores} adicionado com sucesso.`);
+          } catch (err) {
+            toast.error(`Erro ao adicionar cessionário: ${err}`, {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: false,
+              theme: isDarkMode === 'true' ? 'dark' : 'light',
+              transition: Bounce,
+            });
+            setIsLoading(false)
+            console.error('Erro ao adicionar cessionario:', err);
+            return
+          }
+        }
+      } catch (err) {
+        setIsLoading(false)
+        console.log(err);
+        return
+      }
+
+      toast.success('Cessionário(s) adicionado(s) com sucesso!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+      setIsLoading(false)
+    }
+
+    const id = uuidv4();
+    const novoCessionario = {
+      componente: <AdicionarCessionario valorPago={''} setValorPago={setValorPago} comissao={''} setComissao={setComissao} percentual={''} setPercentual={setPercentual} expectativa={''} setExpectativa={setExpectativa} key={id} users={users} enviarValores={(valores) => handleReceberValoresNovoCessionarios(valores, id)} />,
+      index: id,
+      valores: {} // Inicialmente os valores são um objeto vazio
+    };
+    setCessionarios([novoCessionario]);
   }
 
   function changeStringFloat(a) {
@@ -110,7 +351,7 @@ export default function ListaCessionarios({ cessionario, users }) {
           <span className="font-[700] dark:text-white " id='cessionarios'>Cessionários</span>
           <Modal
             botaoAbrirModal={
-              <button title='Adicionar cessionário' className='hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:hover:bg-neutral-700 w-[25px] h-[25px] p-[2px]' >
+              <button title='Adicionar cessionário' className='hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:hover:bg-neutral-800 rounded w-[25px] h-[25px] p-[2px]' >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[18px] h-[18px] dark:text-white">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
@@ -130,6 +371,11 @@ export default function ListaCessionarios({ cessionario, users }) {
             </button>}
           >
             <div className='h-[450px] overflow-auto'>
+              {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
+                <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30'>
+                  <LoadingSpinner />
+                </div>
+              </div>)}
               <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
                 {cessionarios.map((componente) => (
                   <div key={componente.index} className='w-full pt-5'>
@@ -177,19 +423,32 @@ export default function ListaCessionarios({ cessionario, users }) {
                 <DotsButton>
                   <Modal
                     botaoAbrirModal={
-                      <button title='Editar cessionário' className='hover:bg-neutral-100 flex items-center text-center justify-center dark:hover:bg-neutral-800 rounded p-2'>
+                      <button title='Editar cessionário' className='hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm px-4 py-2 rounded'>
                         Editar
                       </button>
                     }
                     tituloModal={`Editar cessionário #${c.id}`}
-                    botaoSalvar={<button
+                    botaoSalvar={<button onClick={() => handleEditarCessionarioSubmit(c.id)}
                       className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
                       Salvar
                     </button>}
                   >
+                    {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
+                      <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30'>
+                        <LoadingSpinner />
+                      </div>
+                    </div>)}
                     <EditarCessionario cessionario={c} users={users} enviarValores={(valores) => handleReceberValoresCessionarioEditado(valores)} />
                   </Modal>
+                  <button onClick={openModal} className='hover:bg-red-800  bg-red-600 text-white text-sm px-4 py-2 rounded'>
+                    Excluir
+                  </button>
                 </DotsButton>
+                <DeleteConfirmationModal
+                  isOpen={modalIsOpen}
+                  onRequestClose={closeModal}
+                  onConfirm={() => confirmDelete(c.id)}
+                />
 
               </div>
             </div>

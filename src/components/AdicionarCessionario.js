@@ -2,12 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import CurrencyFormat from 'react-currency-format';
 
-export default function AdicionarCessionario({ users, enviarValores, valorPago, setValorPago, comissao, setComissao, percentual, setPercentual, expectativa, setExpectativa  }) {
+export default function AdicionarCessionario({ users, enviarValores, valorPago, setValorPago, comissao, setComissao, percentual, setPercentual, expectativa, setExpectativa, resetForm   }) {
   const [cessionario, setCessionario] = useState(null);
-  //const [valorPago, setValorPago] = useState(valorPago ? valorPago : '');
-  //const [comissao, setComissao] = useState(comissao ? comissao : '');
-  //const [percentual, setPercentual] = useState(percentual ? percentual : '');
-  //const [expectativa, setExpectativa] = useState(expectativa ? expectativa : '');
   const [obs, setObs] = useState('');
   const [assinatura, setAssinatura] = useState(false);
   const [expedido, setExpedido] = useState(false);
@@ -41,19 +37,6 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
 
   console.log(handleSelectValues(users, 'nome'))
 
-  const handleAddCessionario = (e) => {
-    e.preventDefault();
-    console.log('submitado')
-    console.log(cessionario)
-    console.log(valorPago)
-    console.log(comissao)
-    console.log(percentual)
-    console.log(expectativa)
-    console.log(obs)
-    console.log(assinatura)
-    console.log(expedido)
-    console.log(recebido)
-  }
 
   const customStyles = {
     control: base => ({
