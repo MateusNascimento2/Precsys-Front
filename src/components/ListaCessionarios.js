@@ -420,6 +420,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
               <div className='min-w-[120px] w-[17%] text-center dark:text-neutral-200'>{c.exp_recebimento}</div>
               <div className='min-w-[180px] w-[18%] text-center'><a href="" className='hover:underline dark:text-neutral-200'>{c.nota ? c.nota.split('/')[1] : ''}</a></div>
               <div className='min-w-[50px] w-[5%] ml-auto flex justify-center dark:text-neutral-200'>
+
                 <DotsButton>
                   <Modal
                     botaoAbrirModal={
@@ -444,6 +445,8 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
                     Excluir
                   </button>
                 </DotsButton>
+
+
                 <DeleteConfirmationModal
                   isOpen={modalIsOpen}
                   onRequestClose={closeModal}
