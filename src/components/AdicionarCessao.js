@@ -65,7 +65,7 @@ export default function AdicionarCessao({ varas, orcamentos, naturezas, empresas
 
     <form className='mt-[20px]'>
       <div className='px-3 '>
-        <div className='grid grid-cols-1 md:grid-cols-2'>
+        <div className='grid grid-cols-1 md:grid-cols-2 w-full'>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
             <label

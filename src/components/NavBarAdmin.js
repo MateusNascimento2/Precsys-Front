@@ -7,12 +7,13 @@ import Modal from './Modal';
 function NavBarAdmin({ show }) {
   const [showMenu, setShowMenu] = useState(false);
   const [menuType, setMenuType] = useState(null);
-  const [showFromModal, setShowFromModal] = useState(false);
+  const [showFromModal, setShowFromModal] = useState(true);
 
 
 
 
   function handleShow(type) {
+
     if (menuType === type) {
       setShowMenu(prevState => !prevState)
     } else {
@@ -27,15 +28,18 @@ function NavBarAdmin({ show }) {
     navigate(route)
   }
 
-
+  console.log(menuType)
+  console.log(showMenu)
+  console.log(showFromModal)
 
 
   return (
     <>
-      <div onClick={() => { setShowMenu((prevState) => !prevState) }} className={showMenu && menuType === 'logs' ? 'lg:w-screen lg:h-screen lg:opacity-100 lg:absolute lg:z-[40] lg:left-0 lg:top-[50px]' : 'hidden'}></div>
-      <div onClick={() => { setShowMenu((prevState) => !prevState) }} className={showMenu && menuType === 'controle' ? 'lg:w-screen lg:h-screen lg:opacity-100 lg:absolute lg:z-[40] lg:left-0 lg:top-[50px]' : 'hidden'}></div>
-      <div onClick={() => { setShowMenu((prevState) => !prevState) }} className={showMenu && menuType === 'pessoal' ? 'lg:w-screen lg:h-screen lg:opacity-100 lg:absolute lg:z-[40] lg:left-0 lg:top-[50px]' : 'hidden'}></div>
-      <div onClick={() => { setShowMenu((prevState) => !prevState) }} className={showMenu && menuType === 'controle' ? 'lg:w-screen lg:h-screen lg:opacity-100 lg:absolute lg:z-[40] lg:left-0 lg:top-[50px]' : 'hidden'}></div>
+      <div onClick={() => { setShowMenu(false)}} className={showMenu && menuType === 'logs' ? 'lg:w-screen lg:h-screen lg:opacity-100 lg:absolute lg:z-[40] lg:left-0 lg:top-[50px]' : 'hidden'}></div>
+      <div onClick={() => { setShowMenu(false) }} className={showMenu && menuType === 'controle' ? 'lg:w-screen lg:h-screen lg:opacity-100 lg:absolute lg:z-[40] lg:left-0 lg:top-[50px]' : 'hidden'}></div>
+      <div onClick={() => { setShowMenu(false) }} className={showMenu && menuType === 'pessoal' ? 'lg:w-screen lg:h-screen lg:opacity-100 lg:absolute lg:z-[40] lg:left-0 lg:top-[50px]' : 'hidden'}></div>
+      <div onClick={() => { setShowMenu(false) }} className={showMenu && menuType === 'controle' ? 'lg:w-screen lg:h-screen lg:opacity-100 lg:absolute lg:z-[40] lg:left-0 lg:top-[50px]' : 'hidden'}></div>
+      <div onClick={() => { setShowMenu(false) }} className={showMenu && menuType === 'ferramentas' ? 'lg:w-screen lg:h-screen lg:opacity-100 lg:absolute lg:z-[40] lg:left-0 lg:top-[50px]' : 'hidden'}></div>
       <nav className={show ? 'shadow border-r border-neutral-300 transition-all duration-[0.3s] ease-in-out fixed flex items-start bg-white w-[300px] z-50 h-screen top-[50px] left-0 px-4 lg:static lg:w-full lg:h-full lg:shadow-none lg:border-0 dark:bg-neutral-900 dark:border-neutral-700 lg:transition-none lg:duration-0 lg:flex lg:items-center' : 'border-r dark:border-neutral-700 transition-all duration-[0.3s] ease-in-out px-4 flex items-start bg-[#FFF] w-[300px] z-50 fixed top-[52px] left-[-300px] h-screen dark:bg-neutral-900 lg:transition-none lg:duration-0'}>
         <ul className='divide-y divide-neutral-300 dark:divide-neutral-700 flex w-full px-2 flex-col items-center gap-2 text-[13px] lg:flex-row lg:divide-y-0'>
 
@@ -75,7 +79,7 @@ function NavBarAdmin({ show }) {
                 </svg>
               </span>
             </div>
-            <div className={showMenu && menuType === 'controle' ? 'lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 h-[360px] lg:h-[245px] lg:w-[430px] overflow-y-hidden transition-all lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all lg:absolute lg:z-50 lg:bg-white lg:right-auto xl:right-auto dark:bg-neutral-900 dark:border-neutral-600'}>
+            <div className={showMenu && menuType === 'controle' ? 'lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 h-[360px] lg:h-[245px] lg:w-[430px] overflow-y-hidden transition-all lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600' : 'h-0 overflow-y-hidden transition-all lg:absolute lg:z-50 lg:bg-white lg:right-auto xl:right-auto  dark:bg-neutral-900 dark:border-neutral-600'}>
               <ul className='lg:ml-0'>
                 <li className='mb-3 mt-2'>
                   <span className='font-[600] text-[12px] text-[#666666]'>Administração</span>
@@ -162,18 +166,22 @@ function NavBarAdmin({ show }) {
                 <li className='mb-3 mt-2'>
                   <span className='font-[600] text-[12px] text-[#666666]'>Categorias</span>
                 </li>
+                <li onClick={() => setShowFromModal(false)}>
+                  <Modal botaoAbrirModal={
+                    <button title='Fazer cálculo' className='w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                      Cálculo
+                      <p className='font-[500] text-[#666666] dark:text-neutral-500'>Fazer Cálculo </p>
+                    </button>}>
+                    <div className='h-[420px] overflow-auto relative'>
+                      <TabelaGeneradaCalculo />
+                    </div>
 
-                <Modal botaoAbrirModal={
-                  <button title='Adicionar nova cessão' className='w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
-                    Cálculo
-                    <p className='font-[500] text-[#666666] dark:text-neutral-500'>Fazer Cálculo </p>
-                  </button>}>
-                  <div className='h-[450px] overflow-auto relative'>
-                    <TabelaGeneradaCalculo />
-                  </div>
+
+                  </Modal>
+
+                </li>
 
 
-                </Modal>
 
 
               </ul>

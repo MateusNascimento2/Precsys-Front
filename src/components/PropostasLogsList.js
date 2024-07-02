@@ -4,13 +4,14 @@ import { Link } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import { Tooltip } from 'react-tooltip';
 
-export default function LoginLogsList({ searchQuery, logs, users, empresas, isLoading, filters }) {
+export default function PropostasLogsList({ searchQuery, logs, users, empresas, isLoading, filters }) {
   const listRef = useRef();
   const [isLoadingName, setIsLoadingName] = useState(false)
+  const [isLoading2, setIsLoading2] = useState(true);
 
   const cache = useMemo(() => new CellMeasurerCache({
     fixedWidth: true,
-    defaultHeight: 50,
+    defaultHeight: 60,
   }), []);
 
   console.log(filters)
@@ -32,6 +33,8 @@ export default function LoginLogsList({ searchQuery, logs, users, empresas, isLo
     }
 
     setIsLoadingName(false)
+    
+
 
     return logs;
   }, [users, logs]);
@@ -67,18 +70,20 @@ export default function LoginLogsList({ searchQuery, logs, users, empresas, isLo
 
     const hora = log.date.split(' ')[1];
 
+    
+
     return (
       <CellMeasurer cache={cache} parent={parent} columnIndex={0} rowIndex={index} key={key}>
-        <div style={style} className="dark:bg-neutral-900">
-          <div className="mb-5 dark:bg-neutral-900">
+        <div style={{ ...style}} className="dark:bg-neutral-900">
+          <div className="mb-4 dark:bg-neutral-900">
             <div className="flex flex-col border dark:border-neutral-700 dark:bg-neutral-900 rounded">
               <div className="flex items-center divide-x mb-0 lg:mb-0 dark:divide-neutral-600 dark:border-b-neutral-600 border-b px-2 py-2">
                 <span className="font-[700] dark:text-white pr-2 text-[14px] lg:text-[16px]">{log.id}</span>
                 <div className="flex flex-col justify-center text-[12px] pl-2">
                   <Link to={`/usuario/${String(log.usuario)}`}>
-                    <span className="font-bold dark:text-white hover:underline">{log.userName}</span>
+                    <span className="font-bold dark:text-white hover:underline">{log.userName ? log.userName : 'Nome do usuário'}</span>
                   </Link>
-                  <span className="text-neutral-400 font-medium line-clamp-1 dark:text-neutral-300">{log.userCpfCnpj}</span>
+                  <span className="text-neutral-400 font-medium line-clamp-1 dark:text-neutral-300">{log.userCpfCnpj ? log.userCpfCnpj : 'CPF/CNPJ do usuário'}</span>
                 </div>
               </div>
               <div className='flex flex-wrap gap-2 px-2 py-2'>
@@ -87,7 +92,7 @@ export default function LoginLogsList({ searchQuery, logs, users, empresas, isLo
                   data-tooltip-content="Nome da empresa"
                   data-tooltip-place="right" className='text-[10px] font-bold px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 '
                 >
-                  {log.empresaName}
+                  {log.empresaName ? log.empresaName : 'Nome empresa'}
                 </span>
 
                 <span
@@ -149,6 +154,8 @@ export default function LoginLogsList({ searchQuery, logs, users, empresas, isLo
       </CellMeasurer>
     );
   }, [filteredLogs, cache]);
+
+  console.log(isLoading2)
 
   return (
     <>

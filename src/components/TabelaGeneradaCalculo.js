@@ -483,7 +483,7 @@ export default function TabelaGeneradaCalculo() {
 
   return (
 
-    <main className="container max-w-[1024px] mx-auto px-2 py-[20px]">
+    <main className="container mx-auto px-2">
       <div className="w-full mb-[60px] flex flex-col gap-5">
         <form
           action=""
@@ -492,9 +492,9 @@ export default function TabelaGeneradaCalculo() {
         >
           <div className="flex flex-col gap-2  lg:grid lg:grid-cols-2 lg:gap-4">
             <div className='flex flex-col gap-1'>
-              <label htmlFor="precatorio">Precatório</label>
+              <label className="dark:text-white" htmlFor="precatorio">Precatório</label>
               <input
-                className="p-1 border bg-neutral-100 rounded"
+                className="p-1 border  rounded dark:bg-neutral-800 dark:border-neutral-600 dark:text-neutral-400"
                 type="text"
                 placeholder="Numero do precatório"
                 name="precatorio"
@@ -504,9 +504,9 @@ export default function TabelaGeneradaCalculo() {
             </div>
 
             <div className='flex flex-col gap-1'>
-              <label htmlFor="orcamento">Orçamento</label>
+              <label className="dark:text-white" htmlFor="orcamento">Orçamento</label>
               <input
-                className="p-1 border bg-neutral-100 rounded"
+                className="p-1 border  rounded dark:bg-neutral-800 dark:border-neutral-600 dark:text-neutral-400"
                 type="text"
                 placeholder="Orçamento"
                 name="orcamento"
@@ -516,9 +516,9 @@ export default function TabelaGeneradaCalculo() {
             </div>
 
             <div className='flex flex-col gap-1'>
-              <label htmlFor="valorPrincipal">Valor principal</label>
+              <label className="dark:text-white" htmlFor="valorPrincipal">Valor principal</label>
               <input
-                className="p-1 border bg-neutral-100 rounded"
+                className="p-1 border  rounded dark:bg-neutral-800 dark:border-neutral-600 dark:text-neutral-400"
                 type="text"
                 name="valorPrincipal"
                 placeholder="Valor Principal"
@@ -528,9 +528,9 @@ export default function TabelaGeneradaCalculo() {
             </div>
 
             <div className='flex flex-col gap-1'>
-              <label htmlFor="valorJuros">Valor dos Juros</label>
+              <label className="dark:text-white" htmlFor="valorJuros">Valor dos Juros</label>
               <input
-                className="p-1 border bg-neutral-100 rounded"
+                className="p-1 border  rounded dark:bg-neutral-800 dark:border-neutral-600 dark:text-neutral-400"
                 type="text"
                 name="valorJuros"
                 placeholder="Valor dos Juros"
@@ -540,9 +540,9 @@ export default function TabelaGeneradaCalculo() {
             </div>
 
             <div className='flex flex-col gap-1'>
-              <label htmlFor="rioPrevidencia">Rioprêvidencia</label>
+              <label className="dark:text-white" htmlFor="rioPrevidencia">Rioprêvidencia</label>
               <input
-                className="p-1 border bg-neutral-100 rounded"
+                className="p-1 border  rounded dark:bg-neutral-800 dark:border-neutral-600 dark:text-neutral-400"
                 type="text"
                 name="rioPrevidencia"
                 placeholder="Rioprêvidencia"
@@ -552,9 +552,9 @@ export default function TabelaGeneradaCalculo() {
             </div>
 
             <div className='flex flex-col gap-1'>
-              <label htmlFor="dataBase">Data Base</label>
+              <label className="dark:text-white" htmlFor="dataBase">Data Base</label>
               <input
-                className="p-1 border bg-neutral-100 rounded"
+                className="p-1 border  rounded dark:bg-neutral-800 dark:border-neutral-600 dark:text-neutral-400"
                 type="date"
                 name="dataBase"
                 placeholder="Data Base"
@@ -564,9 +564,9 @@ export default function TabelaGeneradaCalculo() {
             </div>
 
             <div className='flex flex-col gap-1'>
-              <label htmlFor="dataAtualizacao">Data de Atualização</label>
+              <label className="dark:text-white" htmlFor="dataAtualizacao">Data de Atualização</label>
               <input
-                className="p-1 border bg-neutral-100 rounded"
+                className="p-1 border  rounded dark:bg-neutral-800 dark:border-neutral-600 dark:text-neutral-400"
                 type="date"
                 name="dataAtualizacao"
                 placeholder="Data de Atualização"
@@ -579,46 +579,49 @@ export default function TabelaGeneradaCalculo() {
 
           </div>
 
-          <input
+          <button
             type="submit"
-            className="bg-neutral-200 w-full mt-4 rounded p-1 font-medium cursor-pointer"
-          ></input>
+            className="bg-black text-white dark:bg-white dark:text-black w-full mt-4 rounded p-1 font-medium cursor-pointer"
+          >Fazer cálculo</button>
 
         </form>
         {calculoInicialDataBase !== "" ? (
           // Calculo Inicial
-          <div className="overflow-x-auto w-full">
-            <div className="w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111]">
-              <div className="min-w-[250px] w-[24%]">Calculo Inicial</div>
-            </div>
-            <div className="grid grid-cols-3">
-              <div className="w-max lg:w-full border-l border-b flex flex-col divide-y text-[12px]">
-                <div className="min-w-[250px] p-2 font-bold">Data</div>
-                <div className="min-w-[120px] p-2 font-bold">
-                  Valor Principal
-                </div>
-                <div className="min-w-[60px] p-2 font-bold">Valor Juros</div>
-                <div className="min-w-[120px] p-2 font-bold">Valor Total</div>
+          <div className="overflow-x-auto dark:text-white">
+            <div className="w-max md:w-full">
+              <div className="w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
+                <div className="w-full">Calculo Inicial</div>
               </div>
+              <div className="grid grid-cols-3 overflow-x-auto w-full">
+                <div className="w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600 dark:divide-neutral-600">
+                  <div className="p-2 font-bold">Data</div>
+                  <div className="p-2 font-bold text-nowrap">
+                    Valor Principal
+                  </div>
+                  <div className="p-2 font-bold text-nowrap">Valor Juros</div>
+                  <div className="p-2 font-bold text-nowrap">Valor Total</div>
+                </div>
 
-              <div className="w-max lg:w-full flex flex-col border-r border-l border-b divide-y text-[12px]  border-gray-300">
-                <div className="min-w-[250px] p-2 w-[24%]">
-                  {calculoInicialDataBase}
+                <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
+                  <div className="p-2">
+                    {calculoInicialDataBase}
+                  </div>
+                  <div className="p-2">
+                    {calculoIncialPrincipal}
+                  </div>
+                  <div className="p-2">{calculoIncialJuros}</div>
+                  <div className="p-2">{calculoIncialTotal}</div>
                 </div>
-                <div className="min-w-[120px] p-2">
-                  {calculoIncialPrincipal}
-                </div>
-                <div className="min-w-[60px] p-2">{calculoIncialJuros}</div>
-                <div className="min-w-[120px] p-2">{calculoIncialTotal}</div>
-              </div>
 
-              <div className="w-max lg:w-full border-r divide-y flex flex-col text-[12px] border-b   border-gray-300">
-                <div className="min-w-[250px] p-2 w-[24%]">-</div>
-                <div className="min-w-[120px] p-2">-</div>
-                <div className="min-w-[120px] p-2">-</div>
-                <div className="min-w-[60px] p-2">-</div>
+                <div className="w-full border-r divide-y flex flex-col text-[12px] border-b dark:border-neutral-600   border-gray-300 dark:divide-neutral-600">
+                  <div className="p-2">-</div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">-</div>
+                </div>
               </div>
             </div>
+
           </div>
         ) : (
           ""
@@ -626,102 +629,105 @@ export default function TabelaGeneradaCalculo() {
         {
           // Parte até a IO
           verfDBToIO == 0 ? (
-            <div className="overflow-x-auto w-full">
-              <div className="w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111]">
-                <div className="min-w-[250px] w-[24%]">
-                  Início do Período da Graça
+            <div className="overflow-x-auto dark:text-white">
+              <div className="w-max md:w-full">
+                <div className="w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
+                  <div className="w-full">
+                    Início do Período da Graça
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 overflow-x-auto w-full">
+                  <div className="w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600 border-gray-300 dark:divide-neutral-600">
+                    <div className="p-2 font-bold">Data</div>
+                    <div className="p-2 font-bold">
+                      Correção Monetária
+                    </div>
+                    <div className="p-2 pl-6 ">Fator</div>
+                    <div className="p-2 pl-6 ">
+                      Valor Principal Corrigido
+                    </div>
+                    <div className="p-2 pl-6 ">
+                      Valor Juros Corrigido
+                    </div>
+                    <div className="p-2 pl-6 ">
+                      Valor Total Corrigido
+                    </div>
+                    <div className="p-2 font-bold ">Juros</div>
+                    <div className="p-2 pl-6 ">Número Dias</div>
+                    <div className="p-2 pl-6 ">Taxa de Juros</div>
+                    <div className="p-2 pl-6 ">Valor Juros</div>
+                    <div className="p-2 font-bold ">
+                      Valor Atualizado
+                    </div>
+                    <div className="p-2 pl-6   ">
+                      Valor Principal Corrigido
+                    </div>
+                    <div className="p-2 pl-6  ">
+                      Valor Juros Corrigido
+                    </div>
+                    <div className="p-2 pl-6  ">Valor Total</div>
+                  </div>
+
+                  <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
+                    <div className="p-2">
+                      {segundoQuadranteIPCAE1}
+                    </div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">
+                      {segundoQuadranteIPCAE2}
+                    </div>
+                    <div className="p-2">
+                      {segundoQuadranteIPCAE3}
+                    </div>
+                    <div className="p-2">
+                      {segundoQuadranteIPCAE4}
+                    </div>
+                    <div className="p-2">
+                      {segundoQuadranteIPCAE5}
+                    </div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">
+                      {segundoQuadranteIPCAE6}
+                    </div>
+                    <div className="p-2">
+                      {segundoQuadranteIPCAE7}
+                    </div>
+                    <div className="p-2">
+                      {segundoQuadranteIPCAE8}
+                    </div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">
+                      {segundoQuadranteIPCAE3}
+                    </div>
+                    <div className="p-2">
+                      {segundoQuadranteIPCAE9}
+                    </div>
+                    <div className="p-2">
+                      {segundoQuadranteIPCAE10}
+                    </div>
+                  </div>
+
+                  <div className="w-full border-r divide-y flex flex-col text-[12px] border-b dark:border-neutral-600 border-gray-300 dark:divide-neutral-600">
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">
+                      Correção Monetária do Valor Principal * Taxa de Juros
+                    </div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                  </div>
                 </div>
               </div>
-              <div className="grid grid-cols-3">
-                <div className="w-max lg:w-full border-l border-b flex flex-col divide-y text-[12px] border-gray-300">
-                  <div className="min-w-[250px] p-2 font-bold">Data</div>
-                  <div className="min-w-[120px] p-2 font-bold">
-                    Correção Monetária
-                  </div>
-                  <div className="min-w-[60px] p-2 pl-6 ">Fator</div>
-                  <div className="min-w-[120px] p-2 pl-6 ">
-                    Valor Principal Corrigido
-                  </div>
-                  <div className="min-w-[120px] p-2 pl-6 ">
-                    Valor Juros Corrigido
-                  </div>
-                  <div className="min-w-[120px] p-2 pl-6 ">
-                    Valor Total Corrigido
-                  </div>
-                  <div className="min-w-[120px] p-2 font-bold ">Juros</div>
-                  <div className="min-w-[60px] p-2 pl-6 ">Número Dias</div>
-                  <div className="min-w-[120px] p-2 pl-6 ">Taxa de Juros</div>
-                  <div className="min-w-[120px] p-2 pl-6 ">Valor Juros</div>
-                  <div className="min-w-[120px] p-2 font-bold ">
-                    Valor Atualizado
-                  </div>
-                  <div className="min-w-[60px] p-2 pl-6   ">
-                    Valor Principal Corrigido
-                  </div>
-                  <div className="min-w-[120px] p-2 pl-6  ">
-                    Valor Juros Corrigido
-                  </div>
-                  <div className="min-w-[120px] p-2 pl-6  ">Valor Total</div>
-                </div>
 
-                <div className="w-max lg:w-full flex flex-col border-r border-l border-b divide-y text-[12px]  border-gray-300">
-                  <div className="min-w-[250px] p-2 w-[24%] ">
-                    {segundoQuadranteIPCAE1}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">-</div>
-                  <div className="min-w-[60px] p-2  ">
-                    {segundoQuadranteIPCAE2}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">
-                    {segundoQuadranteIPCAE3}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">
-                    {segundoQuadranteIPCAE4}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">
-                    {segundoQuadranteIPCAE5}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">-</div>
-                  <div className="min-w-[60px] p-2  ">
-                    {segundoQuadranteIPCAE6}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">
-                    {segundoQuadranteIPCAE7}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">
-                    {segundoQuadranteIPCAE8}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">-</div>
-                  <div className="min-w-[60px] p-2  ">
-                    {segundoQuadranteIPCAE3}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">
-                    {segundoQuadranteIPCAE9}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">
-                    {segundoQuadranteIPCAE10}
-                  </div>
-                </div>
-
-                <div className="w-max lg:w-full border-r divide-y flex flex-col text-[12px] border-b   border-gray-300">
-                  <div className="min-w-[250px] p-2 w-[24%]  ">-</div>
-                  <div className="min-w-[120px] p-2 ">-</div>
-                  <div className="min-w-[120px] p-2  ">-</div>
-                  <div className="min-w-[60px] p-2  ">-</div>
-                  <div className="min-w-[120px] p-2 ">-</div>
-                  <div className="min-w-[120px] p-2 ">-</div>
-                  <div className="min-w-[120px] p-2  ">-</div>
-                  <div className="min-w-[60px] p-2  ">-</div>
-                  <div className="min-w-[120px] p-2 ">-</div>
-                  <div className="min-w-[120px] p-2 ">
-                    Correção Monetária do Valor Principal * Taxa de Juros
-                  </div>
-                  <div className="min-w-[120px] p-2 ">-</div>
-                  <div className="min-w-[120px] p-2 ">-</div>
-                  <div className="min-w-[120px] p-2  ">-</div>
-                  <div className="min-w-[60px] p-2  ">-</div>
-                </div>
-              </div>
             </div>
           ) : (
             ""
@@ -730,58 +736,61 @@ export default function TabelaGeneradaCalculo() {
         {
           // Até o Final do Período da Graça
           terceiroQuadranteIPCAE1 != "" ? (
-            <div className="overflow-x-auto w-full">
-              <div className="w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111]">
-                <div className="min-w-[250px] w-[24%]">
-                  Final do Período da Graça
+            <div className="overflow-x-auto w-full dark:text-white">
+              <div className="w-max md:w-full">
+                <div className="w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
+                  <div className="w-full">
+                    Final do Período da Graça
+                  </div>
+                </div>
+                <div className="grid grid-cols-3">
+                  <div className="w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
+                    <div className="p-2 font-bold">Data</div>
+                    <div className="p-2 font-bold">
+                      Correção Monetária
+                    </div>
+                    <div className="p-2 pl-6">Fator</div>
+                    <div className="p-2 pl-6">
+                      Valor Principal Corrigido
+                    </div>
+                    <div className="p-2 pl-6">
+                      Valor Juros Corrigido
+                    </div>
+                    <div className="p-2 pl-6">
+                      Valor Total Corrigido
+                    </div>
+                  </div>
+                  <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
+                    <div className="p-2">
+                      {terceiroQuadranteIPCAE1}
+                    </div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">
+                      {terceiroQuadranteIPCAE2}
+                    </div>
+                    <div className="p-2">
+                      {terceiroQuadranteIPCAE3}
+                    </div>
+                    <div className="p-2">
+                      {terceiroQuadranteIPCAE4}
+                    </div>
+                    <div className="p-2">
+                      {terceiroQuadranteIPCAE5}
+                    </div>
+                  </div>
+                  <div className="w-full border-r divide-y flex flex-col text-[12px] border-b dark:border-neutral-600   border-gray-300 dark:divide-neutral-600 ">
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">
+                      Entre as datas 01/07/2019 e 31/12/2020
+                    </div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                    <div className="p-2">-</div>
+                  </div>
                 </div>
               </div>
-              <div className="grid grid-cols-3">
-                <div className="w-max lg:w-full border-l border-b flex flex-col divide-y text-[12px]  border-gray-300">
-                  <div className="min-w-[250px] p-2 font-bold ">Data</div>
-                  <div className="min-w-[120px] p-2 font-bold ">
-                    Correção Monetária
-                  </div>
-                  <div className="min-w-[60px] p-2 pl-6 ">Fator</div>
-                  <div className="min-w-[120px] p-2 pl-6 ">
-                    Valor Principal Corrigido
-                  </div>
-                  <div className="min-w-[120px] p-2 pl-6 ">
-                    Valor Juros Corrigido
-                  </div>
-                  <div className="min-w-[120px] p-2 pl-6 ">
-                    Valor Total Corrigido
-                  </div>
-                </div>
-                <div className="w-max lg:w-full flex flex-col border-r border-l border-b divide-y text-[12px]  border-gray-300">
-                  <div className="min-w-[250px] p-2 w-[24%] ">
-                    {terceiroQuadranteIPCAE1}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">-</div>
-                  <div className="min-w-[60px] p-2  ">
-                    {terceiroQuadranteIPCAE2}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">
-                    {terceiroQuadranteIPCAE3}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">
-                    {terceiroQuadranteIPCAE4}
-                  </div>
-                  <div className="min-w-[120px] p-2  ">
-                    {terceiroQuadranteIPCAE5}
-                  </div>
-                </div>
-                <div className="w-max lg:w-full border-r divide-y flex flex-col text-[12px] border-b   border-gray-300 ">
-                  <div className="min-w-[250px] p-2 w-[24%]  ">-</div>
-                  <div className="min-w-[120px] p-2 ">-</div>
-                  <div className="min-w-[120px] p-2  ">
-                    Entre as datas 01/07/2019 e 31/12/2020
-                  </div>
-                  <div className="min-w-[60px] p-2  ">-</div>
-                  <div className="min-w-[120px] p-2 ">-</div>
-                  <div className="min-w-[120px] p-2 ">-</div>
-                </div>
-              </div>
+
             </div>
           ) : (
             ""
@@ -792,187 +801,195 @@ export default function TabelaGeneradaCalculo() {
           verfVOToCF == 0 ? (
             <>
               <div>
-                <div className="overflow-x-auto w-full">
-                  <div className="w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111]">
-                    <div className="min-w-[250px] w-[24%]">
-                      Início Taxa Selic
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-3">
-                    <div className="w-max lg:w-full border-l border-b flex flex-col divide-y text-[12px] border-gray-300">
-                      <div className="min-w-[250px] p-2 font-bold ">Data</div>
-                      <div className="min-w-[120px] p-2 font-bold ">
-                        Correção Monetária
-                      </div>
-                      <div className="min-w-[60px] p-2 pl-6 ">Fator</div>
-                      <div className="min-w-[120px] p-2 pl-6 ">
-                        Valor Principal Corrigido
-                      </div>
-                      <div className="min-w-[120px] p-2 pl-6 ">
-                        Valor Juros Corrigido
-                      </div>
-                      <div className="min-w-[120px] p-2 pl-6 ">
-                        Valor Total Corrigido
-                      </div>
-                      <div className="min-w-[120px] p-2 font-bold ">Juros</div>
-                      <div className="min-w-[60px] p-2 pl-6 ">Número Dias</div>
-                      <div className="min-w-[120px] p-2 pl-6 ">
-                        Taxa de Juros
-                      </div>
-                      <div className="min-w-[120px] p-2 pl-6 ">Valor Juros</div>
-                      <div className="min-w-[120px] p-2 font-bold ">
-                        Valor Atualizado
-                      </div>
-                      <div className="min-w-[60px] p-2 pl-6   ">
-                        Valor Principal Corrigido
-                      </div>
-                      <div className="min-w-[120px] p-2 pl-6  ">
-                        Valor Juros Corrigido
-                      </div>
-                      <div className="min-w-[120px] p-2 pl-6  ">
-                        Valor Total
+                <div className="overflow-x-auto w-full dark:text-white">
+                  <div className="w-max md:w-full">
+                    <div className="w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
+                      <div className="w-full">
+                        Início Taxa Selic
                       </div>
                     </div>
+                    <div className="grid grid-cols-3">
+                      <div className="w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600 border-gray-300 dark:divide-neutral-600">
+                        <div className="p-2 font-bold">Data</div>
+                        <div className="p-2 font-bold">
+                          Correção Monetária
+                        </div>
+                        <div className="p-2 pl-6">Fator</div>
+                        <div className="p-2 pl-6">
+                          Valor Principal Corrigido
+                        </div>
+                        <div className="p-2 pl-6">
+                          Valor Juros Corrigido
+                        </div>
+                        <div className="p-2 pl-6">
+                          Valor Total Corrigido
+                        </div>
+                        <div className="p-2 font-bold">Juros</div>
+                        <div className="p-2 pl-6">Número Dias</div>
+                        <div className="p-2 pl-6">
+                          Taxa de Juros
+                        </div>
+                        <div className="p-2 pl-6">Valor Juros</div>
+                        <div className="p-2 font-bold">
+                          Valor Atualizado
+                        </div>
+                        <div className="p-2 pl-6">
+                          Valor Principal Corrigido
+                        </div>
+                        <div className="p-2 pl-6">
+                          Valor Juros Corrigido
+                        </div>
+                        <div className="p-2 pl-6">
+                          Valor Total
+                        </div>
+                      </div>
 
-                    <div className="w-max lg:w-full flex flex-col border-r border-l border-b divide-y text-[12px]  border-gray-300">
-                      <div className="min-w-[250px] p-2 w-[24%] ">
-                        {quartoQuadranteIPCAE1}
+                      <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
+                        <div className="p-2">
+                          {quartoQuadranteIPCAE1}
+                        </div>
+                        <div className="p-2">-</div>
+                        <div className="p-2">
+                          {quartoQuadranteIPCAE2}
+                        </div>
+                        <div className="p-2">
+                          {quartoQuadranteIPCAE3}
+                        </div>
+                        <div className="p-2">
+                          {quartoQuadranteIPCAE4}
+                        </div>
+                        <div className="p-2">
+                          {quartoQuadranteIPCAE5}
+                        </div>
+                        <div className="p-2">-</div>
+                        <div className="p-2">
+                          {quartoQuadranteIPCAE6}
+                        </div>
+                        <div className="p-2">
+                          {quartoQuadranteIPCAE7}
+                        </div>
+                        <div className="p-2">
+                          {quartoQuadranteIPCAE8}
+                        </div>
+                        <div className="p-2">-</div>
+                        <div className="p-2">
+                          {quartoQuadranteIPCAE3}
+                        </div>
+                        <div className="p-2">
+                          {quartoQuadranteIPCAE9}
+                        </div>
+                        <div className="p-2">
+                          {quartoQuadranteIPCAE10}
+                        </div>
                       </div>
-                      <div className="min-w-[120px] p-2  ">-</div>
-                      <div className="min-w-[60px] p-2  ">
-                        {quartoQuadranteIPCAE2}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">
-                        {quartoQuadranteIPCAE3}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">
-                        {quartoQuadranteIPCAE4}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">
-                        {quartoQuadranteIPCAE5}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">-</div>
-                      <div className="min-w-[60px] p-2  ">
-                        {quartoQuadranteIPCAE6}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">
-                        {quartoQuadranteIPCAE7}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">
-                        {quartoQuadranteIPCAE8}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">-</div>
-                      <div className="min-w-[60px] p-2  ">
-                        {quartoQuadranteIPCAE3}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">
-                        {quartoQuadranteIPCAE9}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">
-                        {quartoQuadranteIPCAE10}
-                      </div>
-                    </div>
 
-                    <div className="w-max lg:w-full border-r divide-y flex flex-col text-[12px] border-b   border-gray-300 ">
-                      <div className="min-w-[250px] p-2 w-[24%]  ">-</div>
-                      <div className="min-w-[120px] p-2 ">-</div>
-                      <div className="min-w-[120px] p-2  ">
-                        Entre as datas 05/05/2015 e 01/07/2019
+                      <div className="w-full border-r divide-y flex flex-col text-[12px] border-b  dark:border-neutral-600  border-gray-300 dark:divide-neutral-600 ">
+                        <div className="p-2">-</div>
+                        <div className="p-2 ">-</div>
+                        <div className="p-2">
+                          Entre as datas 05/05/2015 e 01/07/2019
+                        </div>
+                        <div className="p-2">-</div>
+                        <div className="p-2 ">-</div>
+                        <div className="p-2 ">-</div>
+                        <div className="p-2  ">-</div>
+                        <div className="p-2  ">-</div>
+                        <div className="p-2 ">
+                          Entre as datas 05/05/2015 e 01/07/2019
+                        </div>
+                        <div className="p-2 ">
+                          Correção Monetária do Valor Principal * Taxa de Juros
+                        </div>
+                        <div className="p-2 ">-</div>
+                        <div className="p-2 ">-</div>
+                        <div className="p-2  ">-</div>
+                        <div className="p-2  ">-</div>
                       </div>
-                      <div className="min-w-[60px] p-2  ">-</div>
-                      <div className="min-w-[120px] p-2 ">-</div>
-                      <div className="min-w-[120px] p-2 ">-</div>
-                      <div className="min-w-[120px] p-2  ">-</div>
-                      <div className="min-w-[60px] p-2  ">-</div>
-                      <div className="min-w-[120px] p-2 ">
-                        Entre as datas 05/05/2015 e 01/07/2019
-                      </div>
-                      <div className="min-w-[120px] p-2 ">
-                        Correção Monetária do Valor Principal * Taxa de Juros
-                      </div>
-                      <div className="min-w-[120px] p-2 ">-</div>
-                      <div className="min-w-[120px] p-2 ">-</div>
-                      <div className="min-w-[120px] p-2  ">-</div>
-                      <div className="min-w-[60px] p-2  ">-</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="overflow-x-auto w-full">
-                  <div className="w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111]">
-                    <div className="min-w-[250px] w-[24%]">Cálculo Final</div>
-                  </div>
-                  <div className="grid grid-cols-3">
-                    <div className="w-max lg:w-full border-l border-b flex flex-col divide-y text-[12px] border-gray-300">
-                      <div className="min-w-[250px] p-2 font-bold ">Data</div>
-                      <div className="min-w-[120px] p-2 font-bold ">
-                        Valor Base para Correção (01/12/2021)
-                      </div>
-                      <div className="min-w-[60px] p-2 pl-6 ">
-                        Valor Principal
-                      </div>
-                      <div className="min-w-[120px] p-2 pl-6 ">Valor Juros</div>
-                      <div className="min-w-[120px] p-2 pl-6 ">Valor Total</div>
-                      <div className="min-w-[120px] p-2 font-bold ">
-                        Correção Monetária
-                      </div>
-                      <div className="min-w-[60px] p-2 pl-6 ">Fator</div>
-                      <div className="min-w-[120px] p-2 pl-6 ">
-                        Valor Principal Corrigido
-                      </div>
-                      <div className="min-w-[120px] p-2 pl-6 ">
-                        Valor Juros Corrigido
-                      </div>
-                      <div className="min-w-[120px] p-2 pl-6 ">
-                        Valor Total Corrigido
-                      </div>
-                    </div>
-
-                    <div className="w-max lg:w-full flex flex-col border-r border-l border-b divide-y text-[12px]  border-gray-300 ">
-                      <div className="min-w-[250px] p-2 w-[24%] ">
-                        {quartoQuadranteSELIC1}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">-</div>
-                      <div className="min-w-[60px] p-2  ">
-                        {quartoQuadranteSELIC2}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">
-                        {quartoQuadranteSELIC3}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">
-                        {quartoQuadranteSELIC4}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">-</div>
-                      <div className="min-w-[60px] p-2  ">
-                        {quartoQuadranteSELIC5}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">
-                        {quartoQuadranteSELIC6}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">
-                        {quartoQuadranteSELIC7}
-                      </div>
-                      <div className="min-w-[120px] p-2  ">
-                        {quartoQuadranteSELIC8}
-                      </div>
-                    </div>
-
-                    <div className="w-max lg:w-full border-r divide-y flex flex-col text-[12px] border-b   border-gray-300">
-                      <div className="min-w-[250px] p-2 w-[24%]  ">-</div>
-                      <div className="min-w-[120px] p-2 ">-</div>
-                      <div className="min-w-[120px] p-2  ">-</div>
-                      <div className="min-w-[60px] p-2  ">-</div>
-                      <div className="min-w-[120px] p-2 ">-</div>
-                      <div className="min-w-[120px] p-2 ">-</div>
-                      <div className="min-w-[120px] p-2  ">
-                        Entre as datas 01/12/2021 e 12/12/2023
-                      </div>
-                      <div className="min-w-[60px] p-2  ">-</div>
-                      <div className="min-w-[120px] p-2 ">-</div>
-                      <div className="min-w-[120px] p-2 ">-</div>
                     </div>
                   </div>
                 </div>
+
+                <div className="overflow-x-auto w-full dark:text-white">
+                  <div className="w-max md:w-full">
+                    <div className="w-full flex text-[12px] mt-4 font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
+                      <div className="w-full">Cálculo Final</div>
+                    </div>
+                    <div className="grid grid-cols-3">
+                      <div className="w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600 border-gray-300 dark:divide-neutral-600">
+                        <div className="p-2 font-bold ">Data</div>
+                        <div className="p-2 font-bold ">
+                          Valor Base para Correção (01/12/2021)
+                        </div>
+                        <div className="p-2 pl-6 ">
+                          Valor Principal
+                        </div>
+                        <div className="p-2 pl-6 ">Valor Juros</div>
+                        <div className="p-2 pl-6 ">Valor Total</div>
+                        <div className="p-2 font-bold ">
+                          Correção Monetária
+                        </div>
+                        <div className="p-2 pl-6 ">Fator</div>
+                        <div className="p-2 pl-6 ">
+                          Valor Principal Corrigido
+                        </div>
+                        <div className="p-2 pl-6 ">
+                          Valor Juros Corrigido
+                        </div>
+                        <div className="p-2 pl-6 ">
+                          Valor Total Corrigido
+                        </div>
+                      </div>
+
+                      <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600 ">
+                        <div className="p-2">
+                          {quartoQuadranteSELIC1}
+                        </div>
+                        <div className="p-2">-</div>
+                        <div className="p-2">
+                          {quartoQuadranteSELIC2}
+                        </div>
+                        <div className="p-2 ">
+                          {quartoQuadranteSELIC3}
+                        </div>
+                        <div className="p-2">
+                          {quartoQuadranteSELIC4}
+                        </div>
+                        <div className="p-2">-</div>
+                        <div className="p-2">
+                          {quartoQuadranteSELIC5}
+                        </div>
+                        <div className="p-2">
+                          {quartoQuadranteSELIC6}
+                        </div>
+                        <div className="p-2">
+                          {quartoQuadranteSELIC7}
+                        </div>
+                        <div className="p-2">
+                          {quartoQuadranteSELIC8}
+                        </div>
+                      </div>
+
+                      <div className="w-full border-r divide-y flex flex-col text-[12px] border-b dark:border-neutral-600   border-gray-300 dark:divide-neutral-600">
+                        <div className="p-2">-</div>
+                        <div className="p-2">-</div>
+                        <div className="p-2">-</div>
+                        <div className="p-2">-</div>
+                        <div className="p-2">-</div>
+                        <div className="p-2">-</div>
+                        <div className="p-2">
+                          Entre as datas 01/12/2021 e 12/12/2023
+                        </div>
+                        <div className="p-2">-</div>
+                        <div className="p-2">-</div>
+                        <div className="p-2">-</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+
+
               </div>
             </>
           ) : (

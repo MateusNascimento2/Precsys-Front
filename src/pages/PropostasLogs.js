@@ -3,7 +3,6 @@ import { axiosPrivate } from '../api/axios';
 import Header from '../components/Header';
 import SearchInput from '../components/SearchInput';
 import PropostasLogsList from '../components/PropostasLogsList';
-import FilterButton from '../components/FilterButton';
 import PropostasLogsFilter from '../components/PropostasLogsFilter';
 
 export default function LoginLogs() {
@@ -110,7 +109,6 @@ export default function LoginLogs() {
         <div className="mt-[24px] px-5 dark:bg-neutral-900">
           <div className="flex gap-3 items-center mb-4 w-full">
             <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'py-3'} />
-            <FilterButton onSetShow={handleShow} />
           </div>
 
           <div className={`lg:flex lg:gap-4 lg:items-start`}>
