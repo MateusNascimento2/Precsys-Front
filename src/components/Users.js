@@ -144,7 +144,11 @@ function Users({ searchQuery, selectedFilters }) {
   return (
     <>
       {isLoading ? (
-        <LoadingSpinner />
+        <div className="w-full flex justify-center">
+          <div className="w-12 h-12">
+            <LoadingSpinner />
+          </div>
+        </div>
       ) : (
         <WindowScroller>
           {({ height, isScrolling, onChildScroll, registerChild, scrollTop }) => (

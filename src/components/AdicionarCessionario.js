@@ -2,13 +2,45 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import CurrencyFormat from 'react-currency-format';
 
-export default function AdicionarCessionario({ users, enviarValores, valorPago, setValorPago, comissao, setComissao, percentual, setPercentual, expectativa, setExpectativa, resetForm   }) {
+function FileInput({ label, onFileChange, name }) {
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+    onFileChange(selectedFile);
+  };
+
+  return (
+    <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
+      <span className='text-[14px] font-medium mb-1'>{label}</span>
+      <label>
+        <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>
+          Selecione um arquivo
+        </span>
+        <input
+          name={name}
+          type='file'
+          className='hidden'
+          onChange={handleFileChange}
+        />
+      </label>
+      {file && <p className='text-[12px] italic text-neutral-600 mt-2'>Arquivo selecionado: {file.name}</p>}
+    </div>
+  );
+}
+
+
+export default function AdicionarCessionario({ users, enviarValores, valorPago, setValorPago, comissao, setComissao, percentual, setPercentual, expectativa, setExpectativa, index }) {
   const [cessionario, setCessionario] = useState(null);
   const [obs, setObs] = useState('');
   const [assinatura, setAssinatura] = useState(false);
   const [expedido, setExpedido] = useState(false);
   const [recebido, setRecebido] = useState(false);
-  
+  const [nota, setNota] = useState(null); // Change to null
+  const [oficioTransferencia, setOficioTransferencia] = useState(null); // Change to null
+  const [comprovantePagamento, setComprovantePagamento] = useState(null); // Change to null
+
   const [localValorPago, setLocalValorPago] = useState(valorPago ? valorPago : '');
   const [localComissao, setLocalComissao] = useState(comissao ? comissao : '');
   const [localPercentual, setLocalPercentual] = useState(percentual ? percentual : '');
@@ -18,12 +50,12 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
     console.log(localValorPago)
     // Envia os valores dos estados para o componente pai sempre que eles forem alterados
     const timer = setTimeout(() => {
-      enviarValores({ cessionario, valorPago: localValorPago, comissao: localComissao, percentual: localPercentual, expectativa: localExpectativa, obs, assinatura, expedido, recebido });
+      enviarValores({ index, cessionario, valorPago: localValorPago, comissao: localComissao, percentual: localPercentual, expectativa: localExpectativa, obs, assinatura, expedido, recebido, nota, oficioTransferencia, comprovantePagamento });
     }, 100)
 
     return () => clearTimeout(timer)
-    
-  }, [cessionario, localValorPago, localComissao, localPercentual, localExpectativa, obs, assinatura, expedido, recebido]);
+
+  }, [index, cessionario, localValorPago, localComissao, localPercentual, localExpectativa, obs, assinatura, expedido, recebido, nota, oficioTransferencia, comprovantePagamento]);
 
   const handleSelectValues = (array, value) => {
     return array.map(item => {
@@ -34,9 +66,7 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
     });
   }
 
-
   console.log(handleSelectValues(users, 'nome'))
-
 
   const customStyles = {
     control: base => ({
@@ -45,13 +75,11 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
     })
   };
 
-
   return (
     <>
       <form action="" className='mt-[20px]'>
         <div className='px-3 '>
           <div className='md:grid flex flex-col md:grid-cols-2'>
-
             <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
               <label className='text-[14px] font-medium' htmlFor="cessionario">Cessionário</label>
               <Select
@@ -170,7 +198,6 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
               />
             </div>
 
-
             <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2 col-span-1'>
               <label
                 className='text-[14px] font-medium'
@@ -184,12 +211,8 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
                 rows={12}
                 cols={6}
                 onChange={(e) => setObs(e.target.value)}>
-
               </textarea>
             </div>
-
-
-
 
             <div className='md:grid flex flex-col justify-center gap-4 md:grid-cols-2 md:col-span-2 md:justify-between md:place-items-start'>
               <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
@@ -212,22 +235,15 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
                 </div>
               </div>
 
-              <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2'>
-                <span className='text-[14px] font-medium mb-1'>Nota</span>
-                <label htmlFor="nota">
-
-                  <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
-                  <input
-                    name='nota'
-                    id='nota'
-                    type='file'
-                    className='hidden'>
-                  </input>
-
-                </label>
+              <FileInput
+                label="Nota"
+                name={'nota'}
+                onFileChange={(file) => setNota(file)}
+              />
 
 
-              </div>
+
+
 
               <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
                 <label
@@ -249,22 +265,27 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
                 </div>
               </div>
 
-              <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
+              {/* <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
                 <span className='text-[14px] font-medium mb-1'>Ofício de Transferência</span>
-                <label htmlFor="nota">
-
+                <label htmlFor="oficio_transferencia">
                   <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
                   <input
-                    name='nota'
-                    id='nota'
+                    name='oficio_transferencia'
+                    id='oficio_transferencia'
                     type='file'
-                    className='hidden'>
+                    className='hidden'
+                    onChange={(e) => setOficioTransferencia(e.target.files[0])}
+                  >
                   </input>
-
+                  {oficioTransferencia ? <p className='text-[12px] italic text-neutral-600 mt-2'>Arquivo selecionado: {oficioTransferencia.name}</p> : null}
                 </label>
+              </div> */}
 
-
-              </div>
+              <FileInput
+                label="Ofício de Transferência"
+                name={'oficio_transferencia'}
+                onFileChange={(file) => setOficioTransferencia(file)}
+              />
 
               <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
                 <label
@@ -286,54 +307,45 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
                 </div>
               </div>
 
-              <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
+              {/* <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
                 <span className='text-[14px] font-medium mb-1'>Comprovante de Pagamento</span>
-                <label htmlFor="nota">
-
+                <label htmlFor="comprovante_pagamento">
                   <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
                   <input
-                    name='nota'
-                    id='nota'
+                    name='comprovante_pagamento'
+                    id='comprovante_pagamento'
                     type='file'
-                    className='hidden'>
+                    className='hidden'
+                    onChange={(e) => setComprovantePagamento(e.target.files[0])}
+                  >
                   </input>
-
+                  {comprovantePagamento ? <p className='text-[12px] italic text-neutral-600 mt-2'>Arquivo selecionado: {comprovantePagamento.name}</p> : null}
                 </label>
+              </div> */}
 
 
-              </div>
+              <FileInput
+                label="Comprovante de Pagamento"
+                name={'comprovante_pagamento'}
+                onFileChange={(file) => setComprovantePagamento(file)}
+              />
 
               <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
                 <span className='text-[14px] font-medium mb-1'>Comprovante Cedente</span>
-                <label htmlFor="nota">
-
-                  <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
-                  <input
-                    name='nota'
-                    id='nota'
+                <label htmlFor="comprovante_cedente">
+                  <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-not-allowed opacity-75'>Selecione um arquivo</span>
+                  {/* <input
+                    name='comprovante_cedente'
+                    id='comprovante_cedente'
                     type='file'
                     className='hidden'>
-                  </input>
-
+                  </input> */}
                 </label>
-
-
               </div>
             </div>
-
-
-
           </div>
-
-
-
-
-
         </div>
-
-
       </form>
     </>
-
   )
 }

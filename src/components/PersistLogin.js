@@ -33,7 +33,13 @@ function PersistLogin() {
       {!persist
         ? <Outlet />
         : isLoading
-          ? (<div className="w-screen h-screen flex justify-center items-center"><LoadingSpinner /></div>)
+          ? (<div className="w-screen h-screen flex justify-center items-center">
+            <div className="w-full flex justify-center">
+              <div className="w-12 h-12">
+                <LoadingSpinner />
+              </div>
+            </div>
+          </div>)
           : <Outlet />
       }
     </>

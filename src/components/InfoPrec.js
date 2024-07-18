@@ -4,13 +4,13 @@ import { Link, useParams } from 'react-router-dom';
 import Modal from '../components/Modal';
 import ListaCessionarios from './ListaCessionarios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import DotsButton from './DotsButton';
 import EditarPrec from './EditarPrec';
 import { Tooltip } from 'react-tooltip';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
-import DotsButton from './DotsButton';
 
 function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
     if (!isOpen) return null;
@@ -66,13 +66,37 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
     const [repComercialEditado, setRepComercialEditado] = useState(null);
     const [escreventeEditado, setEscreventeEditado] = useState(null);
     const [juridicoEditado, setJuridicoEditado] = useState(null);
+    const [requisitorioEditado, setRequisitorioEditado] = useState('');
+    const [escrituraEditado, setEscrituraEditado] = useState('');
+    const [requisitorioEditadoFile, setRequisitorioEditadoFile] = useState('');
+    const [escrituraEditadoFile, setEscrituraEditadoFile] = useState('');
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [key, setKey] = useState(0); // Add key state here
+    const [loadingFiles, setLoadingFiles] = useState({});
 
     const openModal = () => setModalIsOpen(true);
     const closeModal = () => setModalIsOpen(false);
 
     const navigate = useNavigate();
     const location = useLocation();
+
+    useEffect(() => {
+        const isDarkMode = localStorage.getItem('darkMode');
+        if (localStorage.getItem('cessaoEditada')) {
+            toast.success('Cessão editada com sucesso!', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: false,
+                theme: isDarkMode === 'true' ? 'dark' : 'light',
+                transition: Bounce,
+            });
+            localStorage.removeItem('cessaoEditada');
+        }
+    }, []);
 
     function navigation() {
         window.history.back();
@@ -117,10 +141,6 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
     const { precID } = useParams();
     const axiosPrivate = useAxiosPrivate();
 
-
-
-
-
     const handleReceberValores = (valores) => {
         setPrecatorioEditado(valores.precatorioEditado);
         setProcessoEditado(valores.processoEditado);
@@ -134,6 +154,11 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
         setRepComercialEditado(valores.repComercialEditado);
         setEscreventeEditado(valores.escreventeEditado);
         setJuridicoEditado(valores.juridicoEditado);
+        setRequisitorioEditado(valores.requisitorioEditado);
+        setEscrituraEditado(valores.escrituraEditado)
+        setRequisitorioEditadoFile(valores.requisitorioEditadoFile);
+        setEscrituraEditadoFile(valores.escrituraEditadoFile);
+
     };
 
     const handleEditarCessao = async (e) => {
@@ -157,12 +182,53 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
         }
 
         const cessaoEditada = {
-            precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado, juridicoEditado
+            precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado, juridicoEditado,
+            requisitorioEditado: requisitorioEditadoFile ? `cessoes_requisitorios/${requisitorioEditadoFile.name}` : requisitorioEditado ? `${requisitorioEditado}` : null,
+            escrituraEditado: escrituraEditadoFile ? `cessoes_escrituras/${escrituraEditadoFile.name}` : escrituraEditado ? `${escrituraEditado}` : null,
         };
 
         try {
             setIsLoading(true);
+            console.log(`cessaoEditada: ${JSON.stringify(cessaoEditada)}`);
+            console.log(requisitorioEditadoFile)
             const response = await axiosPrivate.put(`/cessoes/${precID}`, cessaoEditada);
+
+            const uploadFiles = async (files) => {
+                const formData = new FormData();
+                files.forEach((file) => {
+                    console.log('file:' + file)
+                    formData.append(file.name, file.file);
+                });
+
+                try {
+                    const response = await axiosPrivate.post('/upload', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+
+                } catch (err) {
+                    toast.error(`Erro ao enviar arquivos: ${err}`, {
+                        position: "top-right",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: false,
+                        theme: isDarkMode === 'true' ? 'dark' : 'light',
+                        transition: Bounce,
+                    });
+                    setIsLoading(false);
+                }
+            };
+
+            if (requisitorioEditadoFile || escrituraEditadoFile) {
+                await uploadFiles([
+                    { name: 'requisitorio', file: requisitorioEditadoFile },
+                    { name: 'escritura', file: escrituraEditadoFile },
+                ]);
+            }
         } catch (err) {
             toast.error(`Erro ao editar cessão: ${err}`, {
                 position: "top-right",
@@ -180,33 +246,52 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
         }
 
         setIsLoading(false);
-        toast.success('Cessão editada com sucesso!', {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: false,
-            theme: isDarkMode === 'true' ? 'dark' : 'light',
-            transition: Bounce,
-        });
 
-        handleUpdate({
-            precatorio: precatorioEditado,
-            processo: processoEditado,
-            cedente: cedenteEditado,
-            vara_processo: varaEditado,
-            ente_id: enteEditado,
-            ano: anoEditado,
-            natureza: naturezaEditado,
-            empresa_id: empresaEditado,
-            data_cessao: dataCessaoEditado,
-            tele_id: repComercialEditado,
-            escrevente_id: escreventeEditado,
-            juridico_id: juridicoEditado
-        });
+        // Set flag in local storage and reload the page
+        localStorage.setItem('cessaoEditada', 'true');
+        window.location.reload();
     };
+
+    const downloadFile = async (filename) => {
+        const isDarkMode = localStorage.getItem('darkMode');
+        console.log(filename);
+        const path = filename.split('/')[0];
+        const file = filename.split('/')[1];
+
+        setLoadingFiles(prev => ({ ...prev, [filename]: true }));
+
+        try {
+            const response = await axiosPrivate.get(`/download/${path}/${file}`, {
+                responseType: 'blob',
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = file;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            toast.error(`Erro ao baixar arquivo: ${error}`, {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: false,
+                theme: isDarkMode === 'true' ? 'dark' : 'light',
+                transition: Bounce,
+            });
+            console.error('Error downloading the file:', error);
+        } finally {
+            setLoadingFiles(prev => ({ ...prev, [filename]: false }));
+        }
+    };
+
+    console.log(precInfo)
 
     return (
         <div className='max-w-full flex flex-col mb-[60px]'>
@@ -236,7 +321,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                                     >
                                         <div className='h-[450px] overflow-auto'>
                                             {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
-                                                <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30'>
+                                                <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>
                                                     <LoadingSpinner />
                                                 </div>
                                             </div>)}
@@ -310,8 +395,36 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                             </div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Óbito: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.falecido ? precInfo.falecido : '-'}</span></div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Anuência: </span><span className='text-[#666] dark:text-neutral-400'>{precInfo.adv ? precInfo.adv : '-'}</span></div>
-                            <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Requisitório: </span><a className='text-[#666] dark:text-neutral-400 hover:text-black hover:underline cursor-pointer'>Ver Requisitório</a></div>
-                            <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Escritura: </span><a className='text-[#666] dark:text-neutral-400 hover:text-black hover:underline cursor-pointer'>Ver Escritura</a></div>
+                            <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'>
+                                <span className='font-[500] dark:text-neutral-200'>Requisitório:</span>
+                                {loadingFiles[precInfo.requisitorio] ? (
+                                    <div className="flex items-center gap-1">
+
+                                        <button onClick={() => downloadFile(precInfo.requisitorio)} disabled={!precInfo.requisitorio} className='text-[#666] dark:text-neutral-400 hover:text-black hover:underline cursor-pointer disabled:hover:no-underline disabled:opacity-75 disabled:hover:text-[#666] disabled:cursor-not-allowed disabled:dark:hover:text-neutral-400'>Ver Requisitório</button>
+                                        <div className="w-5 h-5"><LoadingSpinner /></div>
+                                    </div>
+                                ) : (
+
+                                    <button onClick={() => downloadFile(precInfo.requisitorio)} disabled={!precInfo.requisitorio} className='text-[#666] dark:text-neutral-400 hover:text-black hover:underline cursor-pointer disabled:hover:no-underline disabled:opacity-75 disabled:hover:text-[#666] disabled:cursor-not-allowed disabled:dark:hover:text-neutral-400'>Ver Requisitório</button>
+
+                                )}
+
+
+                            </div>
+                            <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'>
+                                <span className='font-[500] dark:text-neutral-200'>Escritura: </span>
+                                {loadingFiles[precInfo.escritura] ? (
+                                    <div className="flex items-center gap-1">
+
+                                        <button onClick={() => downloadFile(precInfo.escritura)} disabled={!precInfo.escritura} className='text-[#666] dark:text-neutral-400 hover:text-black hover:underline cursor-pointer disabled:hover:no-underline disabled:opacity-75 disabled:hover:text-[#666] disabled:cursor-not-allowed disabled:dark:hover:text-neutral-400'>Ver Requisitório</button>
+                                        <div className="w-5 h-5"><LoadingSpinner /></div>
+                                    </div>
+                                ) : (
+
+                                    <button onClick={() => downloadFile(precInfo.escritura)} disabled={!precInfo.escritura} className='text-[#666] dark:text-neutral-400 hover:text-black hover:underline cursor-pointer disabled:hover:no-underline disabled:opacity-75 disabled:hover:text-[#666] disabled:cursor-not-allowed disabled:dark:hover:text-neutral-400'>Ver Requisitório</button>
+
+                                )}
+                            </div>
                         </div>
                     </div>
                     <div className='flex flex-col max-[700px]:mb-20px'>
@@ -332,7 +445,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                     </div>
                 </div>
             </div>
-            <ListaCessionarios cessionario={cessionario} precInfo={precInfo} users={users} precID={precID} />
+            <ListaCessionarios key={key} cessionario={cessionario} precInfo={precInfo} users={users} precID={precID} />
             <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                 <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 dark:bg-neutral-900 xl:divide-x-[1px] dark:divide-neutral-600 mt-2 lg:mt-0'>
                     <div className='cursor-pointer lg:px-4 lg:py-2 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-r lg:border-b xl:border-r-0 xl:border-b-0 dark:border-neutral-600' id='juridico'>

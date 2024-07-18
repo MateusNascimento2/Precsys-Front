@@ -15,16 +15,20 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
   const [repComercialEditado, setRepComercialEditado] = useState(precInfo.tele_id ? precInfo.tele_id : '');
   const [escreventeEditado, setEscreventeEditado] = useState(precInfo.escrevente_id ? precInfo.escrevente_id : '');
   const [juridicoEditado, setJuridicoEditado] = useState(precInfo.juridico_id ? precInfo.juridico_id : '');
+  const [requisitorioEditado, setRequisitorioEditado] = useState(precInfo.requisitorio ? precInfo.requisitorio : '');
+  const [escrituraEditado, setEscrituraEditado] = useState(precInfo.escritura ? precInfo.escritura : '');
+  const [requisitorioEditadoFile, setRequisitorioEditadoFile] = useState('');
+  const [escrituraEditadoFile, setEscrituraEditadoFile] = useState('');
 
   useEffect(() => {
     // Envia os valores dos estados para o componente pai sempre que eles forem alterados
     const timer = setTimeout(() => {
-      enviarValores({ precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado, juridicoEditado });
+      enviarValores({ precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado, juridicoEditado, requisitorioEditado, escrituraEditado, requisitorioEditadoFile, escrituraEditadoFile });
     }, 100)
 
     return () => clearTimeout(timer)
 
-  }, [precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado, juridicoEditado]);
+  }, [precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado, juridicoEditado, requisitorioEditado, escrituraEditado, requisitorioEditadoFile, escrituraEditadoFile]);
 
 
   const handleTeleValues = (teles, users) => {
@@ -41,7 +45,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
       })
       .filter(tele => tele !== null); // Filtra os valores que não foram transformados
   };
-  
+
   // Uso da função
   const updatedTeles = handleTeleValues(teles, users);
 
@@ -305,35 +309,67 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
           </div>
 
           <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2'>
-            <span className='text-[14px] font-medium mb-1'>Requisitório</span>
-            <label htmlFor="requisitorio">
+            <span className='text-[14px] font-medium'>Requisitório</span>
 
-              <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
-              <input
-                name='requisitorio'
-                id='requisitorio'
-                type='file'
-                className='hidden'>
-              </input>
 
-            </label>
+            <div className='flex items-center h-[34px] w-full'>
+              <label htmlFor="requisitorio" className='w-full h-[34px]'>
+                <span className='text-[15px] p-2 border-l border-t border-b border-r rounded-l dark:border-neutral-600 font-medium cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 line-clamp-1 w-full h-[34px] dark:bg-neutral-800 text-gray-400'>{requisitorioEditado ? requisitorioEditado: 'Selecione um arquivo'}</span>
+                <input
+                  onChange={(e) => {
+                    setRequisitorioEditadoFile(e.target.files[0])
+                    setRequisitorioEditado(`cessoes_requisitorios/${e.target.files[0].name}`)
+                  }}
+                  name='requisitorio'
+                  id='requisitorio'
+                  type='file'
+                  className='hidden'>
+                </input>
+              </label>
+              <svg onClick={() => {
+                setRequisitorioEditadoFile('')
+                setRequisitorioEditado('')
+                }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-[34px] w-[35px] text-[15px] p-[6px] border-r border-t border-b rounded-r dark:border-neutral-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+              </svg>
+
+
+            </div>
+
+
 
 
           </div>
 
           <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2'>
-            <span className='text-[14px] font-medium mb-1'>Escritura</span>
-            <label htmlFor="escritura">
+            <span className='text-[14px] font-medium'>Escritura</span>
 
-              <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
-              <input
-                name='escritura'
-                id='escritura'
-                type='file'
-                className='hidden'>
-              </input>
 
-            </label>
+            <div className='flex items-center h-[34px] w-full'>
+              <label htmlFor="escritura" className='w-full h-[34px]'>
+                <span className='text-[15px] p-2 border-l border-t border-b border-r rounded-l dark:border-neutral-600 font-medium cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 w-full line-clamp-1 h-[34px] dark:bg-neutral-800 dark:text-gray-400'>{escrituraEditado ? escrituraEditado : 'Selecione um arquivo'}</span>
+                <input
+                  onChange={(e) => {
+                    setEscrituraEditadoFile(e.target.files[0])
+                    setEscrituraEditado(`cessoes_escrituras/${e.target.files[0].name}`)
+                  }}
+                  name='escritura'
+                  id='escritura'
+                  type='file'
+                  className='hidden'>
+                </input>
+              </label>
+              <svg onClick={() => {
+                setEscrituraEditadoFile('')
+                setEscrituraEditado('')
+                }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-[34px] w-[34px] p-[6px] border-r border-t border-b rounded-r dark:border-neutral-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+              </svg>
+
+
+            </div>
+
+
           </div>
         </div>
 

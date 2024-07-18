@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import CurrencyFormat from 'react-currency-format';
 
+
 export default function EditarCessionario({ cessionario, users, enviarValores }) {
   const [cessionarioEditado, setCessionarioEditado] = useState(cessionario.user_id ? cessionario.user_id : null);
   const [valorPagoEditado, setValorPagoEditado] = useState(cessionario.valor_pago ? cessionario.valor_pago : null);
@@ -12,6 +13,13 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
   const [assinaturaEditado, setAssinaturaEditado] = useState(cessionario.assinatura === '1' ? true : null);
   const [expedidoEditado, setExpedidoEditado] = useState(cessionario.expedido === '1' ? true : null);
   const [recebidoEditado, setRecebidoEditado] = useState(cessionario.recebido === '1' ? true : null);
+  const [notaEditado, setNotaEditado] = useState(cessionario.nota ? cessionario.nota : null);
+  const [oficioTransferenciaEditado, setOficioTransferenciaEditado] = useState(cessionario.mandado ? cessionario.mandado : null);
+  const [comprovantePagamentoEditado, setComprovantePagamentoEditado] = useState(cessionario.comprovante ? cessionario.comprovante : null); // Change to null
+  const [notaFile, setNotaFile] = useState('');
+  const [oficioTransferenciaFile, setOficioTransferenciaFile] = useState('');
+  const [comprovantePagamentoFile, setComprovantePagamentoFile] = useState('');
+
 
   const handleSelectValues = (array, value) => {
     return array.map(item => {
@@ -25,12 +33,12 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
   useEffect(() => {
     // Envia os valores dos estados para o componente pai sempre que eles forem alterados
     const timer = setTimeout(() => {
-      enviarValores({ cessionarioEditado, valorPagoEditado, comissaoEditado, percentualEditado, expectativaEditado, obsEditado, assinaturaEditado, expedidoEditado, recebidoEditado });
+      enviarValores({ cessionarioEditado, valorPagoEditado, comissaoEditado, percentualEditado, expectativaEditado, obsEditado, assinaturaEditado, expedidoEditado, recebidoEditado, notaEditado, oficioTransferenciaEditado, comprovantePagamentoEditado, notaFile, oficioTransferenciaFile, comprovantePagamentoFile });
     }, 100)
 
     return () => clearTimeout(timer)
-    
-  }, [cessionarioEditado, valorPagoEditado, comissaoEditado, percentualEditado, expectativaEditado, obsEditado, assinaturaEditado, expedidoEditado, recebidoEditado]);
+
+  }, [cessionarioEditado, valorPagoEditado, comissaoEditado, percentualEditado, expectativaEditado, obsEditado, assinaturaEditado, expedidoEditado, recebidoEditado, notaEditado, oficioTransferenciaEditado, comprovantePagamentoEditado, notaFile, oficioTransferenciaFile, comprovantePagamentoFile]);
 
 
 
@@ -200,22 +208,41 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
               </div>
             </div>
 
-            <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2'>
+            <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2 w-full'>
               <span className='text-[14px] font-medium mb-1'>Nota</span>
-              <label htmlFor="nota">
+              <div className='flex items-center h-[34px] w-full'>
+                <label htmlFor="nota" className='w-full h-[34px]'>
 
-                <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
-                <input
-                  name='nota'
-                  id='nota'
-                  type='file'
-                  className='hidden'>
-                </input>
 
-              </label>
+                  <span className='text-[15px] p-2 border-l border-t border-b border-r rounded-l dark:border-neutral-600 font-medium cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 line-clamp-1 w-full h-[34px] dark:bg-neutral-800 text-gray-400'>{notaEditado ? notaEditado : 'Selecione um arquivo'}</span>
+                  <input
+                    name='nota'
+                    id='nota'
+                    type='file'
+                    className='hidden'
+                    onChange={(e) => {
+                      setNotaFile(e.target.files[0])
+                      setNotaEditado(`cessionarios_nota/${e.target.files[0].name}`)
+                    }}
+                  >
+                  </input>
+
+                </label>
+                <svg onClick={() => {
+                  setNotaFile('')
+                  setNotaEditado('')
+                }
+                } xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-[34px] w-[35px] text-[15px] p-[6px] border-r border-t border-b rounded-r dark:border-neutral-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                </svg>
+
+              </div>
+
 
 
             </div>
+
+
 
             <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
               <label
@@ -237,19 +264,35 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
               </div>
             </div>
 
-            <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
+            <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2 w-full'>
               <span className='text-[14px] font-medium mb-1'>Ofício de Transferência</span>
-              <label htmlFor="oficioTransferencia">
+              <div className='flex items-center h-[34px] w-full'>
+                <label htmlFor="oficio_transferencia" className='w-full h-[34px]'>
 
-                <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
-                <input
-                  name='oficioTransferencia'
-                  id='oficioTransferencia'
-                  type='file'
-                  className='hidden'>
-                </input>
 
-              </label>
+                  <span className='text-[15px] p-2 border-l border-t border-b border-r rounded-l dark:border-neutral-600 font-medium cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 line-clamp-1 w-full h-[34px] dark:bg-neutral-800 text-gray-400'>{oficioTransferenciaEditado ? oficioTransferenciaEditado : 'Selecione um arquivo'}</span>
+                  <input
+                    name='oficio_transferencia'
+                    id='oficio_transferencia'
+                    type='file'
+                    className='hidden'
+                    onChange={(e) => {
+                      setOficioTransferenciaFile(e.target.files[0])
+                      setOficioTransferenciaEditado(`cessionarios_mandado/${e.target.files[0].name}`)
+                    }}
+                  >
+                  </input>
+
+                </label>
+                <svg onClick={() => {
+                  setOficioTransferenciaFile('')
+                  setOficioTransferenciaEditado('')
+                }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-[34px] w-[35px] text-[15px] p-[6px] border-r border-t border-b rounded-r dark:border-neutral-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                </svg>
+
+              </div>
+
 
 
             </div>
@@ -274,38 +317,49 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
               </div>
             </div>
 
-            <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
+            <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2 w-full'>
               <span className='text-[14px] font-medium mb-1'>Comprovante de Pagamento</span>
-              <label htmlFor="comprovantePagamento">
-
-                <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
-                <input
-                  name='comprovantePagamento'
-                  id='comprovantePagamento'
-                  type='file'
-                  className='hidden'>
-                </input>
-
-              </label>
+              <div className='flex items-center h-[34px] w-full'>
+                <label htmlFor="comprovante_pagamento" className='w-full h-[34px]'>
 
 
+                  <span className='text-[15px] p-2 border-l border-t border-b border-r rounded-l dark:border-neutral-600 font-medium cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 line-clamp-1 w-full h-[34px] dark:bg-neutral-800 text-gray-400'>{comprovantePagamentoEditado ? comprovantePagamentoEditado : 'Selecione um arquivo'}</span>
+                  <input
+                    name='comprovante_pagamento'
+                    id='comprovante_pagamento'
+                    type='file'
+                    className='hidden'
+                    onChange={(e) => {
+                      setComprovantePagamentoFile(e.target.files[0])
+                      setComprovantePagamentoEditado(`cessionarios_comprovante/${e.target.files[0].name}`)
+                    }}
+                  >
+                  </input>
+
+                </label>
+                <svg onClick={() => {
+                  setComprovantePagamentoFile('')
+                  setComprovantePagamentoEditado('')
+                }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-[34px] w-[35px] text-[15px] p-[6px] border-r border-t border-b rounded-r dark:border-neutral-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                </svg>
+
+              </div>
             </div>
+
+
 
             <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
               <span className='text-[14px] font-medium mb-1'>Comprovante Cedente</span>
-              <label htmlFor="comprovanteCedente">
-
-                <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
-                <input
-                  name='comprovanteCedente'
-                  id='comprovanteCedente'
-                  type='file'
-                  className='hidden'>
-                </input>
-
+              <label htmlFor="comprovante_cedente">
+                <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-not-allowed opacity-75'>Selecione um arquivo</span>
+                {/* <input
+                    name='comprovante_cedente'
+                    id='comprovante_cedente'
+                    type='file'
+                    className='hidden'>
+                  </input> */}
               </label>
-
-
             </div>
           </div>
 

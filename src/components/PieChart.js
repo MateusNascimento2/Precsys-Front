@@ -43,7 +43,7 @@ function PieChart() {
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
-    
+
     const fetchData = async (url, setter) => {
       try {
         setIsLoading(true)
@@ -54,7 +54,7 @@ function PieChart() {
       } catch (err) {
         setIsLoading(false)
         console.log(err);
-      } 
+      }
     };
 
     fetchData('/cessoes', setCessoes);
@@ -147,19 +147,23 @@ function PieChart() {
         cessao.cedente.toLowerCase().includes(filterText.toLowerCase()) ||
         cessao.processo.toLowerCase().includes(filterText.toLowerCase())
       ));
-    
+
     setIsLoading(false)
 
     if (!selectedStatus) return cessoesFiltradas;
     return cessoesFiltradas.filter(cessao => cessao.x === selectedStatus);
 
-    
+
   }, [cessionarios, cessoes, selectedStatus, userID, filterText]);
 
   return (
     <>
       {isLoading ? (
-        <LoadingSpinner />
+        <div className="w-full flex justify-center">
+          <div className="w-12 h-12">
+            <LoadingSpinner />
+          </div>
+        </div>
       ) : (
         <div className="flex flex-col gap-4">
           <div className="w-full">

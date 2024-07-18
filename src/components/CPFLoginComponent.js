@@ -94,7 +94,11 @@ function CPFLoginComponent() {
 
           <div>
             {isLoading ? (
-              <LoadingSpinner />
+              <div className="w-full flex justify-center">
+                <div className="w-12 h-12">
+                  <LoadingSpinner />
+                </div>
+              </div>
             ) : (
               <>
                 <h2 className={darkMode ? "font-bold text-3xl text-center mb-8 text-white" : "font-bold text-3xl text-center mb-8 text-black"}>Entrar para o Precsys</h2>
@@ -113,7 +117,7 @@ function CPFLoginComponent() {
 
 
                     <input className={darkMode ? "border rounded py-3 px-4 text-white bg-neutral-900 border-neutral-600" : 'border rounded py-3 px-4 text-black'} type="text" placeholder="CPF/CNPJ" name="cpfcnpj" id="cpfcnpj" value={cpfcnpj} onChange
-                    ={(value) => handleCpfCnpjChange(value)} required />
+                      ={(value) => handleCpfCnpjChange(value)} required />
 
                     <button
                       onClick={handleContinue}

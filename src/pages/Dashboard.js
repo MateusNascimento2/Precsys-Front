@@ -32,12 +32,12 @@ function Dashboard() {
           </div>
         </div>
         <div className='mt-[120px] mb-[120px] flex flex-col justify-center items-center lg:mt-[200px] lg:mb-[200px]'>
-          <Tooltip id="my-tooltip2" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#525252', fontSize: '12px', fontWeight: '500', fontStyle: 'italic', maxWidth: '250px' }} border="1px solid #d4d4d4" opacity={100} place="top" />
+          <Tooltip id="my-tooltip3" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#525252', fontSize: '12px', fontWeight: '500', fontStyle: 'italic', maxWidth: '250px' }} border="1px solid #d4d4d4" opacity={100} place="top" />
           <div className='flex gap-2 items-center'>
             <h2 className='text-center font-[800] text-[24px] lg:text-[34px] dark:text-white'>Resumo das suas Cessões</h2>
             <svg
-              data-tooltip-id="my-tooltip2"
-              data-tooltip-content={'Os valores apresentados são estimativas sujeitas a mudanças, com os totais dependendo da atualização dos status dos precatórios.*'}
+              data-tooltip-id="my-tooltip3"
+              data-tooltip-content={'Os valores apresentados são estimativas sujeitas a mudanças, com os totais dependendo da atualização dos status dos precatórios.'}
               data-tooltip-place="left"
               xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 dark:text-white mt-2">
               <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />

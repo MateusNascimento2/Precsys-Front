@@ -33,7 +33,7 @@ export default function PropostasLogsList({ searchQuery, logs, users, empresas, 
     }
 
     setIsLoadingName(false)
-    
+
 
 
     return logs;
@@ -70,11 +70,11 @@ export default function PropostasLogsList({ searchQuery, logs, users, empresas, 
 
     const hora = log.date.split(' ')[1];
 
-    
+
 
     return (
       <CellMeasurer cache={cache} parent={parent} columnIndex={0} rowIndex={index} key={key}>
-        <div style={{ ...style}} className="dark:bg-neutral-900">
+        <div style={{ ...style }} className="dark:bg-neutral-900">
           <div className="mb-4 dark:bg-neutral-900">
             <div className="flex flex-col border dark:border-neutral-700 dark:bg-neutral-900 rounded">
               <div className="flex items-center divide-x mb-0 lg:mb-0 dark:divide-neutral-600 dark:border-b-neutral-600 border-b px-2 py-2">
@@ -160,7 +160,11 @@ export default function PropostasLogsList({ searchQuery, logs, users, empresas, 
   return (
     <>
       {isLoading ? (
-        <LoadingSpinner />
+        <div className="w-full flex justify-center">
+          <div className="w-12 h-12">
+            <LoadingSpinner />
+          </div>
+        </div>
       ) : (
         <WindowScroller>
           {({ height, isScrolling, onChildScroll, registerChild, scrollTop }) => (

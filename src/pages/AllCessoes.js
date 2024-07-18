@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import Header from '../components/Header';
 import SearchInput from '../components/SearchInput';
 import Lista from '../components/List';
@@ -10,14 +10,12 @@ import AdicionarCessao from "../components/AdicionarCessao";
 import AdicionarCessionario from "../components/AdicionarCessionario";
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { ToastContainer, toast, Bounce } from 'react-toastify'
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 import { v4 as uuidv4 } from 'uuid';
 
-
 export default function AllCessoes() {
-  const [voltarAdicionarCessao, setVoltarAdicionarCessao] = useState(false)
+  const [voltarAdicionarCessao, setVoltarAdicionarCessao] = useState(false);
   const [varas, setVaras] = useState([]);
   const [teles, setTeles] = useState([]);
   const [users, setUsers] = useState([]);
@@ -34,11 +32,12 @@ export default function AllCessoes() {
     const savedFilters = localStorage.getItem('filters');
     return savedFilters ? JSON.parse(savedFilters) : [];
   });
-  const [show, setShow] = useState(false)
-  const [dataCessoes, setDataCessoes] = useState([])
-  const axiosPrivate = useAxiosPrivate()
+  const [show, setShow] = useState(false);
+  const [dataCessoes, setDataCessoes] = useState([]);
+  const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
+  const adicionarCessaoRef = useRef(null);
 
   const [precatorio, setPrecatorio] = useState('');
   const [processo, setProcesso] = useState('');
@@ -52,14 +51,15 @@ export default function AllCessoes() {
   const [repComercial, setRepComercial] = useState(null);
   const [escrevente, setEscrevente] = useState(null);
   const [juridico, setJuridico] = useState(null);
+  const [requisitorio, setRequisitorio] = useState(null);
+  const [escritura, setEscritura] = useState(null);
 
   const [valorPago, setValorPago] = useState('');
   const [comissao, setComissao] = useState('');
   const [percentual, setPercentual] = useState('');
   const [expectativa, setExpectativa] = useState('');
 
-
-  const [valoresCessionarios, setValoresCessionarios] = useState([])
+  const [valoresCessionarios, setValoresCessionarios] = useState([]);
 
   const { minhascessoes } = useParams();
 
@@ -76,7 +76,6 @@ export default function AllCessoes() {
         setIsLoading(false);
       } catch (err) {
         console.log(err);
-        //navigate('/', { state: { from: location }, replace: true });
       }
     };
 
@@ -89,20 +88,17 @@ export default function AllCessoes() {
     fetchData('/empresas', setEmpresas);
     fetchData('/juridicos', setJuridicos);
 
-
-
     return () => {
       isMounted = false;
       controller.abort();
     };
   }, []);
 
-
   const addCessionario = () => {
-    setShowModalAdicionarCessionario(true)
+    setShowModalAdicionarCessionario(true);
     if (voltarAdicionarCessao) {
-      setVoltarAdicionarCessao(false)
-      return
+      setVoltarAdicionarCessao(false);
+      return;
     } else {
       const id = uuidv4();
       const novoCessionario = {
@@ -113,11 +109,9 @@ export default function AllCessoes() {
       setCessionarios([...cessionarios, novoCessionario]);
       setValoresCessionarios([...valoresCessionarios, {}]);
     }
-
   }
 
   const handleReceberValoresCessionario = (valores, id) => {
-    // Atualize apenas os valores do componente com o ID correspondente
     setCessionarios(prev => {
       return prev.map(cessionario => {
         if (cessionario.index === id) {
@@ -129,23 +123,16 @@ export default function AllCessoes() {
     });
   };
 
-
-
   const handleExcluirCessionario = (id) => {
-    // Filtra os cessionários com base no ID para removê-lo
     const novaListaCessionarios = cessionarios.filter(cessionario => cessionario.index !== id);
     setCessionarios(novaListaCessionarios);
-
-    // Filtra os valores correspondentes com base no ID para removê-los
     setValoresCessionarios(prev => {
       return prev.filter((_, index) => index !== id);
     });
   };
 
-
   useEffect(() => {
     localStorage.setItem('filters', JSON.stringify(selectedCheckboxes));
-
   }, [selectedCheckboxes]);
 
   const handleInputChange = (query) => {
@@ -153,19 +140,16 @@ export default function AllCessoes() {
   }
 
   const handleData = (data) => {
-    setDataCessoes(data)
+    setDataCessoes(data);
   }
 
   const handleShow = () => {
-    setShow((prevState) => !prevState)
-
-
+    setShow((prevState) => !prevState);
     if (document.body.style.overflow !== "hidden") {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = 'scroll';
     }
-
   }
 
   const handleSelectedCheckboxesChange = (childData) => {
@@ -173,12 +157,11 @@ export default function AllCessoes() {
   };
 
   const handleVoltarAdicionarCessao = () => {
-    setVoltarAdicionarCessao(true)
+    setVoltarAdicionarCessao(true);
     setShowModalAdicionarCessionario(prevState => !prevState);
   }
 
   const handleReceberValoresCessao = (valores) => {
-    // Atualiza os estados com os valores recebidos
     setPrecatorio(valores.precatorio);
     setProcesso(valores.processo);
     setCedente(valores.cedente);
@@ -190,15 +173,16 @@ export default function AllCessoes() {
     setDataCessao(valores.dataCessao);
     setRepComercial(valores.repComercial);
     setEscrevente(valores.escrevente);
-    setJuridico(valores.juridico)
-    // Atualize os outros estados conforme necessário
-
+    setJuridico(valores.juridico);
+    setRequisitorio(valores.requisitorio);
+    setEscritura(valores.escritura);
+    console.log(requisitorio)
+    console.log(escritura)
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isDarkMode = localStorage.getItem('darkMode');
-
 
     if (cessionarios.length > 0) {
       for (const cessionario of cessionarios) {
@@ -214,17 +198,28 @@ export default function AllCessoes() {
             theme: isDarkMode === 'true' ? 'dark' : 'light',
             transition: Bounce,
           });
-
-          return
+          return;
         }
       }
     }
 
-
     const cessao = {
-      precatorio, processo, cedente, vara, ente, ano, natureza, empresa, dataCessao, repComercial, escrevente, juridico, status: "1"
+      precatorio,
+      processo,
+      cedente,
+      vara,
+      ente,
+      ano,
+      natureza,
+      empresa,
+      dataCessao,
+      repComercial,
+      escrevente,
+      juridico,
+      status: "1",
+      escritura: escritura ? `cessoes_escrituras/${escritura.name}` : null,
+      requisitorio: requisitorio ? `cessoes_requisitorios/${requisitorio.name}` : null,
     };
-
 
     if (precatorio.length < 12 || processo.length < 12 || !cedente || !vara || !ente || !ano || !natureza || !empresa || !dataCessao || !repComercial || !escrevente || !juridico) {
       toast.error('Todos os campos da cessão precisam ser preenchidos!', {
@@ -238,7 +233,6 @@ export default function AllCessoes() {
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
       });
-
       return;
     }
 
@@ -247,9 +241,44 @@ export default function AllCessoes() {
     try {
       setIsLoading(true)
       const response = await axiosPrivate.post('/cessoes', cessao);
-      console.log(response);
-      cessaoId = response.data.insertId; // Certifique-se de que a API retorna { id: <id da cessao> }
-      console.log(cessaoId);
+      cessaoId = response.data.insertId;
+
+      const uploadFiles = async (files) => {
+        const formData = new FormData();
+        files.forEach((file) => {
+          formData.append(file.name, file.file);
+        });
+
+        try {
+          const response = await axiosPrivate.post('/upload', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+
+        } catch (err) {
+          toast.error(`Erro ao enviar arquivos: ${err}`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: false,
+            theme: isDarkMode === 'true' ? 'dark' : 'light',
+            transition: Bounce,
+          });
+          setIsLoading(false);
+        }
+      };
+
+      if (requisitorio || escritura) {
+        await uploadFiles([
+          { name: 'requisitorio', file: requisitorio },
+          { name: 'escritura', file: escritura },
+        ]);
+      }
+
     } catch (err) {
       toast.error(`Erro ao adicionar Cessão: ${err}`, {
         position: "top-right",
@@ -263,21 +292,58 @@ export default function AllCessoes() {
         transition: Bounce,
       });
       setIsLoading(false)
-      console.log(err);
-      return; // Se a inserção da cessão falhar, sair da função
+      return;
     }
 
-    for (const cessionario of cessionarios) {
-      console.log(cessionario.valores);
-    }
 
     if (cessionarios.length > 0) {
       try {
         for (const cessionario of cessionarios) {
-          cessionario.valores.id_cessao = cessaoId; // Associa o ID da cessão ao cessionário
+          cessionario.valores.id_cessao = cessaoId;
+          cessionario.valores.nota = `cessionarios_nota/${cessionario.valores.nota.name}`
+          cessionario.valores.oficioTransferencia = `cessionarios_mandado/${cessionario.valores.oficioTransferencia.name}`
+          cessionario.valores.comprovantePagamento = `cessionarios_comprovante/${cessionario.valores.comprovantePagamento.name}`
           try {
             await axiosPrivate.post('/cessionarios', cessionario.valores);
-            console.log(`Cessionario ${cessionario.valores} adicionado com sucesso.`);
+
+            const uploadFiles = async (files) => {
+              const formData = new FormData();
+              files.forEach((file) => {
+                formData.append(file.name, file.file);
+              });
+
+              try {
+                const response = await axiosPrivate.post('/uploadFileCessionario', formData, {
+                  headers: {
+                    'Content-Type': 'multipart/form-data',
+                  },
+                });
+
+              } catch (err) {
+                toast.error(`Erro ao enviar arquivos: ${err}`, {
+                  position: "top-right",
+                  autoClose: 3000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: false,
+                  theme: isDarkMode === 'true' ? 'dark' : 'light',
+                  transition: Bounce,
+                });
+                setIsLoading(false);
+              }
+            };
+
+            if (cessionario.valores.nota || cessionario.valores.oficioTransferencia || cessionario.valores.comprovantePagamento) {
+              await uploadFiles([
+                { name: 'nota', file: cessionario.valores.nota },
+                { name: 'oficio_transferencia', file: cessionario.valores.oficioTransferencia },
+                { name: 'comprovante_pagamento', file: cessionario.valores.comprovantePagamento },
+              ]);
+            }
+
+
           } catch (err) {
             toast.error(`Erro ao adicionar cessionario: ${err}`, {
               position: "top-right",
@@ -291,12 +357,10 @@ export default function AllCessoes() {
               transition: Bounce,
             });
             setIsLoading(false)
-            console.error('Erro ao adicionar cessionario:', err);
           }
         }
       } catch (err) {
         setIsLoading(false)
-        console.log(err);
       }
     }
 
@@ -314,10 +378,9 @@ export default function AllCessoes() {
 
     setIsLoading(false)
 
-    console.log('Submitado', cessao);
-    console.log('Cessionarios:', cessionarios);
+    adicionarCessaoRef.current.resetForm();
+    navigate('/todas-cessoes')
   }
-
 
   return (
     <>
@@ -330,22 +393,22 @@ export default function AllCessoes() {
             {!minhascessoes ?
               <Modal
                 botaoAbrirModal={
-                  <button title='Adicionar nova cessão' className='hover:bg-neutral-100 flex items-center justify-center dark:text-white  dark:hover:bg-neutral-800 rounded-full  text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px] '>
+                  <button title='Adicionar nova cessão' className='hover:bg-neutral-100 flex items-center justify-center dark:text-white dark:hover:bg-neutral-800 rounded-full text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px]'>
                     +
                   </button>}
-                tituloModal=
-                {showModalAdicionarCessionario && cessionarios.length > 0
-                  ? (
-                    <div className='flex gap-2 items-center'>
-                      <button className='rounded hover:bg-neutral-100 dark:hover:bg-neutral-800' onClick={() => handleVoltarAdicionarCessao()}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
-                        </svg>
-                      </button>
-                      <span>Adicionar cessão</span>
-                    </div>
-                  )
-                  : (<span>Adicionar cessão</span>)
+                tituloModal={
+                  showModalAdicionarCessionario && cessionarios.length > 0
+                    ? (
+                      <div className='flex gap-2 items-center'>
+                        <button className='rounded hover:bg-neutral-100 dark:hover:bg-neutral-800' onClick={() => handleVoltarAdicionarCessao()}>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+                          </svg>
+                        </button>
+                        <span>Adicionar cessão</span>
+                      </div>
+                    )
+                    : (<span>Adicionar cessão</span>)
                 }
                 botaoSalvar={<button
                   className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700' onClick={(e) => handleSubmit(e)}>
@@ -359,27 +422,23 @@ export default function AllCessoes() {
                 </button>}
               >
                 <div className='h-[450px] overflow-auto relative'>
-
                   <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? 'absolute left-[-1100px] transition-all ease-in-out duration-300 overflow-hidden' : 'absolute left-0 transition-all ease-in-out duration-300 overflow-y-hidden w-full'}>
-                    {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
-                      <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30'>
+                    {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
+                      <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>
                         <LoadingSpinner />
                       </div>
                     </div>)}
-
-                    <AdicionarCessao varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridicos={juridicos} enviarValores={handleReceberValoresCessao} />
+                    <AdicionarCessao ref={adicionarCessaoRef} varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridicos={juridicos} enviarValores={handleReceberValoresCessao} />
                   </div>
 
                   <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "absolute right-0 transition-all ease-in-out duration-300 overflow-y-auto w-full" : 'w-full absolute right-[1100px] transition-all ease-in-out duration-300 overflow-y-hidden'}>
-
                     <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
-                      {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
+                      {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
                         <div className='absolute left-1/2 top-[33%] -translate-x-[50%] -translate-y-[50%] z-30'>
                           <LoadingSpinner />
                         </div>
                       </div>)}
                       {cessionarios.map((componente) => (
-
                         <div key={componente.index} className='w-full pt-5'>
                           <div className='px-4 flex justify-between items-center'>
                             <span className='dark:text-white text-black font-medium py-2 text-[18px]'>Adicionar cessionário</span>
@@ -393,17 +452,10 @@ export default function AllCessoes() {
                         </div>
                       ))}
                     </div>
-
                   </div>
-
                 </div>
-
-
-
               </Modal> : null}
-
           </div>
-
         </div>
         <div className='mt-[24px] px-5 dark:bg-neutral-900'>
           <div className='flex gap-3 items-center mb-4 w-full'>
@@ -414,20 +466,14 @@ export default function AllCessoes() {
           <div className={`lg:flex lg:gap-4 lg:items-start`}>
             <div className='hidden lg:block lg:sticky lg:top-[5%]'>
               <Filter show={true} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} />
-
             </div>
             <div className='w-full h-full max-h-full'>
               <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} />
-
             </div>
           </div>
-
-
         </div>
         <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} />
-
       </main>
     </>
-
   )
 }

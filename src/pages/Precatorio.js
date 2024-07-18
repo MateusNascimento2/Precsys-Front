@@ -300,7 +300,10 @@ export default function Precatorio() {
         </main>
       ) : (
         <div className='w-screen h-screen flex items-center justify-center'>
-          <LoadingSpinner />
+
+          <div className="w-12 h-12">
+            <LoadingSpinner />
+          </div>
         </div>
       )}
     </>
