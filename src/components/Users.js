@@ -12,6 +12,27 @@ function Users({ searchQuery, selectedFilters }) {
   const [isLoading, setIsLoading] = useState(false);
   const axiosPrivate = useAxiosPrivate();
 
+  // Estado para gerenciar o tema
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+  useEffect(() => {
+    // Verifica se a classe 'dark' está presente no HTML
+    const checkDarkMode = () => {
+      const htmlElement = document.documentElement;
+      setIsDarkTheme(htmlElement.classList.contains('dark'));
+    };
+
+    // Adiciona um evento de escuta para mudanças na classe do HTML
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    // Checa inicialmente o tema
+    checkDarkMode();
+
+    // Limpa o observador quando o componente é desmontado
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
@@ -20,7 +41,6 @@ function Users({ searchQuery, selectedFilters }) {
       try {
         setIsLoading(true);
         const { data } = await axiosPrivate.get(url, { signal: controller.signal });
-        console.log(data);
         if (isMounted) setState(data);
       } catch (err) {
         console.log(err);
@@ -134,12 +154,51 @@ function Users({ searchQuery, selectedFilters }) {
             </div>
           </div>
         </div>
-        <Tooltip id="qtdCessoes" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
-        <Tooltip id="tipoUsuario" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
-        <Tooltip id="statusUsuario" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
+        <Tooltip
+          id="qtdCessoes"
+          style={{
+            position: 'absolute',
+            zIndex: 60,
+            backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF',
+            color: isDarkTheme ? '#FFF' : '#000',
+            fontSize: '12px',
+            fontWeight: '500',
+          }}
+          border={isDarkTheme ? '1px solid rgb(82 82 82)' : '1px solid #d4d4d4'}
+          opacity={100}
+          place="top"
+        />
+        <Tooltip
+          id="tipoUsuario"
+          style={{
+            position: 'absolute',
+            zIndex: 60,
+            backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF',
+            color: isDarkTheme ? '#FFF' : '#000',
+            fontSize: '12px',
+            fontWeight: '500',
+          }}
+          border={isDarkTheme ? '1px solid rgb(82 82 82)' : '1px solid #d4d4d4'}
+          opacity={100}
+          place="right"
+        />
+        <Tooltip
+          id="statusUsuario"
+          style={{
+            position: 'absolute',
+            zIndex: 60,
+            backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF',
+            color: isDarkTheme ? '#FFF' : '#000',
+            fontSize: '12px',
+            fontWeight: '500',
+          }}
+          border={isDarkTheme ? '1px solid rgb(82 82 82)' : '1px solid #d4d4d4'}
+          opacity={100}
+          place="right"
+        />
       </CellMeasurer>
     );
-  }, [filteredUsers, cessionarios, cache]);
+  }, [filteredUsers, cessionarios, cache, isDarkTheme]);
 
   return (
     <>

@@ -1,10 +1,36 @@
-import React, { useMemo, useCallback, useRef } from 'react';
+import React, { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { List, AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { Link } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import { Tooltip } from 'react-tooltip';
 
+const adjustToUserTimezone = (utcDateString) => {
+  const date = new Date(utcDateString); // Converte a string UTC para um objeto Date
+  return date.toLocaleString(); // Converte para a hora local do usuário
+};
+
 const LoginLogsList = ({ searchQuery, logs, users, isLoading, filters }) => {
+  // Estado para gerenciar o tema
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+  useEffect(() => {
+    // Função para verificar o tema
+    const checkDarkMode = () => {
+      const htmlElement = document.documentElement;
+      setIsDarkTheme(htmlElement.classList.contains('dark'));
+    };
+
+    // Checa inicialmente o tema
+    checkDarkMode();
+
+    // Adiciona um evento de escuta para mudanças na classe do HTML
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    // Limpa o observador quando o componente é desmontado
+    return () => observer.disconnect();
+  }, []);
+
   const listRef = useRef();
 
   const cache = useMemo(() => new CellMeasurerCache({
@@ -50,10 +76,14 @@ const LoginLogsList = ({ searchQuery, logs, users, isLoading, filters }) => {
       return null;
     }
 
-    const data = log.data.split('T')[0];
-    const dataFormatada = data.split('-');
-    const hora = log.data.split('T')[1];
-    const horaFormatada = hora.replace('.000Z', '');
+    const data = log.data ? log.data.split('T')[0] : null;
+    const dataFormatada = data ? data.split('-') : '-';
+    const hora = log.data ? log.data.split('T')[1] : null;
+    let horaFormatada = hora ? hora.replace('.000Z', '') : '-';
+
+    if (log.data) {
+      horaFormatada = adjustToUserTimezone(log.data).split(' ')[1];
+    }
 
     return (
       <CellMeasurer cache={cache} parent={parent} columnIndex={0} rowIndex={index} key={key}>
@@ -69,34 +99,34 @@ const LoginLogsList = ({ searchQuery, logs, users, isLoading, filters }) => {
                   <span className="text-neutral-400 font-medium line-clamp-1 dark:text-neutral-300">{log.userCpfCnpj}</span>
                 </div>
               </div>
-              <div className='flex justify-around px-2 pb-2 lg:px-0 lg:pb-0'>
+              <div className='flex justify-between px-2 pb-2 lg:px-0 lg:pb-0'>
                 <span
                   data-tooltip-id="Ip do usuário"
                   data-tooltip-content="Ip do usuário"
-                  data-tooltip-place="bottom" className='text-[12px] lg:text-[14px] text-center dark:text-white'
+                  data-tooltip-place="left" className='text-[12px] lg:text-[14px] text-center dark:text-white'
                 >
                   {log.ip}
                 </span>
                 <span data-tooltip-id="Data do acesso"
                   data-tooltip-content="Data do acesso"
-                  data-tooltip-place="bottom" className='text-[12px] lg:text-[14px] text-center dark:text-white'>
-                  {dataFormatada[2]}/{dataFormatada[1]}/{dataFormatada[0]}
+                  data-tooltip-place="left" className='text-[12px] lg:text-[14px] text-center dark:text-white w-[50px] lg:w-[90px]'>
+                  {dataFormatada.length === 3 ? `${dataFormatada[2]}/${dataFormatada[1]}/${dataFormatada[0]}` : '-'}
                 </span>
                 <span data-tooltip-id="Hora do acesso"
                   data-tooltip-content="Hora do acesso"
-                  data-tooltip-place="bottom" className='text-[12px] lg:text-[14px] text-center dark:text-white'>
+                  data-tooltip-place="left" className='text-[12px] lg:text-[14px] text-center dark:text-white w-[50px] lg:w-[80px]'>
                   {horaFormatada}
                 </span>
               </div>
             </div>
           </div>
         </div>
-        <Tooltip id="Ip do usuário" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
-        <Tooltip id="Data do acesso" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
-        <Tooltip id="Hora do acesso" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
+        <Tooltip id="Ip do usuário" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="left" />
+        <Tooltip id="Data do acesso" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="left" />
+        <Tooltip id="Hora do acesso" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="left" />
       </CellMeasurer>
     );
-  }, [filteredLogs, cache]);
+  }, [filteredLogs, cache, isDarkTheme]);
 
   return (
     <>

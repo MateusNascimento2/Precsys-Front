@@ -6,18 +6,38 @@ import { Link } from "react-router-dom";
 import { Tooltip } from 'react-tooltip';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 
-
 function PieChart() {
   const [endAngle, setEndAngle] = useState(360);
   const [cessoes, setCessoes] = useState([]);
   const [cessionarios, setCessionarios] = useState([]);
   const [status, setStatus] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState(null); // Estado adicional para armazenar o status selecionado
+  const [selectedStatus, setSelectedStatus] = useState(null);
   const [myCessions, setMyCessions] = useState([]);
-  const [filterText, setFilterText] = useState(""); // Estado para armazenar o texto de filtro
+  const [filterText, setFilterText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { auth } = useAuth();
   const userID = String(auth.user.id);
+
+  // Estado para gerenciar o tema
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+  useEffect(() => {
+    // Verifica se a classe 'dark' está presente no HTML
+    const checkDarkMode = () => {
+      const htmlElement = document.documentElement;
+      setIsDarkTheme(htmlElement.classList.contains('dark'));
+    };
+
+    // Adiciona um evento de escuta para mudanças na classe do HTML
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true });
+
+    // Checa inicialmente o tema
+    checkDarkMode();
+
+    // Limpa o observador quando o componente é desmontado
+    return () => observer.disconnect();
+  }, []);
 
   function changeStringFloat(a) {
     const virgulaParaBarra = a.replace(',', '/');
@@ -29,13 +49,11 @@ function PieChart() {
   }
 
   function localeTwoDecimals(a) {
-
     if (Number.isInteger(a)) {
       return a.toLocaleString() + ",00";
     } else {
       return a.toLocaleString();
     }
-
   }
 
   const axiosPrivate = useAxiosPrivate();
@@ -46,14 +64,14 @@ function PieChart() {
 
     const fetchData = async (url, setter) => {
       try {
-        setIsLoading(true)
+        setIsLoading(true);
         const { data } = await axiosPrivate.get(url, {
           signal: controller.signal
         });
         if (isMounted) setter(data);
       } catch (err) {
-        setIsLoading(false)
         console.log(err);
+        setIsLoading(false);
       }
     };
 
@@ -61,18 +79,15 @@ function PieChart() {
     fetchData('/status', setStatus);
     fetchData('/cessionarios', setCessionarios);
 
-
     return () => {
       isMounted = false;
       controller.abort();
     };
   }, [axiosPrivate]);
 
-  const minhasCessoes = useMemo(() => {
-    // Step 1: Filter cessionarios by userID
+  useEffect(() => {
     const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => cessionario.user_id === userID);
 
-    // Step 2: Find corresponding cessoes and update exp_recebimento
     const minhasCessoes = cessionariosPorIDdoUsuarios
       .map(cessionario => {
         const cessao = cessoes.find(cessao => cessao && String(cessao.id) === String(cessionario.cessao_id));
@@ -83,7 +98,6 @@ function PieChart() {
       })
       .filter(cessao => cessao !== undefined);
 
-    // Step 3: Update status in each cessao
     status.forEach(statusItem => {
       minhasCessoes.forEach(cessao => {
         if (cessao.status === String(statusItem.id)) {
@@ -92,10 +106,10 @@ function PieChart() {
       });
     });
 
-    console.log(minhasCessoes)
+    setMyCessions(minhasCessoes);
+  }, [cessionarios, cessoes, status, userID]);
 
-    setMyCessions(minhasCessoes)
-
+  const minhasCessoesData = useMemo(() => {
     const statusQtd = [
       { x: 'Em Andamento', y: 0, color: '#d2c7b3', expRecebimentoTotal: 0 },
       { x: 'Em Andamento Com Depósito', y: 0, color: '#bdb4a9', expRecebimentoTotal: 0 },
@@ -107,7 +121,7 @@ function PieChart() {
       { x: 'Recebido', y: 0, color: '#bad3b9', expRecebimentoTotal: 0 }
     ];
 
-    minhasCessoes.forEach(cessao => {
+    myCessions.forEach(cessao => {
       const statusIndex = statusQtd.findIndex(status => status.x === cessao.x);
       if (statusIndex !== -1) {
         statusQtd[statusIndex].y += 1;
@@ -115,18 +129,15 @@ function PieChart() {
       }
     });
 
-    console.log(statusQtd)
-
     return statusQtd;
-  }, [cessionarios, cessoes, status, userID]);
+  }, [myCessions]);
 
-  const total = minhasCessoes.reduce((sum, status) => sum + status.y, 0);
+  const total = minhasCessoesData.reduce((sum, status) => sum + status.y, 0);
 
   const handlePieClick = (datum) => {
     setSelectedStatus(datum.x);
   };
 
-  // Animação para abrir o gráfico
   useEffect(() => {
     if (endAngle > 0) {
       const interval = setInterval(() => {
@@ -137,7 +148,6 @@ function PieChart() {
     }
   }, [endAngle]);
 
-  // Filtrando as cessões baseadas no status selecionado e pertencentes ao usuário
   const filteredCessoes = useMemo(() => {
     const cessoesFiltradas = cessionarios
       .filter(cessionario => cessionario.user_id === userID)
@@ -148,12 +158,10 @@ function PieChart() {
         cessao.processo.toLowerCase().includes(filterText.toLowerCase())
       ));
 
-    setIsLoading(false)
+    setIsLoading(false);
 
     if (!selectedStatus) return cessoesFiltradas;
     return cessoesFiltradas.filter(cessao => cessao.x === selectedStatus);
-
-
   }, [cessionarios, cessoes, selectedStatus, userID, filterText]);
 
   return (
@@ -167,9 +175,22 @@ function PieChart() {
       ) : (
         <div className="flex flex-col gap-4">
           <div className="w-full">
-            <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500' }} border="1px solid #d4d4d4" opacity={100} place="top" />
+            <Tooltip
+              id="my-tooltip"
+              style={{
+                position: 'absolute',
+                zIndex: 60,
+                backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF',
+                color: isDarkTheme ? '#FFF':'#000',
+                fontSize: '12px',
+                fontWeight: '500'
+              }}
+              border={isDarkTheme ? '1px solid rgb(82 82 82)' : "1px solid #d4d4d4"}
+              opacity={100}
+              place="top"
+            />
             <ul className="flex flex-col dark:divide-neutral-600 md:grid md:grid-cols-4 text-[14px]">
-              {minhasCessoes.map((s, index) => (
+              {minhasCessoesData.map((s, index) => (
                 <li key={index} className="flex flex-col gap-[2px] py-3 px-2 dark:border-neutral-600 border-b md:border-b md:border-r [&:nth-child(4)]:border-b [&:nth-child(5)]:border-b [&:nth-child(6)]:border-b [&:nth-child(7)]:border-b [&:nth-child(8)]:border-b-0 [&:nth-child(8)]:border-r-0 md:[&:nth-child(4)]:border-r-0 md:[&:nth-child(5)]:border-b-0 md:[&:nth-child(6)]:border-b-0 md:[&:nth-child(7)]:border-b-0 md:[&:nth-child(8)]:border-b-0 md:[&:nth-child(8)]:border-r-0">
                   <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">{s.x}:</span>
                   <span><span data-tooltip-id="my-tooltip" data-tooltip-content={'Valor da expectativa'} data-tooltip-place="right" className="text-sm font-bold text-neutral-900 dark:text-white">{`R$ ${localeTwoDecimals(s.expRecebimentoTotal)}` || 'N/A'}</span></span>
@@ -235,7 +256,7 @@ function PieChart() {
             </div>
             <div className="flex justify-center w-[350px] md:w-[400px]">
               <VictoryPie
-                data={minhasCessoes}
+                data={minhasCessoesData}
                 startAngle={360}
                 width={350}
                 height={350}
@@ -248,8 +269,8 @@ function PieChart() {
                 }}
                 labelComponent={
                   <VictoryTooltip
-                    style={{ fontSize: '11px' }}
-                    flyoutStyle={{ strokeWidth: 0.5, stroke: '#a3a3a3', fill: '#FFF' }}
+                    style={{ fontSize: '11px', fill: isDarkTheme ? '#FFF' : '#000' }}
+                    flyoutStyle={{ strokeWidth: 0.5, stroke: 'rgb(82 82 82)', fill: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: '#FFF' }}
                     cornerRadius={2}
                     flyoutHeight={22}
                     flyoutPadding={({ text }) =>
@@ -260,7 +281,7 @@ function PieChart() {
                     constrainToVisibleArea
                   />
                 }
-                colorScale={minhasCessoes.map(cessao => cessao.color)}
+                colorScale={minhasCessoesData.map(cessao => cessao.color)}
                 events={[
                   {
                     target: "data",
@@ -285,7 +306,7 @@ function PieChart() {
                           {
                             target: "data",
                             mutation: (props) => {
-                              const originalColor = minhasCessoes.find(cessao => cessao.x === props.datum.x).color;
+                              const originalColor = minhasCessoesData.find(cessao => cessao.x === props.datum.x).color;
                               return { style: { fill: originalColor, opacity: 1, filter: 'none' } };
                             }
                           },

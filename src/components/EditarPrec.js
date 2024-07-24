@@ -20,6 +20,8 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
   const [requisitorioEditadoFile, setRequisitorioEditadoFile] = useState('');
   const [escrituraEditadoFile, setEscrituraEditadoFile] = useState('');
 
+  console.log(teles)
+
   useEffect(() => {
     // Envia os valores dos estados para o componente pai sempre que eles forem alterados
     const timer = setTimeout(() => {
@@ -48,6 +50,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
 
   // Uso da função
   const updatedTeles = handleTeleValues(teles, users);
+  console.log(updatedTeles)
 
   const tele = updatedTeles.find(tele => String(precInfo.tele_id) === String(tele.value))
 
@@ -174,7 +177,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
                 styles={customStyles}
               />
 
-              <input type='text' name='ano' id='ano' placeholder='Ano' className='dark:bg-neutral-800 border-r border-t border-b rounded-r  dark:border-neutral-600 py-1 px-2 w-[30%] focus:outline-none placeholder:text-[14px] text-gray-400 ' value={anoEditado} onChange={(e) => setAnoEditado(e.target.value)}></input>
+              <input type='text' name='ano' id='ano' placeholder='Ano' maxLength={4} className='dark:bg-neutral-800 border-r border-t border-b rounded-r  dark:border-neutral-600 py-1 px-2 w-[30%] focus:outline-none placeholder:text-[14px] text-gray-400 ' value={anoEditado} onChange={(e) => setAnoEditado(e.target.value)}></input>
             </div>
           </div>
 
@@ -242,7 +245,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
             <label className='text-[14px] font-medium' htmlFor="rep_comercial">Rep. Comercial</label>
             <Select
               menuPlacement='top'
-              options={teles}
+              options={updatedTeles}
               defaultValue={tele}
               onChange={(selectedValue) => !selectedValue ? setRepComercialEditado('') : setRepComercialEditado(String(selectedValue.value))}
               isClearable={true}
@@ -313,8 +316,8 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
 
 
             <div className='flex items-center h-[34px] w-full'>
-              <label htmlFor="requisitorio" className='w-full h-[34px]'>
-                <span className='text-[15px] p-2 border-l border-t border-b border-r rounded-l dark:border-neutral-600 font-medium cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 line-clamp-1 w-full h-[34px] dark:bg-neutral-800 text-gray-400'>{requisitorioEditado ? requisitorioEditado: 'Selecione um arquivo'}</span>
+              <label htmlFor="requisitorio" className='h-[34px] w-[85%] lg:w-[90%]'>
+                <span className='text-[15px] p-2 border-l border-t border-b border-r rounded-l dark:border-neutral-600 font-medium cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 line-clamp-1 w-full h-[34px] dark:bg-neutral-800 text-gray-400'>{requisitorioEditado ? requisitorioEditado.split('/')[1] : 'Selecione um arquivo'}</span>
                 <input
                   onChange={(e) => {
                     setRequisitorioEditadoFile(e.target.files[0])
@@ -326,12 +329,16 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
                   className='hidden'>
                 </input>
               </label>
-              <svg onClick={() => {
-                setRequisitorioEditadoFile('')
-                setRequisitorioEditado('')
-                }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-[34px] w-[35px] text-[15px] p-[6px] border-r border-t border-b rounded-r dark:border-neutral-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-              </svg>
+              <div className='w-[15%] lg:w-[10%]'>
+                <svg onClick={() => {
+                  setRequisitorioEditadoFile('')
+                  setRequisitorioEditado('')
+                }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-[34px] w-full text-[15px] p-[6px] border-r border-t border-b rounded-r dark:border-neutral-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                </svg>
+
+              </div>
+
 
 
             </div>
@@ -346,8 +353,8 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
 
 
             <div className='flex items-center h-[34px] w-full'>
-              <label htmlFor="escritura" className='w-full h-[34px]'>
-                <span className='text-[15px] p-2 border-l border-t border-b border-r rounded-l dark:border-neutral-600 font-medium cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 w-full line-clamp-1 h-[34px] dark:bg-neutral-800 dark:text-gray-400'>{escrituraEditado ? escrituraEditado : 'Selecione um arquivo'}</span>
+              <label htmlFor="escritura" className='w-[85%] h-[34px] lg:w-[90%]'>
+                <span className='text-[15px] p-2 border-l border-t border-b border-r rounded-l dark:border-neutral-600 font-medium cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 w-full line-clamp-1 h-[34px] dark:bg-neutral-800 dark:text-gray-400'>{escrituraEditado ? escrituraEditado.split('/')[1] : 'Selecione um arquivo'}</span>
                 <input
                   onChange={(e) => {
                     setEscrituraEditadoFile(e.target.files[0])
@@ -359,12 +366,15 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
                   className='hidden'>
                 </input>
               </label>
-              <svg onClick={() => {
-                setEscrituraEditadoFile('')
-                setEscrituraEditado('')
-                }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-[34px] w-[34px] p-[6px] border-r border-t border-b rounded-r dark:border-neutral-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-              </svg>
+              <div className='w-[15%] lg:w-[10%]'>
+                <svg onClick={() => {
+                  setEscrituraEditadoFile('')
+                  setEscrituraEditado('')
+                }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-[34px] w-full p-[6px] border-r border-t border-b rounded-r dark:border-neutral-600 hover:bg-red-600 hover:text-black hover:cursor-pointer">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                </svg>
+              </div>
+
 
 
             </div>

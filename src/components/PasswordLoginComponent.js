@@ -70,7 +70,7 @@ function PasswordLoginComponent({ nome, userImage, cpfcnpj, darkMode }) {
                     </svg> {errorMessage} </div> : null}
       <div className='w-full'>
         <form className="flex flex-col gap-4 w-full">
-          <input className={darkMode ? "text-white border rounded py-3 px-4 bg-neutral-900 border-neutral-600" : 'border rounded py-3 px-4 text-black bg-white'} type="text" placeholder="Senha" name='password' id='password' required onChange={(event) => setPassword(event.target.value)} value={password} />
+          <input className={darkMode ? "text-white border rounded py-3 px-4 bg-neutral-900 border-neutral-600" : 'border rounded py-3 px-4 text-black bg-white'} type="password" placeholder="Senha" name='password' id='password' required onChange={(event) => setPassword(event.target.value)} value={password} />
           <button type="submit" className={darkMode ? "border rounded-md text-black text-center bg-white py-3 px-4 flex items-center justify-center gap-2 hover:opacity-85" : "border rounded-md text-white text-center bg-black py-3 px-4 flex items-center justify-center gap-2 hover:opacity-85"} onClick={handlePassword}>
             <span className="font-medium">Entrar</span>
           </button>

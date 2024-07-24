@@ -112,6 +112,7 @@ export default function AllCessoes() {
   }
 
   const handleReceberValoresCessionario = (valores, id) => {
+    console.log(valores)
     setCessionarios(prev => {
       return prev.map(cessionario => {
         if (cessionario.index === id) {
@@ -239,7 +240,7 @@ export default function AllCessoes() {
     let cessaoId;
 
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const response = await axiosPrivate.post('/cessoes', cessao);
       cessaoId = response.data.insertId;
 
@@ -250,12 +251,11 @@ export default function AllCessoes() {
         });
 
         try {
-          const response = await axiosPrivate.post('/upload', formData, {
+          await axiosPrivate.post('/upload', formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
           });
-
         } catch (err) {
           toast.error(`Erro ao enviar arquivos: ${err}`, {
             position: "top-right",
@@ -269,14 +269,20 @@ export default function AllCessoes() {
             transition: Bounce,
           });
           setIsLoading(false);
+          return;
         }
       };
 
+      // Enviar arquivos de cessão se existirem
       if (requisitorio || escritura) {
-        await uploadFiles([
-          { name: 'requisitorio', file: requisitorio },
-          { name: 'escritura', file: escritura },
-        ]);
+        const filesToUpload = [];
+        if (requisitorio) {
+          filesToUpload.push({ name: 'requisitorio', file: requisitorio });
+        }
+        if (escritura) {
+          filesToUpload.push({ name: 'escritura', file: escritura });
+        }
+        await uploadFiles(filesToUpload);
       }
 
     } catch (err) {
@@ -291,18 +297,24 @@ export default function AllCessoes() {
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
       });
-      setIsLoading(false)
+      setIsLoading(false);
       return;
     }
-
 
     if (cessionarios.length > 0) {
       try {
         for (const cessionario of cessionarios) {
+          console.log(cessionario)
           cessionario.valores.id_cessao = cessaoId;
-          cessionario.valores.nota = `cessionarios_nota/${cessionario.valores.nota.name}`
-          cessionario.valores.oficioTransferencia = `cessionarios_mandado/${cessionario.valores.oficioTransferencia.name}`
-          cessionario.valores.comprovantePagamento = `cessionarios_comprovante/${cessionario.valores.comprovantePagamento.name}`
+          if (cessionario.valores.nota) {
+            cessionario.valores.notaPath = `cessionarios_nota/${cessionario.valores.nota.name}`;
+          }
+          if (cessionario.valores.oficioTransferencia) {
+            cessionario.valores.oficioTransferenciaPath = `cessionarios_mandado/${cessionario.valores.oficioTransferencia.name}`;
+          }
+          if (cessionario.valores.comprovantePagamento) {
+            cessionario.valores.comprovantePagamentoPath = `cessionarios_comprovante/${cessionario.valores.comprovantePagamento.name}`;
+          }
           try {
             await axiosPrivate.post('/cessionarios', cessionario.valores);
 
@@ -313,12 +325,11 @@ export default function AllCessoes() {
               });
 
               try {
-                const response = await axiosPrivate.post('/uploadFileCessionario', formData, {
+                await axiosPrivate.post('/uploadFileCessionario', formData, {
                   headers: {
                     'Content-Type': 'multipart/form-data',
                   },
                 });
-
               } catch (err) {
                 toast.error(`Erro ao enviar arquivos: ${err}`, {
                   position: "top-right",
@@ -332,17 +343,24 @@ export default function AllCessoes() {
                   transition: Bounce,
                 });
                 setIsLoading(false);
+                return;
               }
             };
 
-            if (cessionario.valores.nota || cessionario.valores.oficioTransferencia || cessionario.valores.comprovantePagamento) {
-              await uploadFiles([
-                { name: 'nota', file: cessionario.valores.nota },
-                { name: 'oficio_transferencia', file: cessionario.valores.oficioTransferencia },
-                { name: 'comprovante_pagamento', file: cessionario.valores.comprovantePagamento },
-              ]);
+            // Enviar arquivos de cessionário se existirem
+            const filesToUpload = [];
+            if (cessionario.valores.nota) {
+              filesToUpload.push({ name: 'nota', file: cessionario.valores.nota });
             }
-
+            if (cessionario.valores.oficioTransferencia) {
+              filesToUpload.push({ name: 'oficio_transferencia', file: cessionario.valores.oficioTransferencia });
+            }
+            if (cessionario.valores.comprovantePagamento) {
+              filesToUpload.push({ name: 'comprovante_pagamento', file: cessionario.valores.comprovantePagamento });
+            }
+            if (filesToUpload.length > 0) {
+              await uploadFiles(filesToUpload);
+            }
 
           } catch (err) {
             toast.error(`Erro ao adicionar cessionario: ${err}`, {
@@ -356,11 +374,13 @@ export default function AllCessoes() {
               theme: isDarkMode === 'true' ? 'dark' : 'light',
               transition: Bounce,
             });
-            setIsLoading(false)
+            setIsLoading(false);
+            return;
           }
         }
       } catch (err) {
-        setIsLoading(false)
+        setIsLoading(false);
+        return;
       }
     }
 
@@ -376,11 +396,11 @@ export default function AllCessoes() {
       transition: Bounce,
     });
 
-    setIsLoading(false)
+    setIsLoading(false);
 
     adicionarCessaoRef.current.resetForm();
-    navigate('/todas-cessoes')
-  }
+    navigate('/todas-cessoes');
+  };
 
   return (
     <>
@@ -434,7 +454,7 @@ export default function AllCessoes() {
                   <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "absolute right-0 transition-all ease-in-out duration-300 overflow-y-auto w-full" : 'w-full absolute right-[1100px] transition-all ease-in-out duration-300 overflow-y-hidden'}>
                     <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
                       {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
-                        <div className='absolute left-1/2 top-[33%] -translate-x-[50%] -translate-y-[50%] z-30'>
+                        <div className='absolute left-1/2 top-[33%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>
                           <LoadingSpinner />
                         </div>
                       </div>)}

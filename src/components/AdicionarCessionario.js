@@ -12,10 +12,10 @@ function FileInput({ label, onFileChange, name }) {
   };
 
   return (
-    <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2'>
-      <span className='text-[14px] font-medium mb-1'>{label}</span>
-      <label>
-        <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>
+    <div className='dark:text-white text-black flex flex-col md:items-start gap-2 py-2 px-2 w-full'>
+      <span className='text-[14px] font-medium'>{label}</span>
+      <label className='w-full'>
+        <span className='text-[15px] p-2 border rounded dark:border-neutral-600 font-medium cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 line-clamp-1 w-full h-[34px] dark:bg-neutral-800 text-gray-400 block'>
           Selecione um arquivo
         </span>
         <input

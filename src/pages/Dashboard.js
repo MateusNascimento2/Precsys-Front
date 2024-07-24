@@ -10,6 +10,26 @@ import { Tooltip } from 'react-tooltip';
 function Dashboard() {
   const [show, setShow] = useState(false)
   const { auth } = useAuth();
+  // Estado para gerenciar o tema
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+  useEffect(() => {
+    // Verifica se a classe 'dark' está presente no HTML
+    const checkDarkMode = () => {
+      const htmlElement = document.documentElement;
+      setIsDarkTheme(htmlElement.classList.contains('dark'));
+    };
+
+    // Adiciona um evento de escuta para mudanças na classe do HTML
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true });
+
+    // Checa inicialmente o tema
+    checkDarkMode();
+
+    // Limpa o observador quando o componente é desmontado
+    return () => observer.disconnect();
+  }, []);
 
   const handleShow = () => {
     setShow((prevState) => !prevState)
@@ -32,7 +52,20 @@ function Dashboard() {
           </div>
         </div>
         <div className='mt-[120px] mb-[120px] flex flex-col justify-center items-center lg:mt-[200px] lg:mb-[200px]'>
-          <Tooltip id="my-tooltip3" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#525252', fontSize: '12px', fontWeight: '500', fontStyle: 'italic', maxWidth: '250px' }} border="1px solid #d4d4d4" opacity={100} place="top" />
+          <Tooltip id="my-tooltip3" style={{
+            position: 'absolute',
+            zIndex: 60,
+            backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF',
+            color: isDarkTheme ? '#FFF' : '#000',
+            fontSize: '12px',
+            fontWeight: '500',
+            fontStyle: 'italic',
+            maxWidth: '250px'
+          }}
+            border={isDarkTheme ? '1px solid rgb(82 82 82)' : "1px solid #d4d4d4"}
+            opacity={100}
+            place="top"
+             />
           <div className='flex gap-2 items-center'>
             <h2 className='text-center font-[800] text-[24px] lg:text-[34px] dark:text-white'>Resumo das suas Cessões</h2>
             <svg

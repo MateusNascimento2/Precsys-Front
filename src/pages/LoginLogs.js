@@ -46,6 +46,8 @@ export default function LoginLogs() {
     };
   }, []);
 
+  console.log(users)
+
   useEffect(() => {
     const usersName = users.reduce((acc, user) => {
       acc[user.nome] = false;

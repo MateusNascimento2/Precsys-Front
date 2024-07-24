@@ -1,256 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Topics from '../components/Topics';
 import { Link, useParams } from 'react-router-dom';
-import Modal from '../components/Modal';
 import ListaCessionarios from './ListaCessionarios';
 import { useNavigate, useLocation } from 'react-router-dom';
-import DotsButton from './DotsButton';
-import EditarPrec from './EditarPrec';
 import { Tooltip } from 'react-tooltip';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 
-function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
-    if (!isOpen) return null;
 
-    const handleOverlayClick = (event) => {
-        if (event.target === event.currentTarget) {
-            onRequestClose();
-        }
-    };
-
-    return (
-        <div onClick={handleOverlayClick} className="fixed inset-0 bg-white dark:bg-black bg-opacity-80 dark:bg-opacity-80 flex justify-center items-center z-50 p-2">
-            <div onClick={(e) => e.stopPropagation()} className="bg-white border dark:border-neutral-600 dark:bg-neutral-900 p-6 rounded shadow-lg relative w-full max-w-md">
-                <h2 className="text-lg text-black dark:text-white font-semibold">Deseja excluir a cessão?</h2>
-                <div className="flex justify-between mt-4">
-                    <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                        onClick={onConfirm}
-                    >
-                        Confirmar
-                    </button>
-                    <button
-                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-800"
-                        onClick={onRequestClose}
-                    >
-                        Cancelar
-                    </button>
-                </div>
-                <button
-                    className="absolute top-3 right-3 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                    onClick={onRequestClose}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[20px] h-[20px] dark:text-white">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    );
-}
-
-export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas, orcamentos, naturezas, empresas, users, teles, escreventes, juridico, handleUpdate }) {
-    const [isLoading, setIsLoading] = useState(false);
-    const [precatorioEditado, setPrecatorioEditado] = useState('');
-    const [processoEditado, setProcessoEditado] = useState('');
-    const [cedenteEditado, setCedenteEditado] = useState('');
-    const [varaEditado, setVaraEditado] = useState(null);
-    const [enteEditado, setEnteEditado] = useState(null);
-    const [anoEditado, setAnoEditado] = useState(null);
-    const [naturezaEditado, setNaturezaEditado] = useState(null);
-    const [empresaEditado, setEmpresaEditado] = useState(null);
-    const [dataCessaoEditado, setDataCessaoEditado] = useState(null);
-    const [repComercialEditado, setRepComercialEditado] = useState(null);
-    const [escreventeEditado, setEscreventeEditado] = useState(null);
-    const [juridicoEditado, setJuridicoEditado] = useState(null);
-    const [requisitorioEditado, setRequisitorioEditado] = useState('');
-    const [escrituraEditado, setEscrituraEditado] = useState('');
-    const [requisitorioEditadoFile, setRequisitorioEditadoFile] = useState('');
-    const [escrituraEditadoFile, setEscrituraEditadoFile] = useState('');
-    const [modalIsOpen, setModalIsOpen] = useState(false);
+export default function InfoPrec({ precInfo, status, cessionario, cessoes, users}) {
     const [key, setKey] = useState(0); // Add key state here
     const [loadingFiles, setLoadingFiles] = useState({});
 
-    const openModal = () => setModalIsOpen(true);
-    const closeModal = () => setModalIsOpen(false);
 
     const navigate = useNavigate();
     const location = useLocation();
-
-    useEffect(() => {
-        const isDarkMode = localStorage.getItem('darkMode');
-        if (localStorage.getItem('cessaoEditada')) {
-            toast.success('Cessão editada com sucesso!', {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: false,
-                theme: isDarkMode === 'true' ? 'dark' : 'light',
-                transition: Bounce,
-            });
-            localStorage.removeItem('cessaoEditada');
-        }
-    }, []);
+    const { precID } = useParams();
+    const axiosPrivate = useAxiosPrivate();
 
     function navigation() {
         window.history.back();
     }
-
-    const confirmDelete = async () => {
-        const isDarkMode = localStorage.getItem('darkMode');
-
-        try {
-            setIsLoading(true);
-            const response = await axiosPrivate.delete(`/cessoes/${precID}`);
-            toast.success('Cessão excluída com sucesso!', {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: false,
-                theme: isDarkMode === 'true' ? 'dark' : 'light',
-                transition: Bounce,
-            });
-            navigation()
-        } catch (err) {
-            toast.error(`Erro ao deletar cessão: ${err}`, {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: false,
-                theme: isDarkMode === 'true' ? 'dark' : 'light',
-                transition: Bounce,
-            });
-            setIsLoading(false);
-            return;
-        }
-        closeModal();
-    };
-
-    const { precID } = useParams();
-    const axiosPrivate = useAxiosPrivate();
-
-    const handleReceberValores = (valores) => {
-        setPrecatorioEditado(valores.precatorioEditado);
-        setProcessoEditado(valores.processoEditado);
-        setCedenteEditado(valores.cedenteEditado);
-        setVaraEditado(valores.varaEditado);
-        setEnteEditado(valores.enteEditado);
-        setAnoEditado(valores.anoEditado);
-        setNaturezaEditado(valores.naturezaEditado);
-        setEmpresaEditado(valores.empresaEditado);
-        setDataCessaoEditado(valores.dataCessaoEditado);
-        setRepComercialEditado(valores.repComercialEditado);
-        setEscreventeEditado(valores.escreventeEditado);
-        setJuridicoEditado(valores.juridicoEditado);
-        setRequisitorioEditado(valores.requisitorioEditado);
-        setEscrituraEditado(valores.escrituraEditado)
-        setRequisitorioEditadoFile(valores.requisitorioEditadoFile);
-        setEscrituraEditadoFile(valores.escrituraEditadoFile);
-
-    };
-
-    const handleEditarCessao = async (e) => {
-        e.preventDefault();
-        const isDarkMode = localStorage.getItem('darkMode');
-
-        if (precatorioEditado.length < 12 || processoEditado.length < 12 || !cedenteEditado || !varaEditado || !enteEditado || !anoEditado || !naturezaEditado || !empresaEditado || !dataCessaoEditado || !repComercialEditado || !escreventeEditado || !juridicoEditado) {
-            toast.error('Todos os campos da cessão precisam ser preenchidos!', {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: false,
-                theme: isDarkMode === 'true' ? 'dark' : 'light',
-                transition: Bounce,
-            });
-
-            return;
-        }
-
-        const cessaoEditada = {
-            precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado, juridicoEditado,
-            requisitorioEditado: requisitorioEditadoFile ? `cessoes_requisitorios/${requisitorioEditadoFile.name}` : requisitorioEditado ? `${requisitorioEditado}` : null,
-            escrituraEditado: escrituraEditadoFile ? `cessoes_escrituras/${escrituraEditadoFile.name}` : escrituraEditado ? `${escrituraEditado}` : null,
-        };
-
-        try {
-            setIsLoading(true);
-            console.log(`cessaoEditada: ${JSON.stringify(cessaoEditada)}`);
-            console.log(requisitorioEditadoFile)
-            const response = await axiosPrivate.put(`/cessoes/${precID}`, cessaoEditada);
-
-            const uploadFiles = async (files) => {
-                const formData = new FormData();
-                files.forEach((file) => {
-                    console.log('file:' + file)
-                    formData.append(file.name, file.file);
-                });
-
-                try {
-                    const response = await axiosPrivate.post('/upload', formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                        },
-                    });
-
-                } catch (err) {
-                    toast.error(`Erro ao enviar arquivos: ${err}`, {
-                        position: "top-right",
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: false,
-                        theme: isDarkMode === 'true' ? 'dark' : 'light',
-                        transition: Bounce,
-                    });
-                    setIsLoading(false);
-                }
-            };
-
-            if (requisitorioEditadoFile || escrituraEditadoFile) {
-                await uploadFiles([
-                    { name: 'requisitorio', file: requisitorioEditadoFile },
-                    { name: 'escritura', file: escrituraEditadoFile },
-                ]);
-            }
-        } catch (err) {
-            toast.error(`Erro ao editar cessão: ${err}`, {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: false,
-                theme: isDarkMode === 'true' ? 'dark' : 'light',
-                transition: Bounce,
-            });
-            setIsLoading(false);
-            return;
-        }
-
-        setIsLoading(false);
-
-        // Set flag in local storage and reload the page
-        localStorage.setItem('cessaoEditada', 'true');
-        window.location.reload();
-    };
 
     const downloadFile = async (filename) => {
         const isDarkMode = localStorage.getItem('darkMode');
@@ -304,45 +76,6 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, varas
                     <div className='flex flex-col '>
                         <div className='flex items-center justify-between mb-[16px]'>
                             <span className="font-[700] dark:text-white" >Informações Gerais</span>
-                            <div className='mr-2'>
-                                <DotsButton>
-                                    <Modal
-                                        botaoAbrirModal={
-                                            <button title='Editar precatório' className='hover:bg-neutral-100  dark:hover:bg-neutral-800 dark:text-white text-sm px-4 py-2 rounded'>
-                                                Editar
-                                            </button>}
-                                        tituloModal={'Editar cessão'}
-                                        botaoSalvar={
-                                            <button onClick={(e) => handleEditarCessao(e)}
-                                                className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-1 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
-                                                Salvar
-                                            </button>
-                                        }
-                                    >
-                                        <div className='h-[450px] overflow-auto'>
-                                            {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
-                                                <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>
-                                                    <LoadingSpinner />
-                                                </div>
-                                            </div>)}
-                                            <EditarPrec precInfo={precInfo} varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridico={juridico} enviarValores={(valores) => handleReceberValores(valores)} />
-                                        </div>
-
-                                    </Modal>
-
-                                    <button onClick={openModal} className='hover:bg-red-800  bg-red-600 text-white text-sm px-4 py-2 rounded'>
-                                        Excluir
-                                    </button>
-                                </DotsButton>
-                                <DeleteConfirmationModal
-                                    isOpen={modalIsOpen}
-                                    onRequestClose={closeModal}
-                                    onConfirm={confirmDelete}
-                                />
-                            </div>
-
-
-
                         </div>
 
                         <div className='grid grid-cols-1 gap-3 mb-[20px]'>

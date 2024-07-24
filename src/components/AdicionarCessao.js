@@ -177,6 +177,7 @@ const AdicionarCessao = forwardRef(({ varas, orcamentos, naturezas, empresas, us
                 name='ano'
                 id='ano'
                 placeholder='Ano'
+                maxLength={4}
                 className='dark:bg-neutral-800 border-r border-t border-b rounded-r dark:border-neutral-600 py-1 px-2 w-[30%] focus:outline-none placeholder:text-[14px] text-gray-400'
                 value={ano}
                 onChange={(e) => setAno(e.target.value)}
@@ -322,10 +323,10 @@ const AdicionarCessao = forwardRef(({ varas, orcamentos, naturezas, empresas, us
           </div>
 
           {/* Requisitório */}
-          <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2'>
-            <span className='text-[14px] font-medium mb-1'>Requisitório</span>
-            <label htmlFor="requisitorio">
-              <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
+          <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2 w-full'>
+            <span className='text-[14px] font-medium'>Requisitório</span>
+            <label htmlFor="requisitorio" className='w-full'>
+              <span className='text-[15px] p-2 border rounded dark:border-neutral-600 font-medium cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 line-clamp-1 w-full h-[34px] dark:bg-neutral-800 text-gray-400 block'>Selecione um arquivo</span>
               <input
                 name='requisitorio'
                 id='requisitorio'
@@ -338,10 +339,10 @@ const AdicionarCessao = forwardRef(({ varas, orcamentos, naturezas, empresas, us
           </div>
 
           {/* Escritura */}
-          <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2'>
-            <span className='text-[14px] font-medium mb-1'>Escritura</span>
-            <label htmlFor="escritura">
-              <span className='text-[14px] font-medium border rounded dark:border-neutral-600 p-2 h-[34px] cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700'>Selecione um arquivo</span>
+          <div className='dark:text-white text-black flex flex-col justify-center md:items-start gap-2 py-2 px-2 w-full'>
+            <span className='text-[14px] font-medium'>Escritura</span>
+            <label htmlFor="escritura" className='w-full'>
+              <span className='text-[15px] p-2 border rounded dark:border-neutral-600 font-medium cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 line-clamp-1 w-full h-[34px] dark:bg-neutral-800 text-gray-400 block'>Selecione um arquivo</span>
               <input
                 name='escritura'
                 id='escritura'

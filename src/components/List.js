@@ -34,6 +34,28 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
     defaultHeight: 60,
   });
 
+
+  // Estado para gerenciar o tema
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+  useEffect(() => {
+    // Verifica se a classe 'dark' está presente no HTML
+    const checkDarkMode = () => {
+      const htmlElement = document.documentElement;
+      setIsDarkTheme(htmlElement.classList.contains('dark'));
+    };
+
+    // Adiciona um evento de escuta para mudanças na classe do HTML
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true });
+
+    // Checa inicialmente o tema
+    checkDarkMode();
+
+    // Limpa o observador quando o componente é desmontado
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
@@ -368,7 +390,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
               {cessao.falecido ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700`}><span className="text-black font-bold dark:text-neutral-100">{cessao.falecido}</span></span>) : null}
             </div>
           </div>
-          <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500', maxWidth: '220px' }} border="1px solid #d4d4d4" opacity={100} place="top" />
+          <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500', maxWidth: '220px' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="top" />
         </div>
       </CellMeasurer>
     );
@@ -390,7 +412,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
             <section className="container dark:bg-neutral-900" style={{ width: "100%" }}>
               <div className="dark:bg-neutral-900 relative h-full">
                 <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">Mostrando {filteredCessoes.length} de {cessoes.length} cessões</p>
-                <AutoSizer style={{ width: '100%', height: '100%'}}>
+                <AutoSizer style={{ width: '100%', height: '100%' }}>
                   {({ width }) => (
                     <div ref={registerChild}>
                       <List rowRenderer={renderRow} isScrolling={isScrolling} onScroll={onChildScroll} width={width} autoHeight height={height} rowCount={filteredCessoes.length} scrollTop={scrollTop} deferredMeasurementCache={cache} rowHeight={cache.rowHeight} />

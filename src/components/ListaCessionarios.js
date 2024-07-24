@@ -74,13 +74,48 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
 
-  const confirmDelete = async (id) => {
+  console.log(cessionario)
+
+  const confirmDelete = async (id, files) => {
     const isDarkMode = localStorage.getItem('darkMode');
+
+    const deleteFile = async (path, fileName) => {
+      try {
+        console.log(`Tentando deletar arquivo: /deleteFile/${path}/${fileName}`);
+        await axiosPrivate.delete(`/deleteFile/${path}/${fileName}`);
+        console.log(`Arquivo deletado: ${path}/${fileName}`);
+      } catch (err) {
+        toast.error(getToastOptions(`Erro ao deletar arquivo: ${err.message}`, 'error'));
+        throw err;
+      }
+    };
 
     try {
       setIsLoading(true);
+
+
+      if (files.nota) {
+        const [notaPath, notaFileName] = files.nota.split('/');
+        console.log(`Deletando nota: ${notaPath}/${notaFileName}`);
+        await deleteFile(notaPath, notaFileName);
+      }
+
+      if (files.comprovante) {
+        const [comprovantePath, comprovanteFileName] = files.comprovante.split('/');
+        console.log(`Deletando comprovante: ${comprovantePath}/${comprovanteFileName}`);
+        await deleteFile(comprovantePath, comprovanteFileName);
+      }
+
+      if (files.mandado) {
+        const [mandadoPath, mandadoFileName] = files.mandado.split('/');
+        console.log(`Deletando mandado: ${mandadoPath}/${mandadoFileName}`);
+        await deleteFile(mandadoPath, mandadoFileName);
+      }
+
+
       const response = await axiosPrivate.delete(`/cessionarios/${id}`);
-      
+
+
       localStorage.setItem('cessionarioExcluido', 'true');
 
       window.location.reload();
@@ -352,9 +387,20 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
       try {
         for (const cessionario of cessionarios) {
           cessionario.valores.id_cessao = precID;
-          cessionario.valores.notaPath = `cessionarios_nota/${cessionario.valores.nota.name}`;
-          cessionario.valores.oficioTransferenciaPath = `cessionarios_mandado/${cessionario.valores.oficioTransferencia.name}`;
-          cessionario.valores.comprovantePagamentoPath = `cessionarios_comprovante/${cessionario.valores.comprovantePagamento.name}`;
+
+          if (cessionario.valores.nota) {
+            cessionario.valores.notaPath = `cessionarios_nota/${cessionario.valores.nota.name}`;
+          }
+
+          if (cessionario.valores.oficioTransferencia) {
+            cessionario.valores.oficioTransferenciaPath = `cessionarios_mandado/${cessionario.valores.oficioTransferencia.name}`;
+          }
+
+          if (cessionario.valores.comprovantePagamento) {
+            cessionario.valores.comprovantePagamentoPath = `cessionarios_comprovante/${cessionario.valores.comprovantePagamento.name}`
+          }
+
+
           try {
             setIsLoading(true)
             await axiosPrivate.post('/cessionarios', cessionario.valores);
@@ -447,8 +493,6 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
         valores: {}, // Inicialmente os valores são um objeto vazio
       };
       setCessionarios([novoCessionario]);
-
-      localStorage.setItem('cessionarioEditado', 'true');
 
       window.location.reload();
     }
@@ -667,7 +711,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
                 </button>
               </DotsButton>
 
-              <DeleteConfirmationModal isOpen={modalIsOpen} onRequestClose={closeModal} onConfirm={() => confirmDelete(c.id)} />
+              <DeleteConfirmationModal isOpen={modalIsOpen} onRequestClose={closeModal} onConfirm={() => confirmDelete(c.id, { nota: c.nota, comprovante: c.comprovante, mandado: c.mandado })} />
             </div>
           </div>
         ))}
@@ -718,6 +762,13 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
             </button>
           }
         >
+          {isLoading && (
+            <div className="absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20">
+              <div className="absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8">
+                <LoadingSpinner />
+              </div>
+            </div>
+          )}
           <div className="h-[450px] overflow-auto">
             <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
               {cessionarios.map((componente) => (
