@@ -36,6 +36,7 @@
     "axios": "^1.6.7",
     "clsx": "^2.1.0",
     "crypto-js": "^4.2.0",
+    "framer-motion": "^4.1.17",
     "jwt-decode": "^4.0.0",
     "postcss-cli": "^11.0.0",
     "postcss-loader": "^8.1.0",

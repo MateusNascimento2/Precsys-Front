@@ -3,6 +3,7 @@ import { List, AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache } from
 import { Link } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import { Tooltip } from 'react-tooltip';
+import { motion } from 'framer-motion';
 
 export default function PropostasLogsList({ searchQuery, logs, users, empresas, isLoading, filters }) {
   const listRef = useRef();
@@ -89,7 +90,13 @@ export default function PropostasLogsList({ searchQuery, logs, users, empresas, 
 
     return (
       <CellMeasurer cache={cache} parent={parent} columnIndex={0} rowIndex={index} key={key}>
-        <div style={{ ...style }} className="dark:bg-neutral-900">
+        <motion.div 
+          style={{ ...style }} 
+          className="dark:bg-neutral-900"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
           <div className="mb-4 dark:bg-neutral-900">
             <div className="flex flex-col border dark:border-neutral-700 dark:bg-neutral-900 rounded">
               <div className="flex items-center divide-x mb-0 lg:mb-0 dark:divide-neutral-600 dark:border-b-neutral-600 border-b px-2 py-2">
@@ -161,14 +168,14 @@ export default function PropostasLogsList({ searchQuery, logs, users, empresas, 
               </div>
             </div>
           </div>
-        </div>
-        <Tooltip id="empresa" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
-        <Tooltip id="beneficiario" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
-        <Tooltip id="precatorio" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
-        <Tooltip id="processo" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
-        <Tooltip id="proposta" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
-        <Tooltip id="data-proposta" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
-        <Tooltip id="hora-proposta" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
+          <Tooltip id="empresa" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
+          <Tooltip id="beneficiario" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
+          <Tooltip id="precatorio" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
+          <Tooltip id="processo" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
+          <Tooltip id="proposta" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
+          <Tooltip id="data-proposta" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
+          <Tooltip id="hora-proposta" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
+        </motion.div>
       </CellMeasurer>
     );
   }, [filteredLogs, cache, isDarkTheme]);
@@ -184,7 +191,13 @@ export default function PropostasLogsList({ searchQuery, logs, users, empresas, 
       ) : (
         <WindowScroller>
           {({ height, isScrolling, onChildScroll, registerChild, scrollTop }) => (
-            <section className="container dark:bg-neutral-900" style={{ width: "100%" }}>
+            <motion.section
+              className="container dark:bg-neutral-900"
+              style={{ width: "100%" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
               <div className="dark:bg-neutral-900 relative h-full">
                 <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">
                   Mostrando {filteredLogs.length} de {logs.length} logs
@@ -209,7 +222,7 @@ export default function PropostasLogsList({ searchQuery, logs, users, empresas, 
                   )}
                 </AutoSizer>
               </div>
-            </section>
+            </motion.section>
           )}
         </WindowScroller>
       )}

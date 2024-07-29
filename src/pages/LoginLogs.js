@@ -5,6 +5,7 @@ import SearchInput from '../components/SearchInput';
 import LoginLogsList from '../components/LoginLogsList';
 import FilterButton from '../components/FilterButton';
 import LoginLogsFilter from '../components/LoginLogsFilter';
+import { motion } from 'framer-motion';
 
 export default function LoginLogs() {
   const [show, setShow] = useState(false);
@@ -45,8 +46,6 @@ export default function LoginLogs() {
       controller.abort();
     };
   }, []);
-
-  console.log(users)
 
   useEffect(() => {
     const usersName = users.reduce((acc, user) => {
@@ -94,8 +93,21 @@ export default function LoginLogs() {
   return (
     <>
       <Header />
-      <main className="container mx-auto pt-[120px] dark:bg-neutral-900 h-full relative">
-        <h2 className="font-[700] ml-5 text-[32px] md:mt-[16px] dark:text-white" id="Logs">Logs</h2>
+      <motion.main
+        className="container mx-auto pt-[120px] dark:bg-neutral-900 h-full relative"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <motion.h2 
+          className="font-[700] ml-5 text-[32px] md:mt-[16px] dark:text-white" 
+          id="Logs"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          Logs
+        </motion.h2>
         <div className="mt-[24px] px-5 dark:bg-neutral-900">
           <div className="flex gap-3 items-center mb-4 w-full">
             <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'py-3'} />
@@ -112,8 +124,16 @@ export default function LoginLogs() {
             </div>
           </div>
         </div>
-        <LoginLogsFilter show={show} onSetShow={handleShow} filters={filters} onSelectedCheckboxesChange={updateFilters} resetFilters={resetFilters} />
-      </main>
+        {show && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <LoginLogsFilter show={show} onSetShow={handleShow} filters={filters} onSelectedCheckboxesChange={updateFilters} resetFilters={resetFilters} />
+          </motion.div>
+        )}
+      </motion.main>
     </>
   );
 }

@@ -8,6 +8,7 @@ import { Tooltip } from 'react-tooltip';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useAuth from "../hooks/useAuth";
+import { motion } from 'framer-motion';
 import "../teste.css";
 
 export default function Lista({ searchQuery, selectedFilters, setData }) {
@@ -33,7 +34,6 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
     fixedWidth: true,
     defaultHeight: 60,
   });
-
 
   // Estado para gerenciar o tema
   const [isDarkTheme, setIsDarkTheme] = useState(false);
@@ -293,13 +293,18 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
     }
   };
 
-
   const renderRow = ({ index, parent, key, style }) => {
     const cessao = filteredCessoes[index];
 
     return (
       <CellMeasurer cache={cache} parent={parent} columnIndex={0} rowIndex={index} key={key}>
-        <div style={{ ...style, paddingBottom: '35px' }} className="dark:bg-neutral-900">
+        <motion.div
+          style={{ ...style, paddingBottom: '35px' }}
+          className="dark:bg-neutral-900"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.6 }}
+        >
           <div className=" dark:bg-neutral-900 ">
             <div className="flex border dark:border-neutral-700 dark:bg-neutral-900 px-2 py-1 justify-between rounded-t items-center">
               <div className="flex">
@@ -391,7 +396,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
             </div>
           </div>
           <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500', maxWidth: '220px' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="top" />
-        </div>
+        </motion.div>
       </CellMeasurer>
     );
   };
@@ -404,8 +409,6 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
             <LoadingSpinner />
           </div>
         </div>
-
-
       ) : (
         <WindowScroller>
           {({ height, isScrolling, onChildScroll, registerChild, scrollTop }) => (

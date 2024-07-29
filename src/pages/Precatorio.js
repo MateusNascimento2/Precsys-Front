@@ -14,6 +14,7 @@ import EditarPrec from '../components/EditarPrec';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DotsButton from '../components/DotsButton';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
   if (!isOpen) return null;
@@ -527,107 +528,111 @@ export default function Precatorio() {
     <>
       <Header />
       <ToastContainer />
-      {!isLoading ? (
-        <main className={show ? 'container mx-auto px-2 overflow-hidden dark:bg-neutral-900' : 'container mx-auto px-2 pt-[120px] dark:bg-neutral-900'}>
-          <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500', maxWidth: '220px' }} border="1px solid #d4d4d4" opacity={100} place="top" />
-          <div>
-
-            <div className='flex flex-col mx-[20px] border-b dark:border-neutral-600 pb-[24px]'>
-              <div className='flex gap-1 items-center w-full'>
-                <div className="flex w-full">
-                  <div className="border-r dark:border-neutral-600 text-[36px] pr-2 my-3 flex items-center justify-center">
-                    <span className="font-[700] dark:text-white">{precData.id}</span>
-                  </div>
-                  <div className="flex flex-col justify-center text-[12px] pl-2 w-full">
-                    <div className='flex justify-between items-center w-full'>
-                      <span className="font-bold dark:text-white text-[24px]">{precData.precatorio}</span>
-                      <DotsButton>
-                        <Modal
-                          botaoAbrirModal={
-                            <button title='Editar precatório' className='hover:bg-neutral-100  dark:hover:bg-neutral-800 dark:text-white text-sm px-4 py-2 rounded'>
-                              Editar
-                            </button>}
-                          tituloModal={'Editar cessão'}
-                          botaoSalvar={
-                            <button onClick={(e) => handleEditarCessao(e)}
-                              className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-1 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
-                              Salvar
-                            </button>
-                          }
-                        >
-                          <div className='h-[450px] overflow-auto'>
-                            {sendingData && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
-                              <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>
-                                <LoadingSpinner />
-                              </div>
-                            </div>)}
-                            <EditarPrec precInfo={precData} varas={varas} orcamentos={orcamentos} naturezas={natureza} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridico={juridico} enviarValores={(valores) => handleReceberValores(valores)} />
-                          </div>
-                        </Modal>
-
-                        <button onClick={openModal} className='hover:bg-red-800  bg-red-600 text-white text-sm px-4 py-2 rounded'>
-                          Excluir
-                        </button>
-                      </DotsButton>
-                      <DeleteConfirmationModal
-                        isOpen={modalIsOpen}
-                        onRequestClose={closeModal}
-                        onConfirm={confirmDelete}
-                      />
+      <AnimatePresence>
+        {!isLoading ? (
+          <motion.main
+            className={show ? 'container mx-auto px-2 overflow-hidden dark:bg-neutral-900' : 'container mx-auto px-2 pt-[120px] dark:bg-neutral-900'}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            
+          >
+            <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500', maxWidth: '220px' }} border="1px solid #d4d4d4" opacity={100} place="top" />
+            <div>
+              <div className='flex flex-col mx-[20px] border-b dark:border-neutral-600 pb-[24px]'>
+                <div className='flex gap-1 items-center w-full'>
+                  <div className="flex w-full">
+                    <div className="border-r dark:border-neutral-600 text-[36px] pr-2 my-3 flex items-center justify-center">
+                      <span className="font-[700] dark:text-white">{precData.id}</span>
                     </div>
-
-                    <span className="text-neutral-400 font-medium line-clamp-1">{precData.cedente}</span>
+                    <div className="flex flex-col justify-center text-[12px] pl-2 w-full">
+                      <div className='flex justify-between items-center w-full'>
+                        <span className="font-bold dark:text-white text-[24px]">{precData.precatorio}</span>
+                        <DotsButton>
+                          <Modal
+                            botaoAbrirModal={
+                              <button title='Editar precatório' className='hover:bg-neutral-100  dark:hover:bg-neutral-800 dark:text-white text-sm px-4 py-2 rounded'>
+                                Editar
+                              </button>}
+                            tituloModal={'Editar cessão'}
+                            botaoSalvar={
+                              <button onClick={(e) => handleEditarCessao(e)}
+                                className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-1 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
+                                Salvar
+                              </button>
+                            }
+                          >
+                            <div className='h-[450px] overflow-auto'>
+                              {sendingData && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
+                                <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>
+                                  <LoadingSpinner />
+                                </div>
+                              </div>)}
+                              <EditarPrec precInfo={precData} varas={varas} orcamentos={orcamentos} naturezas={natureza} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridico={juridico} enviarValores={(valores) => handleReceberValores(valores)} />
+                            </div>
+                          </Modal>
+                          <button onClick={openModal} className='hover:bg-red-800  bg-red-600 text-white text-sm px-4 py-2 rounded'>
+                            Excluir
+                          </button>
+                        </DotsButton>
+                        <DeleteConfirmationModal
+                          isOpen={modalIsOpen}
+                          onRequestClose={closeModal}
+                          onConfirm={confirmDelete}
+                        />
+                      </div>
+                      <span className="text-neutral-400 font-medium line-clamp-1">{precData.cedente}</span>
+                    </div>
                   </div>
-
+                </div>
+                <div className='flex flex-wrap gap-1 mb-[13px] '>
+                  <a
+                    style={{ backgroundColor: `${precData.statusColor}` }}
+                    data-tooltip-id="my-tooltip"
+                    data-tooltip-content={`${precData.substatus ? precData.substatus : ''}`}
+                    data-tooltip-place="top"
+                    className={`px-2 py-1 rounded text-[10px] flex gap-1 bg-neutral-100 dark:bg-neutral-700 dark:text-neutral-100`}>
+                    <span className="text-black font-bold">{precData.status}</span>
+                  </a>
+                  {precData.orcamento ? (<Tags text={precData.orcamento} />) : null}
+                  {precData.nome_natureza ? (<Tags text={precData.nome_natureza} />) : null}
+                  {precData.nome_empresa ? (<Tags text={precData.nome_empresa} />) : null}
                 </div>
               </div>
-              <div className='flex flex-wrap gap-1 mb-[13px] '>
-                <a
-                  style={{ backgroundColor: `${precData.statusColor}` }}
-                  data-tooltip-id="my-tooltip"
-                  data-tooltip-content={`${precData.substatus ? precData.substatus : ''}`}
-                  data-tooltip-place="top"
-                  className={`px-2 py-1 rounded text-[10px] flex gap-1 bg-neutral-100 dark:bg-neutral-700 dark:text-neutral-100`}>
-                  <span className="text-black font-bold">{precData.status}</span>
-                </a>
-                {precData.orcamento ? (<Tags text={precData.orcamento} />) : null}
-                {precData.nome_natureza ? (<Tags text={precData.nome_natureza} />) : null}
-                {precData.nome_empresa ? (<Tags text={precData.nome_empresa} />) : null}
+            </div>
+            <div className='px-5 dark:bg-neutral-900 mt-[16px] max-w-full h-full'>
+              <div className='lg:flex lg:gap-4 lg:items-start max-w-full h-full'>
+                <div className='hidden lg:block lg:sticky lg:h-full lg:max-h-full lg:top-[8%]'>
+                  <NavMenu />
+                </div>
+                <div className='lg:w-[calc(100%-300px)]'>
+                  <InfoPrec
+                    precInfo={precData}
+                    status={status}
+                    cessionario={cessionarios.filter(cessionario => parseInt(precData.id) === parseInt(cessionario.cessao_id))}
+                    cessoes={todasCessoes.filter(cessao => precData.id !== cessao.id && (precData.processo === cessao.processo || precData.cedente === cessao.cedente || precData.precatorio === cessao.precatorio))}
+                    varas={varas}
+                    orcamentos={orcamentos}
+                    naturezas={natureza}
+                    empresas={empresas}
+                    users={users}
+                    teles={teles}
+                    escreventes={escreventes}
+                    juridico={juridico}
+                    handleUpdate={handleUpdate}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <div className='px-5 dark:bg-neutral-900 mt-[16px] max-w-full h-full'>
-            <div className='lg:flex lg:gap-4 lg:items-start max-w-full h-full'>
-              <div className='hidden lg:block lg:sticky lg:h-full lg:max-h-full lg:top-[8%]'>
-                <NavMenu />
-              </div>
-              <div className='lg:w-[calc(100%-300px)]'>
-                <InfoPrec
-                  precInfo={precData}
-                  status={status}
-                  cessionario={cessionarios.filter(cessionario => parseInt(precData.id) === parseInt(cessionario.cessao_id))}
-                  cessoes={todasCessoes.filter(cessao => precData.id !== cessao.id && (precData.processo === cessao.processo || precData.cedente === cessao.cedente || precData.precatorio === cessao.precatorio))}
-                  varas={varas}
-                  orcamentos={orcamentos}
-                  naturezas={natureza}
-                  empresas={empresas}
-                  users={users}
-                  teles={teles}
-                  escreventes={escreventes}
-                  juridico={juridico}
-                  handleUpdate={handleUpdate}
-                />
-              </div>
+          </motion.main>
+        ) : (
+          <div className='w-screen h-screen flex items-center justify-center'>
+            <div className="w-12 h-12">
+              <LoadingSpinner />
             </div>
           </div>
-        </main>
-      ) : (
-        <div className='w-screen h-screen flex items-center justify-center'>
-          <div className="w-12 h-12">
-            <LoadingSpinner />
-          </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </>
   );
 }

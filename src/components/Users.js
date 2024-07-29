@@ -5,6 +5,7 @@ import { List, AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache } from
 import ProfileImage from './ProfileImage';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import { Tooltip } from 'react-tooltip';
+import { motion } from 'framer-motion';
 
 function Users({ searchQuery, selectedFilters }) {
   const [users, setUsers] = useState([]);
@@ -106,7 +107,13 @@ function Users({ searchQuery, selectedFilters }) {
 
     return (
       <CellMeasurer cache={cache} parent={parent} columnIndex={0} rowIndex={index} key={key}>
-        <div style={style} className="dark:bg-neutral-900">
+        <motion.div
+          style={style}
+          className="dark:bg-neutral-900"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
           <div className="mb-4 dark:bg-neutral-900">
             <div className="flex border dark:border-neutral-700 dark:bg-neutral-900 px-2 py-1 justify-between rounded-t items-center">
               <div className="flex divide-x my-2 dark:divide-neutral-600">
@@ -153,7 +160,7 @@ function Users({ searchQuery, selectedFilters }) {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
         <Tooltip
           id="qtdCessoes"
           style={{

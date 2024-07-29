@@ -3,6 +3,7 @@ import { List, AutoSizer, WindowScroller, CellMeasurer, CellMeasurerCache } from
 import { Link } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import { Tooltip } from 'react-tooltip';
+import { motion } from 'framer-motion';
 
 const adjustToUserTimezone = (utcDateString) => {
   const date = new Date(utcDateString); // Converte a string UTC para um objeto Date
@@ -87,7 +88,13 @@ const LoginLogsList = ({ searchQuery, logs, users, isLoading, filters }) => {
 
     return (
       <CellMeasurer cache={cache} parent={parent} columnIndex={0} rowIndex={index} key={key}>
-        <div style={style} className="dark:bg-neutral-900">
+        <motion.div
+          style={style}
+          className="dark:bg-neutral-900"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
           <div className="mb-5 dark:bg-neutral-900">
             <div className="grid lg:grid-cols-2 border dark:border-neutral-700 dark:bg-neutral-900 rounded items-center">
               <div className="flex flex-none items-center divide-x mb-2 lg:mb-0 dark:divide-neutral-600 dark:border-b-neutral-600 border-b lg:border-b-0 px-2 py-2">
@@ -120,7 +127,7 @@ const LoginLogsList = ({ searchQuery, logs, users, isLoading, filters }) => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
         <Tooltip id="Ip do usuário" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="left" />
         <Tooltip id="Data do acesso" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="left" />
         <Tooltip id="Hora do acesso" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="left" />

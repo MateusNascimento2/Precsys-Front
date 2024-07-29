@@ -132,6 +132,8 @@ function PieChart() {
     return statusQtd;
   }, [myCessions]);
 
+  const allZero = minhasCessoesData.every(data => data.y === 0);
+
   const total = minhasCessoesData.reduce((sum, status) => sum + status.y, 0);
 
   const handlePieClick = (datum) => {
@@ -163,6 +165,11 @@ function PieChart() {
     if (!selectedStatus) return cessoesFiltradas;
     return cessoesFiltradas.filter(cessao => cessao.x === selectedStatus);
   }, [cessionarios, cessoes, selectedStatus, userID, filterText]);
+
+  // Conjunto de dados alternativo para quando todos os valores de y são 0
+  const emptyData = [
+    { x: 'Sem Cessões', y: 1, color: '#d3d3d3' }
+  ];
 
   return (
     <>
@@ -211,7 +218,8 @@ function PieChart() {
                   placeholder="Pesquisar"
                   value={filterText}
                   onChange={(e) => setFilterText(e.target.value)}
-                  className="px-2 py-1 border-none w-full focus:outline-none dark:bg-neutral-800 dark:text-white dark:placeholder:text-neutral-400"
+                  disabled={allZero}
+                  className={`px-2 py-1 border-none w-full focus:outline-none ${allZero ? 'dark:bg-neutral-800 cursor-not-allowed' : 'bg-white text-black dark:bg-neutral-800 dark:text-white dark:placeholder:text-neutral-400'}`}
                 />
               </div>
               <div className="mt-4 h-[260px] overflow-y-auto">
@@ -256,7 +264,7 @@ function PieChart() {
             </div>
             <div className="flex justify-center w-[350px] md:w-[400px]">
               <VictoryPie
-                data={minhasCessoesData}
+                data={allZero ? emptyData : minhasCessoesData}
                 startAngle={360}
                 width={350}
                 height={350}
@@ -264,8 +272,12 @@ function PieChart() {
                 endAngle={endAngle}
                 animate={{ duration: 0 }}
                 labels={({ datum }) => {
-                  const percentage = ((datum.y / total) * 100).toFixed(2);
-                  return `${datum.x}: ${datum.y} (${percentage}%)`;
+                  if (allZero) {
+                    return `${datum.x}`;
+                  } else {
+                    const percentage = ((datum.y / total) * 100).toFixed(2);
+                    return `${datum.x}: ${percentage}%`;
+                  }
                 }}
                 labelComponent={
                   <VictoryTooltip
@@ -281,7 +293,7 @@ function PieChart() {
                     constrainToVisibleArea
                   />
                 }
-                colorScale={minhasCessoesData.map(cessao => cessao.color)}
+                colorScale={allZero ? ['#d3d3d3'] : minhasCessoesData.map(cessao => cessao.color)}
                 events={[
                   {
                     target: "data",
@@ -306,7 +318,7 @@ function PieChart() {
                           {
                             target: "data",
                             mutation: (props) => {
-                              const originalColor = minhasCessoesData.find(cessao => cessao.x === props.datum.x).color;
+                              const originalColor = minhasCessoesData.find(cessao => cessao.x === props.datum.x)?.color || '#d3d3d3';
                               return { style: { fill: originalColor, opacity: 1, filter: 'none' } };
                             }
                           },

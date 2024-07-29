@@ -13,6 +13,7 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
+import { motion } from 'framer-motion';
 
 export default function AllCessoes() {
   const [voltarAdicionarCessao, setVoltarAdicionarCessao] = useState(false);
@@ -409,13 +410,28 @@ export default function AllCessoes() {
         <ToastContainer />
         <div className='px-[20px]'>
           <div className='flex justify-between items-center md:items-end'>
-            <h2 className='font-[700] text-[32px] md:mt-[16px] dark:text-white' id='cessoes'>Cessões</h2>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className='font-[700] text-[32px] md:mt-[16px] dark:text-white'
+              id='cessoes'
+            >
+              Cessões
+            </motion.h2>
             {!minhascessoes ?
               <Modal
                 botaoAbrirModal={
-                  <button title='Adicionar nova cessão' className='hover:bg-neutral-100 flex items-center justify-center dark:text-white dark:hover:bg-neutral-800 rounded-full text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px]'>
+                  <motion.button
+                    title='Adicionar nova cessão'
+                    className='hover:bg-neutral-100 flex items-center justify-center dark:text-white dark:hover:bg-neutral-800 rounded text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px]'
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
                     +
-                  </button>}
+                  </motion.button>
+                }
                 tituloModal={
                   showModalAdicionarCessionario && cessionarios.length > 0
                     ? (
@@ -430,16 +446,28 @@ export default function AllCessoes() {
                     )
                     : (<span>Adicionar cessão</span>)
                 }
-                botaoSalvar={<button
-                  className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700' onClick={(e) => handleSubmit(e)}>
-                  Salvar
-                </button>
+                botaoSalvar={
+                  <motion.button
+                    className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'
+                    onClick={(e) => handleSubmit(e)}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    Salvar
+                  </motion.button>
                 }
-                botaoAdicionarCessionario={<button
-                  onClick={() => addCessionario()}
-                  className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
-                  Adicionar cessionário
-                </button>}
+                botaoAdicionarCessionario={
+                  <motion.button
+                    onClick={() => addCessionario()}
+                    className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    Adicionar cessionário
+                  </motion.button>
+                }
               >
                 <div className='h-[450px] overflow-auto relative'>
                   <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? 'absolute left-[-1100px] transition-all ease-in-out duration-300 overflow-hidden' : 'absolute left-0 transition-all ease-in-out duration-300 overflow-y-hidden w-full'}>
@@ -477,7 +505,12 @@ export default function AllCessoes() {
               </Modal> : null}
           </div>
         </div>
-        <div className='mt-[24px] px-5 dark:bg-neutral-900'>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className='mt-[24px] px-5 dark:bg-neutral-900'
+        >
           <div className='flex gap-3 items-center mb-4 w-full'>
             <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'py-3'} />
             <FilterButton onSetShow={handleShow} />
@@ -491,7 +524,7 @@ export default function AllCessoes() {
               <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} />
             </div>
           </div>
-        </div>
+        </motion.div>
         <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} />
       </main>
     </>
