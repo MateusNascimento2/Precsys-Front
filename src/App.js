@@ -14,6 +14,7 @@ import Precatorio from './pages/Precatorio';
 import Calculo from './pages/Calculo';
 import LoginLogs from './pages/LoginLogs';
 import PropostasLogs from './pages/PropostasLogs'
+import MeuPerfil from './pages/MeuPerfil';
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
             <Route path='dashboard' element={<Dashboard />} />
             <Route path=':minhascessoes' element={<AllCessoes />} />
             <Route path='cessao/:precID' element={<Precatorio />} />
+            <Route path='perfil' element={<MeuPerfil />} />
           </Route>
 
           <Route element={<RequireAdminAuth />}>

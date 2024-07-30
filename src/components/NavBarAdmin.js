@@ -24,6 +24,10 @@ function NavBarAdmin({ show }) {
     navigate(route)
   }
 
+  const handleClick = (event) => {
+    event.stopPropagation();
+  }
+
   return (
     <>
       <div onClick={() => { setShowMenu(false) }} className={showMenu ? 'lg:w-screen lg:h-screen lg:opacity-100 lg:absolute lg:z-[40] lg:left-0 lg:top-[50px]' : 'hidden'}></div>
@@ -178,7 +182,7 @@ function NavBarAdmin({ show }) {
                     <li className='mb-3 mt-2'>
                       <span className='font-[600] text-[12px] text-[#666666]'>Categorias</span>
                     </li>
-                    <li onClick={() => setShowFromModal(false)}>
+                    <li onClick={handleClick}>
                       <Modal botaoAbrirModal={
                         <button title='Fazer cálculo' className='w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
                           Cálculo

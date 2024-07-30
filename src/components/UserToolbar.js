@@ -4,6 +4,7 @@ import useAuth from "../hooks/useAuth";
 import ProfileImage from './ProfileImage';
 import LogoutButton from './LogoutButton';
 import ThemeSwitcher from "./ThemeSwitcher";
+import { Link } from 'react-router-dom';
 
 function UserToolbar({ show, updateLogo, darkMode, onDarkModeChange }) {
   const { auth } = useAuth();
@@ -34,9 +35,9 @@ function UserToolbar({ show, updateLogo, darkMode, onDarkModeChange }) {
               </div>
             </div>
             <ul className='flex w-full px-2 py-2 flex-col items-center gap-1 text-[13px] border-b dark:border-neutral-700'>
-              <li className='cursor-pointer rounded w-full px-2 py-1 font-medium text-[14px] hover:bg-neutral-100 dark:hover:bg-neutral-800'>Meu Perfil
+              <Link to={'/perfil'} className='cursor-pointer rounded w-full px-2 py-1 font-medium text-[14px] hover:bg-neutral-100 dark:hover:bg-neutral-800'>Meu Perfil
                 <p className='font-[500] text-[#666666] dark:text-neutral-500 text-[12px]'>Ver o seu Perfil</p>
-              </li>
+              </Link>
               <li className='cursor-pointer rounded w-full px-2 py-1 font-medium text-[14px] hover:bg-neutral-100 dark:hover:bg-neutral-800'>Minha Atividade
                 <p className='font-[500] text-[#666666] dark:text-neutral-500 text-[12px]'>Ver minha Atividade</p>
               </li>
