@@ -11,6 +11,7 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import { motion } from 'framer-motion';
+import ScrollToTopButton from '../components/ScrollToTopButton';
 
 function Usuarios() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -193,6 +194,8 @@ function Usuarios() {
         {show && (
           <UserFilter show={show} onSetShow={handleShow} filters={filters} onSelectedCheckboxesChange={updateFilters} resetFilters={resetFilters} />
         )}
+
+        <ScrollToTopButton />
       </motion.main>
     </>
   );

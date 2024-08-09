@@ -1,13 +1,15 @@
 import React from 'react'
+import { ButtonEditProfile } from '../pages/MeuPerfil';
 
-export default function DetalhesPerfil({user}) {
-
+export default function DetalhesPerfil({ user, handleItemClick }) {
 
   return (
-    <section className='p-2 mt-3 lg:mt-0'>
+    <section className='px-2 mt-3 lg:mt-0'>
       <div className='flex justify-between items-center pb-4'>
         <span className='font-semibold dark:text-white'>Detalhes do Perfil</span>
-        <button className='bg-neutral-900 dark:bg-white dark:text-black p-1 lg:px-2 lg:py-1 rounded text-white text-[14px] dark:font-medium'>Editar Perfil</button>
+
+        <ButtonEditProfile handleItemClick={handleItemClick} />
+
       </div>
       <div className='pt-4 flex flex-col gap-4'>
         <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between'>

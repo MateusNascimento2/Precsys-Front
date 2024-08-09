@@ -5,6 +5,7 @@ import SearchInput from '../components/SearchInput';
 import PropostasLogsList from '../components/PropostasLogsList';
 import PropostasLogsFilter from '../components/PropostasLogsFilter';
 import { motion } from 'framer-motion';
+import ScrollToTopButton from '../components/ScrollToTopButton';
 
 export default function LoginLogs() {
   const [show, setShow] = useState(false);
@@ -126,6 +127,8 @@ export default function LoginLogs() {
             </div>
           </div>
         </div>
+        <ScrollToTopButton />
+        
 
       </motion.main>
     </>

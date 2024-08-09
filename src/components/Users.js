@@ -7,6 +7,7 @@ import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import { Tooltip } from 'react-tooltip';
 import { motion } from 'framer-motion';
 
+
 function Users({ searchQuery, selectedFilters }) {
   const [users, setUsers] = useState([]);
   const [cessionarios, setCessionarios] = useState([]);
@@ -112,7 +113,7 @@ function Users({ searchQuery, selectedFilters }) {
           className="dark:bg-neutral-900"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
         >
           <div className="mb-4 dark:bg-neutral-900">
             <div className="flex border dark:border-neutral-700 dark:bg-neutral-900 px-2 py-1 justify-between rounded-t items-center">

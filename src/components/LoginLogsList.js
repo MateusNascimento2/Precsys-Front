@@ -93,7 +93,7 @@ const LoginLogsList = ({ searchQuery, logs, users, isLoading, filters }) => {
           className="dark:bg-neutral-900"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
         >
           <div className="mb-5 dark:bg-neutral-900">
             <div className="grid lg:grid-cols-2 border dark:border-neutral-700 dark:bg-neutral-900 rounded items-center">

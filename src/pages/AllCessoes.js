@@ -14,6 +14,7 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import { motion } from 'framer-motion';
+import ScrollToTopButton from '../components/ScrollToTopButton';
 
 export default function AllCessoes() {
   const [voltarAdicionarCessao, setVoltarAdicionarCessao] = useState(false);
@@ -64,6 +65,7 @@ export default function AllCessoes() {
 
   const { minhascessoes } = useParams();
 
+
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
@@ -89,11 +91,13 @@ export default function AllCessoes() {
     fetchData('/empresas', setEmpresas);
     fetchData('/juridicos', setJuridicos);
 
+
     return () => {
       isMounted = false;
       controller.abort();
     };
   }, []);
+
 
   const addCessionario = () => {
     setShowModalAdicionarCessionario(true);
@@ -521,11 +525,14 @@ export default function AllCessoes() {
               <Filter show={true} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} />
             </div>
             <div className='w-full h-full max-h-full'>
-              <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} />
+              <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} isPerfilCessoes={false} />
             </div>
           </div>
         </motion.div>
         <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} />
+
+        {/* Scroll-to-top button */}
+        <ScrollToTopButton />
       </main>
     </>
   )

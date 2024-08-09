@@ -6,6 +6,7 @@ import LoginLogsList from '../components/LoginLogsList';
 import FilterButton from '../components/FilterButton';
 import LoginLogsFilter from '../components/LoginLogsFilter';
 import { motion } from 'framer-motion';
+import ScrollToTopButton from '../components/ScrollToTopButton';
 
 export default function LoginLogs() {
   const [show, setShow] = useState(false);
@@ -133,6 +134,8 @@ export default function LoginLogs() {
             <LoginLogsFilter show={show} onSetShow={handleShow} filters={filters} onSelectedCheckboxesChange={updateFilters} resetFilters={resetFilters} />
           </motion.div>
         )}
+
+        <ScrollToTopButton />
       </motion.main>
     </>
   );

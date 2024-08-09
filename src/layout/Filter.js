@@ -27,7 +27,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
     return savedChecked ? JSON.parse(savedChecked) : [];
   });
 
-  const axiosPrivate = useAxiosPrivate()
+  const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -43,7 +43,6 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
         if (isMounted) setter(data);
       } catch (err) {
         console.log(err);
-        //navigate('/', { state: { from: location }, replace: true });
       }
     };
     fetchData('/status', setStatus);
@@ -52,28 +51,25 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
     fetchData('/natureza', setNatureza);
     fetchData('/empresas', setEmpresas);
     fetchData('/tele', setTeles);
-    fetchData('/users', setUsers)
+    fetchData('/users', setUsers);
 
     return () => {
       isMounted = false;
       controller.abort();
     };
-  }, []);
+  }, [axiosPrivate]);
 
   useEffect(() => {
-    // Salva o estado dos checkboxes no localStorage sempre que houver uma mudança
     localStorage.setItem('checkedStatus', JSON.stringify(checkedStatus));
   }, [checkedStatus]);
 
   useEffect(() => {
-    // Recupera o estado salvo do localStorage quando o componente é montado
     const savedCheckedStatus = JSON.parse(localStorage.getItem('checkedStatus')) || {};
     setCheckedStatus(savedCheckedStatus);
   }, []);
 
   teles.forEach((tele) => {
     const telesAtualizado = users.find(u => parseInt(tele.usuario_id) === parseInt(u.id));
-
     if (telesAtualizado) {
       tele.nome = telesAtualizado.nome;
     }
@@ -81,7 +77,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
 
   const handleShow = () => {
     onSetShow((prevState) => !prevState);
-  }
+  };
 
   function handleMenu(type) {
     if (menuType === type) {
@@ -116,45 +112,38 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
 
   const handleInputChange = (query) => {
     setSearchQuery(query);
-  }
+  };
 
   const handleComarcasCheckboxChange = (event) => {
     const isChecked = event.target.checked;
-
-    // Atualiza o estado de comarcasChecked
+    console.log(isChecked);
     setComarcasChecked(isChecked);
 
-    // Atualiza o estado checkedStatus para marcar ou desmarcar todos os inputs que têm a propriedade data-isComarca === "1"
     const updatedCheckedStatus = filteredEnte.reduce((acc, orcamento) => {
-
       orcamentosAnos.forEach(orcamentoAno => {
         if (orcamento.obs === '1' && parseInt(orcamento.id) === parseInt(orcamentoAno.budget_id)) {
-          // Atualiza o estado temporário com o novo valor
           acc[orcamento.apelido] = isChecked;
           acc[orcamento.apelido + " - " + orcamentoAno.ano] = isChecked;
         }
       });
-      // Verifica se o orcamento é uma comarca
       return acc;
     }, { ...checkedStatus });
 
-    // Marca ou desmarca os inputs que têm a propriedade data-isComarca === "1"
     filteredEnte.forEach((orcamento) => {
-      // Verifica se o orcamento é uma comarca
       if (orcamento.obs === '1') {
-        // Seleciona o input pelo seu ID
         const inputElement = document.getElementById(orcamento.id);
-        // Marca ou desmarca o input dependendo do estado de isChecked
-        inputElement.checked = isChecked;
-        // Chama a função para lidar com a mudança de checkbox passando o evento e o ID do orçamento
-        handleMarkAllCheckboxInEnte({ target: inputElement }, orcamento.id);
+        if (inputElement) {
+          inputElement.checked = isChecked;
+          handleMarkAllCheckboxInEnte({ target: inputElement }, orcamento.id);
+        } else {
+          console.warn(`Elemento com ID ${orcamento.id} não encontrado.`);
+        }
       }
     });
 
     setCheckedStatus(updatedCheckedStatus);
   };
 
-  // Função para lidar com a seleção/deseleção de um checkbox
   const handleMarkAllCheckboxInEnte = (event, orcamento_id) => {
     const checkboxName = event.target.name;
     const checkboxValue = event.target.value;
@@ -166,31 +155,28 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
 
     if (isChecked) {
       const updatedCheckedStatus = { ...checkedStatus, [checkboxValue]: isChecked };
-      console.log(updatedCheckedStatus); // Adiciona o novo valor ao estado
-      setCheckedStatus(updatedCheckedStatus); // Atualiza o estado com o novo valor marcado
-
+      setCheckedStatus(updatedCheckedStatus);
       onSelectedCheckboxesChange(prevState => [...prevState, checkboxValor]);
       checkboxesWithTheSameID.forEach(checkbox => {
         checkbox.checked = true;
         const checkboxValorFilho = checkbox.value;
         const objCheckBoxFilho = { [checkboxName]: checkboxValorFilho };
-        console.log(objCheckBoxFilho);
         onSelectedCheckboxesChange(prevState => [...prevState, objCheckBoxFilho]);
-        updatedCheckedStatus[checkboxValorFilho] = isChecked; // Atualize o objeto de estado temporário
+        updatedCheckedStatus[checkboxValorFilho] = isChecked;
       });
-      setCheckedStatus(updatedCheckedStatus); // Atualize o estado com base na cópia atualizada
+      setCheckedStatus(updatedCheckedStatus);
     } else {
-      const updatedCheckedStatus = { ...checkedStatus }; // Crie uma cópia do estado atual
-      updatedCheckedStatus[checkboxValue] = isChecked; // Atualize o estado temporário com o novo valor desmarcado
-      setCheckedStatus(updatedCheckedStatus); // Atualize o estado com o novo valor desmarcado
+      const updatedCheckedStatus = { ...checkedStatus };
+      updatedCheckedStatus[checkboxValue] = isChecked;
+      setCheckedStatus(updatedCheckedStatus);
 
-      onSelectedCheckboxesChange(prevState => prevState.filter(item => item.ente_id !== checkboxValor.ente_id)); // Remova o item desmarcado do estado
+      onSelectedCheckboxesChange(prevState => prevState.filter(item => item.ente_id !== checkboxValor.ente_id));
       checkboxesWithTheSameID.forEach(checkbox => {
         checkbox.checked = false;
         const checkboxValorFilho = checkbox.value;
         const objCheckBoxFilho = { [checkboxName]: checkboxValorFilho };
         onSelectedCheckboxesChange(prevState => prevState.filter(item => item.ente_id !== objCheckBoxFilho.ente_id));
-        delete updatedCheckedStatus[checkboxValorFilho]; // Remova o item desmarcado do estado
+        delete updatedCheckedStatus[checkboxValorFilho];
       });
     }
   };
@@ -199,32 +185,21 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
     const checkboxName = event.target.name;
     const checkboxValue = event.target.value;
 
-    console.log(checkboxName);
-
     setCheckedStatus({ ...checkedStatus, [checkboxName]: checkboxValue });
 
-    // Cria o objeto checkbox
     const checkbox = { [checkboxName]: checkboxValue };
 
-    console.log(checkbox);
-
     onSelectedCheckboxesChange(prevState => {
-      // Verifica se o valor do checkbox é vazio ('')
       if (checkboxValue === '') {
-        // Remove o objeto com a mesma chave, se existir
         delete prevState[checkboxName];
       } else {
-        // Verifica se o checkbox já existe no estado
         const existingCheckbox = prevState.find(item => Object.keys(item)[0] === checkboxName);
-        // Se o checkbox já existe, atualiza seu valor
         if (existingCheckbox) {
           existingCheckbox[checkboxName] = checkboxValue;
         } else {
-          // Caso contrário, adiciona o checkbox ao estado
           prevState.push(checkbox);
         }
       }
-      // Retorna o novo estado
       return [...prevState];
     });
   };
@@ -234,23 +209,19 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
     const checkboxValue = event.target.value;
     const isChecked = event.target.checked;
 
-    console.log(checkboxValue);
-
     setCheckedStatus({ ...checkedStatus, [checkboxValue]: isChecked });
 
     const checkbox = { [checkboxName]: checkboxValue };
-
-    console.log(checkbox);
 
     if (isChecked) {
       onSelectedCheckboxesChange(prevState => [...prevState, checkbox]);
     } else {
       onSelectedCheckboxesChange(prevState => prevState.filter(item => {
-        const [key] = Object.keys(item); // Obtém a chave do objeto
-        return item[key] !== checkboxValue; // Filtra com base no valor da chave do objeto
+        const [key] = Object.keys(item);
+        return item[key] !== checkboxValue;
       }));
     }
-  }
+  };
 
   const handleClearCheckbox = () => {
     setComarcasChecked(false);
@@ -274,7 +245,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
 
     onSelectedCheckboxesChange([]);
     setCheckedStatus({});
-  }
+  };
 
   const filteredEnte = orcamentos.filter(orcamento =>
     Object.entries(orcamento).some(([key, value]) =>
@@ -315,7 +286,6 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
           </div>
 
           <motion.div className="mt-4 flex flex-col gap-2 lg:divide-y dark:divide-neutral-700">
-
             <motion.div className="rounded px-2 py-1 text-gray-600 text-[14px] dark:text-neutral-300">
               <div>
                 <div onClick={() => handleMenu('status')} className="flex justify-between items-center cursor-pointer">

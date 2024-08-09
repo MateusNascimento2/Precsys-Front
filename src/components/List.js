@@ -11,7 +11,7 @@ import useAuth from "../hooks/useAuth";
 import { motion } from 'framer-motion';
 import "../teste.css";
 
-export default function Lista({ searchQuery, selectedFilters, setData }) {
+export default function Lista({ searchQuery, selectedFilters, setData, isPerfilCessoes }) {
   const { minhascessoes } = useParams();
   const { auth } = useAuth();
   const userID = String(auth.user.id);
@@ -29,6 +29,8 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [myCessions, setMyCessions] = useState([])
 
   const cache = new CellMeasurerCache({
     fixedWidth: true,
@@ -103,19 +105,58 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
   }, [axiosPrivate, navigate, location]);
 
   useEffect(() => {
-    if (!minhascessoes) return;
 
-    const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => cessionario.user_id === userID);
-    const filteredCessoes = cessionariosPorIDdoUsuarios
-      .map(cessionario => cessoes.find(cessao => cessao.id === cessionario.cessao_id))
-      .filter(cessao => cessao !== undefined);
+    console.log('perfil:' + isPerfilCessoes)
 
-    if (!arraysAreEqual(filteredCessoes, cessoes)) {
-      setCessoes(filteredCessoes);
+    if (minhascessoes) {
+      const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => cessionario.user_id === userID);
+
+      const minhasCessoes = cessionariosPorIDdoUsuarios
+        .map(cessionario => {
+          const cessao = cessoes.find(cessao => cessao && String(cessao.id) === String(cessionario.cessao_id));
+          return cessao;
+        })
+        .filter(cessao => cessao !== undefined);
+
+      status.forEach(statusItem => {
+        minhasCessoes.forEach(cessao => {
+          if (cessao.status === String(statusItem.id)) {
+            cessao.x = statusItem.nome;
+          }
+        });
+      });
+
+
+      setMyCessions(minhasCessoes)
     }
-  }, [minhascessoes, cessionarios, cessoes, userID]);
 
-  function arraysAreEqual(arr1, arr2) {
+    if (isPerfilCessoes) {
+      const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => cessionario.user_id === userID);
+
+      const minhasCessoes = cessionariosPorIDdoUsuarios
+        .map(cessionario => {
+          const cessao = cessoes.find(cessao => cessao && String(cessao.id) === String(cessionario.cessao_id));
+          return cessao;
+        })
+        .filter(cessao => cessao !== undefined);
+
+      status.forEach(statusItem => {
+        minhasCessoes.forEach(cessao => {
+          if (cessao.status === String(statusItem.id)) {
+            cessao.x = statusItem.nome;
+          }
+        });
+      });
+
+      setMyCessions(minhasCessoes)
+    }
+
+
+
+
+  }, [minhascessoes, cessionarios, cessoes, userID, isPerfilCessoes]);
+
+  /* function arraysAreEqual(arr1, arr2) {
     if (arr1.length !== arr2.length) {
       return false;
     }
@@ -125,7 +166,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
       }
     }
     return true;
-  }
+  } */
 
   useEffect(() => {
     let dataCessoes = [];
@@ -227,7 +268,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
     });
   }
 
-  const resultadoFiltrado = cessoes.filter(objeto => aplicarFiltros(objeto, selectedFilters));
+  const resultadoFiltrado = myCessions.length >= 1 ? myCessions.filter(objeto => aplicarFiltros(objeto, selectedFilters)) : cessoes.filter(objeto => aplicarFiltros(objeto, selectedFilters));
 
   const filteredCessoes = resultadoFiltrado.filter(cessao =>
     Object.entries(cessao).some(([key, value]) =>
@@ -303,7 +344,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
           className="dark:bg-neutral-900"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.6 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
         >
           <div className=" dark:bg-neutral-900 ">
             <div className="flex border dark:border-neutral-700 dark:bg-neutral-900 px-2 py-1 justify-between rounded-t items-center">
@@ -414,7 +455,7 @@ export default function Lista({ searchQuery, selectedFilters, setData }) {
           {({ height, isScrolling, onChildScroll, registerChild, scrollTop }) => (
             <section className="container dark:bg-neutral-900" style={{ width: "100%" }}>
               <div className="dark:bg-neutral-900 relative h-full">
-                <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">Mostrando {filteredCessoes.length} de {cessoes.length} cessões</p>
+                <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">Mostrando {filteredCessoes.length} de {myCessions.length >= 1 ? myCessions.length : cessoes.length} cessões</p>
                 <AutoSizer style={{ width: '100%', height: '100%' }}>
                   {({ width }) => (
                     <div ref={registerChild}>
