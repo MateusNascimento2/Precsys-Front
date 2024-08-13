@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 
 function UserToolbar({ show, updateLogo, darkMode, onDarkModeChange }) {
   const { auth } = useAuth();
+  console.log(auth)
 
   return (
     <>
@@ -21,7 +22,7 @@ function UserToolbar({ show, updateLogo, darkMode, onDarkModeChange }) {
             transition={{ duration: 0.3 }}
           >
             <div className="flex items-center border-b dark:border-neutral-600 gap-5 py-3 w-full">
-              <div className="w-[70px] bg-gray-100 rounded pt-1">
+              <div className="w-[70px] bg-gray-100 rounded">
                 <ProfileImage userImage={auth?.userImage} />
               </div>
               <div className="flex flex-col w-full">

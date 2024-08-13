@@ -1,11 +1,160 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function SegurancaPerfil() {
   const { auth } = useAuth();
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [email, setEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('')
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const axiosPrivate = useAxiosPrivate();
+
+  const handleEditEmail = async (e) => {
+    e.preventDefault();
+    const isDarkMode = localStorage.getItem('darkMode');
+
+    if (email.length !== 0 && confirmEmail.length !== 0 && email === confirmEmail) {
+      try {
+        setIsLoading(true)
+        await axiosPrivate.put(`/users/${auth.user.id}`, {
+          nome: auth.user.nome,
+          cpfcnpj: auth.user.cpfcnpj,
+          email,
+          telefone: auth.user.telefone,
+          endereco: auth.user.endereco,
+          obs: auth.user.obs,
+          qualificacao: auth.user.qualificacao,
+          foto: auth.user.foto,
+          admin: auth.user.admin,
+          ativo: auth.user.ativo,
+          permissao_email: auth.user.permissao_email,
+          permissao_proposta: auth.user.permissao_proposta,
+          permissao_expcartorio: auth.user.permissao_expcartorio
+        });
+
+        setIsLoading(false)
+
+        toast.success('E-mail alterado com sucesso!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
+        });
+      } catch (err) {
+        toast.error(`Erro ao editar email: ${err}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
+        });
+        setIsLoading(false)
+      }
+    } else {
+      toast.error(`Erro ao editar e-mail: Os e-mails digitados não são iguais!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+    }
+
+
+  };
+
+  const handleEditPassword = async (e) => {
+    e.preventDefault();
+    const isDarkMode = localStorage.getItem('darkMode');
+
+    if (password.length !== 0 && confirmPassword.length !== 0 && password === confirmPassword) {
+      try {
+        setIsLoading(true)
+        const email = auth.user.email;
+        await axiosPrivate.put(`/users/${auth.user.id}`, {
+          nome: auth.user.nome,
+          cpfcnpj: auth.user.cpfcnpj,
+          email,
+          password,
+          telefone: auth.user.telefone,
+          endereco: auth.user.endereco,
+          obs: auth.user.obs,
+          qualificacao: auth.user.qualificacao,
+          foto: auth.user.foto,
+          admin: auth.user.admin,
+          ativo: auth.user.ativo,
+          permissao_email: auth.user.permissao_email,
+          permissao_proposta: auth.user.permissao_proposta,
+          permissao_expcartorio: auth.user.permissao_expcartorio
+        });
+
+        setIsLoading(false)
+
+        toast.success('Senha alterada com sucesso!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
+        });
+      } catch (err) {
+        console.log(err);
+        toast.error(`Erro ao editar senha: ${err}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
+        });
+        setIsLoading(false)
+      }
+    } else {
+      toast.error(`Erro ao editar senha: As senhas digitadas não são iguais!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+    }
+
+
+  };
 
   const handleChangeEmail = () => {
     return (
@@ -19,6 +168,8 @@ export default function SegurancaPerfil() {
               <input
                 className='text-neutral-400 border dark:border-neutral-600 font-medium w-full p-2 rounded dark:bg-neutral-800 outline-none'
                 type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
 
               />
             </div>
@@ -29,6 +180,8 @@ export default function SegurancaPerfil() {
               <input
                 className='text-neutral-400 border dark:border-neutral-600 font-medium w-full p-2 rounded dark:bg-neutral-800 outline-none'
                 type="email"
+                onChange={(e) => setConfirmEmail(e.target.value)}
+                value={confirmEmail}
               />
             </div>
 
@@ -37,6 +190,7 @@ export default function SegurancaPerfil() {
 
           <div className='flex gap-4 mt-4'>
             <button
+              onClick={(e) => handleEditEmail(e)}
               type='submit'
               className='bg-black rounded text-[14px] lg:text-[16px] px-4 py-2 font-medium text-white dark:bg-white dark:text-black'>
               Alterar e-mail
@@ -64,8 +218,9 @@ export default function SegurancaPerfil() {
               </p>
               <input
                 className='text-neutral-400 border dark:border-neutral-600 font-medium w-full p-2 rounded dark:bg-neutral-800 outline-none'
-                type="email"
-
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
               />
             </div>
             <div className='w-full'>
@@ -74,7 +229,9 @@ export default function SegurancaPerfil() {
               </p>
               <input
                 className='text-neutral-400 border dark:border-neutral-600 font-medium w-full p-2 rounded dark:bg-neutral-800 outline-none'
-                type="email"
+                type="password"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={confirmPassword}
               />
             </div>
 
@@ -84,6 +241,7 @@ export default function SegurancaPerfil() {
           <div className='flex gap-4 mt-4'>
             <button
               type='submit'
+              onClick={(e) => handleEditPassword(e)}
               className='bg-black rounded text-[14px] lg:text-[16px] px-4 py-2 font-medium text-white dark:bg-white dark:text-black'>
               Alterar senha
             </button>

@@ -207,8 +207,8 @@ const MeuPerfil = () => {
       >
         <section className='border-b dark:border-neutral-600 pb-[24px]'>
           <div className='flex flex-col items-center lg:flex-row lg:items-start lg:w-full gap-4'>
-            <div className='size-28 lg:size-24 lg:mt-1 bg-gray-100 rounded relative'>
-              <div className='absolute bottom-0'>
+            <div className='size-28 lg:size-24 lg:mt-1 bg-gray-100 rounded relative shrink-0'>
+              <div className='absolute bottom-0 w-full h-full'>
                 <ProfileImage userImage={auth?.userImage} />
               </div>
               <div className='absolute top-3/4 right-[-12px] bg-white rounded-full p-[2px]'>

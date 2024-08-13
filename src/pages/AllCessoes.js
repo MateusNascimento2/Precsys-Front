@@ -188,7 +188,7 @@ export default function AllCessoes() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const isDarkMode = localStorage.getItem('darkMode');
+    
 
     if (cessionarios.length > 0) {
       for (const cessionario of cessionarios) {

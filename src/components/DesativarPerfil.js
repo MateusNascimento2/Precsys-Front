@@ -1,11 +1,89 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export default function DesativarPerfil() {
+  const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
+
   const [isChecked, setIsChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
+  };
+
+  const handleDeactivate = async (e) => {
+    e.preventDefault();
+    const isDarkMode = localStorage.getItem('darkMode');
+
+    if (isChecked) {
+      try {
+        setIsLoading(true)
+        const email = auth.user.email;
+        await axiosPrivate.put(`/users/${auth.user.id}`, {
+          nome: auth.user.nome,
+          cpfcnpj: auth.user.cpfcnpj,
+          email: auth.user.email,
+          telefone: auth.user.telefone,
+          endereco: auth.user.endereco,
+          obs: auth.user.obs,
+          qualificacao: auth.user.qualificacao,
+          foto: auth.user.foto,
+          admin: auth.user.admin,
+          ativo: 0,
+          permissao_email: auth.user.permissao_email,
+          permissao_proposta: auth.user.permissao_proposta,
+          permissao_expcartorio: auth.user.permissao_expcartorio
+        });
+
+        setIsLoading(false)
+
+        toast.success('Perfil desativado com sucesso!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
+        });
+      } catch (err) {
+        console.log(err);
+        toast.error(`Erro ao desativar perfil: ${err}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
+        });
+        setIsLoading(false)
+      }
+    } else {
+      toast.error(`Erro ao desativar perfil !`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+    }
+
+
   };
 
   return (
@@ -61,7 +139,7 @@ export default function DesativarPerfil() {
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.3 }}
             className='mt-4 px-4 py-2 bg-red-500 text-white rounded'
-            onClick={() => alert('Conta desativada')}
+            onClick={(e) => handleDeactivate(e)}
           >
             Confirmar desativação da conta
           </motion.button>
