@@ -258,46 +258,59 @@ export default function SegurancaPerfil() {
   };
 
   return (
-    <section className='mt-12'>
-      <div className='mb-4 mt-4 lg:mt-0'>
-        <span className='font-semibold dark:text-white'>Segurança</span>
-      </div>
+    <>
+      {
+        isLoading ?
+          <div className='w-full h-[320px] lg:h-[210px] flex justify-center items-center'>
+            < div className='w-8 h-8' >
+              <LoadingSpinner />
+            </div >
+          </div > : (
+            <section className='mt-12 border-t dark:border-neutral-600 pt-12'>
+              <div className='mb-4 mt-4 lg:mt-0'>
+                <span className='font-semibold dark:text-white'>Segurança</span>
+              </div>
 
-      <div>
-        <div className='flex flex-col gap-6'>
-          {isEditingEmail ? (
-            handleChangeEmail()
-          ) : (
-            <div className=' flex flex-col lg:flex-row lg:justify-between lg:items-center'>
               <div>
-                <p className='dark:text-neutral-200 text-neutral-600 font-medium text-[15px]'>E-mail</p>
-                <span className='text-neutral-400 font-medium w-full text-[14px]'>{auth.user.email}</span>
-              </div>
-              <div>
-                <button
-                  onClick={() => setIsEditingEmail(true)}
-                  className='bg-black rounded text-[14px] lg:text-[16px] px-4 py-2 font-medium text-white dark:bg-white dark:text-black mt-2'>
-                  Alterar e-mail
-                </button>
-              </div>
-            </div>
-          )}
+                <div className='flex flex-col gap-6'>
+                  {isEditingEmail ? (
+                    handleChangeEmail()
+                  ) : (
+                    <div className=' flex flex-col lg:flex-row lg:justify-between lg:items-center'>
+                      <div>
+                        <p className='dark:text-neutral-200 text-neutral-600 font-medium text-[15px]'>E-mail</p>
+                        <span className='text-neutral-400 font-medium w-full text-[14px]'>{auth.user.email}</span>
+                      </div>
+                      <div>
+                        <button
+                          onClick={() => setIsEditingEmail(true)}
+                          className='bg-black rounded text-[14px] lg:text-[16px] px-4 py-2 font-medium text-white dark:bg-white dark:text-black mt-2'>
+                          Alterar e-mail
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
-          {isEditingPassword ? (
-            handleChangePassword()
-          ) : (
-            <div className='flex flex-col lg:flex-row lg:justify-between lg:items-center'>
-              <div>
-                <p className='dark:text-neutral-200 text-neutral-600 font-medium text-[15px] mb-2 lg:mb-0'>Senha</p>
-                <span className='text-neutral-400 font-medium w-full text-[14px]'>********</span>
+                  {isEditingPassword ? (
+                    handleChangePassword()
+                  ) : (
+                    <div className='flex flex-col lg:flex-row lg:justify-between lg:items-center'>
+                      <div>
+                        <p className='dark:text-neutral-200 text-neutral-600 font-medium text-[15px] mb-2 lg:mb-0'>Senha</p>
+                        <span className='text-neutral-400 font-medium w-full text-[14px]'>********</span>
+                      </div>
+                      <div>
+                        <button onClick={() => setIsEditingPassword(true)} className='bg-black rounded text-[14px] lg:text-[16px] px-4 py-2 font-medium text-white dark:bg-white dark:text-black mt-2'>Alterar senha</button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div>
-                <button onClick={() => setIsEditingPassword(true)} className='bg-black rounded text-[14px] lg:text-[16px] px-4 py-2 font-medium text-white dark:bg-white dark:text-black mt-2'>Alterar senha</button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </section>
+            </section>
+          )
+      }
+    </>
+
+
   );
 }

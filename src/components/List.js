@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useNavigate, useLocation, Link, useParams } from 'react-router-dom';
 import LoadingSpinner from "./LoadingSpinner/LoadingSpinner";
@@ -10,8 +10,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import useAuth from "../hooks/useAuth";
 import { motion } from 'framer-motion';
 import "../teste.css";
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 
-export default function Lista({ searchQuery, selectedFilters, setData, isPerfilCessoes }) {
+
+export default function Lista({ searchQuery, selectedFilters, setData, isPerfilCessoes, onFilteredCessoes }) {
   const { minhascessoes } = useParams();
   const { auth } = useAuth();
   const userID = String(auth.user.id);
@@ -89,6 +92,7 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
           fetchData('/natureza', setNatureza),
           fetchData('/empresas', setEmpresas),
         ]);
+
       } catch (err) {
         console.error('Error with fetching data:', err);
       } finally {
@@ -231,17 +235,21 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
     cessao.id = String(cessao.id);
   });
 
-  cessoes.forEach(cessao => {
+/*   cessoes.forEach(cessao => {
     delete cessao.ano;
   });
-
+ */
   function aplicarFiltros(dados, filtros) {
+    
+    
     const filtroObj = filtros.reduce((acc, filtro) => {
       const chave = Object.keys(filtro)[0];
       acc[chave] = acc[chave] || [];
       acc[chave].push(filtro[chave]);
       return acc;
     }, {});
+
+    
 
     const verificarFiltrosChave = (chave, valor) => {
       if (!filtroObj[chave]) return true;
@@ -268,7 +276,10 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
     });
   }
 
+
   const resultadoFiltrado = myCessions.length >= 1 ? myCessions.filter(objeto => aplicarFiltros(objeto, selectedFilters)) : cessoes.filter(objeto => aplicarFiltros(objeto, selectedFilters));
+
+  console.log('resultadoFiltrado: ' + resultadoFiltrado.length)
 
   const filteredCessoes = resultadoFiltrado.filter(cessao =>
     Object.entries(cessao).some(([key, value]) =>
@@ -293,6 +304,17 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
       value && typeof value === 'string' && value.toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
+
+  useEffect(() => {
+    if (onFilteredCessoes) {
+      onFilteredCessoes((prevFilteredCessoes) => {
+        if (JSON.stringify(prevFilteredCessoes) !== JSON.stringify(filteredCessoes)) {
+          return filteredCessoes;
+        }
+        return prevFilteredCessoes;
+      });
+    }
+  }, [filteredCessoes, onFilteredCessoes]);
 
   const downloadFile = async (filename) => {
     const isDarkMode = localStorage.getItem('darkMode');
@@ -333,6 +355,10 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
       setLoadingFiles(prev => ({ ...prev, [filename]: false }));
     }
   };
+
+  pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
+
 
   const renderRow = ({ index, parent, key, style }) => {
     const cessao = filteredCessoes[index];
@@ -442,32 +468,48 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
     );
   };
 
+
   return (
     <>
-      {isLoading ? (
-        <div className="w-full flex justify-center">
-          <div className="w-12 h-12">
-            <LoadingSpinner />
+      <div>
+        {isLoading ? (
+          <div className="w-full flex justify-center">
+            <div className="w-12 h-12">
+              <LoadingSpinner />
+            </div>
           </div>
-        </div>
-      ) : (
-        <WindowScroller>
-          {({ height, isScrolling, onChildScroll, registerChild, scrollTop }) => (
-            <section className="container dark:bg-neutral-900" style={{ width: "100%" }}>
-              <div className="dark:bg-neutral-900 relative h-full">
-                <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">Mostrando {filteredCessoes.length} de {myCessions.length >= 1 ? myCessions.length : cessoes.length} cessões</p>
-                <AutoSizer style={{ width: '100%', height: '100%' }}>
-                  {({ width }) => (
-                    <div ref={registerChild}>
-                      <List rowRenderer={renderRow} isScrolling={isScrolling} onScroll={onChildScroll} width={width} autoHeight height={height} rowCount={filteredCessoes.length} scrollTop={scrollTop} deferredMeasurementCache={cache} rowHeight={cache.rowHeight} />
-                    </div>
-                  )}
-                </AutoSizer>
-              </div>
-            </section>
-          )}
-        </WindowScroller>
-      )}
+        ) : (
+          <WindowScroller>
+            {({ height, isScrolling, onChildScroll, registerChild, scrollTop }) => (
+              <section className="container dark:bg-neutral-900" style={{ width: "100%" }}>
+                <div className="dark:bg-neutral-900 relative h-full">
+                  <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">
+                    Mostrando {filteredCessoes.length} de {myCessions.length >= 1 ? myCessions.length : cessoes.length} cessões
+                  </p>
+                  <AutoSizer style={{ width: '100%', height: '100%' }}>
+                    {({ width }) => (
+                      <div ref={registerChild}>
+                        <List
+                          rowRenderer={renderRow}
+                          isScrolling={isScrolling}
+                          onScroll={onChildScroll}
+                          width={width}
+                          autoHeight
+                          height={height}
+                          rowCount={filteredCessoes.length}
+                          scrollTop={scrollTop}
+                          deferredMeasurementCache={cache}
+                          rowHeight={cache.rowHeight}
+                        />
+                      </div>
+                    )}
+                  </AutoSizer>
+                </div>
+              </section>
+            )}
+          </WindowScroller>
+        )}
+      </div>
     </>
   );
 }

@@ -158,11 +158,10 @@ export default function ConfiguracoesPerfil() {
   return (
     <>
       {isLoading ?
-        <div className='w-full flex justify-center'>
+        <div className='w-full h-[793px] lg:h-[740px] flex justify-center items-center'>
           <div className='w-8 h-8'>
             <LoadingSpinner />
           </div>
-
         </div> : (
           <>
             <ToastContainer />
@@ -251,13 +250,14 @@ export default function ConfiguracoesPerfil() {
                 </form>
               </div>
             </section>
-
-            <SegurancaPerfil />
-            <DesativarPerfil />
           </>
 
 
         )}
+      <>
+        <SegurancaPerfil />
+        <DesativarPerfil />
+      </>
 
     </>
   );

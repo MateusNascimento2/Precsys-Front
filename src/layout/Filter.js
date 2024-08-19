@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import SearchInput from "../components/SearchInput";
 
-export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, dataCessoes }) {
+export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, dataCessoes, onExportPDF }) {
   const [status, setStatus] = useState([]);
   const [orcamentos, setOrcamentos] = useState([]);
   const [orcamentosAnos, setOrcamentosAnos] = useState([]);
@@ -264,25 +264,35 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
         <div className="p-4 lg:p-0 lg:px-2">
           <div className="flex items-center justify-between ">
             <span className="font-[700] dark:text-white">Filtros</span>
-            <span className="cursor-pointer hover:rounded p-1 text-black hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-white" onClick={() => handleClearCheckbox()}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="122.88"
-                height="110.668"
-                x="0"
-                y="0"
-                version="1.1"
-                viewBox="0 0 122.88 110.668"
-                xmlSpace="preserve"
-                className="w-5 h-5 dark:fill-white fill-black"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M91.124 15.645c12.928 0 23.406 10.479 23.406 23.406s-10.479 23.406-23.406 23.406-23.406-10.479-23.406-23.406c0-12.926 10.479-23.406 23.406-23.406zM2.756 0h117.322a2.801 2.801 0 012.802 2.802 2.75 2.75 0 01-.996 2.139l-10.667 13.556a28.777 28.777 0 00-4.614-3.672l6.628-9.22H9.43l37.975 46.171c.59.516.958 1.254.958 2.102v49.148l21.056-9.623V57.896a28.914 28.914 0 005.642 4.996v32.133a2.735 2.735 0 01-1.586 2.506l-26.476 12.758a2.753 2.753 0 01-3.798-1.033 2.74 2.74 0 01-.368-1.4V55.02L.803 4.756a2.825 2.825 0 010-3.945A2.731 2.731 0 012.756 0zM96.93 28.282a3.388 3.388 0 014.825-.013 3.47 3.47 0 01.013 4.872l-5.829 5.914 5.836 5.919c1.317 1.338 1.299 3.506-.04 4.843-1.34 1.336-3.493 1.333-4.81-.006l-5.797-5.878-5.807 5.889a3.39 3.39 0 01-4.826.013 3.47 3.47 0 01-.013-4.872l5.83-5.913-5.836-5.919c-1.317-1.338-1.3-3.507.04-4.843a3.385 3.385 0 014.81.006l5.796 5.878 5.808-5.89z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            </span>
+            <div className="flex items-center">
+              <button onClick={onExportPDF} title="Exportar para PDF" className="hover:bg-neutral-100 dark:hover:bg-neutral-800 p-1 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.} stroke="currentColor" className="size-5  dark:text-white">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                </svg>
+              </button>
+
+              <span className="cursor-pointer hover:rounded p-1 text-black hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-white" onClick={() => handleClearCheckbox()}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="122.88"
+                  height="110.668"
+                  x="0"
+                  y="0"
+                  version="1.1"
+                  viewBox="0 0 122.88 110.668"
+                  xmlSpace="preserve"
+                  className="w-5 h-5 dark:fill-white fill-black"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M91.124 15.645c12.928 0 23.406 10.479 23.406 23.406s-10.479 23.406-23.406 23.406-23.406-10.479-23.406-23.406c0-12.926 10.479-23.406 23.406-23.406zM2.756 0h117.322a2.801 2.801 0 012.802 2.802 2.75 2.75 0 01-.996 2.139l-10.667 13.556a28.777 28.777 0 00-4.614-3.672l6.628-9.22H9.43l37.975 46.171c.59.516.958 1.254.958 2.102v49.148l21.056-9.623V57.896a28.914 28.914 0 005.642 4.996v32.133a2.735 2.735 0 01-1.586 2.506l-26.476 12.758a2.753 2.753 0 01-3.798-1.033 2.74 2.74 0 01-.368-1.4V55.02L.803 4.756a2.825 2.825 0 010-3.945A2.731 2.731 0 012.756 0zM96.93 28.282a3.388 3.388 0 014.825-.013 3.47 3.47 0 01.013 4.872l-5.829 5.914 5.836 5.919c1.317 1.338 1.299 3.506-.04 4.843-1.34 1.336-3.493 1.333-4.81-.006l-5.797-5.878-5.807 5.889a3.39 3.39 0 01-4.826.013 3.47 3.47 0 01-.013-4.872l5.83-5.913-5.836-5.919c-1.317-1.338-1.3-3.507.04-4.843a3.385 3.385 0 014.81.006l5.796 5.878 5.808-5.89z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+
+            </div>
+
           </div>
 
           <motion.div className="mt-4 flex flex-col gap-2 lg:divide-y dark:divide-neutral-700">

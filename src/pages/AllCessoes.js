@@ -61,6 +61,12 @@ export default function AllCessoes() {
   const [percentual, setPercentual] = useState('');
   const [expectativa, setExpectativa] = useState('');
 
+  const [filteredCessoes, setFilteredCessoes] = useState([]);
+
+  const handleFilteredCessoes = (filteredData) => {
+    setFilteredCessoes(filteredData);
+  };
+
   const [valoresCessionarios, setValoresCessionarios] = useState([]);
 
   const { minhascessoes } = useParams();
@@ -188,7 +194,7 @@ export default function AllCessoes() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
 
     if (cessionarios.length > 0) {
       for (const cessionario of cessionarios) {
@@ -407,6 +413,139 @@ export default function AllCessoes() {
     navigate('/todas-cessoes');
   };
 
+  const exportPDF = (filteredData) => {
+
+    const statusColors = {
+      'Em Andamento': '#d2c7b3',
+      'Em Andamento Com Depósito': '#bdb4a9',
+      'Em Andamento Com Pendência': '#aaa59e',
+      'Homologado': '#9eabaf',
+      'Homologado Com Depósito': '#aabcb5',
+      'Homologado Com Pendência': '#9299a8',
+      'Ofício de Transferência Expedido': '#b2c8b7',
+      'Recebido': '#bad3b9',
+    };
+
+    const chunks = [];
+    for (let i = 0; i < filteredData.length; i += 8) {
+      chunks.push(filteredData.slice(i, i + 8));
+    }
+
+    const docDefinition = {
+      content: chunks.map((chunk, index) => [
+        ...chunk.map(cessao => [
+          {
+            table: {
+              widths: ['*'],
+              body: [
+                [
+                  {
+                    columns: [
+                      { width: 60, text: cessao.id, style: 'id', margin: [10, 10, 0, 5] },
+                      {
+                        width: '*', stack: [
+                          { text: cessao.precatorio, style: 'precatorio', margin: [5, 5, 0, 2] },
+                          { text: cessao.cedente, style: 'cedente', margin: [5, 0, 0, 5] },
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            },
+            layout: {
+              fillColor: function (rowIndex, node, columnIndex) {
+                return '#f5f5f5'; // Cor de fundo cinza
+              },
+              hLineWidth: function (i, node) {
+                return 0; // Sem linhas horizontais internas
+              },
+              vLineWidth: function (i, node) {
+                return 0; // Sem linhas verticais
+              }
+            },
+            margin: [0, 10, 0, 0],
+            keepTogether: true, // Mantém este bloco junto
+          },
+          {
+            table: {
+              widths: ['*'],
+              body: [
+                [
+                  {
+                    stack: [
+                      {
+                        columns: [
+                          { text: cessao.status, style: 'status', color: statusColors[cessao.status] || '#000000' },
+                          ...(cessao.ente_id ? [{ text: cessao.ente_id, style: 'badge' }] : []),
+                          ...(cessao.natureza ? [{ text: cessao.natureza, style: 'badge' }] : []),
+                          ...(cessao.data_cessao ? [{ text: cessao.data_cessao.split('-').reverse().join('/'), style: 'badge' }] : []),
+                          ...(cessao.empresa_id ? [{ text: cessao.empresa_id, style: 'badge' }] : []),
+                          ...(cessao.adv ? [{ text: cessao.adv, style: 'badge' }] : []),
+                          ...(cessao.falecido ? [{ text: cessao.falecido, style: 'badge' }] : []),
+                        ],
+                        columnGap: 5,
+                        margin: [10, 5, 0, 5]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            },
+            layout: {
+              hLineWidth: function (i, node) {
+                return 0; // Sem linhas horizontais internas
+              },
+              vLineWidth: function (i, node) {
+                return 0; // Sem linhas verticais
+              },
+              hLineColor: function (i, node) {
+                return '#ccc'; // Cor da borda
+              },
+              paddingLeft: function (i, node) { return 10; },
+              paddingRight: function (i, node) { return 10; },
+              border: function (i, node) {
+                return { left: 1, top: 1, right: 1, bottom: 1 }; // Borda ao redor do container
+              }
+            },
+            margin: [0, 0, 0, 10],
+            keepTogether: true, // Mantém este bloco junto
+          }
+        ]),
+        ...(index < chunks.length - 1 ? [{ text: '', pageBreak: 'after' }] : []) // Adiciona quebra de página após cada grupo, exceto o último
+      ]).flat(),
+      styles: {
+        id: {
+          fontSize: 9,
+          bold: true
+        },
+        precatorio: {
+          fontSize: 9,
+          bold: true
+        },
+        cedente: {
+          fontSize: 8,
+          color: '#757575'
+        },
+        status: {
+          bold: true,
+          fontSize: 7,
+          margin: [0, 0, 0, 5],
+          alignment: 'center'
+        },
+        badge: {
+          color: '#000',
+          fontSize: 7,
+          margin: [0, 0, 0, 5],
+          bold: true,
+          alignment: 'center'
+        }
+      }
+    };
+
+    pdfMake.createPdf(docDefinition).download('lista.pdf');
+  };
+
   return (
     <>
       <Header />
@@ -522,10 +661,10 @@ export default function AllCessoes() {
 
           <div className={`lg:flex lg:gap-4 lg:items-start`}>
             <div className='hidden lg:block lg:sticky lg:top-[5%]'>
-              <Filter show={true} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} />
+              <Filter show={true} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} />
             </div>
             <div className='w-full h-full max-h-full'>
-              <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} isPerfilCessoes={false} />
+              <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} isPerfilCessoes={false} onFilteredCessoes={handleFilteredCessoes} />
             </div>
           </div>
         </motion.div>
