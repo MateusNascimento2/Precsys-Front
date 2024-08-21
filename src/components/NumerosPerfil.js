@@ -11,8 +11,6 @@ const useAnimatedNumber = (value) => {
     config: { mass: 1, tension: 150, friction: 30 },
   });
 
-  number.to(n => console.log(n))
-
   const formatNumber = (num) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency', currency: 'BRL'
@@ -33,8 +31,9 @@ const useAnimatedNumberCessao = (value) => {
   return <animated.span>{number.to(n => Math.round(n))}</animated.span>;
 };
 
-export default function NumerosPerfil() {
+export default function NumerosPerfil({ user }) {
   const { auth } = useAuth();
+  const currentUser = user || auth.user; // Usar o usuário passado ou auth.user
   const [cessoes, setCessoes] = useState([]);
   const [cessionarios, setCessionarios] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -55,7 +54,6 @@ export default function NumerosPerfil() {
     const valorFloat = Number(barraParaPonto);
     return valorFloat;
   }
-
 
   useEffect(() => {
     let isMounted = true;
@@ -84,8 +82,7 @@ export default function NumerosPerfil() {
   }, []);
 
   useEffect(() => {
-    const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => String(cessionario.user_id) === String(auth.user.id));
-    console.log(cessionariosPorIDdoUsuarios)
+    const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => String(cessionario.user_id) === String(currentUser.id));
 
     const minhasCessoes = cessionariosPorIDdoUsuarios
       .map(cessionario => {
@@ -97,7 +94,7 @@ export default function NumerosPerfil() {
       })
       .filter(cessao => cessao !== undefined);
 
-    setQtdCessao(minhasCessoes.length)
+    setQtdCessao(minhasCessoes.length);
 
     status.forEach(statusItem => {
       minhasCessoes.forEach(cessao => {
@@ -109,13 +106,12 @@ export default function NumerosPerfil() {
 
     setMyCessions(minhasCessoes);
 
-    // Calcular expAReceber e expRecebida
     const totalExpAReceber = minhasCessoes
-      .filter(cessao => cessao.x !== 'Recebido') // Excluir os recebidos
+      .filter(cessao => cessao.x !== 'Recebido')
       .reduce((total, cessao) => total + parseFloat(cessao.exp_recebimento), 0);
 
     const totalExpRecebida = minhasCessoes
-      .filter(cessao => cessao.x === 'Recebido') // Somente os recebidos
+      .filter(cessao => cessao.x === 'Recebido')
       .reduce((total, cessao) => total + parseFloat(cessao.exp_recebimento), 0);
 
     const totalValorGasto = cessionariosPorIDdoUsuarios
@@ -126,9 +122,9 @@ export default function NumerosPerfil() {
 
     setExpAReceber(totalExpAReceber);
     setExpRecebida(totalExpRecebida);
-    setValorGasto(totalValorGasto)
-    setComissao(totalComissao)
-  }, [cessionarios, cessoes, status, auth.user.id]);
+    setValorGasto(totalValorGasto);
+    setComissao(totalComissao);
+  }, [cessionarios, cessoes, status, currentUser.id]);
 
   const minhasCessoesData = useMemo(() => {
     const statusQtd = [
@@ -153,16 +149,14 @@ export default function NumerosPerfil() {
     return statusQtd;
   }, [myCessions]);
 
-
   const animatedExpAReceber = useAnimatedNumber(expAReceber);
   const animatedExpRecebida = useAnimatedNumber(expRecebida);
   const animatedValorGasto = useAnimatedNumber(valorGasto);
   const animatedComissao = useAnimatedNumber(comissao);
-  const animatedCessao = useAnimatedNumberCessao(qtdCessao)
+  const animatedCessao = useAnimatedNumberCessao(qtdCessao);
 
   return (
     <>
-
       <div className=' px-4 rounded min-w-[125px] w-full max-w-[225px] lg:max-w-[210px]'>
         <p className='text-neutral-400 text-[13px]'>Exp. A Receber</p>
         <div className='flex gap-2 items-center'>
@@ -172,7 +166,6 @@ export default function NumerosPerfil() {
 
           <span className='text-sm font-bold text-neutral-900 dark:text-white'>{animatedExpAReceber}</span>
         </div>
-
       </div>
       <div className=' px-4 rounded min-w-[125px] w-full max-w-[225px] lg:max-w-[210px]'>
         <p className='text-neutral-400 text-[13px]'>Exp. Recebida</p>
@@ -193,7 +186,6 @@ export default function NumerosPerfil() {
 
           <span className='text-sm font-bold text-neutral-900 dark:text-white'>{animatedValorGasto}</span>
         </div>
-
       </div>
       <div className=' px-4 rounded min-w-[125px] w-full max-w-[225px] lg:max-w-[210px]'>
         <p className='text-neutral-400 text-[13px]'>Comissão</p>
@@ -204,18 +196,13 @@ export default function NumerosPerfil() {
 
           <span className='text-sm font-bold text-neutral-900 dark:text-white'>{animatedComissao}</span>
         </div>
-
       </div>
       <div className=' px-4 rounded min-w-[125px] w-full max-w-[225px] lg:max-w-[210px]'>
         <p className='text-neutral-400 text-[13px]'>Cessões</p>
         <div className='flex'>
           <span className='text-sm font-bold text-neutral-900 dark:text-white'>{animatedCessao}</span>
         </div>
-
       </div>
-
     </>
-
-
-  )
+  );
 }

@@ -14,10 +14,10 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 
 
-export default function Lista({ searchQuery, selectedFilters, setData, isPerfilCessoes, onFilteredCessoes }) {
+export default function Lista({ searchQuery, selectedFilters, setData, isPerfilCessoes, onFilteredCessoes, user }) {
   const { minhascessoes } = useParams();
   const { auth } = useAuth();
-  const userID = String(auth.user.id);
+  const userID = user ? String(user.id) :String(auth.user.id);
 
   const [cessoes, setCessoes] = useState([]);
   const [cessionarios, setCessionarios] = useState([]);

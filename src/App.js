@@ -37,6 +37,7 @@ function App() {
           <Route element={<RequireAdminAuth />}>
             <Route path='todas-cessoes' element={<AllCessoes />} />
             <Route path='usuarios' element={<Usuarios />} />
+            <Route path='usuario/:id' element={<MeuPerfil />} />
             <Route path='calculo' element={<Calculo />} />
             <Route path ='logs/login' element={<LoginLogs />}/>
             <Route path='logs/propostas' element={<PropostasLogs />} />

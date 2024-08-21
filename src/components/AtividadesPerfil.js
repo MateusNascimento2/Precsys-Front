@@ -190,7 +190,7 @@ export default function AtividadesPerfil({ user, ShowAllActivities }) {
             ))}
           </ul>
         ) : (
-          <p>Nenhuma atividade encontrada.</p>
+          <p className='font-medium text-[16px] dark:text-white'>Nenhuma atividade encontrada.</p>
         )}
       </div>
     </section >

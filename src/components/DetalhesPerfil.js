@@ -33,17 +33,17 @@ export default function DetalhesPerfil({ user, handleItemClick }) {
         </div>
 
         <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between'>
-          <span className='text-[13px] text-neutral-400 font-medium'>Endereço</span>
+          <span className='text-[13px] text-neutral-400 font-medium mr-4'>Endereço</span>
           <span className='dark:text-white font-medium text-[14px]'>{user.endereco}</span>
         </div>
 
         <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between'>
-          <span className='text-[13px] text-neutral-400 font-medium'>Obs</span>
+          <span className='text-[13px] text-neutral-400 font-medium mr-4'>Obs</span>
           <span className='dark:text-white font-medium text-[14px]'>{user.obs ? user.obs : '-'}</span>
         </div>
 
         <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between'>
-          <span className='text-[13px] text-neutral-400 font-medium'>Qualificação</span>
+          <span className='text-[13px] text-neutral-400 font-medium mr-4'>Qualificação</span>
           <span className='dark:text-white font-medium text-[14px]'>{user.qualificacao}</span>
         </div>
       </div>

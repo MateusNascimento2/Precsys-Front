@@ -258,7 +258,7 @@ export default function FilterPerfil({ show, onSetShow, onSelectedCheckboxesChan
       {show && (
         <>
           <div
-            className="fixed inset-0 bg-black opacity-50"
+            className="fixed inset-0 bg-black opacity-50 z-50"
             onClick={handleShow}
           ></div>
           <div className="fixed inset-0 flex items-center justify-center z-50">
