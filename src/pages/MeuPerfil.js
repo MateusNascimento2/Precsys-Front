@@ -14,8 +14,9 @@ import Filter from '../layout/Filter';
 import FilterPerfil from '../layout/FilterPerfil';
 import ScrollToTopButton from '../components/ScrollToTopButton';
 import ConfiguracoesPerfil from '../components/ConfiguracoesPerfil';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams  } from 'react-router-dom';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import ClientesList from '../components/ClientesList';
 
 export const ButtonEditProfile = ({ handleItemClick }) => {
   return (
@@ -33,6 +34,7 @@ const MeuPerfil = () => {
   const axiosPrivate = useAxiosPrivate();
   const [user, setUser] = useState(auth.user);
   const [activeItem, setActiveItem] = useState('resumo');
+  const [searchParams] = useSearchParams(); // Hook para acessar os parâmetros da URL
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCheckboxes, setSelectedCheckboxes] = useState(() => {
@@ -43,6 +45,18 @@ const MeuPerfil = () => {
   const [dataCessoes, setDataCessoes] = useState([]);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
+  const [filteredCessoes, setFilteredCessoes] = useState([]);
+
+  const handleFilteredCessoes = (filteredData) => {
+    setFilteredCessoes(filteredData);
+  };
+  
+  useEffect(() => {
+    const section = searchParams.get('section');
+    if (section) {
+      setActiveItem(section); // Define o item ativo com base na URL
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -101,6 +115,140 @@ const MeuPerfil = () => {
   };
 
   console.log(user)
+
+
+  const exportPDF = (filteredData) => {
+
+    const statusColors = {
+      'Em Andamento': '#d2c7b3',
+      'Em Andamento Com Depósito': '#bdb4a9',
+      'Em Andamento Com Pendência': '#aaa59e',
+      'Homologado': '#9eabaf',
+      'Homologado Com Depósito': '#aabcb5',
+      'Homologado Com Pendência': '#9299a8',
+      'Ofício de Transferência Expedido': '#b2c8b7',
+      'Recebido': '#bad3b9',
+    };
+
+    const chunks = [];
+    for (let i = 0; i < filteredData.length; i += 8) {
+      chunks.push(filteredData.slice(i, i + 8));
+    }
+
+    const docDefinition = {
+      content: chunks.map((chunk, index) => [
+        ...chunk.map(cessao => [
+          {
+            table: {
+              widths: ['*'],
+              body: [
+                [
+                  {
+                    columns: [
+                      { width: 60, text: cessao.id, style: 'id', margin: [10, 10, 0, 5] },
+                      {
+                        width: '*', stack: [
+                          { text: cessao.precatorio, style: 'precatorio', margin: [5, 5, 0, 2] },
+                          { text: cessao.cedente, style: 'cedente', margin: [5, 0, 0, 5] },
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            },
+            layout: {
+              fillColor: function (rowIndex, node, columnIndex) {
+                return '#f5f5f5'; // Cor de fundo cinza
+              },
+              hLineWidth: function (i, node) {
+                return 0; // Sem linhas horizontais internas
+              },
+              vLineWidth: function (i, node) {
+                return 0; // Sem linhas verticais
+              }
+            },
+            margin: [0, 10, 0, 0],
+            keepTogether: true, // Mantém este bloco junto
+          },
+          {
+            table: {
+              widths: ['*'],
+              body: [
+                [
+                  {
+                    stack: [
+                      {
+                        columns: [
+                          { text: cessao.status, style: 'status', color: statusColors[cessao.status] || '#000000' },
+                          ...(cessao.ente_id ? [{ text: cessao.ente_id, style: 'badge' }] : []),
+                          ...(cessao.natureza ? [{ text: cessao.natureza, style: 'badge' }] : []),
+                          ...(cessao.data_cessao ? [{ text: cessao.data_cessao.split('-').reverse().join('/'), style: 'badge' }] : []),
+                          ...(cessao.empresa_id ? [{ text: cessao.empresa_id, style: 'badge' }] : []),
+                          ...(cessao.adv ? [{ text: cessao.adv, style: 'badge' }] : []),
+                          ...(cessao.falecido ? [{ text: cessao.falecido, style: 'badge' }] : []),
+                        ],
+                        columnGap: 5,
+                        margin: [10, 5, 0, 5]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            },
+            layout: {
+              hLineWidth: function (i, node) {
+                return 0; // Sem linhas horizontais internas
+              },
+              vLineWidth: function (i, node) {
+                return 0; // Sem linhas verticais
+              },
+              hLineColor: function (i, node) {
+                return '#ccc'; // Cor da borda
+              },
+              paddingLeft: function (i, node) { return 10; },
+              paddingRight: function (i, node) { return 10; },
+              border: function (i, node) {
+                return { left: 1, top: 1, right: 1, bottom: 1 }; // Borda ao redor do container
+              }
+            },
+            margin: [0, 0, 0, 10],
+            keepTogether: true, // Mantém este bloco junto
+          }
+        ]),
+        ...(index < chunks.length - 1 ? [{ text: '', pageBreak: 'after' }] : []) // Adiciona quebra de página após cada grupo, exceto o último
+      ]).flat(),
+      styles: {
+        id: {
+          fontSize: 9,
+          bold: true
+        },
+        precatorio: {
+          fontSize: 9,
+          bold: true
+        },
+        cedente: {
+          fontSize: 8,
+          color: '#757575'
+        },
+        status: {
+          bold: true,
+          fontSize: 7,
+          margin: [0, 0, 0, 5],
+          alignment: 'center'
+        },
+        badge: {
+          color: '#000',
+          fontSize: 7,
+          margin: [0, 0, 0, 5],
+          bold: true,
+          alignment: 'center'
+        }
+      }
+    };
+
+    pdfMake.createPdf(docDefinition).download('lista.pdf');
+  };
 
   const renderContent = () => {
     switch (activeItem) {
@@ -170,11 +318,11 @@ const MeuPerfil = () => {
               </div>
               <div className={`lg:flex lg:gap-4 lg:items-start`}>
                 <div className='w-full h-full max-h-full'>
-                  <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} isPerfilCessoes={true} user={user} />
+                  <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} isPerfilCessoes={true} user={user} onFilteredCessoes={handleFilteredCessoes} />
                 </div>
               </div>
               <div className='hidden lg:block'>
-                <FilterPerfil show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} />
+                <FilterPerfil show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} />
               </div>
               <div className='lg:hidden'>
                 <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} />
@@ -193,8 +341,10 @@ const MeuPerfil = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.2 }}
+            className='mt-4 px-5 dark:bg-neutral-900 lg:col-span-2 w-full flex flex-col gap-2'
           >
-            Clientes Component
+            <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'p-3'} />
+            <ClientesList searchQuery={searchQuery} user={user} />
           </motion.div>
         );
       case 'documentos':
@@ -258,7 +408,7 @@ const MeuPerfil = () => {
               <div className='absolute bottom-0 w-full h-full'>
                 <ProfileImage userImage={id ? user.photoUrl : auth.userImage} />
               </div>
-              {auth.user.admin && (
+              {auth.user.admin ? (
                 <button
                   onClick={toggleUserStatus}
                   disabled={isUpdatingStatus}
@@ -269,7 +419,7 @@ const MeuPerfil = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9" />
                   </svg>
                 </button>
-              )}
+              ) : null}
             </div>
             <div className='flex flex-col items-center lg:items-start gap-2 lg:w-full xl:justify-between'>
               <div className='flex flex-col lg:items-start xl:items-start'>
@@ -318,7 +468,7 @@ const MeuPerfil = () => {
                 initial={{ y: '100%' }}
                 animate={{ y: isMenuOpen ? 0 : '100%' }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="fixed bottom-0 left-0 w-full lg:h-full dark:bg-neutral-900 shadow-lg rounded-t-lg z-10 lg:relative lg:w-full lg:shadow-none lg:rounded-none lg:p-0 lg:!transform-none"
+                className="fixed bottom-0 left-0 w-full lg:h-full bg-white z-[100] lg:z-10 dark:bg-neutral-900 shadow-lg rounded-t-lg lg:relative lg:w-full lg:shadow-none lg:rounded-none lg:p-0 lg:!transform-none"
               >
                 <div className={"lg:sticky lg:top-[8%]"}>
                   <div className="p-2 lg:p-0 lg:px-2 h-full lg:border-r dark:lg:border-neutral-600 lg:h-[320px]">
@@ -356,22 +506,22 @@ const MeuPerfil = () => {
                           Clientes
                         </a>
                       </li>
-                      <li className={"px-4 py-1 lg:py-2"}>
+                      {/* <li className={"px-4 py-1 lg:py-2"}>
                         <a
                           onClick={() => handleItemClick('documentos')}
                           className={`text-[14px] text-neutral-600 dark:text-neutral-400 cursor-pointer hover:underline ${activeItem === 'documentos' ? ' font-bold ' : ''}`}
                         >
                           Documentos
                         </a>
-                      </li>
-                      <li className={"px-4 py-1 lg:py-2"}>
+                      </li> */}
+                      {!id || auth.user.admin  ? <li className={"px-4 py-1 lg:py-2"}>
                         <a
                           onClick={() => handleItemClick('configuracoes')}
                           className={`text-[14px] text-neutral-600 dark:text-neutral-400 cursor-pointer hover:underline ${activeItem === 'configuracoes' ? ' font-bold ' : ''}`}
                         >
                           Configurações
                         </a>
-                      </li>
+                      </li> : null}
                     </ul>
                   </div>
                 </div>

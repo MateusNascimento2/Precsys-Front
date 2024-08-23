@@ -9,6 +9,7 @@ import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AdministradorPerfil from './AdministradorPerfil';
+import GestorPerfil from './GestorPerfil';
 
 export default function ConfiguracoesPerfil({ user }) {
   const { auth } = useAuth();
@@ -288,6 +289,7 @@ export default function ConfiguracoesPerfil({ user }) {
       <>
         <SegurancaPerfil user={user} />
         {auth.user.admin ? <AdministradorPerfil user={user} /> : null}
+        {auth.user.admin ? <GestorPerfil user={user} /> : null}
         <DesativarPerfil user={user} />
       </>
     </>

@@ -535,7 +535,7 @@ export default function Precatorio() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            
+
           >
             <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: '#FFF', color: '#000', fontSize: '12px', fontWeight: '500', maxWidth: '220px' }} border="1px solid #d4d4d4" opacity={100} place="top" />
             <div>
@@ -548,38 +548,44 @@ export default function Precatorio() {
                     <div className="flex flex-col justify-center text-[12px] pl-2 w-full">
                       <div className='flex justify-between items-center w-full'>
                         <span className="font-bold dark:text-white text-[24px]">{precData.precatorio}</span>
-                        <DotsButton>
-                          <Modal
-                            botaoAbrirModal={
-                              <button title='Editar precatório' className='hover:bg-neutral-100  dark:hover:bg-neutral-800 dark:text-white text-sm px-4 py-2 rounded'>
-                                Editar
-                              </button>}
-                            tituloModal={'Editar cessão'}
-                            botaoSalvar={
-                              <button onClick={(e) => handleEditarCessao(e)}
-                                className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-1 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
-                                Salvar
-                              </button>
-                            }
-                          >
-                            <div className='h-[450px] overflow-auto'>
-                              {sendingData && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
-                                <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>
-                                  <LoadingSpinner />
+                        {auth.user.admin ?
+                          <>
+                            <DotsButton>
+                              <Modal
+                                botaoAbrirModal={
+                                  <button title='Editar precatório' className='hover:bg-neutral-100  dark:hover:bg-neutral-800 dark:text-white text-sm px-4 py-2 rounded'>
+                                    Editar
+                                  </button>}
+                                tituloModal={'Editar cessão'}
+                                botaoSalvar={
+                                  <button onClick={(e) => handleEditarCessao(e)}
+                                    className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-1 hover:bg-neutral-700 dark:hover:bg-neutral-700'>
+                                    Salvar
+                                  </button>
+                                }
+                              >
+                                <div className='h-[450px] overflow-auto'>
+                                  {sendingData && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
+                                    <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>
+                                      <LoadingSpinner />
+                                    </div>
+                                  </div>)}
+                                  <EditarPrec precInfo={precData} varas={varas} orcamentos={orcamentos} naturezas={natureza} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridico={juridico} enviarValores={(valores) => handleReceberValores(valores)} />
                                 </div>
-                              </div>)}
-                              <EditarPrec precInfo={precData} varas={varas} orcamentos={orcamentos} naturezas={natureza} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridico={juridico} enviarValores={(valores) => handleReceberValores(valores)} />
-                            </div>
-                          </Modal>
-                          <button onClick={openModal} className='hover:bg-red-800  bg-red-600 text-white text-sm px-4 py-2 rounded'>
-                            Excluir
-                          </button>
-                        </DotsButton>
-                        <DeleteConfirmationModal
-                          isOpen={modalIsOpen}
-                          onRequestClose={closeModal}
-                          onConfirm={confirmDelete}
-                        />
+                              </Modal>
+                              <button onClick={openModal} className='hover:bg-red-800  bg-red-600 text-white text-sm px-4 py-2 rounded'>
+                                Excluir
+                              </button>
+                            </DotsButton>
+                            <DeleteConfirmationModal
+                              isOpen={modalIsOpen}
+                              onRequestClose={closeModal}
+                              onConfirm={confirmDelete}
+                            />
+                          </>
+                          : null
+                        }
+
                       </div>
                       <span className="text-neutral-400 font-medium line-clamp-1">{precData.cedente}</span>
                     </div>

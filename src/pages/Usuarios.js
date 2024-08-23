@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Users from '../components/Users';
 import Header from '../components/Header';
 import SearchInput from '../components/SearchInput';
@@ -16,9 +16,76 @@ import ScrollToTopButton from '../components/ScrollToTopButton';
 function Usuarios() {
   const [searchQuery, setSearchQuery] = useState('');
   const [show, setShow] = useState(false);
+  const [clientes, setClientes] = useState([]);
+  const [users, setUsers] = useState([]); // Estado para armazenar os gestores
   const axiosPrivate = useAxiosPrivate();
-  const formRef = useRef(null); // Create a ref for the form
+  const formRef = useRef(null); // Cria uma ref para o formulário
   const [isLoading, setIsLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    status: {
+      Ativo: false,
+      Desativado: false,
+    },
+    tipo: {
+      Usuário: false,
+      Administrador: false,
+    },
+    gestores: {},
+  });
+
+  // Primeiro useEffect: Busca os dados dos clientes e gestores ao montar o componente
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+
+    const fetchData = async (url, setState) => {
+      try {
+        setIsLoading(true);
+        const { data } = await axiosPrivate.get(url, { signal: controller.signal });
+        if (isMounted) setState(data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Buscando dados de clientes e gestores
+    fetchData('/cliente', setClientes);
+    fetchData('/users', setUsers); // Supondo que os gestores estejam na mesma rota que os usuários
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [axiosPrivate]);
+
+  // Segundo useEffect: Inicializa os filtros sempre que 'clientes' ou 'gestores' forem atualizados
+  useEffect(() => {
+    const initializeFilters = (clientes, users) => {
+      // Filtra os gestores que têm um cliente associado
+      const gestoresFiltrados = users.filter(user => 
+        clientes.some(cliente => String(cliente.id_gestor) === String(user.id))
+      );
+
+      console.log(gestoresFiltrados)
+
+      // Inicializa os nomes dos gestores como false
+      const gestoresNomes = gestoresFiltrados.reduce((acc, gestor) => {
+        acc[gestor.nome] = false;
+        return acc;
+      }, {});
+
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        gestores: gestoresNomes,
+      }));
+    };
+
+    if (clientes.length > 0 && users.length > 0) {
+      initializeFilters(clientes, users);
+    }
+  }, [clientes, users]);
 
   const handleSubmit = async (formData) => {
     const isDarkMode = localStorage.getItem('darkMode');
@@ -42,14 +109,14 @@ function Usuarios() {
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
       });
-      console.log('caiu no if')
+      console.log('caiu no if');
     } else {
       try {
-        setIsLoading(true)
+        setIsLoading(true);
         await axiosPrivate.post('/users', formData);
       } catch (err) {
-        console.log(err.response.data.error)
-        toast.error(`Erro ao cadastrar usuário: ${err.response.data.error}`, {
+        console.log(err.response?.data?.error || err);
+        toast.error(`Erro ao cadastrar usuário: ${err.response?.data?.error || 'Erro desconhecido'}`, {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -77,28 +144,25 @@ function Usuarios() {
       transition: Bounce,
     });
 
-    setIsLoading(false)
+    setIsLoading(false);
   };
-
-  const initialFilters = {
-    status: {
-      Ativo: false,
-      Desativado: false,
-    },
-    tipo: {
-      Usuário: false,
-      Administrador: false,
-    },
-  };
-
-  const [filters, setFilters] = useState(initialFilters);
 
   const updateFilters = (newFilters) => {
     setFilters(newFilters);
   };
 
   const resetFilters = () => {
-    setFilters(initialFilters);
+    setFilters({
+      status: {
+        Ativo: false,
+        Desativado: false,
+      },
+      tipo: {
+        Usuário: false,
+        Administrador: false,
+      },
+      gestores: {},
+    });
   };
 
   const handleInputChange = (query) => {

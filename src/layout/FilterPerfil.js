@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import SearchInput from "../components/SearchInput";
+import useAuth from "../hooks/useAuth";
 
-export default function FilterPerfil({ show, onSetShow, onSelectedCheckboxesChange, dataCessoes }) {
+export default function FilterPerfil({ show, onSetShow, onSelectedCheckboxesChange, dataCessoes, onExportPDF }) {
   const [status, setStatus] = useState([]);
   const [orcamentos, setOrcamentos] = useState([]);
   const [orcamentosAnos, setOrcamentosAnos] = useState([]);
@@ -25,6 +26,8 @@ export default function FilterPerfil({ show, onSetShow, onSelectedCheckboxesChan
     const savedChecked = localStorage.getItem('checkedStatus');
     return savedChecked ? JSON.parse(savedChecked) : [];
   });
+
+  const { auth } = useAuth();
 
   const axiosPrivate = useAxiosPrivate();
 
@@ -273,6 +276,11 @@ export default function FilterPerfil({ show, onSetShow, onSelectedCheckboxesChan
               <div className="flex items-center justify-between mb-4">
                 <div className="flex gap-2 items-center">
                   <span className="font-bold text-lg dark:text-white">Filtros</span>
+                  <button onClick={onExportPDF} title="Exportar para PDF" className="hover:bg-neutral-100 dark:hover:bg-neutral-800 p-1 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.} stroke="currentColor" className="size-5  dark:text-white">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                    </svg>
+                  </button>
                   <span className="cursor-pointer hover:rounded p-1 text-black hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-white" onClick={() => handleClearCheckbox()}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -619,7 +627,7 @@ export default function FilterPerfil({ show, onSetShow, onSelectedCheckboxesChan
                   </AnimatePresence>
                 </div>
 
-                <div className="flex flex-col gap-2">
+                {auth.user.admin ? <div className="flex flex-col gap-2">
                   <div className="flex justify-between items-center cursor-pointer" onClick={() => handleMenu('obito')}>
                     <span className="text-gray-700 dark:text-neutral-300">Óbito</span>
                     <span className="text-[12px]">
@@ -651,9 +659,9 @@ export default function FilterPerfil({ show, onSetShow, onSelectedCheckboxesChan
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </div> : null}
 
-                <div className="flex flex-col gap-2">
+                {auth.user.admin ? <div className="flex flex-col gap-2">
                   <div className="flex justify-between items-center cursor-pointer" onClick={() => handleMenu('rep_comercial')}>
                     <span className="text-gray-700 dark:text-neutral-300">Rep. Comercial</span>
                     <span className="text-[12px]">
@@ -685,7 +693,7 @@ export default function FilterPerfil({ show, onSetShow, onSelectedCheckboxesChan
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </div> : null}
 
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-between items-center cursor-pointer" onClick={() => handleMenu('data_cessao')}>

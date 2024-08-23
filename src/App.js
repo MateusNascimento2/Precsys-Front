@@ -15,6 +15,7 @@ import Calculo from './pages/Calculo';
 import LoginLogs from './pages/LoginLogs';
 import PropostasLogs from './pages/PropostasLogs'
 import MeuPerfil from './pages/MeuPerfil';
+import Clientes from './pages/Clientes';
 
 function App() {
 
@@ -32,6 +33,8 @@ function App() {
             <Route path=':minhascessoes' element={<AllCessoes />} />
             <Route path='cessao/:precID' element={<Precatorio />} />
             <Route path='perfil' element={<MeuPerfil />} />
+            <Route path='clientes' element={<Clientes />} />
+            <Route path='cliente/:id' element={<MeuPerfil />} />
           </Route>
 
           <Route element={<RequireAdminAuth />}>

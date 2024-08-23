@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
+import useAuth from "../hooks/useAuth";
 
 function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
   if (!isOpen) return null;
@@ -48,6 +49,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
   const [cessionarios, setCessionarios] = useState([]);
   const [valoresCessionarios, setValoresCessionarios] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { auth } = useAuth();
 
   const [valorPagoEditado, setValorPagoEditado] = useState('');
   const [comissaoEditado, setComissaoEditado] = useState('');
@@ -582,59 +584,62 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
         <span className="font-[700] dark:text-white" id="cessionarios">
           Cessionários
         </span>
-        <Modal
-          botaoAbrirModal={
-            <button title="Adicionar cessionário" className="hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:hover:bg-neutral-800 rounded w-[25px] h-[25px] p-[2px]">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[18px] h-[18px] dark:text-white">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-            </button>
-          }
-          tituloModal="Adicionar cessionário"
-          botaoSalvar={
-            <button
-              onClick={() => handleSubmit()}
-              className="bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700"
-            >
-              Salvar
-            </button>
-          }
-          botaoAdicionarCessionario={
-            <button
-              onClick={() => addCessionario()}
-              className="bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700"
-            >
-              Adicionar cessionário
-            </button>
-          }
-        >
-          <div className="h-[450px] overflow-auto">
-            {isLoading && (
-              <div className="absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20">
-                <div className="absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 h-12 w-12">
-                  <LoadingSpinner />
-                </div>
-              </div>
-            )}
-            <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
-              {cessionarios.map((componente) => (
-                <div key={componente.index} className="w-full pt-5">
-                  <div className="px-4 flex justify-end items-center">
-                    <button
-                      onClick={() => handleExcluirCessionario(componente.index)}
-                      className={cessionarios.length > 1 ? 'rounded hover:bg-neutral-100 float-right w-4 h-4 dark:hover:bg-neutral-800' : 'hidden'}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                      </svg>
-                    </button>
+        {auth.user.admin ?
+          <Modal
+            botaoAbrirModal={
+              <button title="Adicionar cessionário" className="hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:hover:bg-neutral-800 rounded w-[25px] h-[25px] p-[2px]">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[18px] h-[18px] dark:text-white">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+              </button>
+            }
+            tituloModal="Adicionar cessionário"
+            botaoSalvar={
+              <button
+                onClick={() => handleSubmit()}
+                className="bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700"
+              >
+                Salvar
+              </button>
+            }
+            botaoAdicionarCessionario={
+              <button
+                onClick={() => addCessionario()}
+                className="bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700"
+              >
+                Adicionar cessionário
+              </button>
+            }
+          >
+            <div className="h-[450px] overflow-auto">
+              {isLoading && (
+                <div className="absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20">
+                  <div className="absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 h-12 w-12">
+                    <LoadingSpinner />
                   </div>
-                  {componente.componente}
                 </div>
-              ))}
+              )}
+              <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
+                {cessionarios.map((componente) => (
+                  <div key={componente.index} className="w-full pt-5">
+                    <div className="px-4 flex justify-end items-center">
+                      <button
+                        onClick={() => handleExcluirCessionario(componente.index)}
+                        className={cessionarios.length > 1 ? 'rounded hover:bg-neutral-100 float-right w-4 h-4 dark:hover:bg-neutral-800' : 'hidden'}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    {componente.componente}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </Modal>
+          </Modal> : null
+        }
+
       </div>
       <div className="overflow-x-auto w-full">
         <div className="w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-600">
@@ -680,38 +685,42 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
               </button> : null}
             </div>
             <div className="min-w-[50px] w-[5%] ml-auto flex justify-center dark:text-neutral-200">
-              <DotsButton>
-                <Modal
-                  botaoAbrirModal={
-                    <button title="Editar cessionário" className="hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm px-4 py-2 rounded">
-                      Editar
-                    </button>
-                  }
-                  tituloModal={`Editar cessionário #${c.id}`}
-                  botaoSalvar={
-                    <button
-                      onClick={() => handleEditarCessionarioSubmit(c.id)}
-                      className="bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700"
+              {auth.user.admin ?
+                <>
+                  <DotsButton>
+                    <Modal
+                      botaoAbrirModal={
+                        <button title="Editar cessionário" className="hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm px-4 py-2 rounded">
+                          Editar
+                        </button>
+                      }
+                      tituloModal={`Editar cessionário #${c.id}`}
+                      botaoSalvar={
+                        <button
+                          onClick={() => handleEditarCessionarioSubmit(c.id)}
+                          className="bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700"
+                        >
+                          Salvar
+                        </button>
+                      }
                     >
-                      Salvar
+                      {isLoading && (
+                        <div className="absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20">
+                          <div className="absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8">
+                            <LoadingSpinner />
+                          </div>
+                        </div>
+                      )}
+                      <EditarCessionario cessionario={c} users={users} enviarValores={(valores) => handleReceberValoresCessionarioEditado(valores)} />
+                    </Modal>
+                    <button onClick={openModal} className="hover:bg-red-800 bg-red-600 text-white text-sm px-4 py-2 rounded">
+                      Excluir
                     </button>
-                  }
-                >
-                  {isLoading && (
-                    <div className="absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20">
-                      <div className="absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8">
-                        <LoadingSpinner />
-                      </div>
-                    </div>
-                  )}
-                  <EditarCessionario cessionario={c} users={users} enviarValores={(valores) => handleReceberValoresCessionarioEditado(valores)} />
-                </Modal>
-                <button onClick={openModal} className="hover:bg-red-800 bg-red-600 text-white text-sm px-4 py-2 rounded">
-                  Excluir
-                </button>
-              </DotsButton>
+                  </DotsButton>
 
-              <DeleteConfirmationModal isOpen={modalIsOpen} onRequestClose={closeModal} onConfirm={() => confirmDelete(c.id, { nota: c.nota, comprovante: c.comprovante, mandado: c.mandado })} />
+                  <DeleteConfirmationModal isOpen={modalIsOpen} onRequestClose={closeModal} onConfirm={() => confirmDelete(c.id, { nota: c.nota, comprovante: c.comprovante, mandado: c.mandado })} />
+                </> : null}
+
             </div>
           </div>
         ))}

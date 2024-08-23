@@ -4,11 +4,23 @@ import useAuth from "../hooks/useAuth";
 import ProfileImage from './ProfileImage';
 import LogoutButton from './LogoutButton';
 import ThemeSwitcher from "./ThemeSwitcher";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function UserToolbar({ show, updateLogo, darkMode, onDarkModeChange }) {
   const { auth } = useAuth();
-  console.log(auth)
+  const navigate = useNavigate();
+
+  const goToConfigurations = () => {
+    navigate('/perfil?section=configuracoes'); // Certifique-se de que a rota corresponde à esperada
+  };
+
+  const goToActivities = () => {
+    navigate('/perfil?section=atividades');
+  }
+
+  const goToResume = () => {
+    navigate('/perfil?section=resumo');
+  }
 
   return (
     <>
@@ -36,18 +48,15 @@ function UserToolbar({ show, updateLogo, darkMode, onDarkModeChange }) {
               </div>
             </div>
             <ul className='flex w-full px-2 py-2 flex-col items-center gap-1 text-[13px] border-b dark:border-neutral-700'>
-              <Link to={'/perfil'} className='cursor-pointer rounded w-full px-2 py-1 font-medium text-[14px] hover:bg-neutral-100 dark:hover:bg-neutral-800'>Meu Perfil
+              <div onClick={() => goToResume()} className='cursor-pointer rounded w-full px-2 py-1 font-medium text-[14px] hover:bg-neutral-100 dark:hover:bg-neutral-800'>Meu Perfil
                 <p className='font-[500] text-[#666666] dark:text-neutral-500 text-[12px]'>Ver o seu Perfil</p>
-              </Link>
-              <li className='cursor-pointer rounded w-full px-2 py-1 font-medium text-[14px] hover:bg-neutral-100 dark:hover:bg-neutral-800'>Minha Atividade
+              </div>
+              <div onClick={() => goToActivities()} className='cursor-pointer rounded w-full px-2 py-1 font-medium text-[14px] hover:bg-neutral-100 dark:hover:bg-neutral-800'>Minha Atividade
                 <p className='font-[500] text-[#666666] dark:text-neutral-500 text-[12px]'>Ver minha Atividade</p>
-              </li>
-              <li className='cursor-pointer rounded w-full px-2 py-1 font-medium text-[14px] hover:bg-neutral-100 dark:hover:bg-neutral-800'>Relatório IR
-                <p className='font-[500] text-[#666666] dark:text-neutral-500 text-[12px]'>Ver o seu Relatório IR</p>
-              </li>
-              <li className='cursor-pointer rounded w-full px-2 py-1 font-medium text-[14px] hover:bg-neutral-100 dark:hover:bg-neutral-800'>Configurações
+              </div>
+              <div onClick={() => goToConfigurations()} className='cursor-pointer rounded w-full px-2 py-1 font-medium text-[14px] hover:bg-neutral-100 dark:hover:bg-neutral-800'>Configurações
                 <p className='font-[500] text-[#666666] dark:text-neutral-500 text-[12px]'>Configurações de Perfil</p>
-              </li>
+              </div>
             </ul>
             <div className="w-full py-2 pl-2 gap-2 flex justify-between ">
               <LogoutButton />

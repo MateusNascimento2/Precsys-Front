@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import SearchInput from "../components/SearchInput";
+import useAuth from "../hooks/useAuth";
 
 export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, dataCessoes, onExportPDF }) {
   const [status, setStatus] = useState([]);
@@ -26,6 +27,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
     const savedChecked = localStorage.getItem('checkedStatus');
     return savedChecked ? JSON.parse(savedChecked) : [];
   });
+  const { auth } = useAuth();
 
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
@@ -654,7 +656,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
               </div>
             </motion.div>
 
-            <motion.div className="px-2 py-1 text-gray-600 text-[14px] dark:text-neutral-300">
+            {auth.user.admin ? <motion.div className="px-2 py-1 text-gray-600 text-[14px] dark:text-neutral-300">
               <div>
                 <div onClick={() => handleMenu('obito')} className="flex justify-between items-center cursor-pointer">
                   <span>Óbito</span>
@@ -692,9 +694,9 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
                   )}
                 </AnimatePresence>
               </div>
-            </motion.div>
+            </motion.div> : null}
 
-            <motion.div className="px-2 py-1 text-gray-600 text-[14px] dark:text-neutral-300">
+            {auth.user.admin ? <motion.div className="px-2 py-1 text-gray-600 text-[14px] dark:text-neutral-300">
               <div>
                 <div onClick={() => handleMenu('rep_comercial')} className="flex justify-between items-center cursor-pointer">
                   <span>Rep. Comercial</span>
@@ -732,7 +734,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
                   )}
                 </AnimatePresence>
               </div>
-            </motion.div>
+            </motion.div> : null}
 
             <motion.div className="px-2 py-1 text-gray-600 text-[14px] dark:text-neutral-300">
               <div>

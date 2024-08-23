@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 function Users({ searchQuery, selectedFilters }) {
   const [users, setUsers] = useState([]);
   const [cessionarios, setCessionarios] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const axiosPrivate = useAxiosPrivate();
 
@@ -39,20 +40,30 @@ function Users({ searchQuery, selectedFilters }) {
     let isMounted = true;
     const controller = new AbortController();
 
-    const fetchData = async (url, setState) => {
+
+    const loadData = async () => {
       try {
-        setIsLoading(true);
-        const { data } = await axiosPrivate.get(url, { signal: controller.signal });
-        if (isMounted) setState(data);
+        setIsLoading(true)
+        const [usersData, cessionariosData, clientesData] = await Promise.all([
+          axiosPrivate.get('/users', { signal: controller.signal }),
+          axiosPrivate.get('/cessionarios', { signal: controller.signal }),
+          axiosPrivate.get('/cliente', { signal: controller.signal }),
+        ]);
+
+        if (isMounted) {
+          const usersWithGestores = mapUsersWithGestores(usersData.data, clientesData.data);
+          setUsers(usersWithGestores);
+          setCessionarios(cessionariosData.data);
+          setClientes(clientesData.data);
+          setIsLoading(false);
+        }
       } catch (err) {
         console.log(err);
-      } finally {
-        setIsLoading(false);
       }
+
     };
 
-    fetchData('/users', setUsers);
-    fetchData('/cessionarios', setCessionarios);
+    loadData();
 
     return () => {
       isMounted = false;
@@ -64,6 +75,33 @@ function Users({ searchQuery, selectedFilters }) {
     fixedWidth: true,
     defaultHeight: 50,
   }), []);
+
+
+  const mapUsersWithGestores = (users, clientes) => {
+    return users.map(user => {
+      // Inicializa a lista de gestores como um array vazio
+      user.gestores = [];
+
+      // Filtra os clientes que têm o user.id como usuário
+      const clientesDoUsuario = clientes.filter(cliente => String(cliente.id_usuario) === String(user.id));
+
+      if (clientesDoUsuario.length > 0) {
+        // Itera sobre os clientes e associa o(s) gestor(es) ao usuário
+        clientesDoUsuario.forEach(cliente => {
+          // Verifica se o gestor já não está na lista para evitar duplicatas
+          if (!user.gestores.includes(cliente.id_gestor)) {
+            // Encontra o nome do gestor no array de usuários
+            const gestor = users.find(u => String(u.id) === String(cliente.id_gestor));
+            if (gestor) {
+              user.gestores.push(gestor.nome);
+            }
+          }
+        });
+      }
+
+      return user;
+    });
+  };
 
   const filterUsers = useCallback(() => {
     return users.filter((user) => {
@@ -77,7 +115,12 @@ function Users({ searchQuery, selectedFilters }) {
         (selectedFilters.tipo.Administrador && user.admin) ||
         (!selectedFilters.tipo.Usuário && !selectedFilters.tipo.Administrador);
 
-      return statusMatch && tipoMatch;
+      const gestorMatch =
+        Object.keys(selectedFilters.gestores).some(gestorNome =>
+          selectedFilters.gestores[gestorNome] && user.gestores.includes(gestorNome)
+        ) || Object.values(selectedFilters.gestores).every(v => !v); // Se nenhum gestor estiver selecionado, não filtra por gestor
+
+      return statusMatch && tipoMatch && gestorMatch;
     });
   }, [users, selectedFilters]);
 
@@ -100,6 +143,8 @@ function Users({ searchQuery, selectedFilters }) {
       })
     );
   }, [resultadoFiltrado, searchQuery]);
+
+  console.log(users)
 
   const renderRow = useCallback(({ index, parent, key, style }) => {
     const user = filteredUsers[index];
@@ -158,6 +203,31 @@ function Users({ searchQuery, selectedFilters }) {
                     ? <span className='bg-[#181c32] dark:bg-white dark:text-[#181c32] text-white font-bold px-2 py-1 rounded flex gap-1'>Ativo</span>
                     : <span className='text-black font-bold dark:text-neutral-100 px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700'>Desativado</span>}
                 </a>
+                {clientes.map((cliente) => {
+                  if (String(cliente.id_usuario) === String(user.id)) {
+                    return (
+                      <a
+                        key={cliente.id}
+                        data-tooltip-id='gestorUsuario'
+                        data-tooltip-content='Gestor do usuário'
+                        data-tooltip-place='right'
+                      >
+                        <span className='text-black font-bold dark:text-neutral-100 px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700'>{users.map((user) => {
+                          if (String(user.id) === String(cliente.id_gestor)) {
+                            user.gestor = user.nome
+                            return user.nome
+                          } else {
+                            return null
+                          }
+                          /* String(user.id) === String(cliente.id_gestor) ? user.nome : null */
+                        })}
+                        </span>
+                      </a>
+                    );
+                  } else {
+                    return null;
+                  }
+                })}
               </div>
             </div>
           </div>
@@ -192,6 +262,20 @@ function Users({ searchQuery, selectedFilters }) {
         />
         <Tooltip
           id="statusUsuario"
+          style={{
+            position: 'absolute',
+            zIndex: 60,
+            backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF',
+            color: isDarkTheme ? '#FFF' : '#000',
+            fontSize: '12px',
+            fontWeight: '500',
+          }}
+          border={isDarkTheme ? '1px solid rgb(82 82 82)' : '1px solid #d4d4d4'}
+          opacity={100}
+          place="right"
+        />
+        <Tooltip
+          id="gestorUsuario"
           style={{
             position: 'absolute',
             zIndex: 60,

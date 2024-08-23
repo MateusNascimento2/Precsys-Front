@@ -17,7 +17,7 @@ import pdfFonts from 'pdfmake/build/vfs_fonts';
 export default function Lista({ searchQuery, selectedFilters, setData, isPerfilCessoes, onFilteredCessoes, user }) {
   const { minhascessoes } = useParams();
   const { auth } = useAuth();
-  const userID = user ? String(user.id) :String(auth.user.id);
+  const userID = user ? String(user.id) : String(auth.user.id);
 
   const [cessoes, setCessoes] = useState([]);
   const [cessionarios, setCessionarios] = useState([]);
@@ -235,13 +235,13 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
     cessao.id = String(cessao.id);
   });
 
-/*   cessoes.forEach(cessao => {
-    delete cessao.ano;
-  });
- */
+  /*   cessoes.forEach(cessao => {
+      delete cessao.ano;
+    });
+   */
   function aplicarFiltros(dados, filtros) {
-    
-    
+
+
     const filtroObj = filtros.reduce((acc, filtro) => {
       const chave = Object.keys(filtro)[0];
       acc[chave] = acc[chave] || [];
@@ -249,7 +249,7 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
       return acc;
     }, {});
 
-    
+
 
     const verificarFiltrosChave = (chave, valor) => {
       if (!filtroObj[chave]) return true;
@@ -277,9 +277,22 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
   }
 
 
-  const resultadoFiltrado = myCessions.length >= 1 ? myCessions.filter(objeto => aplicarFiltros(objeto, selectedFilters)) : cessoes.filter(objeto => aplicarFiltros(objeto, selectedFilters));
+  let resultadoFiltrado;
 
-  console.log('resultadoFiltrado: ' + resultadoFiltrado.length)
+  if (minhascessoes || user) {
+    // Se o usuário não for admin e myCessions estiver vazio, retornar null
+    if (myCessions.length === 0) {
+      resultadoFiltrado = [];
+    } else {
+      // Filtra as cessões do usuário
+      resultadoFiltrado = myCessions.filter(objeto => aplicarFiltros(objeto, selectedFilters));
+    }
+  } else {
+    // Se o usuário for admin, aplica a lógica anterior
+    resultadoFiltrado = myCessions.length >= 1
+      ? myCessions.filter(objeto => aplicarFiltros(objeto, selectedFilters))
+      : cessoes.filter(objeto => aplicarFiltros(objeto, selectedFilters));
+  }
 
   const filteredCessoes = resultadoFiltrado.filter(cessao =>
     Object.entries(cessao).some(([key, value]) =>
@@ -484,7 +497,7 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
               <section className="container dark:bg-neutral-900" style={{ width: "100%" }}>
                 <div className="dark:bg-neutral-900 relative h-full">
                   <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">
-                    Mostrando {filteredCessoes.length} de {myCessions.length >= 1 ? myCessions.length : cessoes.length} cessões
+                    Mostrando {filteredCessoes.length} de {minhascessoes || user ? myCessions.length  : myCessions.length >= 1 ? myCessions.length : cessoes.length} cessões
                   </p>
                   <AutoSizer style={{ width: '100%', height: '100%' }}>
                     {({ width }) => (

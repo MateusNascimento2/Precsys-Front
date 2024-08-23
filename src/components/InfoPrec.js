@@ -8,11 +8,13 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
+import useAuth from "../hooks/useAuth";
 
 
-export default function InfoPrec({ precInfo, status, cessionario, cessoes, users}) {
+export default function InfoPrec({ precInfo, status, cessionario, cessoes, users }) {
     const [key, setKey] = useState(0); // Add key state here
     const [loadingFiles, setLoadingFiles] = useState({});
+    const { auth } = useAuth();
 
 
     const navigate = useNavigate();
@@ -196,7 +198,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, users
                 </div>
             </div>
             {
-                cessoes.length !== 0 ? (
+                auth.user.admin ? cessoes.length !== 0 ? (
                     <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                         <span className="font-[700] dark:text-white mb-[16px]" id='relacionados'>Relacionados</span>
                         <div className="mb-4 dark:bg-neutral-900">
@@ -237,7 +239,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, users
                         </div>
                     </div>
                 ) : null
-            }
+            : null}
         </div>
     );
 }
