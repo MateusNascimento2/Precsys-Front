@@ -77,6 +77,7 @@ function ClientesList({ searchQuery, user }) {
   const filterUsersByGestor = (users, clientes, gestorId) => {
     // Filtra os clientes que têm o `gestorId` como gestor
     console.log(clientes)
+    console.log(gestorId)
     const clientesDoGestor = clientes.filter(cliente => String(cliente.id_gestor) === String(gestorId));
     console.log('clientesDoGestor: ' + clientesDoGestor)
 

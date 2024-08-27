@@ -181,7 +181,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, users
                 </div>
             </div>
             <ListaCessionarios key={key} cessionario={cessionario} precInfo={precInfo} users={users} precID={precID} />
-            <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
+            {auth.user.admin ? <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                 <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 dark:bg-neutral-900 xl:divide-x-[1px] dark:divide-neutral-600 mt-2 lg:mt-0'>
                     <div className='cursor-pointer lg:px-4 lg:py-2 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-r lg:border-b xl:border-r-0 xl:border-b-0 dark:border-neutral-600' id='juridico'>
                         <Topics texto={'Jurídico Feito'} atualizacaoJuridico={precInfo.juridico_feito} textoExplicativo={'A etapa "Jurídico Feito" representa a conclusão bem-sucedida de todos os procedimentos legais necessários na gestão e transferência de precatórios.'} />
@@ -196,7 +196,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, users
                         <Topics texto={'Obs Jurídico'} atualizacaoJuridico={precInfo.juridico_obs} textoExplicativo={'A etapa "Obs Jurídico" envolve a coleta e o registro de observações e recomendações da equipe jurídica, essenciais para orientar e gerenciar o processo de cessão de precatórios de forma eficaz.'} />
                     </div>
                 </div>
-            </div>
+            </div> : null}
             {
                 auth.user.admin ? cessoes.length !== 0 ? (
                     <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
@@ -239,7 +239,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, users
                         </div>
                     </div>
                 ) : null
-            : null}
+                    : null}
         </div>
     );
 }

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import useAuth from "../hooks/useAuth";
+
 
 export default function NavMenu() {
   const [show, setShow] = useState(true);
@@ -6,6 +8,7 @@ export default function NavMenu() {
   const [hideCessionarios, setHideCessionarios] = useState(true);
   const [hideJuridico, setHideJuridico] = useState(true);
   const [hideRelacionados, setHideRelacionados] = useState(true);
+  const { auth } = useAuth();
 
   const handleShow = () => {
     setShow((prevState) => !prevState);
@@ -96,7 +99,7 @@ export default function NavMenu() {
                   Cessionários
                 </a>
               </li>
-              <li className={hideJuridico ? "py-2 px-1" : 'hidden'}>
+              { auth.user.admin ? <li className={hideJuridico ? "py-2 px-1" : 'hidden'}>
                 <a
                   onClick={() => scroll('juridico', 60)}
                   className={
@@ -107,8 +110,8 @@ export default function NavMenu() {
                 >
                   Jurídico
                 </a>
-              </li>
-              <li className={hideRelacionados ? "py-2 px-1" : 'hidden'}>
+              </li> : null}
+              { auth.user.admin ? <li className={hideRelacionados ? "py-2 px-1" : 'hidden'}>
                 <a
                   onClick={() => scroll('relacionados', 60)}
                   className={
@@ -119,7 +122,7 @@ export default function NavMenu() {
                 >
                   Relacionados
                 </a>
-              </li>
+              </li> : null}
             </ul>
           </div>
         </div>
