@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
@@ -6,8 +6,8 @@ import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default function SegurancaPerfil({ user }) {
-  const { auth } = useAuth();
+export default function SegurancaPerfil({ user, id }) {
+  const { auth, setAuth } = useAuth(); // Adiciona setAuth para atualizar o contexto
   const currentUser = user || auth.user; // Usar o usuário passado ou auth.user
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
@@ -31,6 +31,18 @@ export default function SegurancaPerfil({ user }) {
           ...currentUser,
           email,
         });
+
+        // Atualiza o estado de auth com o novo email
+        if (!id) {
+          setAuth(prev => ({
+            ...prev,
+            user: {
+              ...prev.user,
+              email
+            }
+          }));
+        }
+
 
         setIsLoading(false);
 
@@ -85,6 +97,9 @@ export default function SegurancaPerfil({ user }) {
           ...currentUser,
           password,
         });
+
+        // Atualiza o estado de auth, se necessário, para refletir que a senha foi alterada
+        // (Geralmente, não é necessário atualizar o contexto de `auth` apenas para uma mudança de senha)
 
         setIsLoading(false);
 

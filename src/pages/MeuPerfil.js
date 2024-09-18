@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../components/Header';
 import ProfileImage from '../components/ProfileImage';
@@ -14,9 +14,10 @@ import Filter from '../layout/Filter';
 import FilterPerfil from '../layout/FilterPerfil';
 import ScrollToTopButton from '../components/ScrollToTopButton';
 import ConfiguracoesPerfil from '../components/ConfiguracoesPerfil';
-import { useParams, useSearchParams  } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import ClientesList from '../components/ClientesList';
+import FerramentasPerfil from '../components/FerramentasPerfil';
 
 export const ButtonEditProfile = ({ handleItemClick }) => {
   return (
@@ -33,7 +34,7 @@ const MeuPerfil = () => {
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const [user, setUser] = useState(auth.user);
-  const [activeItem, setActiveItem] = useState('resumo');
+  const [activeItem, setActiveItem] = useState('ferramentas');
   const [searchParams] = useSearchParams(); // Hook para acessar os parâmetros da URL
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,7 +51,7 @@ const MeuPerfil = () => {
   const handleFilteredCessoes = (filteredData) => {
     setFilteredCessoes(filteredData);
   };
-  
+
   useEffect(() => {
     const section = searchParams.get('section');
     if (section) {
@@ -84,7 +85,7 @@ const MeuPerfil = () => {
           console.error('Erro ao buscar dados do usuário:', error);
         }
       } else {
-        auth.user.photoUrl = auth.userImage
+        auth.user.photoUrl = auth.userImage;
         setUser(auth.user);
       }
     };
@@ -114,8 +115,7 @@ const MeuPerfil = () => {
     setSelectedCheckboxes(childData);
   };
 
-  console.log(user)
-
+  console.log(user);
 
   const exportPDF = (filteredData) => {
 
@@ -312,7 +312,7 @@ const MeuPerfil = () => {
             className='mt-4 px-5 dark:bg-neutral-900 lg:col-span-2 w-full'
           >
             <div className='w-full'>
-              <div className={`flex gap-3 items-center w-full mb-4 ${isFixed ? 'sticky top-[72px] z-50' : ''}`}>
+              <div className={`flex gap-3 items-center w-full mb-4 ${isFixed ? 'sticky top-[72px] z-10' : ''}`}>
                 <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'py-3'} />
                 <FilterButton onSetShow={handleShow} isPerfilCessao={true} />
               </div>
@@ -325,12 +325,10 @@ const MeuPerfil = () => {
                 <FilterPerfil show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} />
               </div>
               <div className='lg:hidden'>
-                <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} />
+                <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} />
               </div>
               <ScrollToTopButton />
-
             </div>
-
           </motion.div>
         );
       case 'clientes':
@@ -369,9 +367,22 @@ const MeuPerfil = () => {
             transition={{ duration: 0.2 }}
             className='col-span-2 justify-center px-2'
           >
-            <ConfiguracoesPerfil user={user} />
+            <ConfiguracoesPerfil user={user} id={id} />
           </motion.div>
         );
+      case 'ferramentas':
+        return (
+          <motion.div
+            key="ferramentas"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.2 }}
+            className='col-span-2 justify-center px-2'
+          >
+            <FerramentasPerfil user={user} id={id} />
+          </motion.div>
+        )
       default:
         return null;
     }
@@ -506,15 +517,15 @@ const MeuPerfil = () => {
                           Clientes
                         </a>
                       </li>
-                      {/* <li className={"px-4 py-1 lg:py-2"}>
+                      {!id || auth.user.admin ? <li className={"px-4 py-1 lg:py-2"}>
                         <a
-                          onClick={() => handleItemClick('documentos')}
-                          className={`text-[14px] text-neutral-600 dark:text-neutral-400 cursor-pointer hover:underline ${activeItem === 'documentos' ? ' font-bold ' : ''}`}
+                          onClick={() => handleItemClick('ferramentas')}
+                          className={`text-[14px] text-neutral-600 dark:text-neutral-400 cursor-pointer hover:underline ${activeItem === 'ferramentas' ? ' font-bold ' : ''}`}
                         >
-                          Documentos
+                          Ferramentas
                         </a>
-                      </li> */}
-                      {!id || auth.user.admin  ? <li className={"px-4 py-1 lg:py-2"}>
+                      </li> : null}
+                      {!id || auth.user.admin ? <li className={"px-4 py-1 lg:py-2"}>
                         <a
                           onClick={() => handleItemClick('configuracoes')}
                           className={`text-[14px] text-neutral-600 dark:text-neutral-400 cursor-pointer hover:underline ${activeItem === 'configuracoes' ? ' font-bold ' : ''}`}
@@ -522,6 +533,7 @@ const MeuPerfil = () => {
                           Configurações
                         </a>
                       </li> : null}
+
                     </ul>
                   </div>
                 </div>

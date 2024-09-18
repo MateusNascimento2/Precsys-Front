@@ -745,7 +745,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
         <span className="font-[400] text-[12px] dark:text-white" id="cessionarios">
           Não há cessionários
         </span>
-        <Modal
+        {auth.user.admin ? <Modal
           botaoAbrirModal={
             <button title="Adicionar cessionário" className="hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:hover:bg-neutral-800 rounded w-[20px] h-[20px] p-[1px]">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[18px] h-[18px] dark:text-white">
@@ -797,7 +797,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
               ))}
             </div>
           </div>
-        </Modal>
+        </Modal> : null}
       </div>
     </>
   );

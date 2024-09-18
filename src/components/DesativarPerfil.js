@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
@@ -6,8 +6,8 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 
-export default function DesativarPerfil({ user }) {
-  const { auth } = useAuth();
+export default function DesativarPerfil({ user, id }) {
+  const { auth, setAuth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
 
   const currentUser = user || auth.user; // Usar o usuário passado como prop ou o usuário autenticado
@@ -41,6 +41,18 @@ export default function DesativarPerfil({ user }) {
           permissao_expcartorio: currentUser.permissao_expcartorio
         });
 
+        // Atualiza o estado de auth para refletir a desativação
+        if (!id) {
+          setAuth(prev => ({
+            ...prev,
+            user: {
+              ...prev.user,
+              ativo: 0
+            }
+          }));
+        }
+
+
         setIsLoading(false);
 
         toast.success('Perfil desativado com sucesso!', {
@@ -54,6 +66,10 @@ export default function DesativarPerfil({ user }) {
           theme: isDarkMode === 'true' ? 'dark' : 'light',
           transition: Bounce,
         });
+
+        // Opcional: Redirecionar o usuário para uma página de logout ou uma página informativa
+        // Exemplo: window.location.href = '/logout';
+
       } catch (err) {
         console.log(err);
         toast.error(`Erro ao desativar perfil: ${err}`, {
@@ -70,7 +86,7 @@ export default function DesativarPerfil({ user }) {
         setIsLoading(false);
       }
     } else {
-      toast.error(`Erro ao desativar perfil!`, {
+      toast.error('Erro ao desativar perfil!', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

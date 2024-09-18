@@ -198,7 +198,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, users
                 </div>
             </div> : null}
             {
-                auth.user.admin ? cessoes.length !== 0 ? (
+                cessoes.length !== 0 ? (
                     <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                         <span className="font-[700] dark:text-white mb-[16px]" id='relacionados'>Relacionados</span>
                         <div className="mb-4 dark:bg-neutral-900">
@@ -209,7 +209,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, users
                                             <span className="font-[700] dark:text-white">{cessao.id}</span>
                                         </div>
                                         <div className="flex flex-col justify-center text-[12px] pl-2">
-                                            <Link to={`/precatorio/${String(cessao.id)}`}><span className="font-bold dark:text-white hover:underline">{cessao.precatorio}</span></Link>
+                                            <Link to={`/cessao/${String(cessao.id)}`}><span className="font-bold dark:text-white hover:underline">{cessao.precatorio}</span></Link>
                                             <span className="text-neutral-400 font-medium line-clamp-1">{cessao.cedente}</span>
                                         </div>
                                     </div>
@@ -239,7 +239,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, users
                         </div>
                     </div>
                 ) : null
-                    : null}
+            }
         </div>
     );
 }

@@ -6,8 +6,8 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { motion, AnimatePresence } from 'framer-motion'; // Importando framer-motion
 
-export default function AdministradorPerfil({ user }) {
-  const { auth } = useAuth();
+export default function AdministradorPerfil({ user, id }) {
+  const { auth, setAuth } = useAuth(); // Adiciona setAuth para atualizar o contexto
   const currentUser = user || auth.user; // Usar o usuário passado ou auth.user
   const [isLoading, setIsLoading] = useState(false);
   const axiosPrivate = useAxiosPrivate();
@@ -40,6 +40,18 @@ export default function AdministradorPerfil({ user }) {
           permissao_proposta: currentUser.permissao_proposta,
           permissao_expcartorio: currentUser.permissao_expcartorio
         });
+
+        // Atualiza o estado de auth com o novo cargo
+        if (!id) {
+          setAuth(prev => ({
+            ...prev,
+            user: {
+              ...prev.user,
+              admin
+            }
+          }));
+        }
+
 
         setIsLoading(false);
 

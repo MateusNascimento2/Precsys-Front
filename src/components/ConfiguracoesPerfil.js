@@ -10,10 +10,11 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AdministradorPerfil from './AdministradorPerfil';
 import GestorPerfil from './GestorPerfil';
+import { motion } from 'framer-motion';
 
-export default function ConfiguracoesPerfil({ user }) {
-  const { auth } = useAuth();
-  console.log(auth)
+export default function ConfiguracoesPerfil({ user, id }) {
+  const { auth, setAuth } = useAuth();
+  console.log(auth);
 
   const axiosPrivate = useAxiosPrivate();
   const [isLoading, setIsLoading] = useState(false);
@@ -26,13 +27,16 @@ export default function ConfiguracoesPerfil({ user }) {
   const [qualificacao, setQualificacao] = useState(user ? user.qualificacao : auth.user.qualificacao);
   const [foto, setFoto] = useState(user ? user.foto : auth.user.foto);
   const [avatar, setAvatar] = useState(null); // Armazena o arquivo de imagem
-  const [fotoParaMostrar, setFotoParaMostrar] = useState(user.photoUrl ? user.photoUrl : auth.userImage)
+  const [fotoParaMostrar, setFotoParaMostrar] = useState(user.photoUrl ? user.photoUrl : auth.userImage);
 
-  console.log('foto:' + fotoParaMostrar)
+  // Toggle Switch State
+  const [isSwitchOn, setIsSwitchOn] = useState(user ? user.ver_dashboard === 1 : auth.user.ver_dashboard === 1);
+
+  console.log('foto:' + fotoParaMostrar);
 
   useEffect(() => {
     if (user) {
-      console.log(user.photoUrl)
+      console.log(user.photoUrl);
       setNome(user.nome);
       setCpfCnpj(user.cpfcnpj);
       setTelefone(user.telefone);
@@ -40,7 +44,8 @@ export default function ConfiguracoesPerfil({ user }) {
       setObs(user.obs);
       setQualificacao(user.qualificacao);
       setFoto(user.foto);
-      setFotoParaMostrar(user.photoUrl ? user.photoUrl : null)
+      setFotoParaMostrar(user.photoUrl ? user.photoUrl : null);
+      setIsSwitchOn(user.ver_dashboard === 1); // Inicializa o switch com base em ver_dashboard
     }
   }, [user]);
 
@@ -66,7 +71,8 @@ export default function ConfiguracoesPerfil({ user }) {
         ativo: user ? user.ativo : auth.user.ativo,
         permissao_email: user ? user.permissao_email : auth.user.permissao_email,
         permissao_proposta: user ? user.permissao_proposta : auth.user.permissao_proposta,
-        permissao_expcartorio: user ? user.permissao_expcartorio : auth.user.permissao_expcartorio
+        permissao_expcartorio: user ? user.permissao_expcartorio : auth.user.permissao_expcartorio,
+        ver_dashboard: isSwitchOn ? 1 : 0, // Atualiza o valor de ver_dashboard
       });
 
       const uploadFiles = async (files) => {
@@ -92,6 +98,26 @@ export default function ConfiguracoesPerfil({ user }) {
         const filesToUpload = [{ name: 'avatar', file: avatar }];
         await uploadFiles(filesToUpload);
       }
+
+      // Atualiza o estado do auth com as novas informações
+      if (!id) {
+        setAuth(prev => ({
+          ...prev,
+          user: {
+            ...prev.user,
+            nome,
+            cpfcnpj,
+            telefone,
+            endereco,
+            obs,
+            qualificacao,
+            foto,
+            ver_dashboard: isSwitchOn ? 1 : 0, // Atualiza o valor de ver_dashboard no auth
+          },
+          userImage: fotoParaMostrar, // Atualiza a imagem do usuário
+        }));
+      }
+
 
       setIsLoading(false);
 
@@ -152,15 +178,15 @@ export default function ConfiguracoesPerfil({ user }) {
     const file = e.target.files[0];
     if (file) {
       setAvatar(file); // Armazena o arquivo real para envio
-      setFoto(`avatar/${file.name}`)
+      setFoto(`avatar/${file.name}`);
       const imageUrl = URL.createObjectURL(file);
-      setFotoParaMostrar(imageUrl)
+      setFotoParaMostrar(imageUrl);
     }
   };
 
   const handleRemoveImage = (e) => {
     e.preventDefault();
-    setFotoParaMostrar(null)
+    setFotoParaMostrar(null);
     setAvatar(null); // Remove o avatar selecionado
     setFoto(''); // Define a foto como uma string vazia
   };
@@ -174,7 +200,8 @@ export default function ConfiguracoesPerfil({ user }) {
       setObs(user.obs);
       setQualificacao(user.qualificacao);
       setFoto(user.foto);
-      setFotoParaMostrar(user.photoUrl)
+      setFotoParaMostrar(user.photoUrl);
+      setIsSwitchOn(user.ver_dashboard === 1); // Reinicia o switch baseado em ver_dashboard
     } else {
       setNome(auth.user.nome);
       setCpfCnpj(auth.user.cpfcnpj);
@@ -183,7 +210,8 @@ export default function ConfiguracoesPerfil({ user }) {
       setObs(auth.user.obs);
       setQualificacao(auth.user.qualificacao);
       setFoto(auth.user.foto);
-      setFotoParaMostrar(auth.userImage)
+      setFotoParaMostrar(auth.userImage);
+      setIsSwitchOn(auth.user.ver_dashboard === 1); // Reinicia o switch baseado em ver_dashboard
     }
     setAvatar(null);
   };
@@ -275,6 +303,25 @@ export default function ConfiguracoesPerfil({ user }) {
                     <p className='dark:text-neutral-200 text-neutral-600 font-medium text-[15px] mb-2 lg:mb-0'>Qualificação</p>
                     <input className='text-neutral-400 border dark:border-neutral-600 text font-medium w-full p-2 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]' value={qualificacao ? qualificacao : ''} onChange={(e) => setQualificacao(e.target.value)} />
                   </div>
+
+                  {/* Toggle Switch */}
+                  {auth.user.admin ? <div>
+                    <p className='dark:text-neutral-200 text-neutral-600 font-medium text-[15px] mb-2 lg:mb-0'>Ativar Gráfico do Dashboard</p>
+                    <motion.div
+                      className={`${isSwitchOn ? "bg-green-600" : "bg-red-600"
+                        } w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-700`}
+                      onClick={() => setIsSwitchOn(!isSwitchOn)}
+
+                    >
+                      <motion.div
+                        className={`${isSwitchOn ? "bg-neutral-100" : "bg-black"
+                          } w-4 h-4 rounded-full shadow-md transform ${isSwitchOn ? "translate-x-6" : "translate-x-0"}`}
+                        layout
+                        transition={{ type: "spring", stiffness: 500, damping: 50 }}
+                      />
+                    </motion.div>
+                  </div> : null}
+
                 </div>
                 <button onClick={(e) => {
                   e.preventDefault();
@@ -287,10 +334,10 @@ export default function ConfiguracoesPerfil({ user }) {
         </>
       )}
       <>
-        <SegurancaPerfil user={user} />
-        {auth.user.admin ? <AdministradorPerfil user={user} /> : null}
+        <SegurancaPerfil user={user} id={id} />
+        {auth.user.admin ? <AdministradorPerfil user={user} id={id} /> : null}
         {auth.user.admin ? <GestorPerfil user={user} /> : null}
-        <DesativarPerfil user={user} />
+        <DesativarPerfil user={user} id={id} />
       </>
     </>
   );

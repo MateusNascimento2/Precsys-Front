@@ -173,7 +173,7 @@ function NavBarAdmin({ show }) {
             </AnimatePresence>
           </li> : null}
 
-          {auth.user.admin ? <li onClick={() => handleShow('ferramentas')} className='cursor-pointer w-full p-2 lg:px-2  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded'>
+          {auth.user.ver_calculo ? <li onClick={() => handleShow('ferramentas')} className='cursor-pointer w-full p-2 lg:px-2  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded'>
             <div className='flex justify-between items-center lg:gap-3'>
               <span className='font-[500] text-[#666666] dark:text-neutral-300 '>Ferramentas</span>
               <span className='text-[12px] dark:text-neutral-300'>

@@ -93,16 +93,13 @@ export default function Precatorio() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [key, setKey] = useState(0); // Add key state here
   const [loadingFiles, setLoadingFiles] = useState({});
+  const [clientes, setClientes] = useState([]);
 
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
 
   const cessionariosDaCessao = cessionarios.filter(cessionario => parseInt(precData.id) === parseInt(cessionario.cessao_id));
-  console.log('a:', JSON.stringify(cessionariosDaCessao, null, 2));
 
-
-  console.log(precData.escritura)
-  console.log(precData.requisitorio)
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -164,7 +161,8 @@ export default function Precatorio() {
           fetchData('/escreventes', setEscreventes),
           fetchData('/users', setUsers),
           fetchData('/cessionarios', setCessionarios),
-          fetchData('/juridicos', setJuridico)
+          fetchData('/juridicos', setJuridico),
+          fetchData('/cliente', setClientes)
         ]);
       } finally {
         setIsLoading(false);
@@ -180,6 +178,8 @@ export default function Precatorio() {
     };
 
   }, [precID]);
+
+  console.log(clientes)
 
   useEffect(() => {
     if (!isDataLoaded) return; // Garantir que todos os dados foram carregados antes de atualizar
@@ -524,6 +524,44 @@ export default function Precatorio() {
     window.location.reload();
   };
 
+  const isGestor = clientes.some(cliente => String(cliente.id_gestor) === String(auth.user.id))
+  console.log(isGestor)
+
+  const cessionariosFiltrados = cessionarios.filter(cessionario => {
+    const cessaoIdMatch = parseInt(precData.id) === parseInt(cessionario.cessao_id);
+
+    if (isAdmin) {
+      return cessaoIdMatch; // Admin pode ver todos os cessionários
+    }
+
+    // Verificar se o cessionário está relacionado ao próprio usuário
+    if (cessionario.user_id === String(auth.user.id) && cessaoIdMatch) {
+      return true; // Usuário comum pode ver seus próprios cessionários
+    }
+
+    // Verificar se o cessionário está relacionado a algum cliente do gestor
+    if (isGestor && cessaoIdMatch) {
+      return clientes.some(cliente => cliente.id_usuario === cessionario.user_id && cliente.id_gestor === String(auth.user.id));
+    }
+
+    return false; // Caso contrário, o cessionário não será mostrado
+  });
+
+  // Passo 1: Extrair os cessao_id dos cessionariosFiltrados
+  const cessaoIds = cessionariosFiltrados.map(cessionario => cessionario.cessao_id);
+
+  // Passo 2: Filtrar as cessões relacionadas, mas excluir onde precData.id for igual a cessao.id
+  const cessoesRelacionadas = todasCessoes.filter(cessao =>
+    cessaoIds.includes(String(cessao.id)) &&
+    precData.id !== cessao.id
+  );
+
+  // Passo 3: Combinar as cessões filtradas existentes com as cessões relacionadas
+  const cessoesFiltradas = todasCessoes.filter(cessao =>
+    precData.id !== cessao.id &&
+    (precData.processo === cessao.processo || precData.cedente === cessao.cedente || precData.precatorio === cessao.precatorio)
+  ).concat(cessoesRelacionadas);
+
   return (
     <>
       <Header />
@@ -615,8 +653,8 @@ export default function Precatorio() {
                   <InfoPrec
                     precInfo={precData}
                     status={status}
-                    cessionario={cessionarios.filter(cessionario => parseInt(precData.id) === parseInt(cessionario.cessao_id))}
-                    cessoes={todasCessoes.filter(cessao => precData.id !== cessao.id && (precData.processo === cessao.processo || precData.cedente === cessao.cedente || precData.precatorio === cessao.precatorio))}
+                    cessionario={cessionariosFiltrados}
+                    cessoes={cessoesFiltradas}
                     varas={varas}
                     orcamentos={orcamentos}
                     naturezas={natureza}
