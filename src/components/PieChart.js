@@ -5,6 +5,7 @@ import useAuth from "../hooks/useAuth";
 import { Link } from "react-router-dom";
 import { Tooltip } from 'react-tooltip';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
+import CountUp from 'react-countup';  // Importando React CountUp
 
 function PieChart() {
   const [endAngle, setEndAngle] = useState(360);
@@ -200,7 +201,19 @@ function PieChart() {
               {minhasCessoesData.map((s, index) => (
                 <li key={index} className="flex flex-col gap-[2px] py-3 px-2 dark:border-neutral-600 border-b md:border-b md:border-r [&:nth-child(4)]:border-b [&:nth-child(5)]:border-b [&:nth-child(6)]:border-b [&:nth-child(7)]:border-b [&:nth-child(8)]:border-b-0 [&:nth-child(8)]:border-r-0 md:[&:nth-child(4)]:border-r-0 md:[&:nth-child(5)]:border-b-0 md:[&:nth-child(6)]:border-b-0 md:[&:nth-child(7)]:border-b-0 md:[&:nth-child(8)]:border-b-0 md:[&:nth-child(8)]:border-r-0">
                   <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">{s.x}:</span>
-                  <span><span data-tooltip-id="my-tooltip" data-tooltip-content={'Valor da expectativa'} data-tooltip-place="right" className="text-sm font-bold text-neutral-900 dark:text-white">{`R$ ${localeTwoDecimals(s.expRecebimentoTotal)}` || 'N/A'}</span></span>
+                  {/* Usando React CountUp */}
+                  <span>
+                    <span data-tooltip-id="my-tooltip" data-tooltip-content={'Valor da expectativa'} data-tooltip-place="right" className="text-sm flex items-center gap-1 font-bold text-neutral-900 dark:text-white">
+                      R$ 
+                      <CountUp
+                        end={s.expRecebimentoTotal}
+                        decimals={2}
+                        separator="."
+                        decimal=","
+                        preserveValue
+                      />
+                    </span>
+                  </span>
                 </li>
               ))}
             </ul>

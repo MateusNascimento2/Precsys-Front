@@ -194,8 +194,9 @@ export default function AllCessoes() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const isDarkMode = localStorage.getItem('darkMode');
 
-
+    // Verifica se há cessionários e se todos têm os valores corretos
     if (cessionarios.length > 0) {
       for (const cessionario of cessionarios) {
         if (!cessionario.valores.cessionario) {
@@ -215,24 +216,7 @@ export default function AllCessoes() {
       }
     }
 
-    const cessao = {
-      precatorio,
-      processo,
-      cedente,
-      vara,
-      ente,
-      ano,
-      natureza,
-      empresa,
-      dataCessao,
-      repComercial,
-      escrevente,
-      juridico,
-      status: "1",
-      escritura: escritura ? `cessoes_escrituras/${escritura.name}` : null,
-      requisitorio: requisitorio ? `cessoes_requisitorios/${requisitorio.name}` : null,
-    };
-
+    // Verifica se todos os campos obrigatórios da cessão foram preenchidos
     if (precatorio.length < 12 || processo.length < 12 || !cedente || !vara || !ente || !ano || !natureza || !empresa || !dataCessao || !repComercial || !escrevente || !juridico) {
       toast.error('Todos os campos da cessão precisam ser preenchidos!', {
         position: "top-right",
@@ -248,52 +232,76 @@ export default function AllCessoes() {
       return;
     }
 
+    // Cria o objeto inicial da cessão, sem os arquivos
+    const cessao = {
+      precatorio,
+      processo,
+      cedente,
+      vara,
+      ente,
+      ano,
+      natureza,
+      empresa,
+      dataCessao,
+      repComercial,
+      escrevente,
+      juridico,
+      status: "1",
+      escritura: null, // Arquivo será adicionado depois
+      requisitorio: null // Arquivo será adicionado depois
+    };
+
     let cessaoId;
 
     try {
       setIsLoading(true);
+
+      // Primeiro POST para criar a cessão e obter o cessaoId
       const response = await axiosPrivate.post('/cessoes', cessao);
       cessaoId = response.data.insertId;
 
-      const uploadFiles = async (files) => {
-        const formData = new FormData();
-        files.forEach((file) => {
-          formData.append(file.name, file.file);
-        });
+      // Agora que temos o cessaoId, podemos atualizar o objeto cessao com os arquivos
+      /*       if (requisitorio) {
+              cessao.requisitorio = `cessoes_requisitorios/${cessaoId}-requisitorio-${requisitorio.name}`;
+            }
+            if (escritura) {
+              cessao.escritura = `cessoes_escrituras/${cessaoId}-escritura-${escritura.name}`;
+            } */
 
-        try {
-          await axiosPrivate.post('/upload', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
-        } catch (err) {
-          toast.error(`Erro ao enviar arquivos: ${err}`, {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: false,
-            theme: isDarkMode === 'true' ? 'dark' : 'light',
-            transition: Bounce,
-          });
-          setIsLoading(false);
-          return;
-        }
+      // Agora que temos o cessaoId, podemos atualizar o objeto cessao com os arquivos
+      // Agora que temos o cessaoId, podemos criar o objeto com os nomes que o backend espera
+      const cessaoEditada = {
+        precatorioEditado: precatorio,
+        processoEditado: processo,
+        cedenteEditado: cedente,
+        varaEditado: vara,
+        enteEditado: ente,
+        anoEditado: ano,
+        naturezaEditado: natureza,
+        empresaEditado: empresa,
+        dataCessaoEditado: dataCessao,
+        repComercialEditado: repComercial,
+        escreventeEditado: escrevente,
+        juridicoEditado: juridico,
+        requisitorioEditado: requisitorio ? `cessoes_requisitorios/${cessaoId}-requisitorio-${requisitorio.name}` : null,
+        escrituraEditado: escritura ? `cessoes_escrituras/${cessaoId}-escritura-${escritura.name}` : null
       };
 
-      // Enviar arquivos de cessão se existirem
+      // Atualiza o registro da cessão com os arquivos usando o novo objeto
+      await axiosPrivate.put(`/cessoes/${cessaoId}`, cessaoEditada);
+
+      // Agora, se houver arquivos, fazemos o upload
       if (requisitorio || escritura) {
         const filesToUpload = [];
         if (requisitorio) {
-          filesToUpload.push({ name: 'requisitorio', file: requisitorio });
+          filesToUpload.push({ name: 'requisitorio', file: requisitorio, path: cessaoEditada.requisitorio, isRequisitorio: true });
         }
         if (escritura) {
-          filesToUpload.push({ name: 'escritura', file: escritura });
+          filesToUpload.push({ name: 'escritura', file: escritura, path: cessaoEditada.escritura, isEscritura: true });
         }
-        await uploadFiles(filesToUpload);
+
+        // Função de upload dos arquivos
+        await uploadFiles(filesToUpload, cessaoId);
       }
 
     } catch (err) {
@@ -312,11 +320,13 @@ export default function AllCessoes() {
       return;
     }
 
+    // Adiciona os cessionários, se houver
     if (cessionarios.length > 0) {
       try {
         for (const cessionario of cessionarios) {
-          console.log(cessionario)
           cessionario.valores.id_cessao = cessaoId;
+
+          // Adiciona os caminhos dos arquivos no cessionário
           if (cessionario.valores.nota) {
             cessionario.valores.notaPath = `cessionarios_nota/${cessionario.valores.nota.name}`;
           }
@@ -326,70 +336,37 @@ export default function AllCessoes() {
           if (cessionario.valores.comprovantePagamento) {
             cessionario.valores.comprovantePagamentoPath = `cessionarios_comprovante/${cessionario.valores.comprovantePagamento.name}`;
           }
-          try {
-            await axiosPrivate.post('/cessionarios', cessionario.valores);
 
-            const uploadFiles = async (files) => {
-              const formData = new FormData();
-              files.forEach((file) => {
-                formData.append(file.name, file.file);
-              });
+          // POST para adicionar o cessionário
+          await axiosPrivate.post('/cessionarios', cessionario.valores);
 
-              try {
-                await axiosPrivate.post('/uploadFileCessionario', formData, {
-                  headers: {
-                    'Content-Type': 'multipart/form-data',
-                  },
-                });
-              } catch (err) {
-                toast.error(`Erro ao enviar arquivos: ${err}`, {
-                  position: "top-right",
-                  autoClose: 3000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: false,
-                  theme: isDarkMode === 'true' ? 'dark' : 'light',
-                  transition: Bounce,
-                });
-                setIsLoading(false);
-                return;
-              }
-            };
-
-            // Enviar arquivos de cessionário se existirem
-            const filesToUpload = [];
-            if (cessionario.valores.nota) {
-              filesToUpload.push({ name: 'nota', file: cessionario.valores.nota });
-            }
-            if (cessionario.valores.oficioTransferencia) {
-              filesToUpload.push({ name: 'oficio_transferencia', file: cessionario.valores.oficioTransferencia });
-            }
-            if (cessionario.valores.comprovantePagamento) {
-              filesToUpload.push({ name: 'comprovante_pagamento', file: cessionario.valores.comprovantePagamento });
-            }
-            if (filesToUpload.length > 0) {
-              await uploadFiles(filesToUpload);
-            }
-
-          } catch (err) {
-            toast.error(`Erro ao adicionar cessionario: ${err}`, {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: false,
-              theme: isDarkMode === 'true' ? 'dark' : 'light',
-              transition: Bounce,
-            });
-            setIsLoading(false);
-            return;
+          // Upload de arquivos do cessionário, se houver
+          const filesToUpload = [];
+          if (cessionario.valores.nota) {
+            filesToUpload.push({ name: 'nota', file: cessionario.valores.nota });
+          }
+          if (cessionario.valores.oficioTransferencia) {
+            filesToUpload.push({ name: 'oficio_transferencia', file: cessionario.valores.oficioTransferencia });
+          }
+          if (cessionario.valores.comprovantePagamento) {
+            filesToUpload.push({ name: 'comprovante_pagamento', file: cessionario.valores.comprovantePagamento });
+          }
+          if (filesToUpload.length > 0) {
+            await uploadFiles(filesToUpload);
           }
         }
       } catch (err) {
+        toast.error(`Erro ao adicionar cessionário: ${err}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
+        });
         setIsLoading(false);
         return;
       }
@@ -408,9 +385,42 @@ export default function AllCessoes() {
     });
 
     setIsLoading(false);
-
     adicionarCessaoRef.current.resetForm();
     navigate('/todas-cessoes');
+  };
+
+  // Função para upload de arquivos
+  const uploadFiles = async (files, cessaoId) => {
+    const formData = new FormData();
+
+    files.forEach((file) => {
+      const fileNameWithPrecID = `${cessaoId}-${file.name}-${file.file.name}`
+      formData.append(file.name, new File([file.file], fileNameWithPrecID));  // Adiciona o arquivo
+      formData.append('path', file.path);     // Adiciona o caminho do arquivo com o cessaoId
+
+    });
+
+    try {
+      await axiosPrivate.post('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    } catch (err) {
+      toast.error(`Erro ao enviar arquivos: ${err}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+      setIsLoading(false);
+      return;
+    }
   };
 
   const exportPDF = (filteredData) => {

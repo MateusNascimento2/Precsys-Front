@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import TabelaGeneradaCalculo from './TabelaGeneradaCalculo';
 import Modal from './Modal';
 import useAuth from "../hooks/useAuth";
+import GerarProposta from './GerarProposta';
 
 function NavBarAdmin({ show }) {
   const [showMenu, setShowMenu] = useState(false);
@@ -114,7 +115,7 @@ function NavBarAdmin({ show }) {
                         <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Usuários</span>
                         <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todos os Usuários</p>
                       </li>
-                      <li className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                      <li onClick={() => handleRoute('/empresas')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
                         <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Empresas</span>
                         <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todas as Empresas</p>
                       </li>
@@ -203,6 +204,17 @@ function NavBarAdmin({ show }) {
                         </button>}>
                         <div className='h-[420px] overflow-auto relative'>
                           <TabelaGeneradaCalculo />
+                        </div>
+                      </Modal>
+                    </li>
+                    <li onClick={handleClick}>
+                      <Modal botaoAbrirModal={
+                        <button title='Fazer cálculo' className='w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                          Proposta
+                          <p className='font-[500] text-[#666666] dark:text-neutral-500'>Fazer Propostas </p>
+                        </button>}>
+                        <div className='h-[550px] overflow-auto relative'>
+                          <GerarProposta />
                         </div>
                       </Modal>
                     </li>

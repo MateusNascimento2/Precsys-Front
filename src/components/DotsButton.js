@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function DotsButton({ children }) {
+export default function DotsButton({ children, isModal }) {
   const [show, setShow] = useState(false);
   const ref = useRef(null);
 
@@ -10,7 +10,7 @@ export default function DotsButton({ children }) {
   };
 
   const handleClickOutside = (event) => {
-    if (ref.current && !ref.current.contains(event.target)) {
+    if (ref.current && !ref.current.contains(event.target) && !isModal) {
       setShow(false);
     }
   };

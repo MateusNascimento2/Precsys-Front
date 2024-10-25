@@ -436,6 +436,7 @@ export default function Precatorio() {
     e.preventDefault();
     const isDarkMode = localStorage.getItem('darkMode');
 
+    // Verificação de campos obrigatórios
     if (precatorioEditado.length < 12 || processoEditado.length < 12 || !cedenteEditado || !varaEditado || !enteEditado || !anoEditado || !naturezaEditado || !empresaEditado || !dataCessaoEditado || !repComercialEditado || !escreventeEditado || !juridicoEditado) {
       toast.error('Todos os campos da cessão precisam ser preenchidos!', {
         position: "top-right",
@@ -448,29 +449,43 @@ export default function Precatorio() {
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
       });
-
       return;
     }
 
+    // Criação do objeto da cessão editada
     const cessaoEditada = {
-      precatorioEditado, processoEditado, cedenteEditado, varaEditado, enteEditado, anoEditado, naturezaEditado, empresaEditado, dataCessaoEditado, repComercialEditado, escreventeEditado, juridicoEditado,
-      requisitorioEditado: requisitorioEditadoFile ? `cessoes_requisitorios/${requisitorioEditadoFile.name}` : requisitorioEditado ? `${requisitorioEditado}` : null,
-      escrituraEditado: escrituraEditadoFile ? `cessoes_escrituras/${escrituraEditadoFile.name}` : escrituraEditado ? `${escrituraEditado}` : null,
+      precatorioEditado,
+      processoEditado,
+      cedenteEditado,
+      varaEditado,
+      enteEditado,
+      anoEditado,
+      naturezaEditado,
+      empresaEditado,
+      dataCessaoEditado,
+      repComercialEditado,
+      escreventeEditado,
+      juridicoEditado,
+      requisitorioEditado: requisitorioEditadoFile ? `cessoes_requisitorios/${precID}-requisitorio-${requisitorioEditadoFile.name}` : requisitorioEditado ? `${requisitorioEditado}` : null,
+      escrituraEditado: escrituraEditadoFile ? `cessoes_escrituras/${precID}-escritura-${escrituraEditadoFile.name}` : escrituraEditado ? `${escrituraEditado}` : null,
     };
-
-    ;
 
     try {
       setSendingData(true);
       console.log(`cessaoEditada: ${JSON.stringify(cessaoEditada)}`);
       console.log(requisitorioEditadoFile);
+
+      // Envio dos dados da cessão editada
       await axiosPrivate.put(`/cessoes/${precID}`, cessaoEditada);
 
+      // Função para upload de arquivos
       const uploadFiles = async (files) => {
         const formData = new FormData();
         files.forEach((file) => {
-          console.log('file:' + file);
-          formData.append(file.name, file.file);
+          // Adicionando precID ao nome do arquivo
+          const fileNameWithPrecID = `${precID}-${file.name}-${file.file.name}`;
+          console.log('file:' + fileNameWithPrecID);
+          formData.append(file.name, new File([file.file], fileNameWithPrecID)); // Substitui o nome do arquivo
         });
 
         try {
@@ -495,12 +510,20 @@ export default function Precatorio() {
         }
       };
 
-      if (requisitorioEditadoFile || escrituraEditadoFile) {
+      // Verifica se há arquivos para upload
+      if (requisitorioEditadoFile) {
         await uploadFiles([
-          { name: 'requisitorio', file: requisitorioEditadoFile },
-          { name: 'escritura', file: escrituraEditadoFile },
+          { name: 'requisitorio', file: requisitorioEditadoFile, isRequisitorio: true },
         ]);
       }
+
+      if (escrituraEditadoFile) {
+        await uploadFiles([
+          { name: 'escritura', file: escrituraEditadoFile, isEscritura:true },
+        ]);
+      }
+
+
     } catch (err) {
       toast.error(`Erro ao editar cessão: ${err}`, {
         position: "top-right",
@@ -523,6 +546,7 @@ export default function Precatorio() {
     localStorage.setItem('cessaoEditada', 'true');
     window.location.reload();
   };
+
 
   const isGestor = clientes.some(cliente => String(cliente.id_gestor) === String(auth.user.id))
   console.log(isGestor)
@@ -588,7 +612,7 @@ export default function Precatorio() {
                         <span className="font-bold dark:text-white text-[24px]">{precData.precatorio}</span>
                         {auth.user.admin ?
                           <>
-                            <DotsButton>
+                            <DotsButton isModal={true}>
                               <Modal
                                 botaoAbrirModal={
                                   <button title='Editar precatório' className='hover:bg-neutral-100  dark:hover:bg-neutral-800 dark:text-white text-sm px-4 py-2 rounded'>
@@ -602,7 +626,7 @@ export default function Precatorio() {
                                   </button>
                                 }
                               >
-                                <div className='h-[450px] overflow-auto'>
+                                <div className='h-[450px] overflow-auto relative'>
                                   {sendingData && (<div className='absolute bg-neutral-800 w-full h-full opacity-85  left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
                                     <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>
                                       <LoadingSpinner />

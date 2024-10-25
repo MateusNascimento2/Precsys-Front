@@ -1,9 +1,11 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import Header from '../components/Header'
 import { motion } from 'framer-motion';
 import SearchInput from '../components/SearchInput';
 import ClientesList from '../components/ClientesList';
 import ScrollToTopButton from '../components/ScrollToTopButton';
+import GerarPDFPropostaContact from '../propostas_pdfs/modelo_contact/GerarPDFPropostaContact';
+import GerarPDFPropostaPRC from '../propostas_pdfs/modelo_prc/GerarPDFPropostaPRC';
 
 export default function Clientes() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -21,7 +23,7 @@ export default function Clientes() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        <div className='flex justify-between items-center'>
+{/*         <div className='flex justify-between items-center'>
           <motion.h2
             className='font-[700] ml-5 text-[32px] md:mt-[16px] dark:text-white'
             id='usuarios'
@@ -45,8 +47,9 @@ export default function Clientes() {
           </div>
         </div>
 
-        <ScrollToTopButton />
-      </motion.main>
+        <ScrollToTopButton /> */}
+        <GerarPDFPropostaPRC />
+      </motion.main >
 
     </>
   )

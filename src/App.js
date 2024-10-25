@@ -16,6 +16,7 @@ import LoginLogs from './pages/LoginLogs';
 import PropostasLogs from './pages/PropostasLogs'
 import MeuPerfil from './pages/MeuPerfil';
 import Clientes from './pages/Clientes';
+import Empresas from './pages/Empresas';
 
 function App() {
 
@@ -44,6 +45,7 @@ function App() {
             <Route path='calculo' element={<Calculo />} />
             <Route path ='logs/login' element={<LoginLogs />}/>
             <Route path='logs/propostas' element={<PropostasLogs />} />
+            <Route path='empresas' element={<Empresas />} />
           </Route>
         </Route>
 
