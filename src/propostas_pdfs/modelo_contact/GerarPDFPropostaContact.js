@@ -3,7 +3,7 @@ import html2pdf from 'html2pdf.js'; // Importa a biblioteca html2pdf
 import background from './assets/images/background.png'
 import logo from './assets/images/logo.png'
 
-const GerarPDFPropostaContact = ({ beneficiario, cpfcnpj, precatorio, processo, proposta, nome, data, cnpj, }) => {
+const GerarPDFPropostaContact = ({ beneficiario, cpfcnpj, precatorio, processo, proposta, nome, site, cnpj, onPDFGenerated  }) => {
 
   const propostaRef = React.useRef(); // Cria uma referência para o conteúdo do PDF
 
@@ -21,24 +21,32 @@ const GerarPDFPropostaContact = ({ beneficiario, cpfcnpj, precatorio, processo, 
 
       // Gera o PDF
       html2pdf().from(element).set(options).save();
+      onPDFGenerated()
     };
 
     handleGeneratePDF(); // Gera o PDF assim que o componente for montado
   }, []);
 
   const propostaDetails = {
-    beneficiario: "João da Silva",
-    cpfcnpj: "123.456.789-10",
-    precatorio: "0000.00000-0",
-    processo: "1234567-89.2024.1.10.0000",
-    proposta: "R$ 100.000,00",
-    nome: "Mateus Assis do Nascimento",
-    data: "22 de Outubro de 2024",
-    cnpj: "29.945.934/0001-88"
+    beneficiario: beneficiario,
+    cpfcnpj: cpfcnpj,
+    precatorio: precatorio,
+    processo: processo,
+    proposta: proposta,
+    site:site,
+    nome: nome,
+    cnpj: cnpj
   };
 
+  const day = new Date().getDate();
+  const month = new Date().getMonth() + 1;
+  const year = new Date().getFullYear();
+  const monthsArray = [
+    '', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  ];
+
   return (
-    <div>
+    <div style={{display: 'nome'}}>
       <div ref={propostaRef} className="bg-white w-[803px] h-[1035px]">
         {/* Cabeçalho */}
         <div className="bg-center bg-cover h-[180px] flex items-center" style={{ backgroundImage: `url(${background})` }}>
@@ -192,10 +200,10 @@ const GerarPDFPropostaContact = ({ beneficiario, cpfcnpj, precatorio, processo, 
               <div className='flex items-center justify-between'>
                 <div>
                   <p className="font-bold text-[#041b36] text-[24px]">{propostaDetails.nome}</p>
-                  <p className="text-gray-400 text-[16px]">Rio de Janeiro, {propostaDetails.data}</p>
+                  <p className="text-gray-400 text-[16px]">Rio de Janeiro, {day} de {monthsArray[month]} de {year}</p>
                 </div>
                 <div>
-                  <p className="text-right text-gray-400 text-[12px]">www.contactnegocios.com.br</p>
+                  <p className="text-right text-gray-400 text-[12px]">{propostaDetails.site}</p>
                   <p className="text-right text-gray-400 text-[12px]">{propostaDetails.cnpj}</p>
                 </div>
               </div>

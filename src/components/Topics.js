@@ -50,7 +50,7 @@ function Topics({ texto, data, atualizacaoJuridico, textoExplicativo }) {
                 exit={{ opacity: 0 }}
               />
               <motion.div
-                className='bg-white dark:bg-neutral-900 dark:border-neutral-600 border rounded shadow z-[90] relative w-[85%] lg:w-[400px] p-4'
+                className='bg-white dark:bg-neutral-900 dark:border-neutral-600 border rounded shadow z-[90] relative w-[85%] lg:w-[600px] lg:py-8 lg:px-16 p-4'
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
@@ -59,6 +59,7 @@ function Topics({ texto, data, atualizacaoJuridico, textoExplicativo }) {
                 <div className='max-h-[400px] overflow-y-auto'>
                   <p className='text-black dark:text-white mb-4'>{atualizacaoJuridico}</p>
                 </div>
+                <p className='text-[14px] font-light'>Atualizado em {data}</p>
               </motion.div>
             </motion.div>
           </>
