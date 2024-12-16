@@ -72,7 +72,7 @@ function NavBarAdmin({ show }) {
               )}
             </AnimatePresence>
           </li> :
-            <ul className='flex flex-col lg:flex-row lg:items-center divide-y divide-neutral-300 dark:divide-neutral-700 lg:divide-y-0 w-full'>
+            <ul className='flex flex-col lg:flex-row lg:items-center divide-y divide-neutral-300 dark:divide-neutral-700 lg:divide-y-0 w-full lg:gap-2'>
               <li className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800' onClick={() => handleRoute('/minhas-cessoes')}>
                 <span className='font-[500] text-[#666666] dark:text-neutral-300 '>Minhas Cessões</span>
                 {auth.user.admin ? <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver as Minhas Cessões</p> : null}
@@ -127,7 +127,7 @@ function NavBarAdmin({ show }) {
                         <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Escreventes</span>
                         <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todos os Escreventes</p>
                       </li>
-                      <li className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                      <li onClick={() => handleRoute('/orcamentos')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
                         <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Orçamentos</span>
                         <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todos os Orçamentos</p>
                       </li>
@@ -174,7 +174,7 @@ function NavBarAdmin({ show }) {
             </AnimatePresence>
           </li> : null}
 
-          {auth.user.ver_calculo ? <li onClick={() => handleShow('ferramentas')} className='cursor-pointer w-full p-2 lg:px-2  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded'>
+          {auth.user.ver_calculo || auth.user.permissao_proposta ? <li onClick={() => handleShow('ferramentas')} className='cursor-pointer p-2 lg:px-2 w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded'>
             <div className='flex justify-between items-center lg:gap-3'>
               <span className='font-[500] text-[#666666] dark:text-neutral-300 '>Ferramentas</span>
               <span className='text-[12px] dark:text-neutral-300'>
@@ -202,7 +202,7 @@ function NavBarAdmin({ show }) {
                           Cálculo
                           <p className='font-[500] text-[#666666] dark:text-neutral-500'>Fazer Cálculo </p>
                         </button>}>
-                        <div className='h-[420px] overflow-auto relative'>
+                        <div className='h-[500px] lg:h-[650px] overflow-auto'>
                           <TabelaGeneradaCalculo />
                         </div>
                       </Modal>
@@ -213,7 +213,7 @@ function NavBarAdmin({ show }) {
                           Proposta
                           <p className='font-[500] text-[#666666] dark:text-neutral-500'>Fazer Propostas </p>
                         </button>}>
-                        <div className='h-[550px] overflow-auto relative'>
+                        <div className='h-[500px] lg:h-[650px] overflow-auto relative'>
                           <GerarProposta />
                         </div>
                       </Modal>

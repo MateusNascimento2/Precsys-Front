@@ -2,13 +2,14 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import Select from 'react-select';
 import CurrencyFormat from 'react-currency-format';
 
-const AdicionarCessao = forwardRef(({ varas, orcamentos, naturezas, empresas, users, teles, escreventes, juridicos, enviarValores }, ref) => {
+const AdicionarCessao = forwardRef(({ varas, orcamentos, orcamentosAnos, naturezas, empresas, users, teles, escreventes, juridicos, enviarValores }, ref) => {
   const [precatorio, setPrecatorio] = useState('');
   const [processo, setProcesso] = useState('');
   const [cedente, setCedente] = useState('');
   const [vara, setVara] = useState(null);
   const [ente, setEnte] = useState(null);
   const [ano, setAno] = useState('');
+  const [filteredAnos, setFilteredAnos] = useState([]); // Anos filtrados
   const [natureza, setNatureza] = useState(null);
   const [empresa, setEmpresa] = useState(null);
   const [dataCessao, setDataCessao] = useState('');
@@ -20,6 +21,18 @@ const AdicionarCessao = forwardRef(({ varas, orcamentos, naturezas, empresas, us
 
   const [precatorioError, setPrecatorioError] = useState(false);
   const [processoError, setProcessoError] = useState(false);
+
+  useEffect(() => {
+    if (ente) {
+      console.log(ente)
+      const anos = orcamentosAnos
+        .filter((item) => parseInt(item.budget_id) === ente)
+        .map((item) => ({ value: item.ano, label: item.ano }));
+      setFilteredAnos(anos);
+    } else {
+      setFilteredAnos([]); // Limpa os anos se nenhum ente for selecionado
+    }
+  }, [ente]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -152,7 +165,7 @@ const AdicionarCessao = forwardRef(({ varas, orcamentos, naturezas, empresas, us
           {/* Orçamento */}
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
             <label className='text-[14px] font-medium' htmlFor="orcamento">Orçamento</label>
-            <div className='flex'>
+            <div className='flex flex-col gap-2 lg:gap-0 lg:flex-row'>
               <Select
                 options={handleSelectValues(orcamentos, 'ente')}
                 isClearable={true}
@@ -163,7 +176,7 @@ const AdicionarCessao = forwardRef(({ varas, orcamentos, naturezas, empresas, us
                 noOptionsMessage={() => 'Nenhum ente encontrado'}
                 unstyled
                 classNames={{
-                  container: () => ('border-l border-t border-b border-r rounded-l dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 w-[70%] text-[15px] h-[34px]'),
+                  container: () => ('border-l border-t border-b border-r rounded-l dark:bg-neutral-800 dark:border-neutral-600 text-gray-400 w-full lg:w-[70%] text-[15px] h-[34px]'),
                   control: () => ('px-2 mt-[6px] flex items-center'),
                   input: () => ('text-gray-400'),
                   menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full max-h-24'),
@@ -172,15 +185,24 @@ const AdicionarCessao = forwardRef(({ varas, orcamentos, naturezas, empresas, us
                 }}
                 styles={customStyles}
               />
-              <input
-                type='text'
-                name='ano'
-                id='ano'
-                placeholder='Ano'
-                maxLength={4}
-                className='dark:bg-neutral-800 border-r border-t border-b rounded-r dark:border-neutral-600 py-1 px-2 w-[30%] focus:outline-none placeholder:text-[14px] text-gray-400'
-                value={ano}
-                onChange={(e) => setAno(e.target.value)}
+              <Select
+                options={filteredAnos}
+                isClearable={true}
+                value={ano ? { value: ano, label: ano } : null}
+                onChange={(selectedValue) => setAno(selectedValue ? selectedValue.value : null)}
+                placeholder={'Ano'}
+                noOptionsMessage={() => 'Nenhum ano disponível'}
+                unstyled
+                classNames={{
+                  container: () => ('dark:bg-neutral-800 border-l lg:border-l-0 border-r border-t border-b rounded-r dark:border-neutral-600 px-2 w-full lg:w-[30%] focus:outline-none text-[15px] text-gray-400'),
+                  control: () => ('px-2 mt-[6px] flex items-center'),
+                  input: () => ('text-gray-400'),
+                  menu: () => ('mt-1 bg-white border shadow rounded dark:border-neutral-600 dark:bg-neutral-800 w-full max-h-24'),
+                  menuList: () => ('flex flex-col gap-2 px-2 py-1 text-[13px] h-24'),
+                  option: () => ('hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded p-1')
+                }}
+                styles={customStyles}
+                isDisabled={filteredAnos.length === 0} // Desativa o Select se não houver anos disponíveis
               />
             </div>
           </div>

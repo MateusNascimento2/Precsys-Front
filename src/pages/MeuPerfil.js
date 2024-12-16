@@ -18,6 +18,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import ClientesList from '../components/ClientesList';
 import FerramentasPerfil from '../components/FerramentasPerfil';
+import * as XLSX from 'xlsx';
 
 export const ButtonEditProfile = ({ handleItemClick }) => {
   return (
@@ -34,7 +35,7 @@ const MeuPerfil = () => {
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const [user, setUser] = useState(auth.user);
-  const [activeItem, setActiveItem] = useState('ferramentas');
+  const [activeItem, setActiveItem] = useState('resumo');
   const [searchParams] = useSearchParams(); // Hook para acessar os parâmetros da URL
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,6 +48,18 @@ const MeuPerfil = () => {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
   const [filteredCessoes, setFilteredCessoes] = useState([]);
+  const [selectedExportFields, setSelectedExportFields] = useState([
+    "id",
+    "precatorio",
+    "cedente",
+    "status",
+    "ente",
+    "natureza",
+    "data_cessao",
+    "empresa",
+    "adv",
+    "falecido",
+  ]);
 
   const handleFilteredCessoes = (filteredData) => {
     setFilteredCessoes(filteredData);
@@ -250,6 +263,30 @@ const MeuPerfil = () => {
     pdfMake.createPdf(docDefinition).download('lista.pdf');
   };
 
+  const exportToExcel = (filteredData, selectedFields) => {
+    const selectedData = filteredData.map((item) => {
+      const filteredItem = {};
+      selectedFields.forEach((field) => {
+        filteredItem[field] = item[field];
+      });
+      return filteredItem;
+    });
+  
+    const worksheet = XLSX.utils.json_to_sheet(selectedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Cessões");
+  
+    XLSX.writeFile(workbook, "cessoes.xlsx");
+  };
+  
+  const handleFieldSelectionChange = (field) => {
+    setSelectedExportFields((prevState) =>
+      prevState.includes(field)
+        ? prevState.filter((item) => item !== field)
+        : [...prevState, field]
+    );
+  };
+
   const renderContent = () => {
     switch (activeItem) {
       case 'resumo':
@@ -322,10 +359,10 @@ const MeuPerfil = () => {
                 </div>
               </div>
               <div className='hidden lg:block'>
-                <FilterPerfil show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} />
+                <FilterPerfil show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} onExportExcel={(fields) => exportToExcel(filteredCessoes, fields)} onFieldSelectionChange={handleFieldSelectionChange} selectedExportFields={selectedExportFields} />
               </div>
               <div className='lg:hidden'>
-                <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} />
+                <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} onExportExcel={(fields) => exportToExcel(filteredCessoes, fields)} onFieldSelectionChange={handleFieldSelectionChange} selectedExportFields={selectedExportFields} />
               </div>
               <ScrollToTopButton />
             </div>
@@ -517,7 +554,7 @@ const MeuPerfil = () => {
                           Clientes
                         </a>
                       </li>
-                      {!id || auth.user.admin ? <li className={"px-4 py-1 lg:py-2"}>
+                      {auth.user.admin ? <li className={"px-4 py-1 lg:py-2"}>
                         <a
                           onClick={() => handleItemClick('ferramentas')}
                           className={`text-[14px] text-neutral-600 dark:text-neutral-400 cursor-pointer hover:underline ${activeItem === 'ferramentas' ? ' font-bold ' : ''}`}
@@ -525,14 +562,14 @@ const MeuPerfil = () => {
                           Ferramentas
                         </a>
                       </li> : null}
-                      {!id || auth.user.admin ? <li className={"px-4 py-1 lg:py-2"}>
+                      {!auth.user.admin && id ? null : <li className={"px-4 py-1 lg:py-2"}>
                         <a
                           onClick={() => handleItemClick('configuracoes')}
                           className={`text-[14px] text-neutral-600 dark:text-neutral-400 cursor-pointer hover:underline ${activeItem === 'configuracoes' ? ' font-bold ' : ''}`}
                         >
                           Configurações
                         </a>
-                      </li> : null}
+                      </li> }
 
                     </ul>
                   </div>

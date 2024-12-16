@@ -59,7 +59,7 @@ function Topics({ texto, data, atualizacaoJuridico, textoExplicativo }) {
                 <div className='max-h-[400px] overflow-y-auto'>
                   <p className='text-black dark:text-white mb-4'>{atualizacaoJuridico}</p>
                 </div>
-                <p className='text-[14px] font-light'>Atualizado em {data}</p>
+                <p className='text-[14px] font-light dark:text-white'>Atualizado em {data}</p>
               </motion.div>
             </motion.div>
           </>

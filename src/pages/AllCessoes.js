@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import { motion } from 'framer-motion';
 import ScrollToTopButton from '../components/ScrollToTopButton';
+import * as XLSX from 'xlsx';
 
 export default function AllCessoes() {
   const [voltarAdicionarCessao, setVoltarAdicionarCessao] = useState(false);
@@ -23,6 +24,7 @@ export default function AllCessoes() {
   const [users, setUsers] = useState([]);
   const [escreventes, setEscreventes] = useState([]);
   const [orcamentos, setOrcamentos] = useState([]);
+  const [orcamentosAno, setOrcamentosAno] = useState([]);
   const [naturezas, setNaturezas] = useState([]);
   const [empresas, setEmpresas] = useState([]);
   const [juridicos, setJuridicos] = useState([]);
@@ -62,6 +64,72 @@ export default function AllCessoes() {
   const [expectativa, setExpectativa] = useState('');
 
   const [filteredCessoes, setFilteredCessoes] = useState([]);
+  const [selectedExportFields, setSelectedExportFields] = useState([
+    "id",
+    "precatorio",
+    "cedente",
+    "status",
+    "ente_id",
+    "natureza",
+    "data_cessao",
+    "empresa_id",
+    "adv",
+    "falecido",
+  ]);
+  const [valorTotalExcel, setValorTotalExcel] = useState({})
+
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+
+    const fetchValores = async () => {
+      try {
+        const ids = filteredCessoes.map((cessao) => cessao.id);
+        const { data } = await axiosPrivate.post(
+          '/valorTotalExcel',
+          { cessao_ids: ids },
+          { signal: controller.signal }
+        );
+
+        if (isMounted) {
+          // Organize os valores em um objeto
+          const valoresTotais = data.reduce(
+            (acc, item) => {
+              // Função para converter o valor string para número
+              const parseValor = (valor) => {
+                if (!valor) return 0;
+                return parseFloat(
+                  valor.replace("R$", "").replace(".", "").replace(",", ".").trim()
+                );
+              };
+
+              acc.valorPago += parseValor(item.valor_pago);
+              acc.comissao += parseValor(item.comissao);
+              acc.expRecebimento += parseValor(item.exp_recebimento);
+              return acc;
+            },
+            { valorPago: 0, comissao: 0, expRecebimento: 0 } // Valores iniciais
+          );
+
+          setValorTotalExcel(valoresTotais);
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchValores();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [filteredCessoes]);
+
+
+  console.log(valorTotalExcel);
+
 
   const handleFilteredCessoes = (filteredData) => {
     setFilteredCessoes(filteredData);
@@ -93,6 +161,7 @@ export default function AllCessoes() {
     fetchData('/escreventes', setEscreventes);
     fetchData('/users', setUsers);
     fetchData('/orcamentos', setOrcamentos);
+    fetchData('/orcamentosAnos', setOrcamentosAno)
     fetchData('/natureza', setNaturezas);
     fetchData('/empresas', setEmpresas);
     fetchData('/juridicos', setJuridicos);
@@ -556,6 +625,30 @@ export default function AllCessoes() {
     pdfMake.createPdf(docDefinition).download('lista.pdf');
   };
 
+  const exportToExcel = (filteredData, selectedFields) => {
+    const selectedData = filteredData.map((item) => {
+      const filteredItem = {};
+      selectedFields.forEach((field) => {
+        filteredItem[field] = item[field];
+      });
+      return filteredItem;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(selectedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Cessões");
+
+    XLSX.writeFile(workbook, "cessoes.xlsx");
+  };
+
+  const handleFieldSelectionChange = (field) => {
+    setSelectedExportFields((prevState) =>
+      prevState.includes(field)
+        ? prevState.filter((item) => item !== field)
+        : [...prevState, field]
+    );
+  };
+
   return (
     <>
       <Header />
@@ -632,7 +725,7 @@ export default function AllCessoes() {
                         <LoadingSpinner />
                       </div>
                     </div>)}
-                    <AdicionarCessao ref={adicionarCessaoRef} varas={varas} orcamentos={orcamentos} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridicos={juridicos} enviarValores={handleReceberValoresCessao} />
+                    <AdicionarCessao ref={adicionarCessaoRef} varas={varas} orcamentos={orcamentos} orcamentosAnos={orcamentosAno} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridicos={juridicos} enviarValores={handleReceberValoresCessao} />
                   </div>
 
                   <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "absolute right-0 transition-all ease-in-out duration-300 overflow-y-auto w-full" : 'w-full absolute right-[1100px] transition-all ease-in-out duration-300 overflow-y-hidden'}>
@@ -674,14 +767,14 @@ export default function AllCessoes() {
 
           <div className={`lg:flex lg:gap-4 lg:items-start`}>
             <div className='hidden lg:block lg:sticky lg:top-[5%]'>
-              <Filter show={true} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} />
+              <Filter show={true} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} onExportExcel={(fields) => exportToExcel(filteredCessoes, fields)} onFieldSelectionChange={handleFieldSelectionChange} selectedExportFields={selectedExportFields} valoresTotalExcel={valorTotalExcel} />
             </div>
             <div className='w-full h-full max-h-full'>
               <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} isPerfilCessoes={false} onFilteredCessoes={handleFilteredCessoes} />
             </div>
           </div>
         </motion.div>
-        <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} />
+        <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} onExportExcel={(fields) => exportToExcel(filteredCessoes, fields)} onFieldSelectionChange={handleFieldSelectionChange} selectedExportFields={selectedExportFields} />
 
         {/* Scroll-to-top button */}
         <ScrollToTopButton />

@@ -10,28 +10,27 @@ import saco_de_dolar from './assets/images/saco-de-dolar.png';
 import texto from './assets/images/texto.png';
 import html2pdf from 'html2pdf.js'; // Importa a biblioteca html2pdf
 
-const GerarPDFPropostaPRC = ({ beneficiario, cpfcnpj, precatorio, processo, proposta, nome, data, cnpj, onPDFGenerated }) => {
+const GerarPDFPropostaPRC = ({ beneficiario, cpfcnpj, precatorio, processo, proposta, nome, data, cnpj, setHandleGeneratePDF }) => {
   const propostaRef = React.useRef(); // Cria uma referência para o conteúdo do PDF
 
   // Função para gerar o PDF
-  React.useEffect(() => {
-    const handleGeneratePDF = () => {
-      const element = propostaRef.current; // Pega o conteúdo do PDF pela ref
-      const options = {
-        margin: 0,
-        filename: 'Proposta_PRC.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-
-      // Gera o PDF
-      html2pdf().from(element).set(options).save();
-      onPDFGenerated()
+  const handleGeneratePDF = () => {
+    const element = propostaRef.current;
+    const options = {
+      margin: 0,
+      filename: 'Proposta_PRC.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
-    handleGeneratePDF(); // Gera o PDF assim que o componente for montado
-  }, []);
+    html2pdf().from(element).set(options).save();
+  };
+
+  // Passa a função interna para o componente pai
+  React.useEffect(() => {
+    setHandleGeneratePDF(() => handleGeneratePDF);
+  }, [setHandleGeneratePDF]);
 
 
   const propostaDetails = {
@@ -52,7 +51,7 @@ const GerarPDFPropostaPRC = ({ beneficiario, cpfcnpj, precatorio, processo, prop
   ];
 
   return (
-    <div style={{display:'none'}}>
+    <div>
       <div ref={propostaRef}>
         <div className="w-[820px] h-[1035px] bg-white">
           {/* Header */}

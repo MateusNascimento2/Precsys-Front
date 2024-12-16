@@ -3,37 +3,37 @@ import html2pdf from 'html2pdf.js'; // Importa a biblioteca html2pdf
 import background from './assets/images/background.png'
 import logo from './assets/images/logo.png'
 
-const GerarPDFPropostaContact = ({ beneficiario, cpfcnpj, precatorio, processo, proposta, nome, site, cnpj, onPDFGenerated  }) => {
+const GerarPDFPropostaContact = ({ beneficiario, cpfcnpj, precatorio, processo, proposta, nome, site, cnpj, setHandleGeneratePDF   }) => {
 
   const propostaRef = React.useRef(); // Cria uma referência para o conteúdo do PDF
 
   // Função para gerar o PDF
-  React.useEffect(() => {
-    const handleGeneratePDF = () => {
-      const element = propostaRef.current; // Pega o conteúdo do PDF pela ref
-      const options = {
-        margin: 0,
-        filename: 'Proposta_Contact.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: {unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-
-      // Gera o PDF
-      html2pdf().from(element).set(options).save();
-      onPDFGenerated()
+  const handleGeneratePDF = () => {
+    const element = propostaRef.current;
+    const options = {
+      margin: 0,
+      filename: 'Proposta_Contact.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
-    handleGeneratePDF(); // Gera o PDF assim que o componente for montado
-  }, []);
+    html2pdf().from(element).set(options).save();
+  };
 
+  // Passa a função interna para o componente pai
+  React.useEffect(() => {
+    setHandleGeneratePDF(() => handleGeneratePDF);
+  }, [setHandleGeneratePDF]);
+
+  
   const propostaDetails = {
     beneficiario: beneficiario,
     cpfcnpj: cpfcnpj,
     precatorio: precatorio,
     processo: processo,
     proposta: proposta,
-    site:site,
+    site: site,
     nome: nome,
     cnpj: cnpj
   };
@@ -46,7 +46,7 @@ const GerarPDFPropostaContact = ({ beneficiario, cpfcnpj, precatorio, processo, 
   ];
 
   return (
-    <div style={{display: 'nome'}}>
+    <div className=''>
       <div ref={propostaRef} className="bg-white w-[803px] h-[1035px]">
         {/* Cabeçalho */}
         <div className="bg-center bg-cover h-[180px] flex items-center" style={{ backgroundImage: `url(${background})` }}>

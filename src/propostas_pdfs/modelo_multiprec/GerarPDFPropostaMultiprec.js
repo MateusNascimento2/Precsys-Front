@@ -4,28 +4,28 @@ import bullets from './assets/images/bullets.png'
 import html2pdf from 'html2pdf.js'; // Importa a biblioteca html2pdf
 
 
-const GerarPDFPropostaMultiprec = ({ beneficiario, cpfcnpj, precatorio, processo, proposta, site, cnpj, onPDFGenerated  }) => {
+const GerarPDFPropostaMultiprec = ({ beneficiario, cpfcnpj, precatorio, processo, proposta, site, cnpj, setHandleGeneratePDF }) => {
   const propostaRef = React.useRef(); // Cria uma referência para o conteúdo do PDF
 
   // Função para gerar o PDF
-  React.useEffect(() => {
-    const handleGeneratePDF = () => {
-      const element = propostaRef.current; // Pega o conteúdo do PDF pela ref
-      const options = {
-        margin: 0,
-        filename: 'Proposta_Multiprec.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-
-      // Gera o PDF
-      html2pdf().from(element).set(options).save();
-      onPDFGenerated()
+  // Função para gerar o PDF
+  const handleGeneratePDF = () => {
+    const element = propostaRef.current;
+    const options = {
+      margin: 0,
+      filename: 'Proposta_Multiprec.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
-    handleGeneratePDF(); // Gera o PDF assim que o componente for montado
-  }, []);
+    html2pdf().from(element).set(options).save();
+  };
+
+  // Passa a função interna para o componente pai
+  React.useEffect(() => {
+    setHandleGeneratePDF(() => handleGeneratePDF);
+  }, [setHandleGeneratePDF]);
 
   const propostaDetails = {
     beneficiario: beneficiario,
@@ -39,7 +39,7 @@ const GerarPDFPropostaMultiprec = ({ beneficiario, cpfcnpj, precatorio, processo
 
 
   return (
-    <div style={{display: 'none'}}>
+    <div>
       <div ref={propostaRef}>
         <div className="w-[820px] h-[1035px] bg-white">
           {/* Header */}
@@ -170,8 +170,8 @@ const GerarPDFPropostaMultiprec = ({ beneficiario, cpfcnpj, precatorio, processo
 
           {/* Footer */}
           <div className="footer flex flex-col justify-center text-center text-[#456E87] py-8">
-            <p className="text-[14px] font-bold">{empresa.site}</p>
-            <p className="text-[12px] font-bold">{empresa.cnpj}</p>
+            <p className="text-[14px] font-bold">{site}</p>
+            <p className="text-[12px] font-bold">{cnpj}</p>
           </div>
         </div>
       </div>

@@ -17,6 +17,8 @@ import PropostasLogs from './pages/PropostasLogs'
 import MeuPerfil from './pages/MeuPerfil';
 import Clientes from './pages/Clientes';
 import Empresas from './pages/Empresas';
+import Orcamentos from './pages/Orcamentos';
+import Orcamento from './pages/Orcamento';
 
 function App() {
 
@@ -46,6 +48,8 @@ function App() {
             <Route path ='logs/login' element={<LoginLogs />}/>
             <Route path='logs/propostas' element={<PropostasLogs />} />
             <Route path='empresas' element={<Empresas />} />
+            <Route path='orcamentos' element={<Orcamentos />} />
+            <Route path = 'orcamento/:id' element={<Orcamento />} />
           </Route>
         </Route>
 
