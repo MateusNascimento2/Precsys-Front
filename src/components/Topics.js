@@ -16,6 +16,12 @@ function Topics({ texto, data, atualizacaoJuridico, textoExplicativo }) {
     }
   }
 
+  const formatarDataBR = (dataUS) => {
+    if (!dataUS) return '';
+    const [mes, dia, ano] = dataUS.split('/');
+    return `${dia}/${mes}/${ano}`;
+  };
+
   return (
     <>
       <div onClick={() => handleClick(atualizacaoJuridico)}>
@@ -59,7 +65,9 @@ function Topics({ texto, data, atualizacaoJuridico, textoExplicativo }) {
                 <div className='max-h-[400px] overflow-y-auto'>
                   <p className='text-black dark:text-white mb-4'>{atualizacaoJuridico}</p>
                 </div>
-                <p className='text-[14px] font-light dark:text-white'>Atualizado em {data}</p>
+                <p className='text-[14px] font-light dark:text-white'>
+                  Atualizado em {formatarDataBR(data)}
+                </p>
               </motion.div>
             </motion.div>
           </>

@@ -56,7 +56,7 @@ const GerarPDFPropostaPRC = ({ beneficiario, cpfcnpj, precatorio, processo, prop
         <div className="w-[820px] h-[1035px] bg-white">
           {/* Header */}
           <div className="header w-full relative h-[200px] bg-cover bg-no-repeat" style={{ backgroundImage: `url(${bg})`, backgroundPosition: '0px -150px' }}>
-            <img className="w-[120px] ml-9 pt-5" src={logo_prc} alt="Logo" />
+            <img className="w-[120px] left-6 top-10 absolute z-10" src={logo_prc} alt="Logo" />
             <img className="w-[200px] right-32 top-10 absolute z-10" src={quadro_branco} alt="Quadro Branco" />
             <img className="w-[40px] absolute right-[292px] top-9 z-20" src={seta} alt="Seta" />
             <img className="w-[160px] right-[140px] top-[50px]  absolute z-20" src={texto} alt="Texto Quadro" />
@@ -66,7 +66,7 @@ const GerarPDFPropostaPRC = ({ beneficiario, cpfcnpj, precatorio, processo, prop
           <div className="w-full mt-4 py-[20px]">
             <div className="flex mx-[30px] items-start">
               <div className="text-left flex-1">
-                <p className="text-[13px] font-light text-gray-500 mb-4">PROPOSTA</p>
+                <p className="text-[13px] font-light text-gray-500 mb-2">PROPOSTA</p>
                 <div className="text-[14px] font-bold text-gray-900">BENEFICIÁRIO</div>
                 <div className="text-[13px] text-gray-500">{propostaDetails.beneficiario}</div>
                 <div className="text-[14px] font-bold text-gray-900">CPF/CNPJ</div>
@@ -82,9 +82,9 @@ const GerarPDFPropostaPRC = ({ beneficiario, cpfcnpj, precatorio, processo, prop
 
 
               <div className="text-left flex-1">
-                <p className="text-[13px] font-light text-gray-500 mb-4">A EMPRESA</p>
+                <p className="text-[13px] font-light text-gray-500 mb-2">A EMPRESA</p>
                 <div className="text-[15px] font-bold text-gray-900">UM POUCO SOBRE NÓS?</div>
-                <p className="text-[12px] font-light text-gray-500 mt-4">Fundada com o objetivo de realizar uma negociação rápida, transparente e segura para os clientes, a PRC Invest, após enfrentar alguns obstáculos, finalmente conseguiu o melhor planejamento operacional e eficiente do mercado.</p>
+                <p className="text-[12px] font-light text-gray-500 mt-2">Fundada com o objetivo de realizar uma negociação rápida, transparente e segura para os clientes, a PRC Invest, após enfrentar alguns obstáculos, finalmente conseguiu o melhor planejamento operacional e eficiente do mercado.</p>
               </div>
 
             </div>
@@ -93,7 +93,7 @@ const GerarPDFPropostaPRC = ({ beneficiario, cpfcnpj, precatorio, processo, prop
           {/* Section 2 */}
           <div className="section2 bg-gray-100 py-[20px]">
             <div className="mx-[30px]">
-              <p className="text-[13px] font-light text-gray-500 mb-4">A EMPRESA</p>
+              <p className="text-[13px] font-light text-gray-500 mb-2">A EMPRESA</p>
               <div className="text-[15px] font-bold text-gray-900">COMO NEGOCIAR?</div>
               <div className="flex justify-between mt-6">
                 <div className="text-center">
@@ -115,47 +115,47 @@ const GerarPDFPropostaPRC = ({ beneficiario, cpfcnpj, precatorio, processo, prop
           {/* Section 3 */}
           <div className="section3 py-[20px]">
             <div className="mx-[30px]">
-              <p className="text-[13px] font-light text-gray-500 mb-4">A DOCUMENTAÇÃO</p>
+              <p className="text-[13px] font-light text-gray-500 mb-2">A DOCUMENTAÇÃO</p>
               <div className="text-[14px] font-bold text-gray-900">QUAIS DOCUMENTOS PRECISO?</div>
               <div className="flex flex-wrap mt-4">
                 <div className="w-1/2 p-1">
-                  <img className="inline-block w-[15px] mt-4" src={seta} alt="Ícone" />
-                  <span className="text-[14px] font-bold text-gray-900 ml-4">Documento de Identidade</span>
+                  <img className="inline-block w-[15px]" src={seta} alt="Ícone" />
+                  <span className="text-[14px] font-bold text-gray-900 ml-2">Documento de Identidade</span>
                 </div>
                 <div className="w-1/2 p-1">
-                  <img className="inline-block w-[15px] mt-4" src={seta} alt="Ícone" />
-                  <span className="text-[14px] font-bold text-gray-900 ml-4">Estado Civil</span>
+                  <img className="inline-block w-[15px]" src={seta} alt="Ícone" />
+                  <span className="text-[14px] font-bold text-gray-900 ml-2">Estado Civil</span>
                 </div>
                 <div className="w-1/2 p-1">
-                  <img className="inline-block w-[15px] mt-4" src={seta} alt="Ícone" />
-                  <span className="text-[14px] font-bold text-gray-900 ml-4">CPF</span>
+                  <img className="inline-block w-[15px]" src={seta} alt="Ícone" />
+                  <span className="text-[14px] font-bold text-gray-900 ml-2">CPF</span>
                 </div>
                 <div className="w-1/2 p-1">
-                  <img className="inline-block w-[15px] mt-4" src={seta} alt="Ícone" />
-                  <span className="text-[14px] font-bold text-gray-900 ml-4">Profissão</span>
+                  <img className="inline-block w-[15px]" src={seta} alt="Ícone" />
+                  <span className="text-[14px] font-bold text-gray-900 ml-2">Profissão</span>
                 </div>
                 <div className="w-1/2 p-1">
-                  <img className="inline-block w-[15px] mt-4" src={seta} alt="Ícone" />
-                  <span className="text-[14px] font-bold text-gray-900 ml-4">Comprovante de Residência</span>
+                  <img className="inline-block w-[15px]" src={seta} alt="Ícone" />
+                  <span className="text-[14px] font-bold text-gray-900 ml-2">Comprovante de Residência</span>
                 </div>
                 <div className="w-1/2 p-1">
-                  <img className="inline-block w-[15px] mt-4" src={seta} alt="Ícone" />
-                  <span className="text-[14px] font-bold text-gray-900 ml-4">Conta Bancária para pagamento</span>
+                  <img className="inline-block w-[15px]" src={seta} alt="Ícone" />
+                  <span className="text-[14px] font-bold text-gray-900 ml-2">Conta Bancária para pagamento</span>
                 </div>
                 <div className="w-1/2 p-1">
-                  <img className="inline-block w-[15px] mt-4" src={seta} alt="Ícone" />
-                  <span className="text-[14px] font-bold text-gray-900 ml-4">Certidão de Casamento / Nascimento</span>
+                  <img className="inline-block w-[15px]" src={seta} alt="Ícone" />
+                  <span className="text-[14px] font-bold text-gray-900 ml-2">Certidão de Casamento / Nascimento</span>
                 </div>
                 <div className="w-1/2 p-1">
-                  <img className="inline-block w-[15px] mt-4" src={seta} alt="Ícone" />
-                  <span className="text-[14px] font-bold text-gray-900 ml-4">E-mail</span>
+                  <img className="inline-block w-[15px]" src={seta} alt="Ícone" />
+                  <span className="text-[14px] font-bold text-gray-900 ml-2">E-mail</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="py-[20px] mx-[30px]">
+          <div className="py-[40px] mx-[30px]">
             <div className="flex justify-between items-center">
               <div className="">
                 <div className="text-left">

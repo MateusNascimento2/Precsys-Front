@@ -6,12 +6,22 @@ import { motion } from 'framer-motion';
 import ScrollToTopButton from '../components/ScrollToTopButton';
 import OrcamentosList from '../components/OrcamentosList';
 import Modal from '../components/Modal';
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-export default function LoginLogs() {
+
+export default function Orcamentos() {
   const [show, setShow] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [orcamentos, setOrcamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [ente, setEnte] = useState('');
+  const [apelido, setApelido] = useState('');
+  const [comarca, setComarca] = useState("0"); // Inicializa como "0"
+
+  const handleComarcaChange = (e) => {
+    setComarca(e.target.checked ? "1" : "0"); // Se marcado, define "1"; senão, "0"
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -43,6 +53,63 @@ export default function LoginLogs() {
 
   const handleInputChange = (query) => {
     setSearchQuery(query);
+  };
+
+  const handleAdicionarOrcamento = async (e) => {
+    e.preventDefault();
+
+    if (!ente) {
+      toast.error("Mencione um ente antes de criar um novo orçamento.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    if (!apelido) {
+      toast.error("Mencione um apelido para o ente antes de criar um novo orçamento.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true)
+      await axiosPrivate.post(
+        '/orcamentos',
+        {
+          ente, apelido, comarca
+        },
+      );
+
+      toast.success("Orçamento criado com sucesso!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        theme: "light",
+        transition: Bounce,
+      });
+      setIsLoading(false)
+
+    } catch (e) {
+      toast.error(`Error ao criar orçamento: ${e}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        theme: "light",
+        transition: Bounce,
+      });
+
+    }
+
+
   };
 
   return (
@@ -83,7 +150,7 @@ export default function LoginLogs() {
             botaoSalvar={
               <motion.button
                 className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'
-                onClick={(e) => handleSubmit(e)}
+                onClick={(e) => handleAdicionarOrcamento(e)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -93,28 +160,24 @@ export default function LoginLogs() {
             }
 
           >
+            <ToastContainer />
             <form className='flex flex-col gap-4 justify-center  items-center'>
               <div className='w-[650px] flex flex-col gap-4'>
                 <div className='flex flex-col gap-1 dark:text-white'>
                   <label htmlFor='ente'>Ente</label>
-                  <input name='ente' className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400'></input>
+                  <input name='ente' className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400' value={ente} onChange={(e) => setEnte(e.target.value)}></input>
                 </div>
 
                 <div className='flex flex-col gap-1 dark:text-white'>
                   <label htmlFor='apelido'>Apelido</label>
-                  <input name='apelido' className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400'></input>
-                </div>
-
-                <div className='flex flex-col gap-1 dark:text-white'>
-                  <label htmlFor='obs'>Obs</label>
-                  <input name='obs' className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400'></input>
+                  <input name='apelido' className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400' value={apelido} onChange={(e) => setApelido(e.target.value)}></input>
                 </div>
 
                 <div className='flex flex-col gap-1 dark:text-white'>
                   <label htmlFor='comarca'>Comarca:</label>
                   <div className='flex gap-1 items-center'>
                     <div className='relative'>
-                      <input type="checkbox" name="persist" id="persist" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" />
+                      <input type="checkbox" name="persist" id="persist" className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" checked={comarca === "1"} onChange={handleComarcaChange} />
                       <span
                         className="absolute right-[1px] top-[2px] text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[2px] mt-[1px]" viewBox="0 0 20 20" fill="currentColor"

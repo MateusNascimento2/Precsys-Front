@@ -63,8 +63,8 @@ const GerarPDFPropostaContact = ({ beneficiario, cpfcnpj, precatorio, processo, 
           <div className="w-full text-[14px]">
             {/* Beneficiário */}
             <div className="flex bg-[#041b36] text-white">
-              <div className="pl-2 pb-2 w-[180px]">BENEFICIÁRIO</div>
-              <div className="pl-2 pb-2 text-[13px] bg-gray-100 text-gray-600 flex-1">{propostaDetails.beneficiario}</div>
+              <div className="pl-2 pb-2 pt-1 w-[180px]">BENEFICIÁRIO</div>
+              <div className="pl-2 pb-2 pt-1 text-[13px] bg-gray-100 text-gray-600 flex-1">{propostaDetails.beneficiario}</div>
             </div>
 
             {/* CPF/CNPJ */}
@@ -87,8 +87,8 @@ const GerarPDFPropostaContact = ({ beneficiario, cpfcnpj, precatorio, processo, 
 
             {/* Proposta */}
             <div className="flex bg-[#041b36] text-white">
-              <div className="pl-2 pb-3 w-[180px]">PROPOSTA</div>
-              <div className="pl-2 pb-3 text-[13px] bg-gray-100 text-gray-600 flex-1">{propostaDetails.proposta}</div>
+              <div className="pl-2 pb-2 w-[180px]">PROPOSTA</div>
+              <div className="pl-2 pb-2 text-[13px] bg-gray-100 text-gray-600 flex-1">{propostaDetails.proposta}</div>
             </div>
           </div>
 
@@ -134,23 +134,23 @@ const GerarPDFPropostaContact = ({ beneficiario, cpfcnpj, precatorio, processo, 
           <div className="w-full">
             <div className='text-[13px] font-bold text-gray-400 flex'>
               <div className='flex-1'>
-                <div className="border-r border-gray-300 p-2 flex items-center">
-                  <p className="inline-block bg-[#45647a] w-3 h-3 rounded-full mr-2 mt-3"></p>
+                <div className="border-r border-gray-300 p-2 flex gap-2 items-center">
+                  <p className="inline-block bg-[#45647a] w-3 h-3 rounded-full"></p>
                   <p className=''>Documento de Identidade </p>
                 </div>
 
-                <div className="border-r border-gray-300 p-2 flex items-center">
-                  <p className="inline-block bg-[#45647a] w-3 h-3 rounded-full mr-2 mt-3"></p>
+                <div className="border-r border-gray-300 p-2 flex gap-2 items-center">
+                  <p className="inline-block bg-[#45647a] w-3 h-3 rounded-full"></p>
                   <p>CPF/CNPJ</p>
                 </div>
 
-                <div className="border-r border-gray-300 p-2 flex items-center">
-                  <p className="inline-block bg-[#45647a] w-3 h-3 rounded-full mr-2 mt-3"></p>
+                <div className="border-r border-gray-300 p-2 flex gap-2 items-center">
+                  <p className="inline-block bg-[#45647a] w-3 h-3 rounded-full"></p>
                   <p>Comprovante de Residência</p>
                 </div>
 
-                <div className="border-r border-gray-300 p-2 flex items-center">
-                  <p className="inline-block bg-[#45647a] w-3 h-3 rounded-full mr-2 mt-3"></p>
+                <div className="border-r border-gray-300 p-2 flex gap-2 items-center">
+                  <p className="inline-block bg-[#45647a] w-3 h-3 rounded-full"></p>
                   <p>Estado Civil</p>
                 </div>
 
@@ -159,30 +159,30 @@ const GerarPDFPropostaContact = ({ beneficiario, cpfcnpj, precatorio, processo, 
               </div>
 
               <div className='flex-1'>
-                <div className="p-2 flex items-center">
-                  <span className="inline-block bg-[#45647a] w-3 h-3 rounded-full mr-2 mt-3"></span>
+                <div className="p-2 flex gap-2 items-center">
+                  <span className="inline-block bg-[#45647a] w-3 h-3 rounded-full "></span>
                   <span className=''>Certidão de Casamento / Nascimento</span>
                 </div>
 
 
 
-                <div className="p-2 flex items-center">
-                  <span className="inline-block bg-[#45647a] w-3 h-3 rounded-full mr-2 mt-3"></span>
+                <div className="p-2 flex gap-2 items-center">
+                  <span className="inline-block bg-[#45647a] w-3 h-3 rounded-full"></span>
                   <span>Profissão</span>
                 </div>
 
 
 
 
-                <div className="p-2 flex items-center">
-                  <span className="inline-block bg-[#45647a] w-3 h-3 rounded-full mr-2 mt-3"></span>
+                <div className="p-2 flex gap-2 items-center">
+                  <span className="inline-block bg-[#45647a] w-3 h-3 rounded-full "></span>
                   <span>Conta Bancária para pagamento</span>
                 </div>
 
 
 
-                <div className="p-2 flex items-center">
-                  <span className="inline-block bg-[#45647a] w-3 h-3 rounded-full mr-2 mt-3"></span>
+                <div className="p-2 flex gap-2 items-center">
+                  <span className="inline-block bg-[#45647a] w-3 h-3 rounded-full "></span>
                   <span>E-mail</span>
                 </div>
 
