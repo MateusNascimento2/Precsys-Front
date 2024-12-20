@@ -14,6 +14,7 @@ export default function FerramentasPerfil({ user, id }) {
   const [isLoading, setIsLoading] = useState(false);
   const [sala, setSala] = useState('');
   const [teles, setTeles] = useState([]);
+  const [empresas, setEmpresas] = useState([]);
   const [extraInputs, setExtraInputs] = useState([{ apelido: '', email: '', senha: '', link: '' }]); // estado para os inputs extras
   const axiosPrivate = useAxiosPrivate();
   const { auth, setAuth } = useAuth();
@@ -36,6 +37,7 @@ export default function FerramentasPerfil({ user, id }) {
     const fetchAllData = async () => {
       try {
         await Promise.all([fetchData('/tele', setTeles)]);
+        await Promise.all([fetchData('/empresas', setEmpresas)])
       } finally {
         setIsLoading(false);
       }
@@ -66,6 +68,8 @@ export default function FerramentasPerfil({ user, id }) {
     setIsCheckedPermissaoEmail(user.permissao_email === 1);
 
   }, [teles]);
+
+  console.log(empresas)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -186,13 +190,13 @@ export default function FerramentasPerfil({ user, id }) {
                             <span className='text-neutral-400 text-sm'>Acesso rápido aos e-mails corporativos</span>
                           </div>
                           {isCheckedPermissaoEmail && <div>
-                            <button
+                            {/* <button
                               type="button"
                               onClick={addNewInput}
                               className='flex items-center justify-center dark:text-white w-10 h-10 text-lg dark:hover:bg-neutral-800 rounded-full'
                             >
                               +
-                            </button>
+                            </button> */}
                           </div>}
                         </div>
                       </div>
@@ -209,16 +213,10 @@ export default function FerramentasPerfil({ user, id }) {
 
                     {/* Adicionar inputs dinamicamente */}
                     {isCheckedPermissaoEmail ? (
-                      extraInputs.map((input, index) => (
+                      empresas.map((input, index) => (
                         <div key={index} className='flex flex-col lg:flex-row items-end justify-between gap-4 mt-4 lg:flex-wrap xl:flex-nowrap'>
                           <div className='flex flex-col w-full'>
-                            <label className="text-neutral-400 text-sm">Apelido</label>
-                            <input
-                              className='text-neutral-400 border dark:border-neutral-600 text font-medium p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]'
-                              name="apelido"
-                              value={input.apelido}
-                              onChange={(e) => handleInputChange(index, e)} // Chama a função para atualizar o estado
-                            />
+                            <p className='dark:text-white mb-2'>{input.nome}:</p>
                           </div>
 
                           <div className='flex flex-col w-full'>
@@ -242,18 +240,9 @@ export default function FerramentasPerfil({ user, id }) {
                             />
                           </div>
 
-                          <div className='flex flex-col w-full'>
-                            <label className="text-neutral-400 text-sm">Link</label>
-                            <input
-                              className='text-neutral-400 border dark:border-neutral-600 text font-medium p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]'
-                              name="link"
-                              value={input.link}
-                              onChange={(e) => handleInputChange(index, e)}
-                              type="text"
-                            />
-                          </div>
+                          <input type='hidden' value={input.id}></input>
 
-                          <div>
+                          {/* <div>
                             <button
                               type="button"
                               onClick={() => removeInput(index)} // Função para remover a seção de inputs
@@ -263,7 +252,7 @@ export default function FerramentasPerfil({ user, id }) {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                               </svg>
                             </button>
-                          </div>
+                          </div> */}
                         </div>
                       ))
                     ) : null}

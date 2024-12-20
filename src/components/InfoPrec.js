@@ -198,7 +198,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, users
                 </div>
             </div> : null}
             {
-                cessoes.length !== 0 ? (
+                cessoes.length !== 0 && auth.user.admin ? (
                     <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                         <span className="font-[700] dark:text-white mb-[16px]" id='relacionados'>Relacionados</span>
                         <div className="mb-4 dark:bg-neutral-900">

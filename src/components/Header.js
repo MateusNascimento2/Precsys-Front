@@ -101,8 +101,8 @@ function Header() {
 
 
 
-          <div className='relative w-[35px] lg:w-[45px] bg-neutral-100 rounded'>
-            <div className='cursor-pointer' onClick={() => handleMenu('toolBar')}>
+          <div className='relative w-[40px] h-[40px] lg:w-[50px] lg:h-[50px] bg-neutral-100 rounded'>
+            <div className='cursor-pointer w-full h-full' onClick={() => handleMenu('toolBar')}>
               <ProfileImage userImage={auth?.userImage} />
             </div>
             {menuType === 'toolBar' ? (<UserToolbar show={showMenu} updateLogo={updateLogo} darkMode={darkMode} onDarkModeChange={handleDarkModeChange} />) : null}
