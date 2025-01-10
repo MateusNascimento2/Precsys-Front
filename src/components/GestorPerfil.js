@@ -109,7 +109,7 @@ export default function GestorPerfil({ user }) {
       await fetchAllData();
       toast.success('Gestor(es) salvo(s) com sucesso!', {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -117,6 +117,7 @@ export default function GestorPerfil({ user }) {
         progress: false,
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
+        onClose: () => window.location.reload(), // Recarrega após o toast ser fechado
       });
 
     } catch (err) {

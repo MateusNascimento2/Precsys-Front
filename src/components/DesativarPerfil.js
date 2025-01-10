@@ -57,7 +57,7 @@ export default function DesativarPerfil({ user, id }) {
 
         toast.success('Perfil desativado com sucesso!', {
           position: "top-right",
-          autoClose: 3000,
+          autoClose: 1000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -65,6 +65,7 @@ export default function DesativarPerfil({ user, id }) {
           progress: false,
           theme: isDarkMode === 'true' ? 'dark' : 'light',
           transition: Bounce,
+          onClose: () =>  window.location.href = '/', // Recarrega após o toast ser fechado
         });
 
         // Opcional: Redirecionar o usuário para uma página de logout ou uma página informativa
@@ -74,7 +75,7 @@ export default function DesativarPerfil({ user, id }) {
         console.log(err);
         toast.error(`Erro ao desativar perfil: ${err}`, {
           position: "top-right",
-          autoClose: 3000,
+          autoClose: 1000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -88,7 +89,7 @@ export default function DesativarPerfil({ user, id }) {
     } else {
       toast.error('Erro ao desativar perfil!', {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,

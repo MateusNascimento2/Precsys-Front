@@ -19,6 +19,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import ClientesList from '../components/ClientesList';
 import FerramentasPerfil from '../components/FerramentasPerfil';
 import * as XLSX from 'xlsx';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const ButtonEditProfile = ({ handleItemClick }) => {
   return (
@@ -60,6 +61,7 @@ const MeuPerfil = () => {
     "adv",
     "falecido",
   ]);
+  const navigate = useNavigate();
 
   const handleFilteredCessoes = (filteredData) => {
     setFilteredCessoes(filteredData);
@@ -71,6 +73,8 @@ const MeuPerfil = () => {
       setActiveItem(section); // Define o item ativo com base na URL
     }
   }, [searchParams]);
+
+  
 
   useEffect(() => {
     const handleScroll = () => {
@@ -107,9 +111,11 @@ const MeuPerfil = () => {
   }, [id, axiosPrivate, auth.user]);
 
   const handleItemClick = (itemId) => {
-    setActiveItem(itemId);
-    setIsMenuOpen(false); // Fechar o menu após selecionar um item
+    setActiveItem(itemId); // Define o item ativo
+    setIsMenuOpen(false); // Fecha o menu, se estiver aberto
+    navigate(`/perfil${id ? `/${id}` : ''}?section=${itemId}`); // Atualiza a URL com a seção
   };
+
 
   const handleInputChange = (query) => {
     setSearchQuery(query);
@@ -271,14 +277,14 @@ const MeuPerfil = () => {
       });
       return filteredItem;
     });
-  
+
     const worksheet = XLSX.utils.json_to_sheet(selectedData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Cessões");
-  
+
     XLSX.writeFile(workbook, "cessoes.xlsx");
   };
-  
+
   const handleFieldSelectionChange = (field) => {
     setSelectedExportFields((prevState) =>
       prevState.includes(field)
@@ -569,7 +575,7 @@ const MeuPerfil = () => {
                         >
                           Configurações
                         </a>
-                      </li> }
+                      </li>}
 
                     </ul>
                   </div>

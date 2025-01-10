@@ -15,13 +15,14 @@ export default function FerramentasPerfil({ user, id }) {
   const [sala, setSala] = useState('');
   const [teles, setTeles] = useState([]);
   const [empresas, setEmpresas] = useState([]);
-  const [extraInputs, setExtraInputs] = useState([{ apelido: '', email: '', senha: '', link: '' }]); // estado para os inputs extras
+  const [extraInputs, setExtraInputs] = useState([]); // estado para os inputs extras
   const axiosPrivate = useAxiosPrivate();
   const { auth, setAuth } = useAuth();
 
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
+
 
     const fetchData = async (url, setter) => {
       try {
@@ -36,6 +37,7 @@ export default function FerramentasPerfil({ user, id }) {
 
     const fetchAllData = async () => {
       try {
+        setIsLoading(true)
         await Promise.all([fetchData('/tele', setTeles)]);
         await Promise.all([fetchData('/empresas', setEmpresas)])
       } finally {
@@ -75,11 +77,23 @@ export default function FerramentasPerfil({ user, id }) {
     e.preventDefault();
     const isDarkMode = localStorage.getItem('darkMode');
 
-    //console.log(extraInputs)
+    console.log('extraInputs:', extraInputs)
 
-    extraInputs.forEach(async (inputData) => {
-      await axiosPrivate.post('/adicionarEmail', {...inputData, id_usuario: user.id})
-    })
+    await Promise.all(
+      extraInputs.map(async (inputData) => {
+        const { email, senha, empresa_id } = inputData;
+
+        // Certifica-se de que os campos estão preenchidos
+        if (email && senha && empresa_id) {
+          await axiosPrivate.post('/adicionarEmail', {
+            email,
+            senha,
+            empresa_id,
+            id_usuario: user.id, // Inclui o id do usuário se necessário
+          });
+        }
+      })
+    );
 
     const { password, ...restOfUser } = user;
 
@@ -116,7 +130,7 @@ export default function FerramentasPerfil({ user, id }) {
 
       toast.success('Alterações salvas com sucesso!', {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -124,12 +138,13 @@ export default function FerramentasPerfil({ user, id }) {
         progress: false,
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
+        onClose: () => window.location.reload(), // Recarrega após o toast ser fechado
       });
     } catch (err) {
       console.log(err);
       toast.error(`Erro ao salvar alterações: ${err}`, {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -154,6 +169,49 @@ export default function FerramentasPerfil({ user, id }) {
     updatedInputs[index][name] = value;
     setExtraInputs(updatedInputs);
   };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        setIsLoading(true);
+
+        // Buscar todas as empresas
+        const empresasResponse = await axiosPrivate.get('/empresas');
+        const empresasData = empresasResponse.data;
+
+        // Buscar todos os emails cadastrados pelo usuário logado
+        const emailsResponse = await axiosPrivate.get('/emails_usuarios');
+        let userEmails;
+
+        if (id) {
+          userEmails = emailsResponse.data.filter(email => String(email.usuario) === String(id));
+        } else {
+          userEmails = emailsResponse.data.filter(email => String(email.usuario) === String(auth.user.id));
+        }
+
+
+        // Atualizar os inputs com base nas empresas e nos emails do usuário logado
+        const updatedInputs = empresasData.map(empresa => {
+          const userEmail = userEmails.find(email => String(email.empresa) === String(empresa.id));
+          return {
+            nome: empresa.nome,
+            email: userEmail ? userEmail.email : '', // Preenche se existir
+            senha: userEmail ? userEmail.senha : '', // Sempre vazio por segurança
+            empresa_id: empresa.id, // ID da empresa
+          };
+        });
+
+        setExtraInputs(updatedInputs);
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+        toast.error('Erro ao carregar dados.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, [auth.user.id, id]);
 
   // Função para remover inputs
   const removeInput = (index) => {
@@ -212,50 +270,80 @@ export default function FerramentasPerfil({ user, id }) {
                     </div>
 
                     {/* Adicionar inputs dinamicamente */}
-                    {isCheckedPermissaoEmail ? (
-                      empresas.map((input, index) => (
-                        <div key={index} className='flex flex-col lg:flex-row items-end justify-between gap-4 mt-4 lg:flex-wrap xl:flex-nowrap'>
-                          <div className='flex flex-col w-full'>
-                            <p className='dark:text-white mb-2'>{input.nome}:</p>
+                    {isCheckedPermissaoEmail && (
+                      <>
+                        {isLoading ? (
+                          // Mostra o spinner de carregamento enquanto está carregando
+                          <div className='w-full h-[793px] lg:h-[740px] flex justify-center items-center'>
+                            <div className='w-8 h-8'>
+                              <LoadingSpinner />
+                            </div>
                           </div>
-
-                          <div className='flex flex-col w-full'>
-                            <label className="text-neutral-400 text-sm">E-mail</label>
-                            <input
-                              className='text-neutral-400 border dark:border-neutral-600 text font-medium p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]'
-                              name="email"
-                              value={input.email}
-                              onChange={(e) => handleInputChange(index, e)}
-                            />
-                          </div>
-
-                          <div className='flex flex-col w-full'>
-                            <label className="text-neutral-400 text-sm">Senha</label>
-                            <input
-                              className='text-neutral-400 border dark:border-neutral-600 text font-medium p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]'
-                              name="senha"
-                              value={input.senha}
-                              onChange={(e) => handleInputChange(index, e)}
-                              type="password"
-                            />
-                          </div>
-
-                          <input type='hidden' value={input.id}></input>
-
-                          {/* <div>
-                            <button
-                              type="button"
-                              onClick={() => removeInput(index)} // Função para remover a seção de inputs
-                              className='flex items-center justify-center dark:text-white w-8 h-8 text-lg hover:bg-red-500 text-white rounded-full'
+                        ) : (
+                          // Mapeia os inputs quando não está carregando
+                          extraInputs.map((input, index) => (
+                            <div
+                              key={index}
+                              className='flex flex-col lg:flex-row items-end justify-between gap-4 mt-4 lg:flex-wrap xl:flex-nowrap'
                             >
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                              </svg>
-                            </button>
-                          </div> */}
-                        </div>
-                      ))
-                    ) : null}
+                              <div className='flex flex-col w-full'>
+                                <p className='dark:text-white mb-2'>{input.nome}:</p>
+                              </div>
+
+                              <div className='flex flex-col w-full'>
+                                <label className="text-neutral-400 text-sm">E-mail</label>
+                                <input
+                                  className='text-neutral-400 border dark:border-neutral-600 text font-medium p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]'
+                                  name="email"
+                                  value={input.email}
+                                  onChange={(e) => handleInputChange(index, e)} // Atualiza o estado
+                                />
+                              </div>
+
+                              <div className="flex flex-col w-full">
+                                <label className="text-neutral-400 text-sm">Senha</label>
+                                <div className="relative">
+                                  <input
+                                    className="text-neutral-400 border dark:border-neutral-600 text font-medium p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px] w-full"
+                                    name="senha"
+                                    value={input.senha}
+                                    onChange={(e) => handleInputChange(index, e)} // Atualiza o estado
+                                    type={input.showPassword ? "text" : "password"} // Alterna entre texto e senha
+                                  />
+                                  {/* Ícone de alternância de senha */}
+                                  <button
+                                    type="button"
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-600"
+                                    onClick={() => {
+                                      const updatedInputs = [...extraInputs];
+                                      updatedInputs[index].showPassword = !updatedInputs[index].showPassword;
+                                      setExtraInputs(updatedInputs);
+                                    }}
+                                  >
+                                    {input.showPassword ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                                    </svg>
+                                      : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                      </svg>
+                                    } {/* Ícones para alternar */}
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Campo hidden para armazenar o empresa_id */}
+                              <input
+                                name="empresa_id"
+                                type="hidden"
+                                value={input.id}
+                                readOnly
+                              />
+                            </div>
+                          ))
+                        )}
+                      </>
+                    )}
                   </div>
 
                   {/* Proposta ao Cliente */}

@@ -16,43 +16,42 @@ function NavBarAdmin({ show }) {
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
 
-  {
-    auth.user.permissao_email && useEffect(() => {
-      let isMounted = true;
-      const controller = new AbortController();
+  useEffect(() => {
+    if (!auth.user.permissao_email) return; // Adicione uma verificação no início do useEffect
 
-      const fetchData = async (url, setter) => {
-        try {
-          const { data } = await axiosPrivate.get(url, {
-            signal: controller.signal
-          });
-          if (isMounted) setter(data);
-        } catch (err) {
-          console.log(err);
-        }
-      };
+    let isMounted = true;
+    const controller = new AbortController();
 
-      const fetchAllData = async () => {
-        try {
-          await Promise.all([fetchData('/empresas', setEmpresas)])
-          await Promise.all([fetchData('/emails_usuarios', setEmailsUsuarios)])
-        } finally {
-          setIsLoading(false);
-        }
-      };
+    const fetchData = async (url, setter) => {
+      try {
+        const { data } = await axiosPrivate.get(url, {
+          signal: controller.signal,
+        });
+        if (isMounted) setter(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
-      fetchAllData();
+    const fetchAllData = async () => {
+      try {
+        setIsLoading(true);
+        await Promise.all([fetchData('/empresas', setEmpresas)]);
+        await Promise.all([fetchData('/emails_usuarios', setEmailsUsuarios)]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-      return () => {
-        isMounted = false;
-        controller.abort();
-      };
+    fetchAllData();
 
-    }, []);
-  }
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [auth.user.permissao_email, axiosPrivate]);
 
-  console.log(empresas)
-  console.log(emailsUsuarios)
+
   const filteredEmails = emailsUsuarios
     .filter(email => email.usuario === String(auth.user.id)) // Filtra os e-mails pelo usuário
     .map(email => {
@@ -63,7 +62,7 @@ function NavBarAdmin({ show }) {
         empresaDominio: empresa ? empresa.site : null // Adiciona o nome da empresa (ou null se não encontrar)
       };
     });
-  console.log(filteredEmails)
+
 
   function handleShow(type) {
     if (menuType === type) {
@@ -294,11 +293,11 @@ function NavBarAdmin({ show }) {
                 </AnimatePresence>
               </li> : null}
               {auth.user.permissao_email ?
-                <li onClick={filteredEmails.length > 0 ? () => handleShow('emails') : null}  className='cursor-pointer px-2 py-4 lg:p-2 lg:rounded w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800'>
+                <li onClick={filteredEmails.length > 0 ? () => handleShow('emails') : null} className='cursor-pointer px-2 py-4 lg:p-2 lg:rounded w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800'>
                   <div className='flex justify-between items-center lg:gap-3'>
                     <span className='font-[500] text-[#666666] dark:text-neutral-300 text-nowrap '>E-mails</span>
                     <span className='text-[12px] dark:text-neutral-300'>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showMenu && menuType === 'ferramentas' ? "w-3 h-3 inline-block rotate-180" : 'w-3 h-3 inline-block'}>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showMenu && menuType === 'emails' ? "w-3 h-3 inline-block rotate-180" : 'w-3 h-3 inline-block'}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                       </svg>
                     </span>
@@ -397,11 +396,11 @@ function NavBarAdmin({ show }) {
                   </AnimatePresence>
                 </li> : null}
               {auth.user.permissao_email ?
-                <li onClick={filteredEmails.length > 0 ? () => handleShow('emails') : null}  className='cursor-pointer px-2 py-4 lg:p-2 lg:rounded w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800'>
+                <li onClick={filteredEmails.length > 0 ? () => handleShow('emails') : null} className='cursor-pointer px-2 py-4 lg:p-2 lg:rounded w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800'>
                   <div className='flex justify-between items-center lg:gap-3'>
                     <span className='font-[500] text-[#666666] dark:text-neutral-300 text-nowrap  '>E-mails</span>
                     <span className='text-[12px] dark:text-neutral-300'>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showMenu && menuType === 'ferramentas' ? "w-3 h-3 inline-block rotate-180" : 'w-3 h-3 inline-block'}>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showMenu && menuType === 'emails' ? "w-3 h-3 inline-block rotate-180" : 'w-3 h-3 inline-block'}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                       </svg>
                     </span>

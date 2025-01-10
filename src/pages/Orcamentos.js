@@ -8,6 +8,7 @@ import OrcamentosList from '../components/OrcamentosList';
 import Modal from '../components/Modal';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 
 
 export default function Orcamentos() {
@@ -56,8 +57,9 @@ export default function Orcamentos() {
   };
 
   const handleAdicionarOrcamento = async (e) => {
+    const isDarkMode = localStorage.getItem('darkMode');
     e.preventDefault();
-
+    setIsLoading(true)
     if (!ente) {
       toast.error("Mencione um ente antes de criar um novo orçamento.", {
         position: "top-right",
@@ -66,6 +68,7 @@ export default function Orcamentos() {
         theme: "light",
         transition: Bounce,
       });
+      setIsLoading(false)
       return;
     }
 
@@ -77,6 +80,7 @@ export default function Orcamentos() {
         theme: "light",
         transition: Bounce,
       });
+      setIsLoading(false)
       return;
     }
 
@@ -91,14 +95,20 @@ export default function Orcamentos() {
 
       toast.success("Orçamento criado com sucesso!", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
         hideProgressBar: false,
-        theme: "light",
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
+        onClose: () => window.location.reload(), // Recarrega após o toast ser fechado
       });
       setIsLoading(false)
 
     } catch (e) {
+      setIsLoading(false)
       toast.error(`Error ao criar orçamento: ${e}`, {
         position: "top-right",
         autoClose: 3000,
@@ -112,7 +122,7 @@ export default function Orcamentos() {
 
   };
 
-  
+
 
   return (
     <>
@@ -122,6 +132,8 @@ export default function Orcamentos() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
+
+
         <div className='flex items-center justify-between mx-5'>
           <motion.h2 className="font-[700] text-[32px] md:mt-[16px] dark:text-white" id="orcamento" initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -201,6 +213,7 @@ export default function Orcamentos() {
           </Modal>
         </div>
 
+
         <div className="mt-[24px] px-5 dark:bg-neutral-900">
           <div className="flex gap-3 items-center mb-4 w-full">
             <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'py-3'} />
@@ -209,7 +222,7 @@ export default function Orcamentos() {
           <div className={`lg:flex lg:gap-4 lg:items-start`}>
 
 
-            <div className="w-full h-full max-h-full">
+            <div className="w-full h-full max-h-full mb-4">
               <OrcamentosList searchQuery={searchQuery} orcamentos={orcamentos} isLoading={isLoading} />
             </div>
           </div>

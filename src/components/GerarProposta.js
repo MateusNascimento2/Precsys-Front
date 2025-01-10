@@ -201,7 +201,7 @@ function GerarProposta() {
           </div>) : (
           <div className=''>
             <ToastContainer />
-            <div className='flex flex-col gap-2 lg:gap-2 xl:px-4 xl:fixed xl:top-[7%] xl:w-[350px] xl:border-r-[1px] border-neutral-600 px-3 pb-4 mb-[1px] '>
+            <div className='flex flex-col gap-2 lg:gap-2 xl:px-4 xl:fixed xl:top-[7%] xl:w-[380px] xl:border-r-[1px] border-neutral-600 px-3 pb-4 mb-[1px] '>
               <div className='dark:text-white text-black flex flex-col gap-1'>
                 <label className='text-[14px] font-medium' htmlFor="nome">Empresa</label>
                 <div ref={ulRef} onClick={handleShow} className='dark:bg-neutral-800 border rounded dark:border-neutral-600 text-gray-400 relative'>

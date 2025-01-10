@@ -495,6 +495,7 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
           <WindowScroller>
             {({ height, isScrolling, onChildScroll, registerChild, scrollTop }) => (
               <section className="container dark:bg-neutral-900" style={{ width: "100%" }}>
+                <ToastContainer />
                 <div className="dark:bg-neutral-900 relative h-full">
                   <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">
                     Mostrando {filteredCessoes.length} de {minhascessoes || user ? myCessions.length  : myCessions.length >= 1 ? myCessions.length : cessoes.length} cessões

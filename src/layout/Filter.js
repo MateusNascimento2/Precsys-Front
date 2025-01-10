@@ -451,7 +451,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
 
                       <div className="flex flex-col gap-2 overflow-y-scroll ">
                         {filteredEnte.map((orcamento) => (
-                          orcamento.obs === '0'
+                          orcamento.comarca === '0'
                             ? (
                               <div key={orcamento.id}>
                                 <div className="cursor-pointer">
@@ -552,7 +552,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
                                 className="flex flex-col border-l pl-2 pt-1 dark:border-neutral-600"
                               >
                                 {filteredEnte.map((orcamento) => (
-                                  orcamento.obs === '1'
+                                  orcamento.comarca === '1'
                                     ? (
                                       <div key={orcamento.id}>
                                         <div className="cursor-pointer">

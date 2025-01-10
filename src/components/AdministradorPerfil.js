@@ -56,20 +56,21 @@ export default function AdministradorPerfil({ user, id }) {
         setIsLoading(false);
 
         toast.success('Cargo alterado com sucesso!', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: false,
-          theme: isDarkMode === 'true' ? 'dark' : 'light',
-          transition: Bounce,
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+        onClose: () => window.location.reload(), // Recarrega após o toast ser fechado
         });
       } catch (err) {
         toast.error(`Erro ao editar cargo: ${err}`, {
           position: "top-right",
-          autoClose: 3000,
+          autoClose: 1000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -83,7 +84,7 @@ export default function AdministradorPerfil({ user, id }) {
     } else {
       toast.error('Erro ao editar cargo: Cargo não selecionado!', {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,

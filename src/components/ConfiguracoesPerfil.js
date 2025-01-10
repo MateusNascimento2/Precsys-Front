@@ -123,7 +123,7 @@ export default function ConfiguracoesPerfil({ user, id }) {
 
       toast.success('Perfil alterado com sucesso!', {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -131,12 +131,13 @@ export default function ConfiguracoesPerfil({ user, id }) {
         progress: false,
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
+        onClose: () => window.location.reload(), // Recarrega após o toast ser fechado
       });
     } catch (err) {
       console.log(err.response.data.error);
       toast.error(`Erro ao editar perfil: ${err.response.data.error}`, {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,

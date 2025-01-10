@@ -83,7 +83,7 @@ export default function Empresas() {
                           </div>
                           <div className="flex grow flex-col justify-center text-[12px] pl-2">
 
-                            <span className="font-bold dark:text-white hover:underline"><Link>{empresa.nome}</Link></span>
+                            <span className="font-bold dark:text-white"><Link><span className='hover:underline'>{empresa.nome}</span></Link></span>
 
                             <span className="text-neutral-400 font-medium line-clamp-1 dark:text-neutral-300">{empresa.cnpj}</span>
                           </div>

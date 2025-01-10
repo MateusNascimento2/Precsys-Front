@@ -203,8 +203,8 @@ function PieChart() {
                   <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">{s.x}:</span>
                   {/* Usando React CountUp */}
                   <span>
-                    <span data-tooltip-id="my-tooltip" data-tooltip-content={'Valor da expectativa'} data-tooltip-place="right" className="text-sm flex items-center gap-1 font-bold text-neutral-900 dark:text-white">
-                      R$ 
+                    <span data-tooltip-id="my-tooltip" data-tooltip-content={'Valor da expectativa'} data-tooltip-place="right" className="text-sm font-bold text-neutral-900 dark:text-white">
+                      <span className='mr-1'>R$</span>
                       <CountUp
                         end={s.expRecebimentoTotal}
                         decimals={2}

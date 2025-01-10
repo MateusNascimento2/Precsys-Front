@@ -580,6 +580,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
 
   return cessionario.length !== 0 ? (
     <div className="w-full mb-[60px] flex flex-col">
+      <ToastContainer />
       <div className="mb-[16px] flex items-center justify-between">
         <span className="font-[700] dark:text-white" id="cessionarios">
           Cessionários
