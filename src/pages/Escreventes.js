@@ -50,8 +50,8 @@ function EditCompanyModal({ isOpen, onRequestClose, onSave, companyData }) {
     try {
       const isDarkMode = localStorage.getItem('darkMode');
 
-      // Atualiza os dados da empresa
-      await axiosPrivate.put(`/empresas/${companyData.id}`, {
+      // Atualiza os dados da escrevente
+      await axiosPrivate.put(`/escreventes/${companyData.id}`, {
         nome,
         cnpj,
         razaoSocial,
@@ -77,8 +77,8 @@ function EditCompanyModal({ isOpen, onRequestClose, onSave, companyData }) {
         site,
       });
     } catch (error) {
-      console.error('Erro ao atualizar empresa:', error);
-      toast.error('Erro ao atualizar empresa. Verifique os dados.', {
+      console.error('Erro ao atualizar escrevente:', error);
+      toast.error('Erro ao atualizar escrevente. Verifique os dados.', {
         position: 'top-right',
         autoClose: 3000,
         theme: 'light',
@@ -210,7 +210,7 @@ function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
   return (
     <div onClick={handleOverlayClick} className="fixed inset-0 bg-white dark:bg-black bg-opacity-80 dark:bg-opacity-80 flex justify-center items-center z-50 p-2">
       <div onClick={(e) => e.stopPropagation()} className="bg-white border dark:border-neutral-600 dark:bg-neutral-900 p-6 rounded shadow-lg relative w-full max-w-md">
-        <h2 className="text-lg text-black dark:text-white font-semibold">Deseja excluir a empresa?</h2>
+        <h2 className="text-lg text-black dark:text-white font-semibold">Deseja excluir a escrevente?</h2>
         <div className="flex justify-between mt-4">
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
@@ -240,7 +240,7 @@ function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
 
 
 export default function Empresas() {
-  const [empresas, setEmpresas] = React.useState([]);
+  const [escreventes, setEscreventes] = React.useState([]);
   const [nome, setNome] = React.useState('');
   const [cnpj, setCnpj] = React.useState('');
   const [razaoSocial, setRazaoSocial] = React.useState('');
@@ -267,9 +267,9 @@ export default function Empresas() {
     async function fetchEmpresas() {
       try {
         setIsLoading(true)
-        const { data } = await axiosPrivate.get('/empresas')
+        const { data } = await axiosPrivate.get('/escreventes')
         console.log(data)
-        setEmpresas(data)
+        setEscreventes(data)
       } catch (error) {
         console.log(error)
       } finally {
@@ -287,7 +287,7 @@ export default function Empresas() {
     console.log(nome, cnpj, razaoSocial, site, endereco)
     try {
       setIsLoading(true)
-      await axiosPrivate.post('/empresas', { nome, cnpj, razaoSocial, site, endereco })
+      await axiosPrivate.post('/escreventes', { nome, cnpj, razaoSocial, site, endereco })
 
       toast.success("Empresa criada com sucesso!", {
         position: "top-right",
@@ -306,7 +306,7 @@ export default function Empresas() {
       setRazaoSocial('');
       setEndereco('');
     } catch (e) {
-      toast.error(`Erro ao criar nova empresa: ${e}`, {
+      toast.error(`Erro ao criar nova escrevente: ${e}`, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -325,7 +325,7 @@ export default function Empresas() {
     try {
 
       setIsLoading(true);
-      await axiosPrivate.delete(`/empresas/${id}`); // Passa o budget_id para a API
+      await axiosPrivate.delete(`/escreventes/${id}`); // Passa o budget_id para a API
       toast.success('Empresa deletada com sucesso!', {
         position: "top-right",
         autoClose: 1000,
@@ -339,8 +339,8 @@ export default function Empresas() {
         onClose: () => window.location.reload(), // Recarrega após o toast ser fechado
       });
     } catch (err) {
-      console.error(`Erro ao deletar empresa: ${err}`);
-      toast.error(`Erro ao deletar empresa: ${err}`, {
+      console.error(`Erro ao deletar escrevente: ${err}`);
+      toast.error(`Erro ao deletar escrevente: ${err}`, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -369,17 +369,17 @@ export default function Empresas() {
         <div className='flex justify-between items-center mx-5'>
           <motion.h2
             className='font-[700] text-[32px] md:mt-[16px] dark:text-white'
-            id='empresas'
+            id='escreventes'
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Empresas
+            Escreventes
           </motion.h2>
           <Modal
             botaoAbrirModal={
               <motion.button
-                title='Adicionar nova empresa'
+                title='Adicionar novo escrevente'
                 className='hover:bg-neutral-100 flex items-center justify-center dark:text-white dark:hover:bg-neutral-800 rounded text-[20px] lg:mb-0 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px]'
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -395,7 +395,7 @@ export default function Empresas() {
             tituloModal={
 
               <div className='flex gap-2 items-center'>
-                <span>Adicionar nova empresa</span>
+                <span>Adicionar novo escrevente</span>
               </div>
 
             }
@@ -462,15 +462,15 @@ export default function Empresas() {
           </div>
 
           <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">
-            Mostrando {empresas.length} empresas
+            Mostrando {escreventes.length} escreventes
 
           </p>
 
           <div className={`lg:flex lg:flex-col lg:gap-4 lg:items-start mb-10`}>
             <div className='hidden lg:block lg:sticky lg:top-[5%]'>
             </div>
-            {empresas ?
-              empresas.map(empresa =>
+            {escreventes ?
+              escreventes.map(escrevente =>
                 <div className='w-full h-full max-h-full mb-4 lg:mb-0'>
                   <motion.div
                     className="dark:bg-neutral-900"
@@ -479,16 +479,11 @@ export default function Empresas() {
                     transition={{ duration: 0.3, delay: 0.3 }}
                   >
                     <div className=" dark:bg-neutral-900 ">
-                      <div className="flex border dark:border-neutral-700 dark:bg-neutral-900 px-2 py-1 rounded-t items-center">
+                      <div className="flex border dark:border-neutral-700 dark:bg-neutral-900 px-2 py-4 rounded items-center">
                         <div className="flex w-full">
-                          <div className="border-r dark:border-neutral-700 pr-2 my-3 flex items-center justify-center w-[100px] sm:w-[140px] lg:w-[250px]">
-                            <img src={empresa.photoUrl ? empresa.photoUrl : placeholder} className='h-[40px]'></img>
-                          </div>
                           <div className="flex grow flex-col justify-center text-[12px] pl-2">
 
-                            <span className="font-bold dark:text-white"><Link><span className='hover:underline'>{empresa.nome}</span></Link></span>
-
-                            <span className="text-neutral-400 font-medium line-clamp-1 dark:text-neutral-300">{empresa.cnpj}</span>
+                            <span className="font-bold dark:text-white"><Link><span className='hover:underline'>{escrevente.nome}</span></Link></span>
                           </div>
                         </div>
                         <ToastContainer />
@@ -497,7 +492,7 @@ export default function Empresas() {
 
 
                           <button
-                            onClick={() => openEditModal(empresa)}
+                            onClick={() => openEditModal(escrevente)}
                             className="cursor-pointer text-[12px] rounded p-1 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 w-full text-left disabled:opacity-75 disabled:hover:bg-white disabled:dark:hover:bg-neutral-900 disabled:cursor-not-allowed disabled:dark:bg-neutral-900"
                           >
                             Editar
@@ -523,7 +518,7 @@ export default function Empresas() {
                           <DeleteConfirmationModal
                             isOpen={modalIsOpen}
                             onRequestClose={closeModal}
-                            onConfirm={() => confirmDelete(empresa.id)}
+                            onConfirm={() => confirmDelete(escrevente.id)}
                           />
 
 
@@ -547,24 +542,6 @@ export default function Empresas() {
                           </button> */}
 
                         </DotsButton>
-                      </div>
-
-                      <div className="text-[10px] rounded-b border-b border-r border-l dark:border-neutral-700 py-3 px-2 flex gap-2 flex-wrap items-center dark:bg-neutral-900">
-                        <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100`}>
-                          <span className="text-black font-bold dark:text-neutral-100">{empresa.site}</span>
-                        </span>
-
-                        {/*                         <span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700`}>
-                          <span className="text-black font-bold dark:text-neutral-100">b</span>
-                        </span> */}
-
-                        {/* {cessao.data_cessao ? (<span className="px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 font-bold dark:text-neutral-100">{cessao.data_cessao.split('-')[2]}/{cessao.data_cessao.split('-')[1]}/{cessao.data_cessao.split('-')[0]}</span>) : null} */}
-
-                        {/* {cessao.empresa_id ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700`}><span className="text-black font-bold dark:text-neutral-100">{cessao.empresa_id}</span></span>) : null}
-
-                        {cessao.adv ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700`}><span className="text-black font-bold dark:text-neutral-100">{cessao.adv}</span></span>) : null}
-
-                        {cessao.falecido ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700`}><span className="text-black font-bold dark:text-neutral-100">{cessao.falecido}</span></span>) : null} */}
                       </div>
                     </div>
                     {/* <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500', maxWidth: '220px' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="top" /> */}

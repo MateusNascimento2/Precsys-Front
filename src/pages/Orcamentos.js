@@ -163,20 +163,23 @@ export default function Orcamentos() {
             }
             botaoSalvar={
               <motion.button
-                className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'
+                className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700 flex gap-2 items-center'
                 onClick={(e) => handleAdicionarOrcamento(e)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
                 Salvar
+                {isLoading && <div className='w-5 h-5'>
+                  < LoadingSpinner />
+                </div>}
               </motion.button>
             }
 
           >
             <ToastContainer />
             <form className='flex flex-col gap-4 justify-center  items-center'>
-              <div className='w-[650px] flex flex-col gap-4'>
+              <div className='lg:w-[650px] flex flex-col gap-4'>
                 <div className='flex flex-col gap-1 dark:text-white'>
                   <label htmlFor='ente'>Ente</label>
                   <input name='ente' className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400' value={ente} onChange={(e) => setEnte(e.target.value)}></input>

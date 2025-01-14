@@ -418,11 +418,6 @@ export default function OrcamentosList({ searchQuery, orcamentos }) {
     }
   };
 
-  const handleEditarOrcamento = async (e, budget_id) => {
-    e.preventDefault()
-    console.log(budget_id, ente, apelido, comarca)
-  }
-
   const renderRow = useCallback(
     ({ index, key, parent, style }) => {
       const [nome_ente, data] = filteredOrcamentos[index];
@@ -448,7 +443,7 @@ export default function OrcamentosList({ searchQuery, orcamentos }) {
                     {data.anos.map((ano, idx) => (
                       <span
                         key={idx}
-                        className="text-[10px] font-bold px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 "
+                        className="text-[10px] w-[42px] font-bold px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100 "
                       >
                         {ano}
                       </span>
@@ -488,7 +483,7 @@ export default function OrcamentosList({ searchQuery, orcamentos }) {
                     >
 
                       <form className='flex flex-col gap-4 justify-center  items-center'>
-                        <div className='w-[650px] flex flex-col gap-4'>
+                        <div className='lg:w-[650px] flex flex-col gap-4'>
                           <div className='flex flex-col gap-1 dark:text-white'>
                             <label htmlFor='ano'>Ano</label>
                             <input name='ano' className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400' value={ano} onChange={(e) => {
@@ -570,7 +565,7 @@ export default function OrcamentosList({ searchQuery, orcamentos }) {
                 onSave={handleSaveEdit}
                 budgetData={budgetToEdit}
               />
-              <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">
+              <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300 pb-1">
                 Mostrando {filteredOrcamentos.length} orçamentos
 
               </p>

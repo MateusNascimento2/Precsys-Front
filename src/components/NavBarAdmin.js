@@ -194,7 +194,7 @@ function NavBarAdmin({ show }) {
                             <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Jurídicos</span>
                             <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todos os Jurídicos</p>
                           </li>
-                          <li className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                          <li onClick={() => handleRoute('/escreventes')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
                             <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Escreventes</span>
                             <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todos os Escreventes</p>
                           </li>
