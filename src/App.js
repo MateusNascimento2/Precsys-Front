@@ -19,6 +19,7 @@ import Clientes from './pages/Clientes';
 import Empresas from './pages/Empresas';
 import Orcamentos from './pages/Orcamentos';
 import Escreventes from './pages/Escreventes';
+import Juridicos from './pages/Juridicos';
 
 function App() {
 
@@ -50,6 +51,7 @@ function App() {
             <Route path='empresas' element={<Empresas />} />
             <Route path='orcamentos' element={<Orcamentos />} />
             <Route path='escreventes' element={<Escreventes />} />
+            <Route path='juridicos' element={<Juridicos />} />
           </Route>
         </Route>
 

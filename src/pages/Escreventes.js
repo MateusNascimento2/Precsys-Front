@@ -3,31 +3,23 @@ import Header from '../components/Header'
 import { motion, AnimatePresence } from 'framer-motion';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import SearchInput from '../components/SearchInput';
-import { useNavigate, useLocation, Link, useParams } from 'react-router-dom';
 import DotsButton from "../components/DotsButton";
-import placeholder from "../../public/assets/no-logo.png";
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 import Modal from '../components/Modal';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 
-function EditCompanyModal({ isOpen, onRequestClose, onSave, companyData }) {
+function EditEscreventeModal({ isOpen, onRequestClose, onSave, escreventeData }) {
   const [nome, setNome] = React.useState('');
-  const [cnpj, setCnpj] = React.useState('');
-  const [endereco, setEndereco] = React.useState('');
   const [razaoSocial, setRazaoSocial] = React.useState('');
-  const [site, setSite] = React.useState('');
   const axiosPrivate = useAxiosPrivate();
 
   // Atualiza os valores quando o modal é aberto
   React.useEffect(() => {
-    if (isOpen && companyData) {
-      setNome(companyData.nome || '');
-      setCnpj(companyData.cnpj || '');
-      setRazaoSocial(companyData.razaosocial || '');
-      setEndereco(companyData.endereco || '');
-      setSite(companyData.site || '');
+    if (isOpen && escreventeData) {
+      setNome(escreventeData.nome || '');
+      setRazaoSocial(escreventeData.razaosocial || '');
     }
-  }, [isOpen, companyData]);
+  }, [isOpen, escreventeData]);
 
 
   const handleOverlayClick = (event) => {
@@ -38,11 +30,8 @@ function EditCompanyModal({ isOpen, onRequestClose, onSave, companyData }) {
 
   const handleCancel = () => {
     // Reseta os valores ao cancelar ou fechar
-    setNome(companyData.nome || '');
-    setCnpj(companyData.cnpj || '');
-    setRazaoSocial(companyData.razaosocial || '');
-    setEndereco(companyData.endereco || '');
-    setSite(companyData.site || '');
+    setNome(escreventeData.nome || '');
+    setRazaoSocial(escreventeData.razaosocial || '');
     onRequestClose();
   };
 
@@ -51,15 +40,12 @@ function EditCompanyModal({ isOpen, onRequestClose, onSave, companyData }) {
       const isDarkMode = localStorage.getItem('darkMode');
 
       // Atualiza os dados da escrevente
-      await axiosPrivate.put(`/escreventes/${companyData.id}`, {
+      await axiosPrivate.put(`/escreventes/${escreventeData.id}`, {
         nome,
-        cnpj,
         razaoSocial,
-        endereco,
-        site,
       });
 
-      toast.success('Empresa atualizada com sucesso!', {
+      toast.success('Escrevente atualizado com sucesso!', {
         position: 'top-right',
         autoClose: 1000,
         theme: isDarkMode === 'true' ? 'dark' : 'light',
@@ -69,12 +55,9 @@ function EditCompanyModal({ isOpen, onRequestClose, onSave, companyData }) {
 
       // Envia os dados atualizados
       onSave({
-        ...companyData,
+        ...escreventeData,
         nome,
-        cnpj,
         razaoSocial,
-        endereco,
-        site,
       });
     } catch (error) {
       console.error('Erro ao atualizar escrevente:', error);
@@ -98,7 +81,7 @@ function EditCompanyModal({ isOpen, onRequestClose, onSave, companyData }) {
           className="bg-white border dark:border-neutral-600 dark:bg-neutral-900 p-6 rounded shadow-lg relative w-full max-w-md"
         >
           <h2 className="text-lg text-black dark:text-white font-semibold">
-            Editar Empresa
+            Editar Escrevente
           </h2>
           <form className="flex flex-col gap-4 mt-4">
             <div className="flex flex-col">
@@ -114,18 +97,6 @@ function EditCompanyModal({ isOpen, onRequestClose, onSave, companyData }) {
               />
             </div>
             <div className="flex flex-col">
-              <label htmlFor="cnpj" className="text-sm mb-1 text-neutral-700 dark:text-neutral-300">
-                CNPJ
-              </label>
-              <input
-                type="text"
-                id="cnpj"
-                value={cnpj}
-                onChange={(e) => setCnpj(e.target.value)}
-                className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]"
-              />
-            </div>
-            <div className="flex flex-col">
               <label htmlFor="razao-social" className="text-sm mb-1 text-neutral-700 dark:text-neutral-300">
                 Razão social
               </label>
@@ -134,30 +105,6 @@ function EditCompanyModal({ isOpen, onRequestClose, onSave, companyData }) {
                 id="razao-social"
                 value={razaoSocial}
                 onChange={(e) => setRazaoSocial(e.target.value)}
-                className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label htmlFor="endereco" className="text-sm mb-1 text-neutral-700 dark:text-neutral-300">
-                Endereço
-              </label>
-              <input
-                type="text"
-                id="endereco"
-                value={endereco}
-                onChange={(e) => setEndereco(e.target.value)}
-                className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]"
-              />
-            </div>
-            <div className="flex flex-col">
-              <label htmlFor="site" className="text-sm mb-1 text-neutral-700 dark:text-neutral-300">
-                Site
-              </label>
-              <input
-                type="text"
-                id="site"
-                value={site}
-                onChange={(e) => setSite(e.target.value)}
                 className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]"
               />
             </div>
@@ -210,7 +157,7 @@ function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
   return (
     <div onClick={handleOverlayClick} className="fixed inset-0 bg-white dark:bg-black bg-opacity-80 dark:bg-opacity-80 flex justify-center items-center z-50 p-2">
       <div onClick={(e) => e.stopPropagation()} className="bg-white border dark:border-neutral-600 dark:bg-neutral-900 p-6 rounded shadow-lg relative w-full max-w-md">
-        <h2 className="text-lg text-black dark:text-white font-semibold">Deseja excluir a escrevente?</h2>
+        <h2 className="text-lg text-black dark:text-white font-semibold">Deseja excluir o escrevente?</h2>
         <div className="flex justify-between mt-4">
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
@@ -239,32 +186,29 @@ function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
 }
 
 
-export default function Empresas() {
+export default function Escreventes() {
   const [escreventes, setEscreventes] = React.useState([]);
   const [nome, setNome] = React.useState('');
-  const [cnpj, setCnpj] = React.useState('');
   const [razaoSocial, setRazaoSocial] = React.useState('');
-  const [site, setSite] = React.useState('');
-  const [endereco, setEndereco] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [editModalIsOpen, setEditModalIsOpen] = React.useState(false);
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
-  const [companyToEdit, setCompanyToEdit] = React.useState(null);
+  const [escreventeToEdit, setEscreventeToEdit] = React.useState(null);
   const axiosPrivate = useAxiosPrivate();
   const openModal = () => {
     setModalIsOpen(true)
   };
   const closeModal = () => setModalIsOpen(false);
 
-  const openEditModal = (company) => {
-    setCompanyToEdit(company);
+  const openEditModal = (escrevente) => {
+    setEscreventeToEdit(escrevente);
     setEditModalIsOpen(true);
   };
 
   const closeEditModal = () => setEditModalIsOpen(false);
 
   React.useEffect(() => {
-    async function fetchEmpresas() {
+    async function fetchEscreventes() {
       try {
         setIsLoading(true)
         const { data } = await axiosPrivate.get('/escreventes')
@@ -277,19 +221,19 @@ export default function Empresas() {
       }
     }
 
-    fetchEmpresas()
+    fetchEscreventes()
 
   }, [])
 
-  const handleAdicionarEmpresa = async (e) => {
+  const handleAdicionarEscrevente = async (e) => {
     const isDarkMode = localStorage.getItem('darkMode');
     e.preventDefault()
-    console.log(nome, cnpj, razaoSocial, site, endereco)
+    console.log(nome, razaoSocial)
     try {
       setIsLoading(true)
-      await axiosPrivate.post('/escreventes', { nome, cnpj, razaoSocial, site, endereco })
+      await axiosPrivate.post('/escreventes', { nome, razaoSocial })
 
-      toast.success("Empresa criada com sucesso!", {
+      toast.success("Escrevente adicionado com sucesso!", {
         position: "top-right",
         autoClose: 1000,
         hideProgressBar: false,
@@ -302,15 +246,17 @@ export default function Empresas() {
         onClose: () => window.location.reload(), // Recarrega após o toast ser fechado
       });
       setNome('');
-      setCnpj('');
       setRazaoSocial('');
-      setEndereco('');
     } catch (e) {
-      toast.error(`Erro ao criar nova escrevente: ${e}`, {
+      toast.error(`Erro ao adicionar novo escrevente: ${e}`, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
-        theme: "light",
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
       });
       setIsLoading(false)
@@ -326,7 +272,7 @@ export default function Empresas() {
 
       setIsLoading(true);
       await axiosPrivate.delete(`/escreventes/${id}`); // Passa o budget_id para a API
-      toast.success('Empresa deletada com sucesso!', {
+      toast.success('Escrevente deletado com sucesso!', {
         position: "top-right",
         autoClose: 1000,
         hideProgressBar: false,
@@ -386,8 +332,9 @@ export default function Empresas() {
                 transition={{ duration: 0.5 }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                 </svg>
+
 
 
               </motion.button>
@@ -402,7 +349,7 @@ export default function Empresas() {
             botaoSalvar={
               <motion.button
                 className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700 flex gap-2 items-center'
-                onClick={(e) => handleAdicionarEmpresa(e)}
+                onClick={(e) => handleAdicionarEscrevente(e)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -425,23 +372,8 @@ export default function Empresas() {
                 </div>
 
                 <div className='flex flex-col gap-1 dark:text-white'>
-                  <label htmlFor='cpnj'>CNPJ</label>
-                  <input name='cnpj' className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400' value={cnpj} onChange={(e) => setCnpj(e.target.value)}></input>
-                </div>
-
-                <div className='flex flex-col gap-1 dark:text-white'>
                   <label htmlFor='razao-social'>Razão social</label>
                   <input name='razao-social' className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400' value={razaoSocial} onChange={(e) => setRazaoSocial(e.target.value)}></input>
-                </div>
-
-                <div className='flex flex-col gap-1 dark:text-white'>
-                  <label htmlFor='site'>Site</label>
-                  <input name='site' className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400' value={site} onChange={(e) => setSite(e.target.value)}></input>
-                </div>
-
-                <div className='flex flex-col gap-1 dark:text-white'>
-                  <label htmlFor='endereco'>Endereço</label>
-                  <input name='endereco' className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400' value={endereco} onChange={(e) => setEndereco(e.target.value)}></input>
                 </div>
 
               </div>
@@ -466,10 +398,10 @@ export default function Empresas() {
 
           </p>
 
-          <div className={`lg:flex lg:flex-col lg:gap-4 lg:items-start mb-10`}>
+          {!isLoading ? <div className={`lg:flex lg:flex-col lg:gap-4 lg:items-start mb-10`}>
             <div className='hidden lg:block lg:sticky lg:top-[5%]'>
             </div>
-            {escreventes ?
+            {escreventes &&
               escreventes.map(escrevente =>
                 <div className='w-full h-full max-h-full mb-4 lg:mb-0'>
                   <motion.div
@@ -483,7 +415,7 @@ export default function Empresas() {
                         <div className="flex w-full">
                           <div className="flex grow flex-col justify-center text-[12px] pl-2">
 
-                            <span className="font-bold dark:text-white"><Link><span className='hover:underline'>{escrevente.nome}</span></Link></span>
+                            <span className="font-bold dark:text-white"><span className='hover:underline'>{escrevente.nome}</span></span>
                           </div>
                         </div>
                         <ToastContainer />
@@ -506,14 +438,14 @@ export default function Empresas() {
                             Excluir
                           </button>
 
-                          <EditCompanyModal
+                          <EditEscreventeModal
                             isOpen={editModalIsOpen}
                             onRequestClose={closeEditModal}
-                            onSave={(updatedCompany) => {
-                              console.log('Empresa atualizada:', updatedCompany);
+                            onSave={(updatedEscrevente) => {
+                              console.log('Escrevente atualizado:', updatedEscrevente);
                               closeEditModal();
                             }}
-                            companyData={companyToEdit}
+                            escreventeData={escreventeToEdit}
                           />
                           <DeleteConfirmationModal
                             isOpen={modalIsOpen}
@@ -521,40 +453,19 @@ export default function Empresas() {
                             onConfirm={() => confirmDelete(escrevente.id)}
                           />
 
-
-
-
-                          {/* <button title="Baixar escritura" className="cursor-pointer text-[12px] rounded p-1 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 w-full text-left disabled:opacity-75 disabled:hover:bg-white disabled:dark:hover:bg-neutral-900 disabled:cursor-not-allowed  disabled:dark:bg-neutral-900" onClick={() => downloadFile(cessao.escritura)} disabled={!cessao.escritura}>
-                            {loadingFiles[cessao.escritura] ? (
-                              <div className="flex items-center gap-1">
-                                <div className="w-4 h-4"><LoadingSpinner /></div>
-                                <span>Escritura</span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                </svg>
-                                <span>Escritura</span>
-
-                              </div>
-                            )}
-                          </button> */}
-
                         </DotsButton>
                       </div>
                     </div>
-                    {/* <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500', maxWidth: '220px' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="top" /> */}
                   </motion.div>
                 </div>
               )
-              : <div className="w-full flex justify-center">
-                <div className="w-12 h-12">
-                  <LoadingSpinner />
-                </div>
-              </div>}
+            }
 
-          </div>
+          </div> : <div className="w-full flex justify-center">
+            <div className="w-12 h-12">
+              <LoadingSpinner />
+            </div>
+          </div>}
         </motion.div>
       </motion.main>
 

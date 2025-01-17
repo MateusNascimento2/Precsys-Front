@@ -466,10 +466,10 @@ export default function Empresas() {
 
           </p>
 
-          <div className={`lg:flex lg:flex-col lg:gap-4 lg:items-start mb-10`}>
+          {!isLoading ? <div className={`lg:flex lg:flex-col lg:gap-4 lg:items-start mb-10`}>
             <div className='hidden lg:block lg:sticky lg:top-[5%]'>
             </div>
-            {empresas ?
+            {empresas &&
               empresas.map(empresa =>
                 <div className='w-full h-full max-h-full mb-4 lg:mb-0'>
                   <motion.div
@@ -486,7 +486,7 @@ export default function Empresas() {
                           </div>
                           <div className="flex grow flex-col justify-center text-[12px] pl-2">
 
-                            <span className="font-bold dark:text-white"><Link><span className='hover:underline'>{empresa.nome}</span></Link></span>
+                            <span className="font-bold dark:text-white"><span className='hover:underline'>{empresa.nome}</span></span>
 
                             <span className="text-neutral-400 font-medium line-clamp-1 dark:text-neutral-300">{empresa.cnpj}</span>
                           </div>
@@ -526,26 +526,6 @@ export default function Empresas() {
                             onConfirm={() => confirmDelete(empresa.id)}
                           />
 
-
-
-
-                          {/* <button title="Baixar escritura" className="cursor-pointer text-[12px] rounded p-1 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 w-full text-left disabled:opacity-75 disabled:hover:bg-white disabled:dark:hover:bg-neutral-900 disabled:cursor-not-allowed  disabled:dark:bg-neutral-900" onClick={() => downloadFile(cessao.escritura)} disabled={!cessao.escritura}>
-                            {loadingFiles[cessao.escritura] ? (
-                              <div className="flex items-center gap-1">
-                                <div className="w-4 h-4"><LoadingSpinner /></div>
-                                <span>Escritura</span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                </svg>
-                                <span>Escritura</span>
-
-                              </div>
-                            )}
-                          </button> */}
-
                         </DotsButton>
                       </div>
 
@@ -553,31 +533,16 @@ export default function Empresas() {
                         <span className={`px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-100`}>
                           <span className="text-black font-bold dark:text-neutral-100">{empresa.site}</span>
                         </span>
-
-                        {/*                         <span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700`}>
-                          <span className="text-black font-bold dark:text-neutral-100">b</span>
-                        </span> */}
-
-                        {/* {cessao.data_cessao ? (<span className="px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700 font-bold dark:text-neutral-100">{cessao.data_cessao.split('-')[2]}/{cessao.data_cessao.split('-')[1]}/{cessao.data_cessao.split('-')[0]}</span>) : null} */}
-
-                        {/* {cessao.empresa_id ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700`}><span className="text-black font-bold dark:text-neutral-100">{cessao.empresa_id}</span></span>) : null}
-
-                        {cessao.adv ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700`}><span className="text-black font-bold dark:text-neutral-100">{cessao.adv}</span></span>) : null}
-
-                        {cessao.falecido ? (<span className={`px-2 py-1 rounded bg-neutral-200 dark:bg-neutral-700`}><span className="text-black font-bold dark:text-neutral-100">{cessao.falecido}</span></span>) : null} */}
                       </div>
                     </div>
-                    {/* <Tooltip id="my-tooltip" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500', maxWidth: '220px' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="top" /> */}
                   </motion.div>
                 </div>
-              )
-              : <div className="w-full flex justify-center">
-                <div className="w-12 h-12">
-                  <LoadingSpinner />
-                </div>
-              </div>}
-
-          </div>
+              )}
+          </div> : <div className="w-full flex justify-center">
+            <div className="w-12 h-12">
+              <LoadingSpinner />
+            </div>
+          </div>}
         </motion.div>
       </motion.main>
 

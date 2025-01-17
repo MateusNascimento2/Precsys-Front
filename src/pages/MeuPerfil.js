@@ -74,7 +74,7 @@ const MeuPerfil = () => {
     }
   }, [searchParams]);
 
-  
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -113,9 +113,8 @@ const MeuPerfil = () => {
   const handleItemClick = (itemId) => {
     setActiveItem(itemId); // Define o item ativo
     setIsMenuOpen(false); // Fecha o menu, se estiver aberto
-    navigate(`/perfil${id ? `/${id}` : ''}?section=${itemId}`); // Atualiza a URL com a seção
+    navigate(`${id ? `/usuario/${id}` : '/perfil'}?section=${itemId}`); // Atualiza a URL com a seção
   };
-
 
   const handleInputChange = (query) => {
     setSearchQuery(query);
