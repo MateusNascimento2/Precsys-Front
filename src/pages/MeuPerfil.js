@@ -52,12 +52,13 @@ const MeuPerfil = () => {
   const [selectedExportFields, setSelectedExportFields] = useState([
     "id",
     "precatorio",
+    "processo",
     "cedente",
+    "ente_id",
     "status",
-    "ente",
     "natureza",
     "data_cessao",
-    "empresa",
+    "empresa_id",
     "adv",
     "falecido",
   ]);
@@ -113,7 +114,13 @@ const MeuPerfil = () => {
   const handleItemClick = (itemId) => {
     setActiveItem(itemId); // Define o item ativo
     setIsMenuOpen(false); // Fecha o menu, se estiver aberto
-    navigate(`${id ? `/usuario/${id}` : '/perfil'}?section=${itemId}`); // Atualiza a URL com a seção
+
+    // Obtenha a base da URL atual
+    const basePath = window.location.pathname.split('/')[1];
+    const baseId = id ? `/${id}` : '';
+
+    // Navegue para a nova seção mantendo a base atual
+    navigate(`/${basePath}${baseId}?section=${itemId}`);
   };
 
   const handleInputChange = (query) => {
@@ -132,8 +139,6 @@ const MeuPerfil = () => {
   const handleSelectedCheckboxesChange = (childData) => {
     setSelectedCheckboxes(childData);
   };
-
-  console.log(user);
 
   const exportPDF = (filteredData) => {
 
@@ -269,18 +274,37 @@ const MeuPerfil = () => {
   };
 
   const exportToExcel = (filteredData, selectedFields) => {
+    // Mapeamento de rótulos personalizados
+    const fieldLabels = {
+      id: "Id",
+      precatorio: "Precatório",
+      processo: "Processo",
+      cedente: "Cedente",
+      status: "Status",
+      ente_id: "Ente Público",
+      natureza: "Natureza",
+      data_cessao: "Data da Cessão",
+      empresa_id: "Empresa",
+      adv: "Anuência",
+      falecido: "Falecido",
+    };
+
+    // Ajustar os dados filtrados com base nos rótulos
     const selectedData = filteredData.map((item) => {
       const filteredItem = {};
       selectedFields.forEach((field) => {
-        filteredItem[field] = item[field];
+        const label = fieldLabels[field] || field; // Usa o rótulo personalizado ou a chave original
+        filteredItem[label] = item[field];
       });
       return filteredItem;
     });
 
+    // Criar a planilha e o arquivo Excel
     const worksheet = XLSX.utils.json_to_sheet(selectedData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Cessões");
 
+    // Baixar o arquivo Excel
     XLSX.writeFile(workbook, "cessoes.xlsx");
   };
 

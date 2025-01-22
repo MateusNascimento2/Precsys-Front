@@ -212,7 +212,6 @@ export default function Escreventes() {
       try {
         setIsLoading(true)
         const { data } = await axiosPrivate.get('/escreventes')
-        console.log(data)
         setEscreventes(data)
       } catch (error) {
         console.log(error)
@@ -228,7 +227,6 @@ export default function Escreventes() {
   const handleAdicionarEscrevente = async (e) => {
     const isDarkMode = localStorage.getItem('darkMode');
     e.preventDefault()
-    console.log(nome, razaoSocial)
     try {
       setIsLoading(true)
       await axiosPrivate.post('/escreventes', { nome, razaoSocial })

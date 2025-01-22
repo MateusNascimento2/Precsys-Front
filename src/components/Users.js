@@ -144,7 +144,6 @@ function Users({ searchQuery, selectedFilters }) {
     );
   }, [resultadoFiltrado, searchQuery]);
 
-  console.log(users)
 
   const renderRow = useCallback(({ index, parent, key, style }) => {
     const user = filteredUsers[index];

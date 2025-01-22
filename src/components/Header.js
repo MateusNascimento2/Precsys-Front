@@ -29,7 +29,6 @@ function Header() {
   }, [darkMode]);
 
   useEffect(() => {
-    console.log(showMenu)
 
     if (showMenu === true && menuType !== 'toolBar') {
       if (document.body.style.overflow !== "hidden") {
@@ -70,8 +69,6 @@ function Header() {
   const handleRoute = (route) => {
     navigate(route)
   }
-
-  console.log(`Header auth: ${auth.user.admin}`)
 
   return (
     <>

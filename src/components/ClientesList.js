@@ -76,10 +76,7 @@ function ClientesList({ searchQuery, user }) {
 
   const filterUsersByGestor = (users, clientes, gestorId) => {
     // Filtra os clientes que têm o `gestorId` como gestor
-    console.log(clientes)
-    console.log(gestorId)
     const clientesDoGestor = clientes.filter(cliente => String(cliente.id_gestor) === String(gestorId));
-    console.log('clientesDoGestor: ' + clientesDoGestor)
 
     // Pega os IDs dos usuários que têm o `gestorId` como gestor
     const usuariosIds = clientesDoGestor.map(cliente => cliente.id_usuario);
@@ -105,15 +102,11 @@ function ClientesList({ searchQuery, user }) {
       })
     );
   }, [users, searchQuery]);
-
-  console.log(users);
   
 
   const renderRow = useCallback(({ index, parent, key, style }) => {
     const user = filteredUsers[index];
-    console.log('sadasd', cessionarios)
     const cessoesDoUsuario = cessionarios.filter((cessionario) => cessionario.user_id === String(user.id));
-    console.log(cessoesDoUsuario)
     user.qtdCessoes = cessoesDoUsuario.length;
 
     return (

@@ -71,13 +71,9 @@ export default function FerramentasPerfil({ user, id }) {
 
   }, [teles]);
 
-  console.log(empresas)
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isDarkMode = localStorage.getItem('darkMode');
-
-    console.log('extraInputs:', extraInputs)
 
     await Promise.all(
       extraInputs.map(async (inputData) => {

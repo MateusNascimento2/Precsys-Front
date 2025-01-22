@@ -24,7 +24,6 @@ const AdicionarCessao = forwardRef(({ varas, orcamentos, orcamentosAnos, naturez
 
   useEffect(() => {
     if (ente) {
-      console.log(ente)
       const anos = orcamentosAnos
         .filter((item) => parseInt(item.budget_id) === ente)
         .map((item) => ({ value: item.ano, label: item.ano }));

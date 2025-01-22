@@ -27,7 +27,6 @@ function Dashboard() {
 
   const handleShow = () => {
     setShow((prevState) => !prevState)
-    console.log(show);
   }
 
   return (

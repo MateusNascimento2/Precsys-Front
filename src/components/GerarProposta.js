@@ -27,7 +27,6 @@ function GerarProposta() {
   const [handleGeneratePDF, setHandleGeneratePDF] = React.useState(null);
   // Referência para o componente de PDF
   const pdfRef = React.useRef();
-  console.log(auth)
 
   React.useEffect(() => {
     async function fetchEmpresas() {
@@ -90,14 +89,6 @@ function GerarProposta() {
       });
       return;
     }
-
-    console.log(auth.user.id)
-    console.log(empresa.id)
-    console.log(beneficiario)
-    console.log(cpfcnpj)
-    console.log(precatorio)
-    console.log(processo)
-    console.log(proposta)
 
     try {
       await axiosPrivate.post(

@@ -14,7 +14,6 @@ import { motion } from 'framer-motion';
 
 export default function ConfiguracoesPerfil({ user, id }) {
   const { auth, setAuth } = useAuth();
-  console.log(auth);
 
   const axiosPrivate = useAxiosPrivate();
   const [isLoading, setIsLoading] = useState(false);
@@ -32,11 +31,8 @@ export default function ConfiguracoesPerfil({ user, id }) {
   // Toggle Switch State
   const [isSwitchOn, setIsSwitchOn] = useState(user ? user.ver_dashboard === 1 : auth.user.ver_dashboard === 1);
 
-  console.log('foto:' + fotoParaMostrar);
-
   useEffect(() => {
     if (user) {
-      console.log(user.photoUrl);
       setNome(user.nome);
       setCpfCnpj(user.cpfcnpj);
       setTelefone(user.telefone);

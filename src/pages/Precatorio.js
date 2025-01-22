@@ -179,8 +179,6 @@ export default function Precatorio() {
 
   }, [precID]);
 
-  console.log(clientes)
-
   useEffect(() => {
     if (!isDataLoaded) return; // Garantir que todos os dados foram carregados antes de atualizar
 
@@ -473,7 +471,6 @@ export default function Precatorio() {
     try {
       setSendingData(true);
       console.log(`cessaoEditada: ${JSON.stringify(cessaoEditada)}`);
-      console.log(requisitorioEditadoFile);
 
       // Envio dos dados da cessão editada
       await axiosPrivate.put(`/cessoes/${precID}`, cessaoEditada);
@@ -484,7 +481,6 @@ export default function Precatorio() {
         files.forEach((file) => {
           // Adicionando precID ao nome do arquivo
           const fileNameWithPrecID = `${precID}-${file.name}-${file.file.name}`;
-          console.log('file:' + fileNameWithPrecID);
           formData.append(file.name, new File([file.file], fileNameWithPrecID)); // Substitui o nome do arquivo
         });
 
@@ -549,7 +545,6 @@ export default function Precatorio() {
 
 
   const isGestor = clientes.some(cliente => String(cliente.id_gestor) === String(auth.user.id))
-  console.log(isGestor)
 
   const cessionariosFiltrados = cessionarios.filter(cessionario => {
     const cessaoIdMatch = parseInt(precData.id) === parseInt(cessionario.cessao_id);

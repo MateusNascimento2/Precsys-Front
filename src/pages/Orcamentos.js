@@ -32,7 +32,6 @@ export default function Orcamentos() {
       try {
         setIsLoading(true);
         const { data } = await axiosPrivate.get(url, { signal: controller.signal });
-        console.log(data);
         if (isMounted) setState(data);
       } catch (err) {
         console.log(err);
@@ -50,7 +49,6 @@ export default function Orcamentos() {
     };
   }, []);
 
-  console.log(orcamentos)
 
   const handleInputChange = (query) => {
     setSearchQuery(query);

@@ -68,8 +68,6 @@ function Usuarios() {
         clientes.some(cliente => String(cliente.id_gestor) === String(user.id))
       );
 
-      console.log(gestoresFiltrados)
-
       // Inicializa os nomes dos gestores como false
       const gestoresNomes = gestoresFiltrados.reduce((acc, gestor) => {
         acc[gestor.nome] = false;
@@ -89,7 +87,7 @@ function Usuarios() {
 
   const handleSubmit = async (formData) => {
     const isDarkMode = localStorage.getItem('darkMode');
-    console.log(formData);
+    
 
     if (
       formData.nome.length < 3 ||
@@ -109,7 +107,6 @@ function Usuarios() {
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
       });
-      console.log('caiu no if');
     } else {
       try {
         setIsLoading(true);

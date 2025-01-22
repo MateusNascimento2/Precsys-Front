@@ -128,9 +128,6 @@ export default function AllCessoes() {
   }, [filteredCessoes]);
 
 
-  console.log(valorTotalExcel);
-
-
   const handleFilteredCessoes = (filteredData) => {
     setFilteredCessoes(filteredData);
   };
@@ -192,7 +189,6 @@ export default function AllCessoes() {
   }
 
   const handleReceberValoresCessionario = (valores, id) => {
-    console.log(valores)
     setCessionarios(prev => {
       return prev.map(cessionario => {
         if (cessionario.index === id) {
@@ -257,8 +253,6 @@ export default function AllCessoes() {
     setJuridico(valores.juridico);
     setRequisitorio(valores.requisitorio);
     setEscritura(valores.escritura);
-    console.log(requisitorio)
-    console.log(escritura)
   };
 
   const handleSubmit = async (e) => {
@@ -626,18 +620,37 @@ export default function AllCessoes() {
   };
 
   const exportToExcel = (filteredData, selectedFields) => {
+    // Mapeamento de rótulos personalizados
+    const fieldLabels = {
+      id: "Id",
+      precatorio: "Precatório",
+      processo: "Processo",
+      cedente: "Cedente",
+      status: "Status",
+      ente_id: "Ente Público",
+      natureza: "Natureza",
+      data_cessao: "Data da Cessão",
+      empresa_id: "Empresa",
+      adv: "Anuência",
+      falecido: "Falecido",
+    };
+
+    // Ajustar os dados filtrados com base nos rótulos
     const selectedData = filteredData.map((item) => {
       const filteredItem = {};
       selectedFields.forEach((field) => {
-        filteredItem[field] = item[field];
+        const label = fieldLabels[field] || field; // Usa o rótulo personalizado ou a chave original
+        filteredItem[label] = item[field];
       });
       return filteredItem;
     });
 
+    // Criar a planilha e o arquivo Excel
     const worksheet = XLSX.utils.json_to_sheet(selectedData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Cessões");
 
+    // Baixar o arquivo Excel
     XLSX.writeFile(workbook, "cessoes.xlsx");
   };
 
@@ -719,7 +732,7 @@ export default function AllCessoes() {
                 }
               >
                 <div className='h-[450px] overflow-auto relative'>
-                  <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? 'absolute left-[-1100px] transition-all ease-in-out duration-300 overflow-hidden' : 'absolute left-0 transition-all ease-in-out duration-300 overflow-y-hidden w-full'}>
+                  <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? 'absolute left-[-1800px] transition-all ease-in-out duration-300 overflow-hidden' : 'absolute left-0 transition-all ease-in-out duration-300 overflow-y-hidden w-full'}>
                     {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
                       <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>
                         <LoadingSpinner />
@@ -728,7 +741,7 @@ export default function AllCessoes() {
                     <AdicionarCessao ref={adicionarCessaoRef} varas={varas} orcamentos={orcamentos} orcamentosAnos={orcamentosAno} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridicos={juridicos} enviarValores={handleReceberValoresCessao} />
                   </div>
 
-                  <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "absolute right-0 transition-all ease-in-out duration-300 overflow-y-auto w-full" : 'w-full absolute right-[1100px] transition-all ease-in-out duration-300 overflow-y-hidden'}>
+                  <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "absolute right-0 transition-all ease-in-out duration-300 overflow-y-auto w-full" : 'w-full absolute right-[1800px] transition-all ease-in-out duration-300 overflow-y-hidden'}>
                     <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
                       {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
                         <div className='absolute left-1/2 top-[33%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>

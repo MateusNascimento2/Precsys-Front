@@ -76,8 +76,6 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
 
-  console.log(cessionario)
-
   const confirmDelete = async (id, files) => {
     const isDarkMode = localStorage.getItem('darkMode');
 
@@ -184,8 +182,6 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
 
   };
 
-  console.log(cessionarios);
-
   const handleReceberValoresCessionarioEditado = (valores) => {
     console.log(valores);
     setValorPagoEditado(valores.valorPagoEditado);
@@ -215,7 +211,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
 
   const handleEditarCessionarioSubmit = async (id) => {
     const isDarkMode = localStorage.getItem('darkMode');
-    console.log(id, valorPagoEditado, comissaoEditado, percentualEditado, expectativaEditado, cessionarioEditado, obsEditado, assinaturaEditado, expedidoEditado, recebidoEditado);
+
 
     try {
       setIsLoading(true);
@@ -362,7 +358,6 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
   }, []);
 
   const handleSubmit = async () => {
-    console.log('Iniciando handleSubmit', cessionarios);
     const isDarkMode = localStorage.getItem('darkMode');
     setIsLoading(true);
 
@@ -502,7 +497,6 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
 
   const downloadFile = async (filename) => {
     const isDarkMode = localStorage.getItem('darkMode');
-    console.log(filename);
     const path = filename.split('/')[0];
     const file = filename.split('/')[1];
 
@@ -514,7 +508,6 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
       });
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      console.log('urL:' + url)
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;

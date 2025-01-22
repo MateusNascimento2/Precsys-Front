@@ -268,7 +268,6 @@ export default function Empresas() {
       try {
         setIsLoading(true)
         const { data } = await axiosPrivate.get('/empresas')
-        console.log(data)
         setEmpresas(data)
       } catch (error) {
         console.log(error)
@@ -284,7 +283,6 @@ export default function Empresas() {
   const handleAdicionarEmpresa = async (e) => {
     const isDarkMode = localStorage.getItem('darkMode');
     e.preventDefault()
-    console.log(nome, cnpj, razaoSocial, site, endereco)
     try {
       setIsLoading(true)
       await axiosPrivate.post('/empresas', { nome, cnpj, razaoSocial, site, endereco })

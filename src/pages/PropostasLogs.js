@@ -31,7 +31,6 @@ export default function LoginLogs() {
       try {
         setIsLoading(true);
         const { data } = await axiosPrivate.get(url, { signal: controller.signal });
-        console.log(data);
         if (isMounted) setState(data);
       } catch (err) {
         console.log(err);

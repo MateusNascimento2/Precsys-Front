@@ -339,7 +339,6 @@ export default function OrcamentosList({ searchQuery, orcamentos }) {
     try {
 
       if (!ano || !budget_id) {
-        console.log(budget_id, ano)
         toast.error(`Erro ao adicionar ano ao orçamento: Ano faltando`, {
           position: "top-right",
           autoClose: 3000,
@@ -487,7 +486,6 @@ export default function OrcamentosList({ searchQuery, orcamentos }) {
                           <div className='flex flex-col gap-1 dark:text-white'>
                             <label htmlFor='ano'>Ano</label>
                             <input name='ano' className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400' value={ano} onChange={(e) => {
-                              console.log('Valor do input:', e.target.value);
                               setAno(e.target.value);
                             }}></input>
                           </div>

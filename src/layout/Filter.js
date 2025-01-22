@@ -190,7 +190,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
     const checkboxValue = event.target.value;
     const isChecked = event.target.checked;
 
-    console.log("Filtro", checkboxName, checkboxValue, isChecked);
+    /* console.log("Filtro", checkboxName, checkboxValue, isChecked); */
 
     // Atualiza o estado checkedStatus
     const updatedCheckedStatus = { ...checkedStatus };
@@ -294,6 +294,19 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
 
   const anuencia = ["Sem anuência", "Honorários", "Com anuência", "Quitação"];
   const obito = ["Vivo", "Não deixou bens", "Deixou bens", "Herdeiros habilitados", "Solicitada habilitação"];
+  const fieldLabels = {
+    id: "Id",
+    precatorio: "Precatório",
+    processo: 'Processo',
+    cedente: "Cedente",
+    status: "Status",
+    ente_id: "Ente Público",
+    natureza: "Natureza",
+    data_cessao: "Data da Cessão",
+    empresa_id: "Empresa",
+    adv: "Anuência",
+    falecido: "Falecido",
+  };
 
   return (
     <>
@@ -325,37 +338,55 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
                 }
               >
                 <div className="flex flex-col gap-2 p-4 lg:grid lg:grid-cols-2">
-                  {[
-                    "id",
-                    "precatorio",
-                    "cedente",
-                    "status",
-                    "ente_id",
-                    "natureza",
-                    "data_cessao",
-                    "empresa_id",
-                    "adv",
-                    "falecido",
-                  ].map((field) => (
-                    <div className='flex gap-2 items-center justify-start'>
-                      <div className='relative mt-[6px]' key={field}>
-                        <input type="checkbox" name="persist" id="persist" onChange={() => onFieldSelectionChange(field)} checked={selectedExportFields.includes(field)} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" />
-                        <span
-                          className="absolute right-[1px] top-[2px] text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[2px] mt-[1px]" viewBox="0 0 20 20" fill="currentColor"
-                            stroke="currentColor" strokeWidth="1">
-                            <path fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"></path>
-                          </svg>
-                        </span>
-                      </div>
+                      {[
+                        "id",
+                        "precatorio",
+                        "processo",
+                        "cedente",
+                        "status",
+                        "ente_id",
+                        "natureza",
+                        "data_cessao",
+                        "empresa_id",
+                        "adv",
+                        "falecido",
+                      ].map((field) => (
+                        <div className="flex gap-2 items-center justify-start" key={field}>
+                          <div className="relative mt-[6px]">
+                            <input
+                              type="checkbox"
+                              name={field}
+                              id={field}
+                              onChange={() => onFieldSelectionChange(field)}
+                              checked={selectedExportFields.includes(field)}
+                              className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white"
+                            />
+                            <span
+                              className="absolute right-[1px] top-[2px] text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-3.5 w-3.5 ml-[2px] mt-[1px]"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                stroke="currentColor"
+                                strokeWidth="1"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                ></path>
+                              </svg>
+                            </span>
+                          </div>
 
-                      <label className={'font-medium text-sm dark:text-white'} htmlFor={field}>{field}</label>
+                          <label className="font-medium text-sm dark:text-white" htmlFor={field}>
+                            {fieldLabels[field]} {/* Texto personalizado para o label */}
+                          </label>
+                        </div>
+                      ))}
                     </div>
-
-                  ))}
-                </div>
               </Modal>
               <button onClick={onExportPDF} title="Exportar para PDF" className="hover:bg-neutral-100 dark:hover:bg-neutral-800 p-1 rounded">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.} stroke="currentColor" className="size-5  dark:text-white">

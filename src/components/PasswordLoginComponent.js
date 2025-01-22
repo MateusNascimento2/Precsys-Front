@@ -14,7 +14,6 @@ function PasswordLoginComponent({ nome, userImage, cpfcnpj, darkMode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/dashboard";
-  console.log(from);
 
 
   const handlePassword = async (event) => {
@@ -29,12 +28,10 @@ function PasswordLoginComponent({ nome, userImage, cpfcnpj, darkMode }) {
         withCredentials: true
       });
 
-      console.log(data.accessToken);
 
       if (data.accessToken) {
         const accessToken = data.accessToken;
         const user = data.user
-        console.log(`user do login: ${user}`);
         setAuth({ user, userImage, accessToken });
 
         navigate(from, { replace: true });

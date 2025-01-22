@@ -20,7 +20,6 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
   const [requisitorioEditadoFile, setRequisitorioEditadoFile] = useState('');
   const [escrituraEditadoFile, setEscrituraEditadoFile] = useState('');
 
-  console.log(teles)
 
   useEffect(() => {
     // Envia os valores dos estados para o componente pai sempre que eles forem alterados
@@ -50,11 +49,8 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
 
   // Uso da função
   const updatedTeles = handleTeleValues(teles, users);
-  console.log(updatedTeles)
 
   const tele = updatedTeles.find(tele => String(precInfo.tele_id) === String(tele.value))
-
-  console.log(tele)
 
   const handleSelectValues = (array, value) => {
     return array.map(item => {
@@ -71,8 +67,6 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
       minHeight: 21
     })
   };
-
-  console.log(handleTeleValues(teles, users))
 
   return (
     <form className='mt-[20px]'>

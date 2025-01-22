@@ -47,16 +47,12 @@ export default function AtividadesPerfil({ user, ShowAllActivities }) {
         if (isMounted) {
 
           if (ShowAllActivities) {
-            console.log(ShowAllActivities)
             const userLogs = data.filter(log => log.usuario === String(user.id));
-            console.log(userLogs)
             const filteredLogs = filterLogs(userLogs);
             setState(filteredLogs);
           } else {
-            console.log(ShowAllActivities)
             const userLogs = data.filter(log => log.usuario === String(user.id)).slice(0, 4);
             const filteredLogs = filterLogs(userLogs);
-            console.log(userLogs)
             setState(filteredLogs);
           }
 

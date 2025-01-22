@@ -110,8 +110,6 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
 
   useEffect(() => {
 
-    console.log('perfil:' + isPerfilCessoes)
-
     if (minhascessoes) {
       const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => cessionario.user_id === userID);
 
@@ -331,7 +329,6 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
 
   const downloadFile = async (filename) => {
     const isDarkMode = localStorage.getItem('darkMode');
-    console.log(filename);
     const path = filename.split('/')[0];
     const file = filename.split('/')[1];
 
@@ -343,7 +340,6 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
       });
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      console.log('urL:' + url)
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;

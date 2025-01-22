@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function UserFilter({ show, onSetShow, filters, onSelectedCheckboxesChange, resetFilters }) {
   const [showMenu, setShowMenu] = useState(false);
   const [menuType, setMenuType] = useState(null);
-  console.log(filters)
 
   const handleShow = () => {
     onSetShow((prevState) => !prevState);

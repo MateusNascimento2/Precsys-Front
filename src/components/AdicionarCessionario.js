@@ -47,7 +47,6 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
   const [localExpectativa, setLocalExpectativa] = useState(expectativa ? expectativa : '');
 
   useEffect(() => {
-    console.log(localValorPago)
     // Envia os valores dos estados para o componente pai sempre que eles forem alterados
     const timer = setTimeout(() => {
       enviarValores({ index, cessionario, valorPago: localValorPago, comissao: localComissao, percentual: localPercentual, expectativa: localExpectativa, obs, assinatura, expedido, recebido, nota, oficioTransferencia, comprovantePagamento });
@@ -65,8 +64,6 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
       };
     });
   }
-
-  console.log(handleSelectValues(users, 'nome'))
 
   const customStyles = {
     control: base => ({

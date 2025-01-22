@@ -28,7 +28,6 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, users
 
     const downloadFile = async (filename) => {
         const isDarkMode = localStorage.getItem('darkMode');
-        console.log(filename);
         const path = filename.split('/')[0];
         const file = filename.split('/')[1];
 
@@ -64,8 +63,6 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, users
             setLoadingFiles(prev => ({ ...prev, [filename]: false }));
         }
     };
-
-    console.log(precInfo)
 
     return (
         <div className='max-w-full flex flex-col mb-[60px]'>
@@ -151,7 +148,7 @@ export default function InfoPrec({ precInfo, status, cessionario, cessoes, users
                                 {loadingFiles[precInfo.escritura] ? (
                                     <div className="flex items-center gap-1">
 
-                                        <button onClick={() => downloadFile(precInfo.escritura)} disabled={!precInfo.escritura} className='text-[#666] dark:text-neutral-400 hover:text-black hover:underline cursor-pointer disabled:hover:no-underline disabled:opacity-75 disabled:hover:text-[#666] disabled:cursor-not-allowed disabled:dark:hover:text-neutral-400'>Ver Requisitório</button>
+                                        <button onClick={() => downloadFile(precInfo.escritura)} disabled={!precInfo.escritura} className='text-[#666] dark:text-neutral-400 hover:text-black hover:underline cursor-pointer disabled:hover:no-underline disabled:opacity-75 disabled:hover:text-[#666] disabled:cursor-not-allowed disabled:dark:hover:text-neutral-400'>Ver Escritura</button>
                                         <div className="w-5 h-5"><LoadingSpinner /></div>
                                     </div>
                                 ) : (

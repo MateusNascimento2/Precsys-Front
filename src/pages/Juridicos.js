@@ -212,7 +212,6 @@ export default function Juridicos() {
       try {
         setIsLoading(true)
         const { data } = await axiosPrivate.get('/juridicos')
-        console.log(data)
         setJuridicos(data)
       } catch (error) {
         console.log(error)
@@ -228,7 +227,6 @@ export default function Juridicos() {
   const handleAdicionarJuridico = async (e) => {
     const isDarkMode = localStorage.getItem('darkMode');
     e.preventDefault()
-    console.log(nome, razaoSocial)
     try {
       setIsLoading(true)
       await axiosPrivate.post('/juridicos', { nome, razaoSocial })
