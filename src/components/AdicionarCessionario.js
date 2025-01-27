@@ -72,6 +72,51 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
     })
   };
 
+  const formatCurrency = (value) => {
+    // Remove tudo que não seja número
+    let numericValue = value.replace(/\D/g, "");
+
+    // Se o valor for vazio, define como "0,00"
+    if (!numericValue) return "0,00";
+
+    // Adiciona as casas decimais
+    const centavos = numericValue.slice(-2); // Últimos 2 dígitos
+    let inteiros = numericValue.slice(0, -2) || "0"; // Resto
+
+    // Remove zeros à esquerda nos inteiros
+    inteiros = parseInt(inteiros, 10).toString();
+
+    // Formata os inteiros com separadores de milhar
+    const inteirosFormatados = inteiros
+      .split("")
+      .reverse()
+      .join("")
+      .replace(/(\d{3}(?!$))/g, "$1.")
+      .split("")
+      .reverse()
+      .join("");
+
+    // Retorna o valor formatado
+    return `R$ ${inteirosFormatados},${centavos}`;
+  };
+
+  const handleInputChange = (e) => {
+    const rawValue = e.target.value;
+
+    // Remove o prefixo 'R$ ' antes de formatar
+    const valueWithoutPrefix = rawValue.replace(/^R\$\s?/, "");
+
+    // Formata o valor e atualiza o estado
+    const formattedValue = formatCurrency(valueWithoutPrefix);
+    setValorPago(formattedValue)
+    setLocalValorPago(formattedValue); // Atualiza o valor local
+  };
+
+  console.log(percentual)
+  console.log(localPercentual)
+
+
+
   return (
     <>
       <form action="" className='mt-[20px]'>
@@ -105,22 +150,17 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
                 htmlFor="valorPago">
                 Valor Pago
               </label>
-              <CurrencyFormat
-                name={'valorPago'}
-                placeholder={'Valor pago'}
-                value={localValorPago}
-                thousandSeparator={'.'}
-                decimalSeparator={','}
-                decimalScale={2}
-                fixedDecimalScale={true}
-                prefix={'R$ '}
-                className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-                onValueChange={(values) => {
-                  const { formattedValue, value } = values;
-                  setLocalValorPago(formattedValue)
-                  setValorPago(formattedValue)
-                }}
-              />
+              <div className="relative">
+                <input
+                  id="valorPago"
+                  name="valorPago"
+                  type="text"
+                  value={localValorPago} // Controlado pelo estado
+                  onChange={handleInputChange}
+                  placeholder="Digite o valor"
+                  className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] w-full"
+                />
+              </div>
             </div>
 
             <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
@@ -129,21 +169,19 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
                 htmlFor="comissao">
                 Comissão
               </label>
-              <CurrencyFormat
-                name={'comissao'}
-                placeholder={'Comissão'}
+              <input
+                id="comissao"
+                name="comissao"
+                type="text"
                 value={localComissao}
-                thousandSeparator={'.'}
-                decimalSeparator={','}
-                decimalScale={2}
-                fixedDecimalScale={true}
-                prefix={'R$ '}
-                className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-                onValueChange={(values) => {
-                  const { formattedValue, value } = values;
-                  setLocalComissao(formattedValue)
-                  setComissao(formattedValue)
+                onChange={(e) => {
+                  const valueWithoutPrefix = e.target.value.replace(/^R\$\s?/, "");
+                  const formattedValue = formatCurrency(valueWithoutPrefix);
+                  setLocalComissao(formattedValue);
+                  setComissao(formattedValue); // Envia para o estado do componente pai
                 }}
+                placeholder="Digite o valor"
+                className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] w-full"
               />
             </div>
 
@@ -153,21 +191,34 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
                 htmlFor="percentual">
                 Porcentagem
               </label>
-              <CurrencyFormat
-                name={'percentual'}
-                placeholder={'Percentual'}
-                value={localPercentual}
-                thousandSeparator={'.'}
-                decimalSeparator={','}
-                decimalScale={2}
-                fixedDecimalScale={true}
-                suffix={'%'}
-                className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-                onValueChange={(values) => {
-                  const { formattedValue, value } = values;
-                  setLocalPercentual(formattedValue)
-                  setPercentual(formattedValue)
+              <input
+                id="percentual"
+                name="percentual"
+                type="text"
+                value={localPercentual} // Armazena o valor com o %
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/[^\d]/g, ""); // Remove tudo que não seja número
+
+                  // Formata o valor como percentual
+                  const formattedValue = formatCurrency(rawValue).replace("R$ ", "") + "%"; // Remove "R$" e adiciona "%"
+
+                  setLocalPercentual(formattedValue); // Atualiza o estado local
+                  setPercentual(formattedValue); // Atualiza o estado pai
+
+                  // Garante que o cursor esteja no lugar certo
+                  setTimeout(() => {
+                    const input = e.target;
+                    input.setSelectionRange(formattedValue.length - 1, formattedValue.length - 1);
+                  }, 0);
                 }}
+                onBlur={(e) => {
+                  // Adiciona o % ao sair do campo
+                  if (localPercentual && !localPercentual.endsWith("%")) {
+                    setLocalPercentual(localPercentual + "%");
+                  }
+                }}
+                placeholder="Digite o percentual"
+                className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] w-full"
               />
             </div>
 
@@ -177,21 +228,19 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
                 htmlFor="expectativa">
                 Expectativa
               </label>
-              <CurrencyFormat
-                name={'expectativa'}
-                placeholder={'Expectativa'}
+              <input
+                id="expectativa"
+                name="expectativa"
+                type="text"
                 value={localExpectativa}
-                thousandSeparator={'.'}
-                decimalSeparator={','}
-                decimalScale={2}
-                fixedDecimalScale={true}
-                prefix={'R$ '}
-                className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-                onValueChange={(values) => {
-                  const { formattedValue, value } = values;
-                  setLocalExpectativa(formattedValue)
-                  setExpectativa(formattedValue)
+                onChange={(e) => {
+                  const valueWithoutPrefix = e.target.value.replace(/^R\$\s?/, "");
+                  const formattedValue = formatCurrency(valueWithoutPrefix);
+                  setLocalExpectativa(formattedValue);
+                  setExpectativa(formattedValue); // Envia para o estado do componente pai
                 }}
+                placeholder="Digite o valor"
+                className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] w-full"
               />
             </div>
 

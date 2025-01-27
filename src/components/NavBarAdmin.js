@@ -243,7 +243,7 @@ function NavBarAdmin({ show }) {
                   )}
                 </AnimatePresence>
               </li>
-              {auth.user.ver_calculo !== '0' || auth.user.permissao_proposta ? <li onClick={() => handleShow('ferramentas')} className='cursor-pointer p-2 lg:px-2 w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded'>
+              {auth.user.ver_calculo || auth.user.permissao_proposta ? <li onClick={() => handleShow('ferramentas')} className='cursor-pointer p-2 lg:px-2 w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded'>
                 <div className='flex justify-between items-center lg:gap-3'>
                   <span className='font-[500] text-[#666666] dark:text-neutral-300 '>Ferramentas</span>
                   <span className='text-[12px] dark:text-neutral-300'>
@@ -265,7 +265,7 @@ function NavBarAdmin({ show }) {
                         <li className='mb-3 mt-2'>
                           <span className='font-[600] text-[12px] text-[#666666]'>Categorias</span>
                         </li>
-                        {auth.user.ver_calculo !== '0' ? <li onClick={handleClick}>
+                        {auth.user.ver_calculo ? <li onClick={handleClick}>
                           <Modal botaoAbrirModal={
                             <button title='Fazer cálculo' className='w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
                               Cálculo
@@ -345,7 +345,7 @@ function NavBarAdmin({ show }) {
                 <span className='font-[500] text-[#666666] dark:text-neutral-300 text-nowrap '>Meus Clientes</span>
                 {auth.user.admin ? <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver os Meus Clientes</p> : null}
               </li>
-              {auth.user.ver_calculo !== '0' || auth.user.permissao_proposta ?
+              {auth.user.ver_calculo || auth.user.permissao_proposta ?
                 <li onClick={() => handleShow('ferramentas')} className='cursor-pointer px-2 py-4 lg:p-2 lg:rounded w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800'>
                   <div className='flex justify-between items-center lg:gap-3'>
                     <span className='font-[500] text-[#666666] dark:text-neutral-300 '>Ferramentas</span>
@@ -368,7 +368,7 @@ function NavBarAdmin({ show }) {
                           <li className='mb-3 mt-2'>
                             <span className='font-[600] text-[12px] text-[#666666]'>Categorias</span>
                           </li>
-                          {auth.user.ver_calculo !== '0' ? <li onClick={handleClick}>
+                          {auth.user.ver_calculo ? <li onClick={handleClick}>
                             <Modal botaoAbrirModal={
                               <button title='Fazer cálculo' className='w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
                                 Cálculo

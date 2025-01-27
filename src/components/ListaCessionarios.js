@@ -85,7 +85,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
         await axiosPrivate.delete(`/deleteFile/${path}/${fileName}`);
         console.log(`Arquivo deletado: ${path}/${fileName}`);
       } catch (err) {
-        toast.error(getToastOptions(`Erro ao deletar arquivo: ${err.message}`, 'error'));
+        toast.error(`Erro ao deletar arquivo: ${err.message}`);
         throw err;
       }
     };
@@ -498,6 +498,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
   const downloadFile = async (filename) => {
     const isDarkMode = localStorage.getItem('darkMode');
     const path = filename.split('/')[0];
+    console.log(path)
     const file = filename.split('/')[1];
 
     setLoadingFiles(prev => ({ ...prev, [filename]: true }));
@@ -681,7 +682,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
             <div className="min-w-[50px] w-[5%] ml-auto flex justify-center dark:text-neutral-200">
               {auth.user.admin ?
                 <>
-                  <DotsButton>
+                  <DotsButton isModal={true}>
                     <Modal
                       botaoAbrirModal={
                         <button title="Editar cessionário" className="hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm px-4 py-2 rounded">

@@ -292,6 +292,7 @@ export default function FerramentasPerfil({ user, id }) {
                                   className='text-neutral-400 border dark:border-neutral-600 text font-medium p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]'
                                   name="email"
                                   value={input.email}
+                                  autoComplete="off" // Desativa o preenchimento automático
                                   onChange={(e) => handleInputChange(index, e)} // Atualiza o estado
                                 />
                               </div>
@@ -304,6 +305,7 @@ export default function FerramentasPerfil({ user, id }) {
                                     name="senha"
                                     value={input.senha}
                                     onChange={(e) => handleInputChange(index, e)} // Atualiza o estado
+                                    autoComplete="new-password"
                                     type={input.showPassword ? "text" : "password"} // Alterna entre texto e senha
                                   />
                                   {/* Ícone de alternância de senha */}

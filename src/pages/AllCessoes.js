@@ -415,7 +415,7 @@ export default function AllCessoes() {
             filesToUpload.push({ name: 'comprovante_pagamento', file: cessionario.valores.comprovantePagamento });
           }
           if (filesToUpload.length > 0) {
-            await uploadFiles(filesToUpload);
+            await uploadFilesCessionario(filesToUpload);
           }
         }
       } catch (err) {
@@ -464,12 +464,49 @@ export default function AllCessoes() {
     });
 
     try {
+      
       await axiosPrivate.post('/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
     } catch (err) {
+      const isDarkMode = localStorage.getItem('darkMode');
+      toast.error(`Erro ao enviar arquivos: ${err}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+      setIsLoading(false);
+      return;
+    }
+  };
+
+  const uploadFilesCessionario = async (files) => {
+    const formData = new FormData();
+
+    files.forEach((file) => {
+      const fileNameWithPrecID = `${file.file.name}`
+      formData.append(file.name, new File([file.file], fileNameWithPrecID));  // Adiciona o arquivo
+      formData.append('path', file.path);     // Adiciona o caminho do arquivo com o cessaoId
+
+    });
+
+    try {
+      
+      await axiosPrivate.post('/uploadFileCessionario', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    } catch (err) {
+      const isDarkMode = localStorage.getItem('darkMode');
       toast.error(`Erro ao enviar arquivos: ${err}`, {
         position: "top-right",
         autoClose: 3000,
