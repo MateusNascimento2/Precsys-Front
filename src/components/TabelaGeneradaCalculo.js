@@ -625,7 +625,7 @@ export default function TabelaGeneradaCalculo() {
 
           onSubmit={(e) => handleSubmit(e)}
         >
-          <div className="flex flex-col gap-2 lg:gap-2 xl:px-4 lg:fixed lg:top-[7%] lg:w-[350px]">
+          <div className="flex flex-col gap-2 lg:gap-2 xl:fixed xl:top-[7%] xl:w-[380px]  border-neutral-600 pb-4 mb-[1px]">
             <div className='flex flex-col gap-1 relative'>
               <button onClick={handleExportPDF} title="Exportar para PDF" className="hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded absolute right-0 top-[0px]">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.} stroke="currentColor" className="size-5  dark:text-white">

@@ -270,7 +270,9 @@ function NavBarAdmin({ show }) {
                             <button title='Fazer cálculo' className='w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
                               Cálculo
                               <p className='font-[600] text-[12px] text-[#666666]'>Fazer Cálculo </p>
-                            </button>}>
+                            </button>}
+                            >
+                            
                             <div className='h-[500px] lg:h-[650px] overflow-auto'>
                               <TabelaGeneradaCalculo />
                             </div>

@@ -30,6 +30,35 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
     });
   }
 
+  const formatCurrency = (value) => {
+    // Remove tudo que não seja número
+    let numericValue = value.replace(/\D/g, "");
+
+    // Se o valor for vazio, define como "0,00"
+    if (!numericValue) return "0,00";
+
+    // Adiciona as casas decimais
+    const centavos = numericValue.slice(-2); // Últimos 2 dígitos
+    let inteiros = numericValue.slice(0, -2) || "0"; // Resto
+
+    // Remove zeros à esquerda nos inteiros
+    inteiros = parseInt(inteiros, 10).toString();
+
+    // Formata os inteiros com separadores de milhar
+    const inteirosFormatados = inteiros
+      .split("")
+      .reverse()
+      .join("")
+      .replace(/(\d{3}(?!$))/g, "$1.")
+      .split("")
+      .reverse()
+      .join("");
+
+    // Retorna o valor formatado
+    return `R$ ${inteirosFormatados},${centavos}`;
+  };
+
+
   useEffect(() => {
     // Envia os valores dos estados para o componente pai sempre que eles forem alterados
     const timer = setTimeout(() => {
@@ -81,23 +110,24 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
             <label
               className='text-[14px] font-medium'
-              htmlFor="valor_pago">
+              htmlFor="valorPago">
               Valor Pago
             </label>
-            <CurrencyFormat
-              placeholder={'Valor pago'}
-              value={valorPagoEditado}
-              thousandSeparator={'.'}
-              decimalSeparator={','}
-              decimalScale={2}
-              fixedDecimalScale={true}
-              prefix={'R$ '}
-              className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-              onValueChange={(values) => {
-                const { formattedValue, value } = values;
-                setValorPagoEditado(formattedValue)
-              }}
-            />
+            <div className="relative">
+              <input
+                id="valorPago"
+                name="valorPago"
+                type="text"
+                value={valorPagoEditado} // Controlado pelo estado
+                onChange={(e) => {
+                  const valueWithoutPrefix = e.target.value.replace(/^R\$\s?/, "");
+                  const formattedValue = formatCurrency(valueWithoutPrefix);
+                  setValorPagoEditado(formattedValue);
+                }}
+                placeholder="Digite o valor"
+                className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] w-full"
+              />
+            </div>
           </div>
 
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
@@ -106,19 +136,18 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
               htmlFor="comissao">
               Comissão
             </label>
-            <CurrencyFormat
-              placeholder={'Comissão'}
-              value={comissaoEditado}
-              thousandSeparator={'.'}
-              decimalSeparator={','}
-              decimalScale={2}
-              fixedDecimalScale={true}
-              prefix={'R$ '}
-              className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-              onValueChange={(values) => {
-                const { formattedValue, value } = values;
-                setComissaoEditado(formattedValue)
+            <input
+              id="comissao"
+              name="comissao"
+              type="text"
+              value={comissaoEditado} // Controlado pelo estado
+              onChange={(e) => {
+                const valueWithoutPrefix = e.target.value.replace(/^R\$\s?/, "");
+                const formattedValue = formatCurrency(valueWithoutPrefix);
+                setComissaoEditado(formattedValue);
               }}
+              placeholder="Digite o valor"
+              className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] w-full"
             />
           </div>
 
@@ -128,19 +157,33 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
               htmlFor="comissao">
               Porcentagem
             </label>
-            <CurrencyFormat
-              placeholder={'Percentual'}
-              value={percentualEditado}
-              thousandSeparator={'.'}
-              decimalSeparator={','}
-              decimalScale={2}
-              fixedDecimalScale={true}
-              suffix={'%'}
-              className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-              onValueChange={(values) => {
-                const { formattedValue, value } = values;
-                setPercentualEditado(formattedValue)
+            <input
+              id="percentual"
+              name="percentual"
+              type="text"
+              value={percentualEditado} // Armazena o valor com o %
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/[^\d]/g, ""); // Remove tudo que não seja número
+
+                // Formata o valor como percentual
+                const formattedValue = formatCurrency(rawValue).replace("R$ ", "") + "%"; // Remove "R$" e adiciona "%"
+
+                setPercentualEditado(formattedValue); // Atualiza o estado local
+
+                // Garante que o cursor esteja no lugar certo
+                setTimeout(() => {
+                  const input = e.target;
+                  input.setSelectionRange(formattedValue.length - 1, formattedValue.length - 1);
+                }, 0);
               }}
+              onBlur={(e) => {
+                // Adiciona o % ao sair do campo
+                if (percentualEditado && !percentualEditado.endsWith("%")) {
+                  setPercentualEditado(percentualEditado + "%");
+                }
+              }}
+              placeholder="Digite o percentual"
+              className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] w-full"
             />
           </div>
 
@@ -150,19 +193,19 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
               htmlFor="comissao">
               Expectativa
             </label>
-            <CurrencyFormat
-              placeholder={'Comissâo'}
+
+            <input
+              id="expectativa"
+              name="expectativa"
+              type="text"
               value={expectativaEditado}
-              thousandSeparator={'.'}
-              decimalSeparator={','}
-              decimalScale={2}
-              fixedDecimalScale={true}
-              prefix={'R$ '}
-              className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px]'
-              onValueChange={(values) => {
-                const { formattedValue, value } = values;
-                setExpectativaEditado(formattedValue)
+              onChange={(e) => {
+                const valueWithoutPrefix = e.target.value.replace(/^R\$\s?/, "");
+                const formattedValue = formatCurrency(valueWithoutPrefix);
+                setExpectativaEditado(formattedValue);
               }}
+              placeholder="Digite o valor"
+              className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] w-full"
             />
           </div>
 

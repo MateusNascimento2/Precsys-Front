@@ -33,7 +33,7 @@ export default function Modal({ botaoAbrirModal, children, botaoSalvar, botaoAdi
               exit={{ opacity: 0 }}
             />
             <motion.div
-              className={`bg-white dark:bg-neutral-900 dark:border-neutral-600 border rounded shadow z-[200] relative w-[85%] lg:w-[900px] xl:w-[90%] py-2 md:pb-[20px] md:w-[600px]`}
+              className={`bg-white dark:bg-neutral-900 dark:border-neutral-600 border rounded shadow z-[200] relative w-[85%] py-2 md:pb-[20px]`}
               initial={{ y: '-100%', opacity: 0 }}
               animate={{ y: '0%', opacity: 1 }}
               exit={{ y: '-100%', opacity: 0 }}

@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { Tooltip } from 'react-tooltip';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import CountUp from 'react-countup';  // Importando React CountUp
+import { useParams } from 'react-router-dom';
 
 function PieChart() {
   const [endAngle, setEndAngle] = useState(360);
@@ -18,6 +19,8 @@ function PieChart() {
   const [isLoading, setIsLoading] = useState(false);
   const { auth } = useAuth();
   const userID = String(auth.user.id);
+  const { id } = useParams();
+
 
   // Estado para gerenciar o tema
   const [isDarkTheme, setIsDarkTheme] = useState(false);
@@ -87,27 +90,53 @@ function PieChart() {
   }, [axiosPrivate]);
 
   useEffect(() => {
-    const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => cessionario.user_id === userID);
+    if (id) {
+      const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => String(cessionario.user_id) === String(id));
 
-    const minhasCessoes = cessionariosPorIDdoUsuarios
-      .map(cessionario => {
-        const cessao = cessoes.find(cessao => cessao && String(cessao.id) === String(cessionario.cessao_id));
-        if (cessao) {
-          cessao.exp_recebimento = changeStringFloat(cessionario.exp_recebimento);
-        }
-        return cessao;
-      })
-      .filter(cessao => cessao !== undefined);
+      const minhasCessoes = cessionariosPorIDdoUsuarios
+        .map(cessionario => {
+          const cessao = cessoes.find(cessao => cessao && String(cessao.id) === String(cessionario.cessao_id));
+          if (cessao) {
+            cessao.exp_recebimento = changeStringFloat(cessionario.exp_recebimento);
+          }
+          return cessao;
+        })
+        .filter(cessao => cessao !== undefined);
 
-    status.forEach(statusItem => {
-      minhasCessoes.forEach(cessao => {
-        if (cessao.status === String(statusItem.id)) {
-          cessao.x = statusItem.nome;
-        }
+      status.forEach(statusItem => {
+        minhasCessoes.forEach(cessao => {
+          if (cessao.status === String(statusItem.id)) {
+            cessao.x = statusItem.nome;
+          }
+        });
       });
-    });
 
-    setMyCessions(minhasCessoes);
+      setMyCessions(minhasCessoes);
+
+    } else {
+      const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => cessionario.user_id === userID);
+
+      const minhasCessoes = cessionariosPorIDdoUsuarios
+        .map(cessionario => {
+          const cessao = cessoes.find(cessao => cessao && String(cessao.id) === String(cessionario.cessao_id));
+          if (cessao) {
+            cessao.exp_recebimento = changeStringFloat(cessionario.exp_recebimento);
+          }
+          return cessao;
+        })
+        .filter(cessao => cessao !== undefined);
+
+      status.forEach(statusItem => {
+        minhasCessoes.forEach(cessao => {
+          if (cessao.status === String(statusItem.id)) {
+            cessao.x = statusItem.nome;
+          }
+        });
+      });
+
+      setMyCessions(minhasCessoes);
+    }
+
   }, [cessionarios, cessoes, status, userID]);
 
   const minhasCessoesData = useMemo(() => {
@@ -189,7 +218,7 @@ function PieChart() {
                 position: 'absolute',
                 zIndex: 60,
                 backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF',
-                color: isDarkTheme ? '#FFF':'#000',
+                color: isDarkTheme ? '#FFF' : '#000',
                 fontSize: '12px',
                 fontWeight: '500'
               }}

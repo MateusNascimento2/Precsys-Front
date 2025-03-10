@@ -245,20 +245,44 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
 
   const handleCheckboxChange = (event) => {
     const checkboxName = event.target.name;
-    const checkboxValue = event.target.value;
     const isChecked = event.target.checked;
+    let checkboxValue
+    let checkbox
 
-    setCheckedStatus({ ...checkedStatus, [checkboxValue]: isChecked });
+    if (checkboxName === 'requisitorio' || checkboxName === 'escritura') {
+      checkboxValue = null
+      setCheckedStatus({ ...checkedStatus, [checkboxName]: isChecked });
+      checkbox = { [checkboxName]: checkboxValue };
 
-    const checkbox = { [checkboxName]: checkboxValue };
-
+      
     if (isChecked) {
       onSelectedCheckboxesChange(prevState => [...prevState, checkbox]);
     } else {
       onSelectedCheckboxesChange(prevState => prevState.filter(item => {
         const [key] = Object.keys(item);
-        return item[key] !== checkboxValue;
+        console.log(item)
+        console.log(key)
+        console.log(item[key])
+        return key !== checkboxName;
       }));
+    }
+    } else {
+      checkboxValue = event.target.value;
+      setCheckedStatus({ ...checkedStatus, [checkboxValue]: isChecked });
+      checkbox = { [checkboxName]: checkboxValue };
+
+      if (isChecked) {
+        onSelectedCheckboxesChange(prevState => [...prevState, checkbox]);
+      } else {
+        onSelectedCheckboxesChange(prevState => prevState.filter(item => {
+          const [key] = Object.keys(item);
+          console.log(item)
+          console.log(key)
+          console.log(item[key])
+          return item[key] !== checkboxValue;
+        }));
+      }
+
     }
   };
 
@@ -338,55 +362,55 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
                 }
               >
                 <div className="flex flex-col gap-2 p-4 lg:grid lg:grid-cols-2">
-                      {[
-                        "id",
-                        "precatorio",
-                        "processo",
-                        "cedente",
-                        "status",
-                        "ente_id",
-                        "natureza",
-                        "data_cessao",
-                        "empresa_id",
-                        "adv",
-                        "falecido",
-                      ].map((field) => (
-                        <div className="flex gap-2 items-center justify-start" key={field}>
-                          <div className="relative mt-[6px]">
-                            <input
-                              type="checkbox"
-                              name={field}
-                              id={field}
-                              onChange={() => onFieldSelectionChange(field)}
-                              checked={selectedExportFields.includes(field)}
-                              className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white"
-                            />
-                            <span
-                              className="absolute right-[1px] top-[2px] text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-3.5 w-3.5 ml-[2px] mt-[1px]"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                stroke="currentColor"
-                                strokeWidth="1"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                  clipRule="evenodd"
-                                ></path>
-                              </svg>
-                            </span>
-                          </div>
+                  {[
+                    "id",
+                    "precatorio",
+                    "processo",
+                    "cedente",
+                    "status",
+                    "ente_id",
+                    "natureza",
+                    "data_cessao",
+                    "empresa_id",
+                    "adv",
+                    "falecido",
+                  ].map((field) => (
+                    <div className="flex gap-2 items-center justify-start" key={field}>
+                      <div className="relative mt-[6px]">
+                        <input
+                          type="checkbox"
+                          name={field}
+                          id={field}
+                          onChange={() => onFieldSelectionChange(field)}
+                          checked={selectedExportFields.includes(field)}
+                          className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white"
+                        />
+                        <span
+                          className="absolute right-[1px] top-[2px] text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-3.5 w-3.5 ml-[2px] mt-[1px]"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            stroke="currentColor"
+                            strokeWidth="1"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            ></path>
+                          </svg>
+                        </span>
+                      </div>
 
-                          <label className="font-medium text-sm dark:text-white" htmlFor={field}>
-                            {fieldLabels[field]} {/* Texto personalizado para o label */}
-                          </label>
-                        </div>
-                      ))}
+                      <label className="font-medium text-sm dark:text-white" htmlFor={field}>
+                        {fieldLabels[field]} {/* Texto personalizado para o label */}
+                      </label>
                     </div>
+                  ))}
+                </div>
               </Modal>
               <button onClick={onExportPDF} title="Exportar para PDF" className="hover:bg-neutral-100 dark:hover:bg-neutral-800 p-1 rounded">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.} stroke="currentColor" className="size-5  dark:text-white">
@@ -891,6 +915,59 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
                 </AnimatePresence>
               </div>
             </motion.div>
+            {auth.user.admin && (<motion.div className="px-2 py-1 text-gray-600 text-[14px] dark:text-neutral-300">
+              <div>
+                <div onClick={() => handleMenu('documentos')} className="flex justify-between items-center cursor-pointer">
+                  <span>Documentos Faltantes</span>
+                  <span className='text-[12px] '>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={showMenu && menuType === 'documentos' ? "w-3 h-3 inline-block rotate-180 transition-all" : 'w-3 h-3 inline-block'}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+              <AnimatePresence>
+                {showMenu && menuType === 'documentos' && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-2 pl-2 flex flex-col justify-center gap-2 text-[12px] h-full max-h-[300px] overflow-y-hidden  cursor-default border-l dark:border-neutral-600"
+                  >
+
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" id="requisitorio" name={'requisitorio'} value={'requisitorio'} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleCheckboxChange(e)} checked={checkedStatus['requisitorio'] || false} />
+                      <span
+                        className="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                          stroke="currentColor" strokeWidth="1">
+                          <path fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"></path>
+                        </svg>
+                      </span>
+                      <label htmlFor={'requisitorio'}>Requisitório</label>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" id="escritura" name={'escritura'} value={''} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleCheckboxChange(e)} checked={checkedStatus['escritura'] || false} />
+                      <span
+                        className="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
+                          stroke="currentColor" strokeWidth="1">
+                          <path fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"></path>
+                        </svg>
+                      </span>
+                      <label htmlFor={'escritura'}>Escritura</label>
+                    </div>
+
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>)}
           </motion.div>
         </div>
       </motion.div >

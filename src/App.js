@@ -3,7 +3,6 @@ import React from 'react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Cessoes from './pages/Cessoes';
-import AllCessoes from './pages/AllCessoes';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import PersistLogin from './components/PersistLogin';
@@ -20,6 +19,7 @@ import Empresas from './pages/Empresas';
 import Orcamentos from './pages/Orcamentos';
 import Escreventes from './pages/Escreventes';
 import Juridicos from './pages/Juridicos';
+import { TesteModal } from './pages/TesteModal';
 
 function App() {
 
@@ -34,7 +34,7 @@ function App() {
         <Route element={<PersistLogin />}>
           <Route element={<RequireNormalUserAuth />}>
             <Route path='dashboard' element={<Dashboard />} />
-            <Route path=':minhascessoes' element={<AllCessoes />} />
+            <Route path=':minhascessoes' element={<Cessoes />} />
             <Route path='cessao/:precID' element={<Precatorio />} />
             <Route path='perfil' element={<MeuPerfil />} />
             <Route path='clientes' element={<Clientes />} />
@@ -42,7 +42,7 @@ function App() {
           </Route>
 
           <Route element={<RequireAdminAuth />}>
-            <Route path='todas-cessoes' element={<AllCessoes />} />
+            <Route path='todas-cessoes' element={<Cessoes />} />
             <Route path='usuarios' element={<Usuarios />} />
             <Route path='usuario/:id' element={<MeuPerfil />} />
             <Route path='calculo' element={<Calculo />} />
@@ -52,6 +52,7 @@ function App() {
             <Route path='orcamentos' element={<Orcamentos />} />
             <Route path='escreventes' element={<Escreventes />} />
             <Route path='juridicos' element={<Juridicos />} />
+            <Route path='testeModal' element={<TesteModal />} />
           </Route>
         </Route>
 

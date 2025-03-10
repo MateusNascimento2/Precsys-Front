@@ -112,6 +112,20 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
     setLocalValorPago(formattedValue); // Atualiza o valor local
   };
 
+  const formatPercentual = (value) => {
+    // Remove tudo que não for número
+    const rawValue = value.replace(/[^\d]/g, "");
+
+    // Converte para número e formata com duas casas decimais
+    const numericValue = Number(rawValue) / 100;
+    const formattedValue = numericValue.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+    return formattedValue + "%";
+  };
+
   console.log(percentual)
   console.log(localPercentual)
 

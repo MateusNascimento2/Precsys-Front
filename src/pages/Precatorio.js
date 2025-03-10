@@ -435,7 +435,7 @@ export default function Precatorio() {
     const isDarkMode = localStorage.getItem('darkMode');
 
     // Verificação de campos obrigatórios
-    if (precatorioEditado.length < 12 || processoEditado.length < 12 || !cedenteEditado || !varaEditado || !enteEditado || !anoEditado || !naturezaEditado || !empresaEditado || !dataCessaoEditado || !repComercialEditado || !escreventeEditado || !juridicoEditado) {
+    if (precatorioEditado.length < 12 || processoEditado.length < 12 || !cedenteEditado || !varaEditado || !enteEditado || !anoEditado || !naturezaEditado || !dataCessaoEditado || !escreventeEditado || !juridicoEditado) {
       toast.error('Todos os campos da cessão precisam ser preenchidos!', {
         position: "top-right",
         autoClose: 3000,
