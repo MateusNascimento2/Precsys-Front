@@ -353,7 +353,7 @@ function NavBarAdmin({ show }) {
                 <span className='font-[500] text-[#666666] dark:text-neutral-300 text-nowrap '>Meus Clientes</span>
                 {auth.user.admin ? <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver os Meus Clientes</p> : null}
               </li>
-              {auth.user.ver_calculo || auth.user.permissao_proposta ?
+              {auth.user.ver_calculo || auth.user.permissao_proposta || auth.user.acesso_api ?
                 <li onClick={() => handleShow('ferramentas')} className='cursor-pointer px-2 py-4 lg:p-2 lg:rounded w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800'>
                   <div className='flex justify-between items-center lg:gap-3'>
                     <span className='font-[500] text-[#666666] dark:text-neutral-300 '>Ferramentas</span>
@@ -370,7 +370,7 @@ function NavBarAdmin({ show }) {
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 lg:w-[200px] overflow-hidden lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600"
+                        className="lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 lg:w-[220px] overflow-hidden lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600"
                       >
                         <ul className='lg:ml-0 '>
                           <li className='mb-3 mt-2'>

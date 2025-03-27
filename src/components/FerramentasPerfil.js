@@ -17,6 +17,8 @@ export default function FerramentasPerfil({ user, id }) {
   const [teles, setTeles] = useState([]);
   const [empresas, setEmpresas] = useState([]);
   const [extraInputs, setExtraInputs] = useState([]); // estado para os inputs extras
+  const [apiKey, setApiKey] = useState('');
+  const [apiKeyExpiresAt, setApiKeyExpiresAt] = useState(null);
   const axiosPrivate = useAxiosPrivate();
   const { auth, setAuth } = useAuth();
 
@@ -219,6 +221,41 @@ export default function FerramentasPerfil({ user, id }) {
     setExtraInputs(updatedInputs);
   };
 
+  const isKeyExpired = () => {
+    if (!apiKeyExpiresAt) return true;
+    return new Date(apiKeyExpiresAt) < new Date();
+  };
+
+  useEffect(async () => {
+
+    const response = await axiosPrivate.get(`/pegar-api-key/${id ? id : auth.user.id}`)
+    console.log(response.data.chave)
+    console.log(response.data.expires_at)
+    setApiKey(response.data.chave)
+    setApiKeyExpiresAt(response.data.expires_at)
+
+
+  }, [auth.user.id, id])
+
+  const generateKey = async (e) => {
+    e.preventDefault();
+
+    if (!isKeyExpired()) {
+      toast.info('Você já possui uma chave ativa.');
+      return;
+    }
+
+    try {
+      const response = await axiosPrivate.post(`/gerar-api-key/${id ? id : auth.user.id}`);
+      setApiKey(response.data.apiKey);
+      setApiKeyExpiresAt(response.data.expiresAt);
+      toast.success('Nova chave gerada!');
+    } catch (err) {
+      console.error(err);
+      toast.error('Erro ao gerar nova chave');
+    }
+  };
+
   return (
     <>
       {isLoading ? (
@@ -239,117 +276,120 @@ export default function FerramentasPerfil({ user, id }) {
               <form>
                 <div className='flex flex-col divide-y-[1px] dark:divide-neutral-600'>
                   {/* Permissão Email */}
-                  <div className="py-4">
-                    <div className='flex items-center justify-between gap-2'>
-                      <div className='flex flex-col'>
-                        <div className='flex items-center gap-4'>
-                          <div className='flex flex-col'>
-                            <label htmlFor={'email-corporativo'} key={'email-corporativo'} className='dark:text-white font-medium'>E-mail Corporativo</label>
-                            <span className='text-neutral-400 text-sm'>Acesso rápido aos e-mails corporativos</span>
+                  {auth.user.admin ?
+                    <div className="py-4">
+                      <div className='flex items-center justify-between gap-2'>
+                        <div className='flex flex-col'>
+                          <div className='flex items-center gap-4'>
+                            <div className='flex flex-col'>
+                              <label htmlFor={'email-corporativo'} key={'email-corporativo'} className='dark:text-white font-medium'>E-mail Corporativo</label>
+                              <span className='text-neutral-400 text-sm'>Acesso rápido aos e-mails corporativos</span>
+                            </div>
+                            {isCheckedPermissaoEmail && <div>
+                              {/* <button
+                                                type="button"
+                                                onClick={addNewInput}
+                                                className='flex items-center justify-center dark:text-white w-10 h-10 text-lg dark:hover:bg-neutral-800 rounded-full'
+                                              >
+                                                +
+                                              </button> */}
+                            </div>}
                           </div>
-                          {isCheckedPermissaoEmail && <div>
-                            {/* <button
-                              type="button"
-                              onClick={addNewInput}
-                              className='flex items-center justify-center dark:text-white w-10 h-10 text-lg dark:hover:bg-neutral-800 rounded-full'
-                            >
-                              +
-                            </button> */}
-                          </div>}
                         </div>
+
+                        <motion.div
+                          className={`${isCheckedPermissaoEmail ? "bg-black dark:bg-white flex-shrink-0" : "bg-neutral-200 dark:bg-neutral-600"} w-12 h-6 flex items-center rounded-full p-1 cursor-pointer flex-shrink-0`}
+                          onClick={() => setIsCheckedPermissaoEmail(!isCheckedPermissaoEmail)}
+                        >
+                          <motion.div
+                            className={`w-4 h-4 rounded-full shadow-md transform ${isCheckedPermissaoEmail ? "translate-x-6 bg-white dark:bg-black" : "translate-x-0 bg-white"}`}
+                          />
+                        </motion.div>
                       </div>
 
-                      <motion.div
-                        className={`${isCheckedPermissaoEmail ? "bg-black dark:bg-white flex-shrink-0" : "bg-neutral-200 dark:bg-neutral-600"} w-12 h-6 flex items-center rounded-full p-1 cursor-pointer flex-shrink-0`}
-                        onClick={() => setIsCheckedPermissaoEmail(!isCheckedPermissaoEmail)}
-                      >
-                        <motion.div
-                          className={`w-4 h-4 rounded-full shadow-md transform ${isCheckedPermissaoEmail ? "translate-x-6 bg-white dark:bg-black" : "translate-x-0 bg-white"}`}
-                        />
-                      </motion.div>
-                    </div>
-
-                    {/* Adicionar inputs dinamicamente */}
-                    {isCheckedPermissaoEmail && (
-                      <>
-                        {isLoading ? (
-                          // Mostra o spinner de carregamento enquanto está carregando
-                          <div className='w-full h-[793px] lg:h-[740px] flex justify-center items-center'>
-                            <div className='w-8 h-8'>
-                              <LoadingSpinner />
-                            </div>
-                          </div>
-                        ) : (
-                          // Mapeia os inputs quando não está carregando
-                          extraInputs.map((input, index) => (
-                            <div
-                              key={index}
-                              className='flex flex-col lg:flex-row items-end justify-between gap-4 mt-4 lg:flex-wrap xl:flex-nowrap'
-                            >
-                              <div className='flex flex-col w-full'>
-                                <p className='dark:text-white mb-2'>{input.nome}:</p>
+                      {/* Adicionar inputs dinamicamente */}
+                      {isCheckedPermissaoEmail && (
+                        <>
+                          {isLoading ? (
+                            // Mostra o spinner de carregamento enquanto está carregando
+                            <div className='w-full h-[793px] lg:h-[740px] flex justify-center items-center'>
+                              <div className='w-8 h-8'>
+                                <LoadingSpinner />
                               </div>
+                            </div>
+                          ) : (
+                            // Mapeia os inputs quando não está carregando
+                            extraInputs.map((input, index) => (
+                              <div
+                                key={index}
+                                className='flex flex-col lg:flex-row items-end justify-between gap-4 mt-4 lg:flex-wrap xl:flex-nowrap'
+                              >
+                                <div className='flex flex-col w-full'>
+                                  <p className='dark:text-white mb-2'>{input.nome}:</p>
+                                </div>
 
-                              <div className='flex flex-col w-full'>
-                                <label className="text-neutral-400 text-sm">E-mail</label>
+                                <div className='flex flex-col w-full'>
+                                  <label className="text-neutral-400 text-sm">E-mail</label>
+                                  <input
+                                    className='text-neutral-400 border dark:border-neutral-600 text font-medium p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]'
+                                    name="email"
+                                    value={input.email}
+                                    autoComplete="off" // Desativa o preenchimento automático
+                                    onChange={(e) => handleInputChange(index, e)} // Atualiza o estado
+                                  />
+                                </div>
+
+                                <div className="flex flex-col w-full">
+                                  <label className="text-neutral-400 text-sm">Senha</label>
+                                  <div className="relative">
+                                    <input
+                                      className="text-neutral-400 border dark:border-neutral-600 text font-medium p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px] w-full"
+                                      name="senha"
+                                      value={input.senha}
+                                      onChange={(e) => handleInputChange(index, e)} // Atualiza o estado
+                                      autoComplete="new-password"
+                                      type={input.showPassword ? "text" : "password"} // Alterna entre texto e senha
+                                    />
+                                    {/* Ícone de alternância de senha */}
+                                    <button
+                                      type="button"
+                                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-600"
+                                      onClick={() => {
+                                        const updatedInputs = [...extraInputs];
+                                        updatedInputs[index].showPassword = !updatedInputs[index].showPassword;
+                                        setExtraInputs(updatedInputs);
+                                      }}
+                                    >
+                                      {input.showPassword ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                                      </svg>
+                                        : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        </svg>
+                                      } {/* Ícones para alternar */}
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* Campo hidden para armazenar o empresa_id */}
                                 <input
-                                  className='text-neutral-400 border dark:border-neutral-600 text font-medium p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]'
-                                  name="email"
-                                  value={input.email}
-                                  autoComplete="off" // Desativa o preenchimento automático
-                                  onChange={(e) => handleInputChange(index, e)} // Atualiza o estado
+                                  name="empresa_id"
+                                  type="hidden"
+                                  value={input.id}
+                                  readOnly
                                 />
                               </div>
+                            ))
+                          )}
+                        </>
+                      )}
+                    </div> : null
+                  }
 
-                              <div className="flex flex-col w-full">
-                                <label className="text-neutral-400 text-sm">Senha</label>
-                                <div className="relative">
-                                  <input
-                                    className="text-neutral-400 border dark:border-neutral-600 text font-medium p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px] w-full"
-                                    name="senha"
-                                    value={input.senha}
-                                    onChange={(e) => handleInputChange(index, e)} // Atualiza o estado
-                                    autoComplete="new-password"
-                                    type={input.showPassword ? "text" : "password"} // Alterna entre texto e senha
-                                  />
-                                  {/* Ícone de alternância de senha */}
-                                  <button
-                                    type="button"
-                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-600"
-                                    onClick={() => {
-                                      const updatedInputs = [...extraInputs];
-                                      updatedInputs[index].showPassword = !updatedInputs[index].showPassword;
-                                      setExtraInputs(updatedInputs);
-                                    }}
-                                  >
-                                    {input.showPassword ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-                                    </svg>
-                                      : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                      </svg>
-                                    } {/* Ícones para alternar */}
-                                  </button>
-                                </div>
-                              </div>
-
-                              {/* Campo hidden para armazenar o empresa_id */}
-                              <input
-                                name="empresa_id"
-                                type="hidden"
-                                value={input.id}
-                                readOnly
-                              />
-                            </div>
-                          ))
-                        )}
-                      </>
-                    )}
-                  </div>
 
                   {/* Proposta ao Cliente */}
-                  <div className="py-4">
+                  {auth.user.admin ? <div className="py-4">
                     <div className='flex items-center justify-between gap-2'>
                       <div className='flex flex-col'>
                         <label htmlFor={'proposta-cliente'} key={'proposta-cliente'} className='dark:text-white font-medium'>Proposta ao Cliente</label>
@@ -364,10 +404,10 @@ export default function FerramentasPerfil({ user, id }) {
                         />
                       </motion.div>
                     </div>
-                  </div>
+                  </div> : null}
 
                   {/* Representante Comercial */}
-                  <div className="py-4">
+                  {auth.user.admin ? <div className="py-4">
                     <div className='flex items-center justify-between gap-2'>
                       <div className='flex flex-col'>
                         <label htmlFor={'rep-comercial'} key={'rep-comercial'} className='dark:text-white font-medium'>Representante Comercial</label>
@@ -388,10 +428,10 @@ export default function FerramentasPerfil({ user, id }) {
                         <input className='text-neutral-400 border dark:border-neutral-600 text font-medium w-[80px] p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]' value={sala} onChange={e => setSala(e.target.value)} />
                       </div>
                     ) : null}
-                  </div>
+                  </div> : null}
 
                   {/* Calc. Escritura */}
-                  <div className="py-4">
+                  {auth.user.admin ? <div className="py-4">
                     <div className='flex items-center justify-between gap-2'>
                       <div className='flex flex-col'>
                         <label htmlFor={'calc-escritura'} key={'calc-escritura'} className='dark:text-white font-medium'>Calc. Escritura</label>
@@ -406,27 +446,75 @@ export default function FerramentasPerfil({ user, id }) {
                         />
                       </motion.div>
                     </div>
-                  </div>
+                  </div> : null}
 
                   {/* Acesso a API do precsys */}
-                  <div className="py-4">
+                  {auth.user.admin || auth.user.acesso_api ? (<div className="py-4 flex flex-col gap-4">
                     <div className='flex items-center justify-between gap-2'>
                       <div className='flex flex-col'>
                         <label htmlFor={'calc-escritura'} key={'calc-escritura'} className='dark:text-white font-medium'>API PrecSys</label>
-                        <span className='text-neutral-400 text-sm'>Acesso à informações via API Precsys</span>
+                        <p className='text-neutral-400 text-sm flex'>Acesso à informações via
+                          <span className='ml-1'>
+                            <a target='_blank' href='https://precsysteste.discloud.app/api-docs/' title='Ir para documentação da API' className='font-semibold cursor-pointer flex items-center gap-1 hover:underline'>
+                              API Precsys
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 inline-block">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                              </svg>
+                            </a>
+                          </span>
+                        </p>
                       </div>
-                      <motion.div
+                      {auth.user.admin ? <motion.div
                         className={`${isCheckedAcessoApi ? "bg-black dark:bg-white flex-shrink-0" : "bg-neutral-200 dark:bg-neutral-600"} w-12 h-6 flex items-center rounded-full p-1 cursor-pointer flex-shrink-0`}
                         onClick={() => setIsCheckedAcessoApi(!isCheckedAcessoApi)}
                       >
                         <motion.div
                           className={`w-4 h-4 rounded-full shadow-md transform  ${isCheckedAcessoApi ? "translate-x-6 bg-white dark:bg-black" : "translate-x-0 bg-white"}`}
                         />
-                      </motion.div>
+                      </motion.div> : null}
+
                     </div>
-                  </div>
+                    {isCheckedAcessoApi && (
+                      <div className='flex flex-col lg:flex-row lg:items-center gap-4'>
+                        <div className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 flex items-center gap-2'>
+                          <input
+                            className='dark:bg-neutral-800 focus:outline-none placeholder:text-[14px] text-gray-400 text-ellipsis w-full'
+                            value={apiKey}
+                            readOnly
+                          />
+                          <button
+                            title='Copiar chave'
+                            type='button'
+                            onClick={() => {
+                              navigator.clipboard.writeText(apiKey);
+                              toast.success('Chave copiada!', {
+                                position: "top-right",
+                                autoClose: 1000,
+                                theme: localStorage.getItem('darkMode') === true ? 'dark' : 'light',
+                                transition: Bounce,
+                              });
+                            }}
+                            className='rounded p-1 dark:border-neutral-600 text-gray-400 dark:hover:bg-neutral-700 hover:bg-neutral-200'
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+                            </svg>
+
+                          </button>
+                        </div>
+
+                        <button
+                          className='border rounded py-1 px-4 float-right mt-4 lg:mt-0 hover:bg-neutral-200 dark:bg-neutral-800 dark:border-neutral-600 dark:text-white dark:hover:bg-neutral-700'
+                          onClick={(e) => generateKey(e)}
+                        >
+                          Gerar chave da API
+                        </button>
+                      </div>
+
+                    )}
+                  </div>) : null}
                 </div>
-                <button className='bg-black rounded text-[14px] lg:text-[16px] px-4 py-2 font-medium text-white dark:bg-white dark:text-black mt-2' type='submit' onClick={(e) => handleSubmit(e)}>Salvar Alterações</button>
+                {auth.user.admin ? <button className='bg-black rounded text-[14px] lg:text-[16px] px-4 py-2 font-medium text-white dark:bg-white dark:text-black mt-2' type='submit' onClick={(e) => handleSubmit(e)}>Salvar Alterações</button> : null}
               </form>
             </div>
           </section>

@@ -411,18 +411,6 @@ const MeuPerfil = () => {
             <ClientesList searchQuery={searchQuery} user={user} />
           </motion.div>
         );
-      case 'documentos':
-        return (
-          <motion.div
-            key="documentos"
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.2 }}
-          >
-            Documentos Component
-          </motion.div>
-        );
       case 'configuracoes':
         return (
           <motion.div
@@ -583,7 +571,7 @@ const MeuPerfil = () => {
                           Clientes
                         </a>
                       </li>
-                      {auth.user.admin ? <li className={"px-4 py-1 lg:py-2"}>
+                      {auth.user.admin || auth.user.acesso_api ? <li className={"px-4 py-1 lg:py-2"}>
                         <a
                           onClick={() => handleItemClick('ferramentas')}
                           className={`text-[14px] text-neutral-600 dark:text-neutral-400 cursor-pointer hover:underline ${activeItem === 'ferramentas' ? ' font-bold ' : ''}`}
