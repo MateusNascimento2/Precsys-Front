@@ -14,12 +14,10 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 
 
-export default function Lista({ searchQuery, selectedFilters, setData, isPerfilCessoes, onFilteredCessoes, user }) {
+export default function Lista({ cessoes, searchQuery, selectedFilters, setData, isPerfilCessoes, onFilteredCessoes, user }) {
   const { minhascessoes } = useParams();
   const { auth } = useAuth();
   const userID = user ? String(user.id) : String(auth.user.id);
-
-  const [cessoes, setCessoes] = useState([]);
   const [cessionarios, setCessionarios] = useState([]);
   const [status, setStatus] = useState([]);
   const [orcamentos, setOrcamentos] = useState([]);
@@ -86,7 +84,6 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
       try {
         await Promise.all([
           fetchData('/cessionarios', setCessionarios),
-          fetchData('/cessoes', setCessoes),
           fetchData('/status', setStatus),
           fetchData('/orcamentos', setOrcamentos),
           fetchData('/natureza', setNatureza),
@@ -157,6 +154,7 @@ export default function Lista({ searchQuery, selectedFilters, setData, isPerfilC
 
 
   }, [minhascessoes, cessionarios, cessoes, userID, isPerfilCessoes]);
+  
 
   /* function arraysAreEqual(arr1, arr2) {
     if (arr1.length !== arr2.length) {

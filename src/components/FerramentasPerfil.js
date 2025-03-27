@@ -11,6 +11,7 @@ export default function FerramentasPerfil({ user, id }) {
   const [isCheckedCalcEscritura, setIsCheckedCalcEscritura] = useState(false);
   const [isCheckedPropostaCliente, setIsCheckedPropostaCliente] = useState(false);
   const [isCheckedPermissaoEmail, setIsCheckedPermissaoEmail] = useState(false);
+  const [isCheckedAcessoApi, setIsCheckedAcessoApi] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [sala, setSala] = useState('');
   const [teles, setTeles] = useState([]);
@@ -68,6 +69,7 @@ export default function FerramentasPerfil({ user, id }) {
     setIsCheckedCalcEscritura(user.ver_calculo === 1);
     setIsCheckedPropostaCliente(user.permissao_proposta === 1);
     setIsCheckedPermissaoEmail(user.permissao_email === 1);
+    setIsCheckedAcessoApi(user.acesso_api === 1);
 
   }, [teles]);
 
@@ -98,6 +100,7 @@ export default function FerramentasPerfil({ user, id }) {
       ver_calculo: isCheckedCalcEscritura ? 1 : 0,
       permissao_email: isCheckedPermissaoEmail ? 1 : 0,
       permissao_proposta: isCheckedPropostaCliente ? 1 : 0,
+      acesso_api: isCheckedAcessoApi ? 1 : 0,
     };
 
     try {
@@ -119,6 +122,7 @@ export default function FerramentasPerfil({ user, id }) {
             ver_calculo: updates.ver_calculo,
             permissao_email: updates.permissao_email,
             permissao_proposta: updates.permissao_proposta,
+            acesso_api: updates.acesso_api
           },
           userImage: prev.userImage,
         }));
@@ -399,6 +403,24 @@ export default function FerramentasPerfil({ user, id }) {
                       >
                         <motion.div
                           className={`w-4 h-4 rounded-full shadow-md transform  ${isCheckedCalcEscritura ? "translate-x-6 bg-white dark:bg-black" : "translate-x-0 bg-white"}`}
+                        />
+                      </motion.div>
+                    </div>
+                  </div>
+
+                  {/* Acesso a API do precsys */}
+                  <div className="py-4">
+                    <div className='flex items-center justify-between gap-2'>
+                      <div className='flex flex-col'>
+                        <label htmlFor={'calc-escritura'} key={'calc-escritura'} className='dark:text-white font-medium'>API PrecSys</label>
+                        <span className='text-neutral-400 text-sm'>Acesso à informações via API Precsys</span>
+                      </div>
+                      <motion.div
+                        className={`${isCheckedAcessoApi ? "bg-black dark:bg-white flex-shrink-0" : "bg-neutral-200 dark:bg-neutral-600"} w-12 h-6 flex items-center rounded-full p-1 cursor-pointer flex-shrink-0`}
+                        onClick={() => setIsCheckedAcessoApi(!isCheckedAcessoApi)}
+                      >
+                        <motion.div
+                          className={`w-4 h-4 rounded-full shadow-md transform  ${isCheckedAcessoApi ? "translate-x-6 bg-white dark:bg-black" : "translate-x-0 bg-white"}`}
                         />
                       </motion.div>
                     </div>

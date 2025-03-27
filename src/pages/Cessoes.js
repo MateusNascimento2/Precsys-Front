@@ -65,6 +65,7 @@ export default function Cessoes() {
   });
   const [show, setShow] = useState(false);
   const [dataCessoes, setDataCessoes] = useState([]);
+  const [cessoes, setCessoes] = useState([]);
   const axiosPrivate = useAxiosPrivate();
   const [filteredCessoes, setFilteredCessoes] = useState([]);
   const [selectedExportFields, setSelectedExportFields] = useState([
@@ -79,57 +80,47 @@ export default function Cessoes() {
     "adv",
     "falecido",
   ]);
-  const [valorTotalExcel, setValorTotalExcel] = useState({})
 
-  /*   useEffect(() => {
+    useEffect(() => {
       let isMounted = true;
       const controller = new AbortController();
   
-      const fetchValores = async () => {
+      const fetchData = async (url, setter) => {
         try {
-          const ids = filteredCessoes.map((cessao) => cessao.id);
-          const { data } = await axiosPrivate.post(
-            '/valorTotalExcel',
-            { cessao_ids: ids },
-            { signal: controller.signal }
-          );
-  
-          if (isMounted) {
-            // Organize os valores em um objeto
-            const valoresTotais = data.reduce(
-              (acc, item) => {
-                // Função para converter o valor string para número
-                const parseValor = (valor) => {
-                  if (!valor) return 0;
-                  return parseFloat(
-                    valor.replace("R$", "").replace(".", "").replace(",", ".").trim()
-                  );
-                };
-  
-                acc.valorPago += parseValor(item.valor_pago);
-                acc.comissao += parseValor(item.comissao);
-                acc.expRecebimento += parseValor(item.exp_recebimento);
-                return acc;
-              },
-              { valorPago: 0, comissao: 0, expRecebimento: 0 } // Valores iniciais
-            );
-  
-            setValorTotalExcel(valoresTotais);
-            setIsLoading(false);
-          }
+          const { data } = await axiosPrivate.get(url, {
+            signal: controller.signal,
+          });
+          if (isMounted) setter(data);
         } catch (err) {
-          console.log(err);
+          console.error(`Failed to fetch ${url}:`, err);
+          if (err.name === 'AbortError') {
+            console.log('Fetch aborted due to route change or unmount:', err);
+          } else if (isMounted) {
+            console.error('Error fetching data:', err);
+          }
         }
       };
   
-      fetchValores();
+      const fetchAllData = async () => {
+        try {
+          await Promise.all([
+            fetchData('/cessoes', setCessoes),
+          ]);
+  
+        } catch (err) {
+          console.error('Error with fetching data:', err);
+        } 
+      };
+  
+      fetchAllData();
   
       return () => {
         isMounted = false;
         controller.abort();
       };
-    }, [filteredCessoes]); */
+    }, [axiosPrivate]);
 
+  
 
   const handleFilteredCessoes = (filteredData) => {
     setFilteredCessoes(filteredData);
@@ -144,6 +135,15 @@ export default function Cessoes() {
   const handleInputChange = (query) => {
     setSearchQuery(query);
   }
+
+  const fetchCessoes = async () => {
+    try {
+      const { data } = await axiosPrivate.get('/cessoes');
+      setCessoes(data);              // atualiza a lista
+    } catch (error) {
+      console.error('Erro ao buscar as cessões após cadastro:', error);
+    }
+  };
 
   const handleData = (data) => {
     setDataCessoes(data);
@@ -640,6 +640,8 @@ export default function Cessoes() {
         status: 'success',
         message: 'Cessão cadastrada com sucesso!',
       });
+
+      await fetchCessoes();
     } catch (error) {
       console.error("Erro ao cadastrar cessão e cessionários:", error);
       setStatus({
@@ -699,10 +701,10 @@ export default function Cessoes() {
 
           <div className={`lg:flex lg:gap-4 lg:items-start`}>
             <div className='hidden lg:block lg:sticky lg:top-[5%]'>
-              <Filter show={true} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} onExportExcel={(fields) => exportToExcel(filteredCessoes, fields)} onFieldSelectionChange={handleFieldSelectionChange} selectedExportFields={selectedExportFields} valoresTotalExcel={valorTotalExcel} />
+              <Filter show={true} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} onExportExcel={(fields) => exportToExcel(filteredCessoes, fields)} onFieldSelectionChange={handleFieldSelectionChange} selectedExportFields={selectedExportFields} />
             </div>
             <div className='w-full h-full max-h-full'>
-              <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} isPerfilCessoes={false} onFilteredCessoes={handleFilteredCessoes} />
+              <Lista cessoes={cessoes} searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} isPerfilCessoes={false} onFilteredCessoes={handleFilteredCessoes} />
             </div>
           </div>
         </motion.div>

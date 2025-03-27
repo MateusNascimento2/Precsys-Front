@@ -175,7 +175,7 @@ export function Modal({ onAddCessionario, onDeleteCessionarioForm, handleCession
           {status.status === 'sending' ? (
             <div className='p-4 overflow-y-auto h-[calc(100%-50px)] lg:flex lg:flex-col lg:justify-between'>
 
-              <div className='w-full h-full absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] bg-black bg-opacity-20 flex justify-center items-center'>
+              <div className='w-full h-full absolute z-[100] top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] bg-black bg-opacity-20 flex justify-center items-center'>
                 <div className='w-10 h-10'>
                   <LoadingSpinner />
                 </div>

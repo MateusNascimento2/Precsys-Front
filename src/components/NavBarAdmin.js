@@ -14,6 +14,7 @@ function NavBarAdmin({ show }) {
   const [emailsUsuarios, setEmailsUsuarios] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { auth } = useAuth();
+  console.log(auth)
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
@@ -118,7 +119,7 @@ function NavBarAdmin({ show }) {
       <nav className={show ? 'shadow border-r border-neutral-300 fixed items-start bg-white w-[300px] z-50 h-screen top-[50px] left-0 px-4 lg:px-0 lg:static lg:w-full lg:h-full lg:shadow-none lg:border-0 dark:bg-neutral-900 dark:border-neutral-700 lg:flex lg:items-center' : 'border-r dark:border-neutral-700 flex items-start bg-[#FFF] w-[300px] z-50 fixed top-[52px] left-[-300px] h-screen dark:bg-neutral-900 lg:transition-none lg:duration-0'}>
         <ul className={auth.user.admin ? 'divide-y divide-neutral-300 dark:divide-neutral-700 flex w-full px-2 flex-col items-center gap-2 text-[13px] lg:flex-row lg:divide-y-0' : 'divide-y divide-neutral-300 dark:divide-neutral-700 flex w-full px-2 flex-col items-start lg:items-center gap-2 text-[13px] lg:flex-row lg:divide-y-0'}>
 
-          {auth.user.admin ?
+          {auth.user.admin ? // NavBar de Admin
             <>
               <li onClick={() => handleShow('pessoal')} className='cursor-pointer w-full p-2 lg:px-2  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded'>
                 <div className='flex justify-between items-center lg:gap-3'>
@@ -259,7 +260,7 @@ function NavBarAdmin({ show }) {
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 lg:w-[200px] overflow-hidden lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600"
+                      className="lg:shadow dark:lg:shadow-[#000] mt-2 flex flex-col gap-2 lg:w-[220px] overflow-hidden lg:absolute lg:right-auto xl:right-auto lg:z-50 lg:bg-white lg:py-2 lg:px-4 lg:rounded lg:border lg:border-gray-300 cursor-default dark:bg-neutral-900 dark:border-neutral-600"
                     >
                       <ul className='lg:ml-0 '>
                         <li className='mb-3 mt-2'>
@@ -271,8 +272,8 @@ function NavBarAdmin({ show }) {
                               Cálculo
                               <p className='font-[600] text-[12px] text-[#666666]'>Fazer Cálculo </p>
                             </button>}
-                            >
-                            
+                          >
+
                             <div className='h-[500px] lg:h-[650px] overflow-auto'>
                               <TabelaGeneradaCalculo />
                             </div>
@@ -289,6 +290,11 @@ function NavBarAdmin({ show }) {
                             </div>
                           </Modal>
                         </li> : null}
+                        {auth.user.acesso_api ?
+                          <li className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                            <a target='_blank' href='https://precsysteste.discloud.app/api-docs/' className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>API PrecSys</a>
+                            <p className='font-[500] text-[#666666] dark:text-neutral-500'>Acesso à Documentação</p>
+                          </li> : null}
                       </ul>
                     </motion.div>
                   )}
@@ -337,7 +343,7 @@ function NavBarAdmin({ show }) {
                   </AnimatePresence>
                 </li> : null}
             </>
-            :
+            : //NavBar de usuário
             <ul className='flex flex-col lg:flex-row lg:items-center divide-y divide-neutral-300 dark:divide-neutral-700 lg:divide-y-0 w-full lg:gap-2'>
               <li className='px-2 py-4 lg:p-2 lg:rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 w-full' onClick={() => handleRoute('/minhas-cessoes')}>
                 <span className='font-[500] text-[#666666] dark:text-neutral-300 text-nowrap '>Minhas Cessões</span>
@@ -392,6 +398,11 @@ function NavBarAdmin({ show }) {
                               </div>
                             </Modal>
                           </li> : null}
+                          {auth.user.acesso_api ?
+                            <li className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                              <a target='_blank' href='https://precsysteste.discloud.app/api-docs/' className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>API PrecSys</a>
+                              <p className='font-[500] text-[#666666] dark:text-neutral-500'>Acesso à Documentação</p>
+                            </li> : null}
                         </ul>
                       </motion.div>
                     )}

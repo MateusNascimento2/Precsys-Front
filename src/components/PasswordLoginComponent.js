@@ -63,8 +63,8 @@ function PasswordLoginComponent({ nome, userImage, cpfcnpj, darkMode }) {
       </div>
       <h2 className={darkMode ? 'text-white' : 'text-black'}>Bem-vindo, <strong>{`${primeiroNome} ${sobrenome}`}</strong></h2>
       {passwordError ? <div className='bg-red-200 border border-red-600 w-full px-4 py-3 rounded flex gap-2'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                    </svg> {errorMessage} </div> : null}
+        <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+      </svg> {errorMessage} </div> : null}
       <div className='w-full'>
         <form className="flex flex-col gap-4 w-full">
           <input className={darkMode ? "text-white border rounded py-3 px-4 bg-neutral-900 border-neutral-600" : 'border rounded py-3 px-4 text-black bg-white'} type="password" placeholder="Senha" name='password' id='password' required onChange={(event) => setPassword(event.target.value)} value={password} />
@@ -84,7 +84,7 @@ function PasswordLoginComponent({ nome, userImage, cpfcnpj, darkMode }) {
                 </svg>
               </span>
             </div>
-            
+
             <label className={darkMode ? 'font-medium text-sm text-white' : 'font-medium text-sm text-black'} htmlFor="persist">Lembrar credenciais neste dispositivo?</label>
           </div>
         </form>
