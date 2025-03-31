@@ -10,11 +10,9 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 function NavBarAdmin({ show }) {
   const [showMenu, setShowMenu] = useState(false);
   const [menuType, setMenuType] = useState(null);
-  const [empresas, setEmpresas] = useState([]);
   const [emailsUsuarios, setEmailsUsuarios] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { auth } = useAuth();
-  console.log(auth)
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
@@ -34,36 +32,13 @@ function NavBarAdmin({ show }) {
       }
     };
 
-    const fetchAllData = async () => {
-      try {
-        setIsLoading(true);
-        await Promise.all([fetchData('/empresas', setEmpresas)]);
-        await Promise.all([fetchData('/emails_usuarios', setEmailsUsuarios)]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAllData();
+    fetchData(`/email-do-usuario/${auth.user.id}`, setEmailsUsuarios)
 
     return () => {
       isMounted = false;
       controller.abort();
     };
   }, [auth.user.permissao_email, axiosPrivate]);
-
-
-  const filteredEmails = emailsUsuarios
-    .filter(email => email.usuario === String(auth.user.id)) // Filtra os e-mails pelo usuário
-    .map(email => {
-      const empresa = empresas.find(e => String(e.id) === String(email.empresa)); // Procura o nome da empresa correspondente
-      return {
-        ...email,
-        empresaNome: empresa ? empresa.nome : null,
-        empresaDominio: empresa ? empresa.site : null // Adiciona o nome da empresa (ou null se não encontrar)
-      };
-    });
-
 
   function handleShow(type) {
     if (menuType === type) {
@@ -301,7 +276,7 @@ function NavBarAdmin({ show }) {
                 </AnimatePresence>
               </li> : null}
               {auth.user.permissao_email ?
-                <li onClick={filteredEmails.length > 0 ? () => handleShow('emails') : null} className='cursor-pointer px-2 py-4 lg:p-2 lg:rounded w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800'>
+                <li onClick={emailsUsuarios.length > 0 ? () => handleShow('emails') : null} className='cursor-pointer px-2 py-4 lg:p-2 lg:rounded w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800'>
                   <div className='flex justify-between items-center lg:gap-3'>
                     <span className='font-[500] text-[#666666] dark:text-neutral-300 text-nowrap '>E-mails</span>
                     <span className='text-[12px] dark:text-neutral-300'>
@@ -324,10 +299,10 @@ function NavBarAdmin({ show }) {
                             <span className='font-[600] text-[12px] text-[#666666]'>E-mails </span>
                           </li>
                           <li>
-                            {filteredEmails.map(emails => (
+                            {emailsUsuarios.map(emails => (
                               <>
-                                <button onClick={() => handleSubmit(emails.email, emails.senha, emails.empresaDominio)} className='w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
-                                  <span>{emails.empresaNome}</span>
+                                <button onClick={() => handleSubmit(emails.email, emails.senha, emails.site)} className='w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                                  <span>{emails.nome}</span>
                                   <p className='font-[600] text-[12px] text-[#666666]'>E-mails Corporativos</p>
                                 </button>
 
@@ -409,7 +384,7 @@ function NavBarAdmin({ show }) {
                   </AnimatePresence>
                 </li> : null}
               {auth.user.permissao_email ?
-                <li onClick={filteredEmails.length > 0 ? () => handleShow('emails') : null} className='cursor-pointer px-2 py-4 lg:p-2 lg:rounded w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800'>
+                <li onClick={emailsUsuarios.length > 0 ? () => handleShow('emails') : null} className='cursor-pointer px-2 py-4 lg:p-2 lg:rounded w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800'>
                   <div className='flex justify-between items-center lg:gap-3'>
                     <span className='font-[500] text-[#666666] dark:text-neutral-300 text-nowrap  '>E-mails</span>
                     <span className='text-[12px] dark:text-neutral-300'>
@@ -433,10 +408,10 @@ function NavBarAdmin({ show }) {
                           </li>
 
                           <li>
-                            {filteredEmails.map(emails => (
+                            {emailsUsuarios.map(emails => (
                               <>
-                                <button onClick={() => handleSubmit(emails.email, emails.senha, emails.empresaDominio)} className='w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
-                                  <span>{emails.empresaNome}</span>
+                                <button onClick={() => handleSubmit(emails.email, emails.senha, emails.site)} className='w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                                  <span>{emails.nome}</span>
                                   <p className='font-[600] text-[12px] text-[#666666]'>E-mails Corporativos</p>
                                 </button>
 

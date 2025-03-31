@@ -9,7 +9,6 @@ import { motion } from 'framer-motion';
 function Dashboard() {
   const [show, setShow] = useState(false)
   const { auth } = useAuth();
-  console.log('auth:' + JSON.stringify(auth))
   const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   useEffect(() => {

@@ -10,11 +10,8 @@ import { useParams } from 'react-router-dom';
 
 function PieChart() {
   const [endAngle, setEndAngle] = useState(360);
-  const [cessoes, setCessoes] = useState([]);
-  const [cessionarios, setCessionarios] = useState([]);
-  const [status, setStatus] = useState([]);
+  const [DashboardData, setDashboardData] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState(null);
-  const [myCessions, setMyCessions] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { auth } = useAuth();
@@ -68,7 +65,7 @@ function PieChart() {
 
     const fetchData = async (url, setter) => {
       try {
-        setIsLoading(true);
+        setIsLoading(true)
         const { data } = await axiosPrivate.get(url, {
           signal: controller.signal
         });
@@ -79,9 +76,8 @@ function PieChart() {
       }
     };
 
-    fetchData('/cessoes', setCessoes);
-    fetchData('/status', setStatus);
-    fetchData('/cessionarios', setCessionarios);
+    fetchData(`/dashboard/${id ? id : userID}`, setDashboardData);
+    setIsLoading(false);
 
     return () => {
       isMounted = false;
@@ -89,55 +85,7 @@ function PieChart() {
     };
   }, [axiosPrivate]);
 
-  useEffect(() => {
-    if (id) {
-      const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => String(cessionario.user_id) === String(id));
-
-      const minhasCessoes = cessionariosPorIDdoUsuarios
-        .map(cessionario => {
-          const cessao = cessoes.find(cessao => cessao && String(cessao.id) === String(cessionario.cessao_id));
-          if (cessao) {
-            cessao.exp_recebimento = changeStringFloat(cessionario.exp_recebimento);
-          }
-          return cessao;
-        })
-        .filter(cessao => cessao !== undefined);
-
-      status.forEach(statusItem => {
-        minhasCessoes.forEach(cessao => {
-          if (cessao.status === String(statusItem.id)) {
-            cessao.x = statusItem.nome;
-          }
-        });
-      });
-
-      setMyCessions(minhasCessoes);
-
-    } else {
-      const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => cessionario.user_id === userID);
-
-      const minhasCessoes = cessionariosPorIDdoUsuarios
-        .map(cessionario => {
-          const cessao = cessoes.find(cessao => cessao && String(cessao.id) === String(cessionario.cessao_id));
-          if (cessao) {
-            cessao.exp_recebimento = changeStringFloat(cessionario.exp_recebimento);
-          }
-          return cessao;
-        })
-        .filter(cessao => cessao !== undefined);
-
-      status.forEach(statusItem => {
-        minhasCessoes.forEach(cessao => {
-          if (cessao.status === String(statusItem.id)) {
-            cessao.x = statusItem.nome;
-          }
-        });
-      });
-
-      setMyCessions(minhasCessoes);
-    }
-
-  }, [cessionarios, cessoes, status, userID]);
+  console.log(DashboardData)
 
   const minhasCessoesData = useMemo(() => {
     const statusQtd = [
@@ -151,16 +99,16 @@ function PieChart() {
       { x: 'Recebido', y: 0, color: '#bad3b9', expRecebimentoTotal: 0 }
     ];
 
-    myCessions.forEach(cessao => {
-      const statusIndex = statusQtd.findIndex(status => status.x === cessao.x);
+    DashboardData.forEach(cessao => {
+      const statusIndex = statusQtd.findIndex(status => status.x === cessao.status);
       if (statusIndex !== -1) {
         statusQtd[statusIndex].y += 1;
-        statusQtd[statusIndex].expRecebimentoTotal += parseFloat(cessao.exp_recebimento);
+        statusQtd[statusIndex].expRecebimentoTotal += parseFloat(changeStringFloat(cessao.exp_recebimento));
       }
     });
 
     return statusQtd;
-  }, [myCessions]);
+  }, [DashboardData]);
 
   const allZero = minhasCessoesData.every(data => data.y === 0);
 
@@ -181,20 +129,14 @@ function PieChart() {
   }, [endAngle]);
 
   const filteredCessoes = useMemo(() => {
-    const cessoesFiltradas = cessionarios
-      .filter(cessionario => cessionario.user_id === userID)
-      .map(cessionario => cessoes.find(cessao => cessao && String(cessao.id) === String(cessionario.cessao_id)))
-      .filter(cessao => cessao && (
-        cessao.precatorio.toLowerCase().includes(filterText.toLowerCase()) ||
-        cessao.cedente.toLowerCase().includes(filterText.toLowerCase()) ||
-        cessao.processo.toLowerCase().includes(filterText.toLowerCase())
-      ));
+    return DashboardData.filter(cessao => {
+      const matchesStatus = selectedStatus ? cessao.status === selectedStatus : true;
+      const matchesText = cessao.precatorio.toLowerCase().includes(filterText.toLowerCase()) ||
+        cessao.cedente.toLowerCase().includes(filterText.toLowerCase());
 
-    setIsLoading(false);
-
-    if (!selectedStatus) return cessoesFiltradas;
-    return cessoesFiltradas.filter(cessao => cessao.x === selectedStatus);
-  }, [cessionarios, cessoes, selectedStatus, userID, filterText]);
+      return matchesStatus && matchesText;
+    });
+  }, [DashboardData, selectedStatus, filterText]);
 
   // Conjunto de dados alternativo para quando todos os valores de y são 0
   const emptyData = [
@@ -283,10 +225,9 @@ function PieChart() {
                   </ul>
                 ) : (
                   <ul className="">
-                    {myCessions.filter(cessao =>
+                    {filteredCessoes.filter(cessao =>
                       cessao.precatorio.toLowerCase().includes(filterText.toLowerCase()) ||
-                      cessao.cedente.toLowerCase().includes(filterText.toLowerCase()) ||
-                      cessao.processo.toLowerCase().includes(filterText.toLowerCase())
+                      cessao.cedente.toLowerCase().includes(filterText.toLowerCase())
                     ).map((cessao, index) => (
                       <li key={index} className="flex p-2 items-center border dark:border-neutral-600 rounded  mb-2">
                         <div className='border-r dark:border-neutral-600 pr-2'>
