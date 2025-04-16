@@ -85,8 +85,6 @@ function PieChart() {
     };
   }, [axiosPrivate]);
 
-  console.log(DashboardData)
-
   const minhasCessoesData = useMemo(() => {
     const statusQtd = [
       { x: 'Em Andamento', y: 0, color: '#d2c7b3', expRecebimentoTotal: 0 },

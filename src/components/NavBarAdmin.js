@@ -61,14 +61,13 @@ function NavBarAdmin({ show }) {
 
   const handleSubmit = (user, pass, domain) => {
 
-    const protocol = 'https://';
-    const port = '2096'
-    const actionUrl = `${protocol}${domain}:${port}/login`;
+    /*     const protocol = 'https://';
+        const port = '2096' */
+    const actionUrl = `https://${domain}:2096/login`;
 
     // Cria um formulário dinamicamente e o submete
     const form = document.createElement('form');
     form.action = actionUrl;
-    form.method = 'POST';
     form.target = '_blank'; // Abre em uma nova guia
 
     // Adiciona os campos necessários ao formulário

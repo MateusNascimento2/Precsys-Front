@@ -12,6 +12,8 @@ import { motion } from 'framer-motion';
 import ScrollToTopButton from '../components/ScrollToTopButton';
 import * as XLSX from 'xlsx';
 import { Modal } from '../components/CessaoCessionarioModal/Modal';
+import useAuth from "../hooks/useAuth";
+import Filtro from '../components/FiltroCessoes/Filtro';
 
 export default function Cessoes() {
   const [formDataCessao, setFormDataCessao] = useState({
@@ -54,83 +56,220 @@ export default function Cessoes() {
     mandado: '',
     comprovante: ''
   })
+  const [selectedFilters, setSelectedFilters] = useState(() => {
+    const saved = localStorage.getItem('selectedFilters');
+    const parsed = saved ? JSON.parse(saved) : {};
+
+    return {
+      status: parsed.status || [],
+      ente: parsed.ente || [],
+      empresa: parsed.empresa || [],
+      natureza: parsed.natureza || [],
+      anuencia_advogado: parsed.anuencia_advogado || [],
+      falecido: parsed.falecido || [],
+      tele: parsed.tele || [],
+      data_cessao: Array.isArray(parsed.data_cessao) ? parsed.data_cessao : [],
+      requisitorio: parsed.requisitorio || [],
+      escritura: parsed.escritura || [],
+    };
+  });
+
   const [status, setStatus] = useState('typing');
   const [cessionariosQtd, setCessionariosQtd] = useState([]);
   const [idCessionarioForm, setIdCessionarioForm] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCheckboxes, setSelectedCheckboxes] = useState(() => {
-    const savedFilters = localStorage.getItem('filters');
-    return savedFilters ? JSON.parse(savedFilters) : [];
-  });
   const [show, setShow] = useState(false);
-  const [dataCessoes, setDataCessoes] = useState([]);
   const [cessoes, setCessoes] = useState([]);
+  const [dadosFiltro, setDadosFiltro] = useState([]);
   const axiosPrivate = useAxiosPrivate();
-  const [filteredCessoes, setFilteredCessoes] = useState([]);
+
   const [selectedExportFields, setSelectedExportFields] = useState([
     "id",
     "precatorio",
     "cedente",
     "status",
-    "ente_id",
+    "ente",
     "natureza",
     "data_cessao",
-    "empresa_id",
-    "adv",
+    "empresa",
+    "anuencia_advogado",
     "falecido",
   ]);
 
-    useEffect(() => {
-      let isMounted = true;
-      const controller = new AbortController();
-  
-      const fetchData = async (url, setter) => {
-        try {
-          const { data } = await axiosPrivate.get(url, {
-            signal: controller.signal,
-          });
-          if (isMounted) setter(data);
-        } catch (err) {
-          console.error(`Failed to fetch ${url}:`, err);
-          if (err.name === 'AbortError') {
-            console.log('Fetch aborted due to route change or unmount:', err);
-          } else if (isMounted) {
-            console.error('Error fetching data:', err);
-          }
-        }
-      };
-  
-      const fetchAllData = async () => {
-        try {
-          await Promise.all([
-            fetchData('/cessoes', setCessoes),
-          ]);
-  
-        } catch (err) {
-          console.error('Error with fetching data:', err);
-        } 
-      };
-  
-      fetchAllData();
-  
-      return () => {
-        isMounted = false;
-        controller.abort();
-      };
-    }, [axiosPrivate]);
-
-  
-
-  const handleFilteredCessoes = (filteredData) => {
-    setFilteredCessoes(filteredData);
-  };
-
   const { minhascessoes } = useParams();
+  const { auth } = useAuth();
 
   useEffect(() => {
-    localStorage.setItem('filters', JSON.stringify(selectedCheckboxes));
-  }, [selectedCheckboxes]);
+    let isMounted = true;
+    const controller = new AbortController();
+
+    const fetchData = async (url, setter) => {
+      try {
+        setIsLoading(true)
+        const { data } = await axiosPrivate.get(url, {
+          signal: controller.signal,
+        });
+        if (isMounted) setter(data);
+        setIsLoading(false)
+      } catch (err) {
+        setIsLoading(false)
+        console.error(`Failed to fetch ${url}:`, err);
+      }
+    };
+
+    const fetchAllData = async () => {
+      try {
+        const urlCessoes = minhascessoes ? `/cessoes-usuario/${auth.user.id}` : '/todas-cessoes';
+        const urlFiltros = auth.user.admin ? '/filtros' : '/filtros-usuario';
+        await fetchData(urlCessoes, setCessoes);
+        await fetchData(urlFiltros, setDadosFiltro)
+      } catch (err) {
+        console.error('Error with fetching data:', err);
+      }
+    };
+
+    fetchAllData();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [axiosPrivate, minhascessoes, auth.user?.id]);
+
+  useEffect(() => {
+    localStorage.setItem('selectedFilters', JSON.stringify(selectedFilters));
+  }, [selectedFilters]);
+
+  // Função para atualizar o estado dos filtros
+  const handleFilterChange = (filterCategory, value) => {
+    setSelectedFilters(prevState => {
+      const newFilter = prevState[filterCategory].includes(value)
+        ? prevState[filterCategory].filter(item => item !== value)
+        : [...prevState[filterCategory], value];
+
+      return { ...prevState, [filterCategory]: newFilter };
+    });
+  };
+
+  // Função para limpar todos os filtros
+  const clearAllFilters = () => {
+    const emptyFilters = {
+      status: [],
+      ente: [],
+      empresa: [],
+      natureza: [],
+      anuencia_advogado: [],
+      falecido: [],
+      tele: [],
+      data_cessao: [],
+      requisitorio: [],
+      escritura: [],
+    };
+  
+    setSelectedFilters(emptyFilters);
+    localStorage.removeItem('selectedFilters');
+  };
+
+  const handleDateChange = (id, value) => {
+    setSelectedFilters((prevState) => {
+      let newDataCessao = [...prevState.data_cessao];
+
+      if (id === 'data_cessao_inicial') {
+        newDataCessao[0] = value;  // Atualiza a data inicial
+        // Se a data final ainda não foi preenchida, define como a data de hoje
+        if (!newDataCessao[1]) {
+          newDataCessao[1] = new Date().toISOString().split('T')[0];  // Data de hoje no formato yyyy-mm-dd
+        }
+      } else if (id === 'data_cessao_final') {
+        newDataCessao[1] = value;  // Atualiza a data final
+      }
+
+      return {
+        ...prevState,
+        data_cessao: newDataCessao,  // Atualiza o array de datas
+      };
+    });
+  };
+
+  // Função para filtrar os dados das cessões com base nos filtros selecionados
+  const filteredData = cessoes.filter(item => {
+
+    // 1. Filtro de pesquisa (searchQuery) em todos os campos do item
+    const filterSearchInput = searchQuery
+      ? Object.values(item).some(value =>
+        // Concatenando "ente - ano" na pesquisa
+        (value && value.toString().toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (`${item.ente} - ${item.ano}`.toLowerCase().includes(searchQuery.toLowerCase()))  // Concatenando ente + ano
+      )
+      : true;
+
+    // 2. Filtro de "status"
+    const filterStatus = selectedFilters.status.length
+      ? selectedFilters.status.includes(item.status)  // Verifica se o status está selecionado
+      : true;  // Se não houver filtro de status, retorna true (sem filtro)
+
+    // 3. Filtro de "ente + ano" (ex: "Estado RJ - 2017")
+    const filterEnteAno = selectedFilters.ente.length
+      ? selectedFilters.ente.includes(`${item.ente} - ${item.ano}`)  // Concatenando ente e ano com " - "
+      : true;  // Se não houver filtro de ente/ano, retorna true
+
+    // 4. Filtro de "empresa"
+    const filterEmpresa = selectedFilters.empresa.length
+      ? selectedFilters.empresa.includes(item.empresa)  // Verifica se a empresa está selecionada
+      : true;  // Se não houver filtro de empresa, retorna true
+
+    // 5. Filtro de "natureza"
+    const filterNatureza = selectedFilters.natureza.length
+      ? selectedFilters.natureza.includes(item.natureza)  // Verifica se a natureza está selecionada
+      : true;  // Se não houver filtro de natureza, retorna true
+
+    // 6. Filtro de "anuencia_advogado"
+    const filterAnuenciaAdvogado = selectedFilters.anuencia_advogado.length
+      ? selectedFilters.anuencia_advogado.includes(item.anuencia_advogado)  // Verifica se a anuência do advogado está selecionada
+      : true;  // Se não houver filtro de anuência, retorna true
+
+    // 7. Filtro de "falecido"
+    const filterFalecido = selectedFilters.falecido.length
+      ? selectedFilters.falecido.includes(item.falecido)  // Verifica se o valor de falecido está selecionado
+      : true;  // Se não houver filtro de falecido, retorna true
+
+    // 8. Filtro de "tele"
+    const filterTele = selectedFilters.tele.length
+      ? selectedFilters.tele.includes(item.tele)  // Verifica se o tele está selecionado
+      : true;  // Se não houver filtro de tele, retorna true
+
+    // 9. Filtro de "data_cessao"
+    // Filtro de data_cessao com base no intervalo de data inicial e final (dentro do array)
+    const filterDataCessao = selectedFilters.data_cessao.length === 2
+      ? new Date(item.data_cessao) >= new Date(selectedFilters.data_cessao[0]) &&
+      new Date(item.data_cessao) <= new Date(selectedFilters.data_cessao[1])
+      : true;
+
+    const filterRequisitorioFaltando = selectedFilters.requisitorio.length
+      ? selectedFilters.requisitorio.includes(item.requisitorio)  // Verifica se o tele está selecionado
+      : true;  // Se não houver filtro de tele, retorna true
+
+    const filterEscrituraFaltando = selectedFilters.escritura.length
+      ? selectedFilters.escritura.includes(item.escritura)  // Verifica se o tele está selecionado
+      : true;  // Se não houver filtro de tele, retorna true
+
+    // 10. Verifica se todos os filtros são verdadeiros
+    return (
+      filterSearchInput &&
+      filterStatus &&
+      filterEnteAno &&
+      filterEmpresa &&
+      filterNatureza &&
+      filterAnuenciaAdvogado &&
+      filterFalecido &&
+      filterTele &&
+      filterDataCessao &&
+      filterRequisitorioFaltando &&
+      filterEscrituraFaltando
+    );
+  });
 
   const handleInputChange = (query) => {
     setSearchQuery(query);
@@ -138,16 +277,12 @@ export default function Cessoes() {
 
   const fetchCessoes = async () => {
     try {
-      const { data } = await axiosPrivate.get('/cessoes');
-      setCessoes(data);              // atualiza a lista
+      const { data } = await axiosPrivate.get('/todas-cessoes');
+      setCessoes(data);// atualiza a lista
     } catch (error) {
       console.error('Erro ao buscar as cessões após cadastro:', error);
     }
   };
-
-  const handleData = (data) => {
-    setDataCessoes(data);
-  }
 
   const handleShow = () => {
     setShow((prevState) => !prevState);
@@ -157,10 +292,6 @@ export default function Cessoes() {
       document.body.style.overflow = 'scroll';
     }
   }
-
-  const handleSelectedCheckboxesChange = (childData) => {
-    setSelectedCheckboxes(childData);
-  };
 
   const exportPDF = (filteredData) => {
 
@@ -226,11 +357,11 @@ export default function Cessoes() {
                       {
                         columns: [
                           { text: cessao.status, style: 'status', color: statusColors[cessao.status] || '#000000' },
-                          ...(cessao.ente_id ? [{ text: cessao.ente_id, style: 'badge' }] : []),
+                          ...(cessao.ente ? [{ text: `${cessao.ente} - ${cessao.ano}`, style: 'badge' }] : []),
                           ...(cessao.natureza ? [{ text: cessao.natureza, style: 'badge' }] : []),
                           ...(cessao.data_cessao ? [{ text: cessao.data_cessao.split('-').reverse().join('/'), style: 'badge' }] : []),
-                          ...(cessao.empresa_id ? [{ text: cessao.empresa_id, style: 'badge' }] : []),
-                          ...(cessao.adv ? [{ text: cessao.adv, style: 'badge' }] : []),
+                          ...(cessao.empresa ? [{ text: cessao.empresa, style: 'badge' }] : []),
+                          ...(cessao.anuencia_advogado ? [{ text: cessao.anuencia_advogado, style: 'badge' }] : []),
                           ...(cessao.falecido ? [{ text: cessao.falecido, style: 'badge' }] : []),
                         ],
                         columnGap: 5,
@@ -295,6 +426,14 @@ export default function Cessoes() {
     pdfMake.createPdf(docDefinition).download('lista.pdf');
   };
 
+  const handleFieldSelectionChange = (field) => {
+    setSelectedExportFields((prevState) =>
+      prevState.includes(field)
+        ? prevState.filter((item) => item !== field)
+        : [...prevState, field]
+    );
+  };
+
   const exportToExcel = (filteredData, selectedFields) => {
     // Mapeamento de rótulos personalizados
     const fieldLabels = {
@@ -303,11 +442,11 @@ export default function Cessoes() {
       processo: "Processo",
       cedente: "Cedente",
       status: "Status",
-      ente_id: "Ente Público",
+      ente: "Ente Público",
       natureza: "Natureza",
       data_cessao: "Data da Cessão",
-      empresa_id: "Empresa",
-      adv: "Anuência",
+      empresa: "Empresa",
+      anuencia_advogado: "Anuência",
       falecido: "Falecido",
     };
 
@@ -315,9 +454,16 @@ export default function Cessoes() {
     const selectedData = filteredData.map((item) => {
       const filteredItem = {};
       selectedFields.forEach((field) => {
-        const label = fieldLabels[field] || field; // Usa o rótulo personalizado ou a chave original
-        filteredItem[label] = item[field];
+
+        if (fieldLabels[field] === 'Ente Público') {
+          const label = fieldLabels[field] || field; // Usa o rótulo personalizado ou a chave original
+          filteredItem[label] = `${item[field]} - ${item.ano}`;
+        } else {
+          const label = fieldLabels[field] || field; // Usa o rótulo personalizado ou a chave original
+          filteredItem[label] = item[field];
+        }
       });
+
       return filteredItem;
     });
 
@@ -328,14 +474,6 @@ export default function Cessoes() {
 
     // Baixar o arquivo Excel
     XLSX.writeFile(workbook, "cessoes.xlsx");
-  };
-
-  const handleFieldSelectionChange = (field) => {
-    setSelectedExportFields((prevState) =>
-      prevState.includes(field)
-        ? prevState.filter((item) => item !== field)
-        : [...prevState, field]
-    );
   };
 
 
@@ -635,7 +773,7 @@ export default function Cessoes() {
 
       // 📡 Envio da cessão (comentado por enquanto)
       const response = await axiosPrivate.post("/cessoes", payload);
-      
+
       setStatus({
         status: 'success',
         message: 'Cessão cadastrada com sucesso!',
@@ -700,15 +838,23 @@ export default function Cessoes() {
           </div>
 
           <div className={`lg:flex lg:gap-4 lg:items-start`}>
-            <div className='hidden lg:block lg:sticky lg:top-[5%]'>
-              <Filter show={true} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} onExportExcel={(fields) => exportToExcel(filteredCessoes, fields)} onFieldSelectionChange={handleFieldSelectionChange} selectedExportFields={selectedExportFields} />
+
+            {/* Filtro no Desktop */}
+            <div className='hidden lg:block lg:sticky lg:top-[7%] lg:w-[320px]'>
+              <Filtro show={show} dadosFiltro={dadosFiltro} selectedFilters={selectedFilters} handleFilterChange={handleFilterChange} handleDateChange={handleDateChange} exportPDF={() => exportPDF(filteredData)} exportExcel={(fields) => exportToExcel(filteredData, fields)} selectedExportFields={selectedExportFields} handleFieldSelectionChange={handleFieldSelectionChange} clearAllFilters={clearAllFilters} />
             </div>
+
+            {/* Lista de Cessões */}
             <div className='w-full h-full max-h-full'>
-              <Lista cessoes={cessoes} searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} isPerfilCessoes={false} onFilteredCessoes={handleFilteredCessoes} />
+              <Lista cessoes={cessoes} filteredCessoes={filteredData} searchQuery={searchQuery} isLoading={isLoading} />
             </div>
           </div>
         </motion.div>
-        <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} onExportExcel={(fields) => exportToExcel(filteredCessoes, fields)} onFieldSelectionChange={handleFieldSelectionChange} selectedExportFields={selectedExportFields} />
+
+        {/* Filtro no Mobile */}
+        <div className='lg:hidden'>
+          <Filtro onSetShow={handleShow} setShow={setShow} show={show} dadosFiltro={dadosFiltro} selectedFilters={selectedFilters} handleFilterChange={handleFilterChange} handleDateChange={handleDateChange} exportPDF={() => exportPDF(filteredData)} exportExcel={(fields) => exportToExcel(filteredData, fields)} selectedExportFields={selectedExportFields} handleFieldSelectionChange={handleFieldSelectionChange} clearAllFilters={clearAllFilters} />
+        </div>
 
         {/* Scroll-to-top button */}
         <ScrollToTopButton />

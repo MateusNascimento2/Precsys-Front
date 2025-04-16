@@ -126,7 +126,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
     const updatedCheckedStatus = { ...checkedStatus };
 
     filteredEnte.forEach((orcamento) => {
-      if (orcamento.obs === '1') {
+      if (orcamento.comarca === '1') {
         // Marca/desmarca o item principal (ex.: "M. Cachoeiras de Macacu")
         updatedCheckedStatus[orcamento.apelido] = isChecked;
 
@@ -146,7 +146,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
     if (isChecked) {
       const newSelections = [
         ...filteredEnte
-          .filter((orcamento) => orcamento.obs === '1')
+          .filter((orcamento) => orcamento.comarca === '1')
           .map((orcamento) => ({
             ente_id: orcamento.apelido,
           })),
@@ -154,7 +154,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
           orcamentosAnos
             .filter(
               (orcamentoAno) =>
-                orcamento.obs === '1' &&
+                orcamento.comarca === '1' &&
                 parseInt(orcamento.id) === parseInt(orcamentoAno.budget_id)
             )
             .map((orcamentoAno) => ({
@@ -176,7 +176,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
                   (orcamentoAno) =>
                     item.ente_id ===
                     `${orcamento.apelido} - ${orcamentoAno.ano}` &&
-                    orcamento.obs === '1'
+                    orcamento.comarca === '1'
                 )
             )
         )
@@ -254,18 +254,18 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
       setCheckedStatus({ ...checkedStatus, [checkboxName]: isChecked });
       checkbox = { [checkboxName]: checkboxValue };
 
-      
-    if (isChecked) {
-      onSelectedCheckboxesChange(prevState => [...prevState, checkbox]);
-    } else {
-      onSelectedCheckboxesChange(prevState => prevState.filter(item => {
-        const [key] = Object.keys(item);
-        console.log(item)
-        console.log(key)
-        console.log(item[key])
-        return key !== checkboxName;
-      }));
-    }
+
+      if (isChecked) {
+        onSelectedCheckboxesChange(prevState => [...prevState, checkbox]);
+      } else {
+        onSelectedCheckboxesChange(prevState => prevState.filter(item => {
+          const [key] = Object.keys(item);
+          console.log(item)
+          console.log(key)
+          console.log(item[key])
+          return key !== checkboxName;
+        }));
+      }
     } else {
       checkboxValue = event.target.value;
       setCheckedStatus({ ...checkedStatus, [checkboxValue]: isChecked });
@@ -613,7 +613,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
                                         <div className="cursor-pointer">
                                           <div className="flex items-center gap-2 " onClick={() => handleSubMenu(orcamento.apelido)}>
                                             <div className="relative">
-                                              <input type="checkbox" name={"ente_id"} id={orcamento.id} data-iscomarca={orcamento.obs} value={orcamento.apelido} className="peer relative h-[18px] w-[18px] cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleMarkAllCheckboxInEnte(e, orcamento.id)} checked={checkedStatus[orcamento.apelido] || false} />
+                                              <input type="checkbox" name={"ente_id"} id={orcamento.id} data-iscomarca={orcamento.comarca} value={orcamento.apelido} className="peer relative h-[18px] w-[18px] cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleMarkAllCheckboxInEnte(e, orcamento.id)} checked={checkedStatus[orcamento.apelido] || false} />
                                               <span
                                                 className="absolute left-[1px] right-0 top-[2px] text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
@@ -649,7 +649,7 @@ export default function Filter({ show, onSetShow, onSelectedCheckboxesChange, da
                                                 parseInt(orcamento.id) === parseInt(orcamentoAno.budget_id) ? (
                                                   <div className="flex items-center gap-2 overflow-hidden" key={orcamentoAno.id}>
                                                     <div className="relative">
-                                                      <input type="checkbox" name={"ente_id"} id={orcamento.apelido + " - " + orcamentoAno.ano} value={orcamento.apelido + " - " + orcamentoAno.ano} data-budget-id={orcamentoAno.budget_id} data-iscomarca={orcamento.obs} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleCheckboxChange(e, orcamento.id, orcamentoAno.budget_id)} checked={checkedStatus[orcamento.apelido + " - " + orcamentoAno.ano] || false} />
+                                                      <input type="checkbox" name={"ente_id"} id={orcamento.apelido + " - " + orcamentoAno.ano} value={orcamento.apelido + " - " + orcamentoAno.ano} data-budget-id={orcamentoAno.budget_id} data-iscomarca={orcamento.comarca} className="peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white" onChange={(e) => handleCheckboxChange(e, orcamento.id, orcamentoAno.budget_id)} checked={checkedStatus[orcamento.apelido + " - " + orcamentoAno.ano] || false} />
                                                       <span
                                                         className="absolute left-0 right-0 top-[1px] text-white transition-opacity hidden pointer-events-none peer-checked:block dark:text-black">
                                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 ml-[1px]" viewBox="0 0 20 20" fill="currentColor"
