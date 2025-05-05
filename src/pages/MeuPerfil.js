@@ -6,12 +6,14 @@ import useAuth from "../hooks/useAuth";
 import DetalhesPerfil from '../components/DetalhesPerfil';
 import AtividadesPerfil from '../components/AtividadesPerfil';
 import CessoesPerfil from '../components/CessoesPerfil';
+import Cessoes from './Cessoes';
 import NumerosPerfil from '../components/NumerosPerfil';
 import SearchInput from '../components/SearchInput';
 import Lista from '../components/List';
 import FilterButton from '../components/FilterButton';
 import Filter from '../layout/Filter';
 import FilterPerfil from '../layout/FilterPerfil';
+import Filtro from '../components/FiltroCessoes/Filtro';
 import ScrollToTopButton from '../components/ScrollToTopButton';
 import ConfiguracoesPerfil from '../components/ConfiguracoesPerfil';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -40,33 +42,9 @@ const MeuPerfil = () => {
   const [searchParams] = useSearchParams(); // Hook para acessar os parâmetros da URL
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCheckboxes, setSelectedCheckboxes] = useState(() => {
-    const savedFilters = localStorage.getItem('filters');
-    return savedFilters ? JSON.parse(savedFilters) : [];
-  });
-  const [show, setShow] = useState(false);
-  const [dataCessoes, setDataCessoes] = useState([]);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
-  const [isFixed, setIsFixed] = useState(false);
-  const [filteredCessoes, setFilteredCessoes] = useState([]);
-  const [selectedExportFields, setSelectedExportFields] = useState([
-    "id",
-    "precatorio",
-    "processo",
-    "cedente",
-    "ente_id",
-    "status",
-    "natureza",
-    "data_cessao",
-    "empresa_id",
-    "adv",
-    "falecido",
-  ]);
-  const navigate = useNavigate();
 
-  const handleFilteredCessoes = (filteredData) => {
-    setFilteredCessoes(filteredData);
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
     const section = searchParams.get('section');
@@ -75,24 +53,22 @@ const MeuPerfil = () => {
     }
   }, [searchParams]);
 
-
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 100) {  // ajuste o valor conforme a necessidade
-        setIsFixed(true);
-      } else {
-        setIsFixed(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
+  /*   useEffect(() => {
+      const handleScroll = () => {
+        if (window.scrollY > 100) {  // ajuste o valor conforme a necessidade
+          setIsFixed(true);
+        } else {
+          setIsFixed(false);
+        }
+      };
+  
+      window.addEventListener('scroll', handleScroll);
+  
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }, []);
+   */
   useEffect(() => {
     const fetchUserData = async () => {
       if (id) {
@@ -125,195 +101,6 @@ const MeuPerfil = () => {
 
   const handleInputChange = (query) => {
     setSearchQuery(query);
-  };
-
-  const handleData = (data) => {
-    setDataCessoes(data);
-  };
-
-  const handleShow = () => {
-    setShow((prevState) => !prevState);
-    document.body.style.overflow = document.body.style.overflow !== "hidden" ? "hidden" : "scroll";
-  };
-
-  const handleSelectedCheckboxesChange = (childData) => {
-    setSelectedCheckboxes(childData);
-  };
-
-  const exportPDF = (filteredData) => {
-
-    const statusColors = {
-      'Em Andamento': '#d2c7b3',
-      'Em Andamento Com Depósito': '#bdb4a9',
-      'Em Andamento Com Pendência': '#aaa59e',
-      'Homologado': '#9eabaf',
-      'Homologado Com Depósito': '#aabcb5',
-      'Homologado Com Pendência': '#9299a8',
-      'Ofício de Transferência Expedido': '#b2c8b7',
-      'Recebido': '#bad3b9',
-    };
-
-    const chunks = [];
-    for (let i = 0; i < filteredData.length; i += 8) {
-      chunks.push(filteredData.slice(i, i + 8));
-    }
-
-    const docDefinition = {
-      content: chunks.map((chunk, index) => [
-        ...chunk.map(cessao => [
-          {
-            table: {
-              widths: ['*'],
-              body: [
-                [
-                  {
-                    columns: [
-                      { width: 60, text: cessao.id, style: 'id', margin: [10, 10, 0, 5] },
-                      {
-                        width: '*', stack: [
-                          { text: cessao.precatorio, style: 'precatorio', margin: [5, 5, 0, 2] },
-                          { text: cessao.cedente, style: 'cedente', margin: [5, 0, 0, 5] },
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              ]
-            },
-            layout: {
-              fillColor: function (rowIndex, node, columnIndex) {
-                return '#f5f5f5'; // Cor de fundo cinza
-              },
-              hLineWidth: function (i, node) {
-                return 0; // Sem linhas horizontais internas
-              },
-              vLineWidth: function (i, node) {
-                return 0; // Sem linhas verticais
-              }
-            },
-            margin: [0, 10, 0, 0],
-            keepTogether: true, // Mantém este bloco junto
-          },
-          {
-            table: {
-              widths: ['*'],
-              body: [
-                [
-                  {
-                    stack: [
-                      {
-                        columns: [
-                          { text: cessao.status, style: 'status', color: statusColors[cessao.status] || '#000000' },
-                          ...(cessao.ente_id ? [{ text: cessao.ente_id, style: 'badge' }] : []),
-                          ...(cessao.natureza ? [{ text: cessao.natureza, style: 'badge' }] : []),
-                          ...(cessao.data_cessao ? [{ text: cessao.data_cessao.split('-').reverse().join('/'), style: 'badge' }] : []),
-                          ...(cessao.empresa_id ? [{ text: cessao.empresa_id, style: 'badge' }] : []),
-                          ...(cessao.adv ? [{ text: cessao.adv, style: 'badge' }] : []),
-                          ...(cessao.falecido ? [{ text: cessao.falecido, style: 'badge' }] : []),
-                        ],
-                        columnGap: 5,
-                        margin: [10, 5, 0, 5]
-                      }
-                    ]
-                  }
-                ]
-              ]
-            },
-            layout: {
-              hLineWidth: function (i, node) {
-                return 0; // Sem linhas horizontais internas
-              },
-              vLineWidth: function (i, node) {
-                return 0; // Sem linhas verticais
-              },
-              hLineColor: function (i, node) {
-                return '#ccc'; // Cor da borda
-              },
-              paddingLeft: function (i, node) { return 10; },
-              paddingRight: function (i, node) { return 10; },
-              border: function (i, node) {
-                return { left: 1, top: 1, right: 1, bottom: 1 }; // Borda ao redor do container
-              }
-            },
-            margin: [0, 0, 0, 10],
-            keepTogether: true, // Mantém este bloco junto
-          }
-        ]),
-        ...(index < chunks.length - 1 ? [{ text: '', pageBreak: 'after' }] : []) // Adiciona quebra de página após cada grupo, exceto o último
-      ]).flat(),
-      styles: {
-        id: {
-          fontSize: 9,
-          bold: true
-        },
-        precatorio: {
-          fontSize: 9,
-          bold: true
-        },
-        cedente: {
-          fontSize: 8,
-          color: '#757575'
-        },
-        status: {
-          bold: true,
-          fontSize: 7,
-          margin: [0, 0, 0, 5],
-          alignment: 'center'
-        },
-        badge: {
-          color: '#000',
-          fontSize: 7,
-          margin: [0, 0, 0, 5],
-          bold: true,
-          alignment: 'center'
-        }
-      }
-    };
-
-    pdfMake.createPdf(docDefinition).download('lista.pdf');
-  };
-
-  const exportToExcel = (filteredData, selectedFields) => {
-    // Mapeamento de rótulos personalizados
-    const fieldLabels = {
-      id: "Id",
-      precatorio: "Precatório",
-      processo: "Processo",
-      cedente: "Cedente",
-      status: "Status",
-      ente_id: "Ente Público",
-      natureza: "Natureza",
-      data_cessao: "Data da Cessão",
-      empresa_id: "Empresa",
-      adv: "Anuência",
-      falecido: "Falecido",
-    };
-
-    // Ajustar os dados filtrados com base nos rótulos
-    const selectedData = filteredData.map((item) => {
-      const filteredItem = {};
-      selectedFields.forEach((field) => {
-        const label = fieldLabels[field] || field; // Usa o rótulo personalizado ou a chave original
-        filteredItem[label] = item[field];
-      });
-      return filteredItem;
-    });
-
-    // Criar a planilha e o arquivo Excel
-    const worksheet = XLSX.utils.json_to_sheet(selectedData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Cessões");
-
-    // Baixar o arquivo Excel
-    XLSX.writeFile(workbook, "cessoes.xlsx");
-  };
-
-  const handleFieldSelectionChange = (field) => {
-    setSelectedExportFields((prevState) =>
-      prevState.includes(field)
-        ? prevState.filter((item) => item !== field)
-        : [...prevState, field]
-    );
   };
 
   const renderContent = () => {
@@ -375,25 +162,10 @@ const MeuPerfil = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.3 }}
-            className='mt-4 px-5 dark:bg-neutral-900 lg:col-span-2 w-full'
+            className='p-2 dark:bg-neutral-900 lg:col-span-2 w-full'
           >
             <div className='w-full'>
-              <div className={`flex gap-3 items-center w-full mb-4 ${isFixed ? 'sticky top-[72px] z-10' : ''}`}>
-                <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'py-3'} />
-                <FilterButton onSetShow={handleShow} isPerfilCessao={true} />
-              </div>
-              <div className={`lg:flex lg:gap-4 lg:items-start`}>
-                <div className='w-full h-full max-h-full'>
-                  <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} isPerfilCessoes={true} user={user} onFilteredCessoes={handleFilteredCessoes} />
-                </div>
-              </div>
-              <div className='hidden lg:block'>
-                <FilterPerfil show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} onExportExcel={(fields) => exportToExcel(filteredCessoes, fields)} onFieldSelectionChange={handleFieldSelectionChange} selectedExportFields={selectedExportFields} />
-              </div>
-              <div className='lg:hidden'>
-                <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} onExportExcel={(fields) => exportToExcel(filteredCessoes, fields)} onFieldSelectionChange={handleFieldSelectionChange} selectedExportFields={selectedExportFields} />
-              </div>
-              <ScrollToTopButton />
+              <Cessoes isInPerfilUsuario={true} userIdUrlParam={id} />
             </div>
           </motion.div>
         );

@@ -1,7 +1,7 @@
 import React from 'react'
 import { ButtonEditProfile } from '../pages/MeuPerfil';
-import PieChart from './PieChart';
-
+/* import PieChart from './PieChart';
+ */
 export default function DetalhesPerfil({ user, handleItemClick }) {
 
   return (
@@ -49,9 +49,9 @@ export default function DetalhesPerfil({ user, handleItemClick }) {
         </div>
       </div>
 
-      <div className='mt-4'>
+{/*       <div className='mt-4'>
         <PieChart />
-      </div>
+      </div> */}
     </section>
   )
 }

@@ -20,6 +20,51 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
   const [requisitorioEditadoFile, setRequisitorioEditadoFile] = useState('');
   const [escrituraEditadoFile, setEscrituraEditadoFile] = useState('');
 
+    useEffect(() => {
+      let isMounted = true;
+      const controller = new AbortController();
+  
+      const fetchData = async (url, setter) => {
+        try {
+          const { data } = await axiosPrivate.get(url, {
+            signal: controller.signal,
+
+          });
+          if (isMounted) setter(data);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+  
+      const fetchAllData = async () => {
+        try {
+          await Promise.all([
+            fetchData('/orcamentos', setOrcamentos),
+            fetchData('/natureza', setNatureza),
+            fetchData('/empresas', setEmpresas),
+            fetchData('/vara', setVaras),
+            fetchData('/tele', setTeles),
+            fetchData('/cessoes', setTodasCessoes),
+            fetchData('/escreventes', setEscreventes),
+            fetchData('/users', setUsers),
+            fetchData('/cessionarios', setCessionarios),
+            fetchData('/juridicos', setJuridico),
+          ]);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+  
+      fetchAllData();
+  
+  
+      return () => {
+        isMounted = false;
+        controller.abort();
+      };
+  
+    }, [precID]);
+
 
   useEffect(() => {
     // Envia os valores dos estados para o componente pai sempre que eles forem alterados
@@ -332,13 +377,7 @@ export default function EditarPrec({ precInfo, varas, orcamentos, naturezas, emp
                 </svg>
 
               </div>
-
-
-
             </div>
-
-
-
 
           </div>
 

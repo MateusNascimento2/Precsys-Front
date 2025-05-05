@@ -39,6 +39,12 @@ function useAxiosPrivate() {
             return Promise.reject(err);
           }
         }
+
+        if (error.response?.status === 403) {
+          navigate('/forbidden', { replace: true });
+        }
+
+
         return Promise.reject(error);
       }
     );

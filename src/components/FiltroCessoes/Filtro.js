@@ -3,7 +3,7 @@ import AbaFiltro from './AbaFiltro'
 import Modal from '../Modal'
 import useAuth from '../../hooks/useAuth';
 
-export default function Filtro({ onSetShow, show, dadosFiltro, selectedFilters, handleFilterChange, handleDateChange, exportPDF, exportExcel,  selectedExportFields, handleFieldSelectionChange, clearAllFilters }) {
+export default function Filtro({ onSetShow, show, dadosFiltro, selectedFilters, handleFilterChange, handleDateChange, exportPDF, exportExcel,  selectedExportFields, handleFieldSelectionChange, clearAllFilters, isInPerfilUsuario }) {
 
   const { auth } = useAuth();
 
@@ -23,11 +23,11 @@ export default function Filtro({ onSetShow, show, dadosFiltro, selectedFilters, 
 
   return (
     <>
-      <div onClick={onSetShow} className={`${show ? 'fixed h-dvh top-0 w-dvw bg-black z-[90] opacity-70' : 'opacity-0'} transition-all ease-in-out duration-[400ms]`} />
+      <div onClick={onSetShow} className={`${show ? 'fixed h-dvh left-0 top-0 w-dvw bg-black z-[90] opacity-70' : 'opacity-0'} transition-all ease-in-out duration-[600ms]`} />
 
       <div className={`${show
-        ? 'bg-white dark:bg-neutral-900 fixed w-dvw bottom-0 p-4 rounded-t-md top-1/4 z-[100] overflow-y-auto lg:border-r'
-        : 'bg-white dark:bg-neutral-900 lg:bg-transparent top-full w-dvw fixed p-4 lg:relative lg:w-[320px] lg:mt-5 lg:border-r lg:dark:border-neutral-600 lg:p-0 lg:px-2'
+        ? 'bg-white dark:bg-neutral-900 fixed w-dvw bottom-0 left-0 p-4 rounded-t-md top-1/4 z-[100] overflow-y-auto lg:border-r'
+        : 'bg-white dark:bg-neutral-900 lg:bg-transparent top-full left-0 w-dvw fixed p-4 lg:relative lg:w-[320px] lg:mt-5 lg:border-r lg:dark:border-neutral-600 lg:p-0 lg:px-2'
         } transition-all ease-in-out duration-[400ms]`}>
         <div className={'flex justify-between items-center mb-4'}>
           <span className="font-[700] dark:text-white">Filtros</span>

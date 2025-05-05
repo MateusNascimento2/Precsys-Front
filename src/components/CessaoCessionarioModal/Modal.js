@@ -27,7 +27,7 @@ export function Modal({ onAddCessionario, onDeleteCessionarioForm, handleCession
   const [users, setUsers] = useState([]);
 
 
-  useEffect(() => {
+  useEffect(async () => {
     let isMounted = true; // ✅ Flag para verificar se o componente está montado
 
     const fetchData = async (ApiRoute, setter) => {
@@ -41,14 +41,16 @@ export function Modal({ onAddCessionario, onDeleteCessionarioForm, handleCession
       }
     };
 
-    fetchData('/orcamentos', setOrcamentos);
-    fetchData('/empresas', setEmpresas);
-    fetchData('/nomeTele', setTeles);
-    fetchData('/juridicos', setJuridico);
-    fetchData('/vara', setVaras);
-    fetchData('/natureza', setNatureza);
-    fetchData('/escreventes', setEscrevente);
-    fetchData('/users', setUsers);
+    await Promise.all([
+      fetchData('/orcamentos', setOrcamentos),
+      fetchData('/empresas', setEmpresas),
+      fetchData('/nomeTele', setTeles),
+      fetchData('/juridicos', setJuridico),
+      fetchData('/vara', setVaras),
+      fetchData('/natureza', setNatureza),
+      fetchData('/escreventes', setEscrevente),
+      fetchData('/users', setUsers)
+    ]);
 
 
     return () => {
@@ -93,7 +95,7 @@ export function Modal({ onAddCessionario, onDeleteCessionarioForm, handleCession
   //As coisas que estão nesse useEffect só funcionam quando eu clico no modal
   useEffect(() => {
     const handler = (event) => {
-      
+
       if (!modalElement.current) {
         return;
       }
@@ -105,13 +107,13 @@ export function Modal({ onAddCessionario, onDeleteCessionarioForm, handleCession
       if (!modalElement.current.contains(event.target)) {
         if (document.body.style.overflow == "hidden") {
           document.body.style.overflow = "scroll";
-        } 
+        }
         setIsModalOpen(false);
       }
 
     }
 
-    
+
 
     document.addEventListener("click", handler, true);
 

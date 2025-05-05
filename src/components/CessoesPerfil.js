@@ -3,6 +3,7 @@ import { axiosPrivate } from '../api/axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 // Função para obter a data atual no formato YYYY-MM-DD
 const getCurrentDate = () => {
@@ -24,8 +25,8 @@ const getCurrentYear = () => {
 const tabs = ["Dia", "Semana", "Ano"];
 
 export default function CessoesPerfil({ user }) {
+  const { id } = useParams();
   const [cessoes, setCessoes] = useState([]);
-  const [cessionarios, setCessionarios] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
 
@@ -46,8 +47,7 @@ export default function CessoesPerfil({ user }) {
       }
     };
 
-    fetchData('/cessoes', setCessoes);
-    fetchData('/cessionarios', setCessionarios);
+    fetchData(`/cessoes-usuario/${id ? id : user.id}`, setCessoes);
 
     return () => {
       isMounted = false;
@@ -55,16 +55,8 @@ export default function CessoesPerfil({ user }) {
     };
   }, []);
 
-  // Filtra as cessões do usuário atual
-  const minhasCessoes = cessionarios
-    .filter(cessionario => cessionario.user_id === String(user.id))
-    .map(cessionario => {
-      return cessoes.find(cessao => cessao && String(cessao.id) === String(cessionario.cessao_id));
-    })
-    .filter(cessao => cessao); // Remover possíveis valores indefinidos
-
   // Filtra as cessões de acordo com a aba ativa
-  const filteredCessoes = minhasCessoes.filter(cessao => {
+  const filteredCessoes = cessoes.filter(cessao => {
     if (!cessao) return false;
 
     const cessaoDate = new Date(cessao.data_cessao);

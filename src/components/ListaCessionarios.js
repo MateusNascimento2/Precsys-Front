@@ -572,7 +572,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
     return previousValue + changePorcentagemToFloat(currentValue.percentual);
   }, 0);
 
-  return cessionario.length !== 0 ? (
+  return cessionario.length > 0 ? (
     <div className="w-full mb-[60px] flex flex-col">
       <ToastContainer />
       <div className="mb-[16px] flex items-center justify-between">
@@ -650,7 +650,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
           <div className="w-max lg:w-full flex text-[12px] items-center border-b dark:border-neutral-600 last:border-0 py-[10px] border-gray-300" key={c.id}>
             <div className="min-w-[250px] w-[24%]">
               <div className="flex flex-col justify-center text-[12px]">
-                <span className="font-bold dark:text-neutral-200">{c.nome_user} </span>
+                <span className="font-bold dark:text-neutral-200">{c.nome} </span>
                 <span className=" text-neutral-400 font-medium">{c.cpfcnpj}</span>
               </div>
             </div>
@@ -689,10 +689,10 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
                           Editar
                         </button>
                       }
-                      tituloModal={`Editar cessionário #${c.id}`}
+                      tituloModal={`Editar cessionário #${c.user_id}`}
                       botaoSalvar={
                         <button
-                          onClick={() => handleEditarCessionarioSubmit(c.id)}
+                          onClick={() => handleEditarCessionarioSubmit(c.cessionario_id)}
                           className="bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700"
                         >
                           Salvar
@@ -713,7 +713,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
                     </button>
                   </DotsButton>
 
-                  <DeleteConfirmationModal isOpen={modalIsOpen} onRequestClose={closeModal} onConfirm={() => confirmDelete(c.id, { nota: c.nota, comprovante: c.comprovante, mandado: c.mandado })} />
+                  <DeleteConfirmationModal isOpen={modalIsOpen} onRequestClose={closeModal} onConfirm={() => confirmDelete(c.cessionario_id, { nota: c.nota, comprovante: c.comprovante, mandado: c.mandado })} />
                 </> : null}
 
             </div>

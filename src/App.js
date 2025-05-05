@@ -19,6 +19,7 @@ import Empresas from './pages/Empresas';
 import Orcamentos from './pages/Orcamentos';
 import Escreventes from './pages/Escreventes';
 import Juridicos from './pages/Juridicos';
+import Forbidden from './pages/Forbidden';
 import { TesteModal } from './pages/TesteModal';
 
 function App() {
@@ -57,6 +58,7 @@ function App() {
         </Route>
 
         <Route path='*' element={<Unauthorized />} />
+        <Route path='/forbidden' element={<Forbidden />} />
       </Route>
     </Routes>
 

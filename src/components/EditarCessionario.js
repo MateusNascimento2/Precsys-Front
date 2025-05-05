@@ -4,7 +4,7 @@ import CurrencyFormat from 'react-currency-format';
 
 
 export default function EditarCessionario({ cessionario, users, enviarValores }) {
-  const [cessionarioEditado, setCessionarioEditado] = useState(cessionario.user_id ? cessionario.user_id : null);
+  const [cessionarioEditado, setCessionarioEditado] = useState(cessionario.user_id ? Number(cessionario.user_id) : null);
   const [valorPagoEditado, setValorPagoEditado] = useState(cessionario.valor_pago ? cessionario.valor_pago : null);
   const [comissaoEditado, setComissaoEditado] = useState(cessionario.comissao ? cessionario.comissao : null);
   const [percentualEditado, setPercentualEditado] = useState(cessionario.percentual ? cessionario.percentual : null);
@@ -87,7 +87,7 @@ export default function EditarCessionario({ cessionario, users, enviarValores })
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
             <label className='text-[14px] font-medium' htmlFor="cessionario">Cessionário</label>
             <Select
-              defaultValue={{ value: parseInt(cessionario.user_id), label: cessionario.nome_user }}
+              defaultValue={{ value: parseInt(cessionario.user_id), label: cessionario.nome }}
               placeholder={'Selecionar cessionário'}
               options={handleSelectValues(users, 'nome')}
               isClearable={true}

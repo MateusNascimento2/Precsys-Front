@@ -15,7 +15,7 @@ import { Modal } from '../components/CessaoCessionarioModal/Modal';
 import useAuth from "../hooks/useAuth";
 import Filtro from '../components/FiltroCessoes/Filtro';
 
-export default function Cessoes() {
+export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
   const [formDataCessao, setFormDataCessao] = useState({
     precatorio: '',
     processo: '',
@@ -121,12 +121,15 @@ export default function Cessoes() {
 
     const fetchAllData = async () => {
       try {
-        const urlCessoes = minhascessoes ? `/cessoes-usuario/${auth.user.id}` : '/todas-cessoes';
+        const urlCessoes = minhascessoes || isInPerfilUsuario ? `/cessoes-usuario/${userIdUrlParam ? userIdUrlParam : auth.user.id}` : '/todas-cessoes';
         const urlFiltros = auth.user.admin ? '/filtros' : '/filtros-usuario';
-        await fetchData(urlCessoes, setCessoes);
-        await fetchData(urlFiltros, setDadosFiltro)
+        await Promise.all([
+          fetchData(urlCessoes, setCessoes),
+          fetchData(urlFiltros, setDadosFiltro)
+        ]);
+
       } catch (err) {
-        console.error('Error with fetching data:', err);
+        console.error('Erro ao buscar informações sobre cessões:', err);
       }
     };
 
@@ -167,7 +170,7 @@ export default function Cessoes() {
       requisitorio: [],
       escritura: [],
     };
-  
+
     setSelectedFilters(emptyFilters);
     localStorage.removeItem('selectedFilters');
   };
@@ -425,6 +428,7 @@ export default function Cessoes() {
 
     pdfMake.createPdf(docDefinition).download('lista.pdf');
   };
+
 
   const handleFieldSelectionChange = (field) => {
     setSelectedExportFields((prevState) =>
@@ -805,21 +809,28 @@ export default function Cessoes() {
 
   return (
     <>
-      <Header />
-      <main className={show ? 'container mx-auto pt-[120px] dark:bg-neutral-900 h-full' : 'container mx-auto pt-[120px] dark:bg-neutral-900 h-full'}>
+      {!isInPerfilUsuario ? <Header /> : null}
+      <main className={show ? `container mx-auto ${isInPerfilUsuario ? '' : 'pt-[120px]'} dark:bg-neutral-900 h-full` : `container mx-auto ${isInPerfilUsuario ? '' : 'pt-[120px]'} dark:bg-neutral-900 h-full`}>
         <ToastContainer />
-        <div className='px-[20px]'>
+        <div className={isInPerfilUsuario ? '' : 'px-[20px]'}>
           <div className='flex justify-between items-center md:items-end'>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className='font-[700] text-[32px] md:mt-[16px] dark:text-white'
-              id='cessoes'
-            >
-              Cessões
-            </motion.h2>
-            {!minhascessoes ?
+            {isInPerfilUsuario ?
+              <div className='flex flex-col'>
+                <span className='font-semibold dark:text-white'>Cessões</span>
+                <span class="text-[12px] font-medium dark:text-neutral-400 text-neutral-600">Acompanhe suas cessões no sistema</span>
+              </div>
+
+              :
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className='font-[700] text-[32px] md:mt-[16px] dark:text-white'
+                id='cessoes'
+              >
+                Cessões
+              </motion.h2>}
+            {!minhascessoes && !isInPerfilUsuario ?
               <div>
                 <Modal {...modalProps} />
               </div>
@@ -830,17 +841,18 @@ export default function Cessoes() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className='mt-[24px] px-5 dark:bg-neutral-900'
+          className={isInPerfilUsuario ? 'mt-[24px]' : 'mt-[24px] px-5 dark:bg-neutral-900'}
         >
           <div className='flex gap-3 items-center mb-4 w-full'>
             <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'py-3'} />
+
             <FilterButton onSetShow={handleShow} />
           </div>
 
           <div className={`lg:flex lg:gap-4 lg:items-start`}>
 
             {/* Filtro no Desktop */}
-            <div className='hidden lg:block lg:sticky lg:top-[7%] lg:w-[320px]'>
+            <div className={isInPerfilUsuario ? 'hidden lg:block lg:sticky lg:top-[7%] lg:w-[320px]' : 'hidden lg:block lg:sticky lg:top-[7%] lg:w-[320px]'}>
               <Filtro show={show} dadosFiltro={dadosFiltro} selectedFilters={selectedFilters} handleFilterChange={handleFilterChange} handleDateChange={handleDateChange} exportPDF={() => exportPDF(filteredData)} exportExcel={(fields) => exportToExcel(filteredData, fields)} selectedExportFields={selectedExportFields} handleFieldSelectionChange={handleFieldSelectionChange} clearAllFilters={clearAllFilters} />
             </div>
 
