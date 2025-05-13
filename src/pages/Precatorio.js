@@ -122,6 +122,7 @@ export default function Precatorio() {
         await Promise.all([
           fetchData(`/cessao/${String(precID)}`, setprecDataNew),
           fetchData('/status', setStatus),
+          fetchData('/users', setUsers),
         ]);
       } finally {
         setIsLoading(false);

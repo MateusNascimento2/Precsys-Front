@@ -9,7 +9,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 export function Modal({ precID }) {
-  console.log(precID)
   const axiosPrivate = useAxiosPrivate();
   const [status, setStatus] = useState('typing');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,14 +33,16 @@ export function Modal({ precID }) {
     requisitorio: '',
     escritura: ''
   })
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(async () => {
-    let isMounted = true; // ✅ Flag para verificar se o componente está montado
+    let isMounted = true; // Flag para verificar se o componente está montado
 
     const fetchData = async (ApiRoute) => {
       try {
+        setIsLoading(true)
         const { data } = await axiosPrivate.get(ApiRoute);
-        if (isMounted) {  // ✅ Só atualiza o estado se o componente ainda estiver montado
+        if (isMounted) {  // Só atualiza o estado se o componente ainda estiver montado
           setFormDataCessao({
             precatorio: data.precatorio,
             processo: data.processo,
@@ -59,18 +60,19 @@ export function Modal({ precID }) {
             escritura: data.escritura,
           })
         }
+        setIsLoading(false)
       } catch (e) {
         console.log(e);
       }
     };
 
-    await Promise.all([
-      fetchData(`/cessoes/${String(precID)}`),
-    ]);
+
+    fetchData(`/cessoes/${String(precID)}`)
+
 
 
     return () => {
-      isMounted = false; // ✅ Cleanup: evita atualização após desmontar
+      isMounted = false; // Cleanup: evita atualização após desmontar
     };
   }, []);
 
@@ -114,7 +116,7 @@ export function Modal({ precID }) {
     setStatus({ status: "sending", message: "Enviando dados..." });
 
     try {
-      // 🟡 Validação da cessão
+      // Validação da cessão
       const camposObrigatorios = [
         'precatorio',
         'processo',
@@ -142,7 +144,7 @@ export function Modal({ precID }) {
         return;
       }
 
-      // 📤 Upload dos arquivos
+      // Upload dos arquivos
       const uploadResponse = await uploadFiles();
 
       if (!uploadResponse) {
@@ -153,12 +155,12 @@ export function Modal({ precID }) {
         return;
       }
 
-      // 🧾 Montagem do payload
+      // Montagem do payload
       const payload = {
         ...formDataCessao,
       };
 
-      // 📡 Envio da cessão (comentado por enquanto)
+      // Envio da cessão
       const response = await axiosPrivate.put(`/cessoes/${precID}`, payload);
 
       setStatus({
@@ -179,7 +181,7 @@ export function Modal({ precID }) {
     try {
       const formDataCessao = new FormData();
 
-      // 🔹 Adicionando os arquivos da cessão ao formDataCessao
+      // Adicionando os arquivos da cessão ao formDataCessao
       if (fileCessao.requisitorio) {
         formDataCessao.append("requisitorio", fileCessao.requisitorio);
       }
@@ -189,18 +191,18 @@ export function Modal({ precID }) {
       }
 
 
-      // 🔹 Enviar arquivos da cessão primeiro
+      // Enviar arquivos da cessão primeiro
       if (fileCessao.requisitorio || fileCessao.escritura) {
         await axiosPrivate.post("/upload", formDataCessao, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        console.log("✅ Upload dos arquivos da cessão realizado com sucesso!");
+        console.log("Upload dos arquivos da cessão realizado com sucesso!");
       }
 
 
       return true;
     } catch (error) {
-      console.error("❌ Erro ao enviar os arquivos:", error);
+      console.error("Erro ao enviar os arquivos:", error);
       return false;
     }
   };
@@ -346,6 +348,14 @@ export function Modal({ precID }) {
 
             </div>) :
             <div className='p-4 overflow-y-auto h-[calc(100%-50px)] lg:flex lg:flex-col lg:justify-between'>
+
+              {isLoading ?
+                <div className='w-full h-full absolute z-[100] top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] bg-black bg-opacity-20 flex justify-center items-center'>
+                  <div className='w-10 h-10'>
+                    <LoadingSpinner />
+                  </div>
+                </div> : null}
+
               <div>
                 <form onSubmit={handleEditarCessao}>
                   <div>

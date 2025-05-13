@@ -126,7 +126,7 @@ export default function AdicionarCessionario({ users, enviarValores, valorPago, 
     return formattedValue + "%";
   };
 
-  console.log(percentual)
+  console.log(handleSelectValues(users, 'nome'))
   console.log(localPercentual)
 
 

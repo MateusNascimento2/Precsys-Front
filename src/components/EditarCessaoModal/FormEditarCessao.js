@@ -17,6 +17,8 @@ export function FormEditarCessao({ formDataCessao, handleCessaoInputChange }) {
   const [escrevente, setEscrevente] = useState([]);
   const axiosPrivate = useAxiosPrivate();
 
+  console.log(formDataCessao)
+
 
   useEffect(async () => {
     let isMounted = true; // ✅ Flag para verificar se o componente está montado
