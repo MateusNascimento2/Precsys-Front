@@ -8,6 +8,8 @@ import DotsButton from './DotsButton';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import useAuth from "../hooks/useAuth";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
   if (!isOpen) return null;
@@ -40,7 +42,7 @@ function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
   );
 }
 
-export default function ListaCessionarios({ cessionario, users, precID }) {
+export default function ListaCessionarios({ cessionario, precID, fetchDataCessao }) {
   const [isLoading, setIsLoading] = useState(false);
   const { auth } = useAuth();
   const [loadingFiles, setLoadingFiles] = useState({});
@@ -264,6 +266,8 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
 
   const handleSubmitAdicionarCessionario = async (e) => {
     e.preventDefault();
+    const isDarkMode = localStorage.getItem('darkMode');
+
 
     // Estado inicial: envio iniciado
     setStatus({ status: "sending", message: "Enviando dados..." });
@@ -285,10 +289,21 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
         });
 
         if (algumCessionarioInvalido) {
-          setStatus({
-            status: 'error',
-            message: 'Preencha todos os campos obrigatórios do cessionário!',
+          toast.error(`Preencha todos os campos obrigatórios do cessionário!`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: false,
+            theme: isDarkMode === 'true' ? 'dark' : 'light',
+            transition: Bounce,
           });
+          /*           setStatus({
+                      status: 'error',
+                      message: 'Preencha todos os campos obrigatórios do cessionário!',
+                    }); */
           return;
         }
       }
@@ -297,9 +312,19 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
       const uploadResponse = await uploadFiles('Adicionar');
 
       if (!uploadResponse) {
+        toast.error(`Erro no upload dos arquivos. Cadastro cancelado.`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
+        });
         setStatus({
           status: 'error',
-          message: 'Erro no upload dos arquivos. Cadastro cancelado.',
         });
         return;
       }
@@ -314,15 +339,41 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
 
       setStatus({
         status: 'success',
-        message: 'Cessão cadastrada com sucesso!',
       });
 
-    } catch (error) {
-      console.error("Erro ao cadastrar cessão e cessionários:", error);
-      setStatus({
-        status: 'error',
-        message: 'Erro ao enviar dados. Tente novamente.',
+      toast.success(`Cessionário cadastrado com sucesso!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
       });
+
+      fetchDataCessao()
+
+    } catch (error) {
+      console.error("Erro ao cadastrar cessionário:", error);
+
+      toast.error(`Erro ao cadastrar cessionário: ${error}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+
+      /*       setStatus({
+              status: 'error',
+              message: 'Erro ao enviar dados. Tente novamente.',
+            }); */
     }
   };
 
@@ -382,10 +433,21 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
 
       const response = await axiosPrivate.delete(`/cessionarios/${id}`);
 
+      toast.success(`Cessionário excluído com sucesso!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
 
-      localStorage.setItem('cessionarioExcluido', 'true');
+      fetchDataCessao();
 
-      window.location.reload();
+
     } catch (err) {
       toast.error(`Erro ao deletar cessionário: ${err}`, {
         position: 'top-right',
@@ -408,6 +470,8 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
 
   const handleEditarCessionarioSubmit = async (e) => {
     e.preventDefault();
+    const isDarkMode = localStorage.getItem('darkMode');
+
 
     // Estado inicial: envio iniciado
     setStatus({ status: "sending", message: "Enviando dados..." });
@@ -424,9 +488,19 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
 
 
       if (algumCessionarioInvalido) {
+        toast.error('Preencha todos os campos obrigatórios do cessionário!', {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
+        });
         setStatus({
           status: 'error',
-          message: 'Preencha todos os campos obrigatórios do cessionário!',
         });
         return;
       }
@@ -436,9 +510,21 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
       const uploadResponse = await uploadFiles('Editar');
 
       if (!uploadResponse) {
+
+        toast.error('Erro no upload dos arquivos. Cadastro cancelado.', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
+        });
+
         setStatus({
           status: 'error',
-          message: 'Erro no upload dos arquivos. Cadastro cancelado.',
         });
         return;
       }
@@ -451,23 +537,6 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
       //  Envio da cessão
       const response = await axiosPrivate.put(`/cessionarios/${formDataCessionario.cessionario_id}`, payload);
 
-      setStatus({
-        status: 'success',
-        message: 'Cessionário editado com sucesso!',
-      });
-
-    } catch (error) {
-      console.error("Erro ao editar cessionário:", error);
-      setStatus({
-        status: 'error',
-        message: 'Erro ao enviar dados. Tente novamente.',
-      });
-    }
-  };
-
-/*   useEffect(() => {
-    const isDarkMode = localStorage.getItem('darkMode');
-    if (localStorage.getItem('cessionarioEditado')) {
       toast.success('Cessionário editado com sucesso!', {
         position: "top-right",
         autoClose: 3000,
@@ -479,14 +548,18 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
       });
-      localStorage.removeItem('cessionarioEditado');
-    }
-  }, []);
 
-  useEffect(() => {
-    const isDarkMode = localStorage.getItem('darkMode');
-    if (localStorage.getItem('cessionarioAdicionado')) {
-      toast.success('Cessionário(s) adicionado(s) com sucesso!', {
+
+      setStatus({
+        status: 'success',
+      });
+
+      fetchDataCessao();
+
+    } catch (error) {
+      console.error("Erro ao editar cessionário:", error);
+
+      toast.err('Erro ao enviar dados. Tente novamente.', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -497,27 +570,13 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
       });
-      localStorage.removeItem('cessionarioAdicionado');
-    }
-  }, []);
 
-  useEffect(() => {
-    const isDarkMode = localStorage.getItem('darkMode');
-    if (localStorage.getItem('cessionarioExcluido')) {
-      toast.success('Cessionário excluído com sucesso!', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: false,
-        theme: isDarkMode === 'true' ? 'dark' : 'light',
-        transition: Bounce,
+      setStatus({
+        status: 'error',
       });
-      localStorage.removeItem('cessionarioExcluido');
     }
-  }, []); */
+  };
+
 
   const downloadFile = async (filename) => {
     const isDarkMode = localStorage.getItem('darkMode');

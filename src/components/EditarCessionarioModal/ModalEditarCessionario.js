@@ -16,37 +16,43 @@ export function ModalEditarCessionario({ handleCessionarioInputChange, formDataC
   const statusRef = useRef(status); // Ref para armazenar o status
   const [users, setUsers] = useState([]);
 
-  useEffect(async () => {
-    let isMounted = true; // Flag para verificar se o componente está montado
+  console.log(isLoading)
+  console.log(statusRef)
 
-    const fetchData = async (ApiRoute, setter) => {
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
       try {
-        setIsLoading(true)
-        const { data } = await axiosPrivate.get(ApiRoute);
-        if (isMounted) {  // Só atualiza o estado se o componente ainda estiver montado
-          setter(data);
+        setIsLoading(true);
+
+        const { data } = await axiosPrivate.get('/users');
+        if (isMounted) {
+          setUsers(data);
         }
-        setIsLoading(false)
+
+        if (isMounted) {
+          setFormDataCessionario({ ...dadosCessionario });
+        }
+
+        setIsLoading(false);
+
       } catch (e) {
-        console.log(e);
+        console.error(e);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    await Promise.all([
-      fetchData('/users', setUsers)
-
-    ]);
-
-    setFormDataCessionario({ ...dadosCessionario })
-
+    fetchData();
 
     return () => {
-      isMounted = false; // Cleanup: evita atualização após desmontar
+      isMounted = false;
     };
   }, []);
 
   // Atualiza a referência do status sempre que ele mudar
-  useEffect(() => {
+/*   useEffect(() => {
     statusRef.current = status;
 
     if (statusRef.current.status === 'success') {
@@ -77,7 +83,7 @@ export function ModalEditarCessionario({ handleCessionarioInputChange, formDataC
       });
     }
 
-  }, [status]);
+  }, [status]); */
 
   //As coisas que estão nesse useEffect só funcionam quando eu clico no modal
   useEffect(() => {
@@ -139,12 +145,11 @@ export function ModalEditarCessionario({ handleCessionarioInputChange, formDataC
 
     ) : (
       <div className='fixed w-[100vw] h-[100vh] left-0 top-0 z-[100] bg-black bg-opacity-40'>
-        <ToastContainer />
 
         <div ref={modalElement} className='bg-white dark:bg-neutral-900 w-[85%] h-[80%] top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] rounded shadow-sm absolute'>
 
           <ModalTab status={status} handleModalShow={handleModalShow} nomeCessionario={dadosCessionario.nome} />
-
+          {/* PROBLEMA ESTA AQUI ! */}
           {status.status === 'sending' ? (
             <div className='p-4 overflow-y-auto h-[calc(100%-50px)] lg:flex lg:flex-col lg:justify-between'>
 
@@ -188,7 +193,8 @@ export function ModalEditarCessionario({ handleCessionarioInputChange, formDataC
                   <div className='w-10 h-10'>
                     <LoadingSpinner />
                   </div>
-                </div> : null}
+                </div> : null
+              }
 
               <div>
                 <form>

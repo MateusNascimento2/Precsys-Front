@@ -85,7 +85,6 @@ export function FormEditarCessionario({ formCessionario, setFormDataCessionario,
     return formattedValue;
   };
 
-  console.log(formCessionario)
 
   return (
     <div className={'block w-full'}>

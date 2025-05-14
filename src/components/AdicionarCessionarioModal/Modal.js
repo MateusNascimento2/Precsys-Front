@@ -158,7 +158,6 @@ export function Modal({ onAddCessionario, onDeleteCessionarioForm, handleCession
 
     ) : (
       <div className='fixed w-[100vw] h-[100vh] left-0 top-0 z-[100] bg-black bg-opacity-40'>
-        <ToastContainer />
 
         <div ref={modalElement} className='bg-white dark:bg-neutral-900 w-[85%] h-[80%] top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] rounded shadow-sm absolute'>
 

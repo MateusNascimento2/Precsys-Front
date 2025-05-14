@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 
-export function Modal({ precID }) {
+export function Modal({ precID, cessaoInfo, fetchDataCessao }) {
   const axiosPrivate = useAxiosPrivate();
   const [status, setStatus] = useState('typing');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -150,7 +150,7 @@ export function Modal({ precID }) {
       if (!uploadResponse) {
         setStatus({
           status: 'error',
-          message: 'Erro no upload dos arquivos. Cadastro cancelado.',
+          message: "Erro ao enviar arquivos !"
         });
         return;
       }
@@ -165,8 +165,10 @@ export function Modal({ precID }) {
 
       setStatus({
         status: 'success',
-        message: 'Cessão editada com sucesso!',
+        message: "Cessão editada com sucesso !"
       });
+
+      fetchDataCessao();
 
     } catch (error) {
       console.error("Erro ao editar cessão:", error);

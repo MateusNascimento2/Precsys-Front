@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Topics from '../components/Topics';
 import { Link, useParams } from 'react-router-dom';
 import ListaCessionarios from './ListaCessionarios';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
@@ -11,14 +10,10 @@ import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import useAuth from "../hooks/useAuth";
 
 
-export default function InfoPrec({ precInfoNew, status, users }) {
+export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
     const [key, setKey] = useState(0); // Add key state here
     const [loadingFiles, setLoadingFiles] = useState({});
     const { auth } = useAuth();
-
-
-    const navigate = useNavigate();
-    const location = useLocation();
     const { precID } = useParams();
     const axiosPrivate = useAxiosPrivate();
 
@@ -66,7 +61,6 @@ export default function InfoPrec({ precInfoNew, status, users }) {
 
     return (
         <div className='max-w-full flex flex-col mb-[60px]'>
-            <ToastContainer />
             <div className='flex flex-col mb-[16px] max-[700px]:mb-16px'>
                 <span className='text-gray-400 text-[10px]'><Link className='hover:underline cursor-pointer' to={'/dashboard'}>Dashboard</Link> &gt; <a className='hover:underline cursor-pointer' onClick={navigation}>Cessões</a> &gt; <span>{precInfoNew.precatorio}</span></span>
             </div>
@@ -177,23 +171,29 @@ export default function InfoPrec({ precInfoNew, status, users }) {
                     </div>
                 </div>
             </div>
-            <ListaCessionarios key={key} cessionario={precInfoNew.cessionarios} users={users} precID={precID} />
-            {auth.user.admin ? <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
-                <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 dark:bg-neutral-900 xl:divide-x-[1px] dark:divide-neutral-600 mt-2 lg:mt-0'>
-                    <div className='cursor-pointer lg:px-4 lg:py-2 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-r lg:border-b xl:border-r-0 xl:border-b-0 dark:border-neutral-600' id='juridico'>
-                        <Topics data={precInfoNew.juridico_data} texto={'Jurídico Feito'} atualizacaoJuridico={precInfoNew.juridico_feito} textoExplicativo={'A etapa "Jurídico Feito" representa a conclusão bem-sucedida de todos os procedimentos legais necessários na gestão e transferência de precatórios.'} />
-                    </div>
-                    <div className='cursor-pointer  pt-4 lg:px-4 lg:py-2 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-b xl:border-b-0 dark:border-neutral-600'>
-                        <Topics data={precInfoNew.juridico_data} texto={'Jurídico a Fazer'} atualizacaoJuridico={precInfoNew.juridico_afazer} textoExplicativo={'A etapa "Jurídico a Fazer" engloba todas as ações jurídicas necessárias que ainda precisam ser completadas para assegurar a legalidade e eficácia da cessão de precatórios.'} />
-                    </div>
-                    <div className='cursor-pointer  pt-4 lg:py-2 lg:px-4 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-r xl:border-r-0 dark:border-neutral-600'>
-                        <Topics data={precInfoNew.juridico_data} texto={'Andamento Jurídico'} atualizacaoJuridico={precInfoNew.juridico_andamentoatual} textoExplicativo={'A etapa "Andamento Jurídico" é uma fase crítica na gestão de precatórios, onde o progresso dos procedimentos legais é monitorado e revisado continuamente.'} />
-                    </div>
-                    <div className='cursor-pointer  pt-4 lg:py-2 lg:px-4 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 dark:border-neutral-600'>
-                        <Topics texto={'Obs Jurídico'} data={precInfoNew.juridico_data} atualizacaoJuridico={precInfoNew.juridico_obs} textoExplicativo={'A etapa "Obs Jurídico" envolve a coleta e o registro de observações e recomendações da equipe jurídica, essenciais para orientar e gerenciar o processo de cessão de precatórios de forma eficaz.'} />
+
+            <ListaCessionarios cessionario={precInfoNew.cessionarios} precID={precID} fetchDataCessao={fetchDataCessao} />
+
+            {
+                auth.user.admin ? <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
+                    <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 dark:bg-neutral-900 xl:divide-x-[1px] dark:divide-neutral-600 mt-2 lg:mt-0'>
+                        <div className='cursor-pointer lg:px-4 lg:py-2 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-r lg:border-b xl:border-r-0 xl:border-b-0 dark:border-neutral-600' id='juridico'>
+                            <Topics data={precInfoNew.juridico_data} texto={'Jurídico Feito'} atualizacaoJuridico={precInfoNew.juridico_feito} textoExplicativo={'A etapa "Jurídico Feito" representa a conclusão bem-sucedida de todos os procedimentos legais necessários na gestão e transferência de precatórios.'} />
+                        </div>
+                        <div className='cursor-pointer  pt-4 lg:px-4 lg:py-2 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-b xl:border-b-0 dark:border-neutral-600'>
+                            <Topics data={precInfoNew.juridico_data} texto={'Jurídico a Fazer'} atualizacaoJuridico={precInfoNew.juridico_afazer} textoExplicativo={'A etapa "Jurídico a Fazer" engloba todas as ações jurídicas necessárias que ainda precisam ser completadas para assegurar a legalidade e eficácia da cessão de precatórios.'} />
+                        </div>
+                        <div className='cursor-pointer  pt-4 lg:py-2 lg:px-4 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-r xl:border-r-0 dark:border-neutral-600'>
+                            <Topics data={precInfoNew.juridico_data} texto={'Andamento Jurídico'} atualizacaoJuridico={precInfoNew.juridico_andamentoatual} textoExplicativo={'A etapa "Andamento Jurídico" é uma fase crítica na gestão de precatórios, onde o progresso dos procedimentos legais é monitorado e revisado continuamente.'} />
+                        </div>
+                        <div className='cursor-pointer  pt-4 lg:py-2 lg:px-4 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 dark:border-neutral-600'>
+                            <Topics texto={'Obs Jurídico'} data={precInfoNew.juridico_data} atualizacaoJuridico={precInfoNew.juridico_obs} textoExplicativo={'A etapa "Obs Jurídico" envolve a coleta e o registro de observações e recomendações da equipe jurídica, essenciais para orientar e gerenciar o processo de cessão de precatórios de forma eficaz.'} />
+                        </div>
                     </div>
                 </div>
-            </div> : null}
+                    : null
+            }
+
             {
                 precInfoNew.cessoes_relacionadas.length > 0 && auth.user.admin ? (
                     <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
