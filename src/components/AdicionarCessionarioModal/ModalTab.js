@@ -14,9 +14,6 @@ export function ModalTab({ status, cessionariosQtd, onAddCessionario, onDeleteCe
     }
   }
 
-  console.log(isTabSelected)
-
-
   return (
     <div className="border-b pt-1 px-1 rounded-t w-full">
       <div className='lg:flex lg:gap-1 lg:items-center lg:justify-between lg:w-full dark:text-white'>

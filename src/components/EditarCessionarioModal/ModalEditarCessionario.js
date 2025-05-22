@@ -16,9 +16,6 @@ export function ModalEditarCessionario({ handleCessionarioInputChange, formDataC
   const statusRef = useRef(status); // Ref para armazenar o status
   const [users, setUsers] = useState([]);
 
-  console.log(isLoading)
-  console.log(statusRef)
-
   useEffect(() => {
     let isMounted = true;
 

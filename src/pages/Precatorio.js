@@ -52,7 +52,6 @@ function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
 export default function Precatorio() {
   const [show, setShow] = useState(false);
   const [status, setStatus] = useState([]);
-  const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [precDataNew, setPrecDataNew] = useState({});
@@ -94,7 +93,6 @@ export default function Precatorio() {
       await Promise.all([
         fetchData(`/cessao/${precID}`, setPrecDataNew),
         fetchData('/status', setStatus),
-        fetchData('/users', setUsers)
       ]);
       setIsLoading(false);
     };

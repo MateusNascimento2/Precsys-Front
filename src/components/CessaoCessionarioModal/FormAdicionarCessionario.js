@@ -173,12 +173,37 @@ export function FormAdicionarCessionario({ cessionario, formCessionario, setForm
             />
           </div>
 
+          {/*Valor do Ofício de Pagamento*/}
+          <div className='dark:text-white text-black flex flex-col gap-1'>
+            <label
+              className='text-[14px] font-medium'
+              htmlFor="valor_oficio_pagamento">
+              Valor do Ofício de Pagamento
+            </label>
+            <input
+              id="valor_oficio_pagamento"
+              name="valor_oficio_pagamento"
+              type="text"
+              value={cessionario.formDataCessionario.valor_oficio_pagamento}
+              onChange={(e) => {
+                const valueWithoutPrefix = e.target.value.replace(/^R\$\s?/, "");
+                const formattedValue = formatCurrency(valueWithoutPrefix);
+                handleCessionarioInputChange(cessionario.id, formattedValue, 'valor_oficio_pagamento')
+                setFormDataCessionario({ ...formCessionario, valor_oficio_pagamento: formattedValue });
+              }}
+              placeholder="Digite o valor"
+              className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] w-full"
+            />
+          </div>
+
+
+
           {/*Assinatura*/}
           <div className='dark:text-white text-black flex flex-col md:items-start gap-1'>
             <label
               className='text-[14px] font-medium'
               htmlFor="assinatura">
-              Assinatura 
+              Assinatura
             </label>
             <div className="flex items-center gap-2 relative">
               <input

@@ -43,6 +43,7 @@ const MeuPerfil = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  console.log(auth.user)
 
   const navigate = useNavigate();
 
@@ -68,7 +69,8 @@ const MeuPerfil = () => {
         window.removeEventListener('scroll', handleScroll);
       };
     }, []);
-   */
+  */
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (id) {

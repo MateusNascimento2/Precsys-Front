@@ -106,7 +106,7 @@ export function FormEditarCessionario({ formCessionario, setFormDataCessionario,
                   : null
               }
               onChange={(selectedValue) => {
-                setFormDataCessionario({...formCessionario, user_id: selectedValue.value})
+                setFormDataCessionario({ ...formCessionario, user_id: selectedValue.value })
               }}
               name='user_id'
               noOptionsMessage={() => 'Nenhum usuário encontrado'}
@@ -161,6 +161,28 @@ export function FormEditarCessionario({ formCessionario, setFormDataCessionario,
                 const valueWithoutPrefix = e.target.value.replace(/^R\$\s?/, "");
                 const formattedValue = formatCurrency(valueWithoutPrefix);
                 setFormDataCessionario({ ...formCessionario, exp_recebimento: formattedValue });
+              }}
+              placeholder="Digite o valor"
+              className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] w-full"
+            />
+          </div>
+
+          {/*Valor do Ofício de Pagamento*/}
+          <div className='dark:text-white text-black flex flex-col gap-1'>
+            <label
+              className='text-[14px] font-medium'
+              htmlFor="valor_oficio_pagamento">
+              Valor do Ofício de Pagamento
+            </label>
+            <input
+              id="valor_oficio_pagamento"
+              name="valor_oficio_pagamento"
+              type="text"
+              value={formCessionario.valor_oficio_pagamento}
+              onChange={(e) => {
+                const valueWithoutPrefix = e.target.value.replace(/^R\$\s?/, "");
+                const formattedValue = formatCurrency(valueWithoutPrefix);
+                setFormDataCessionario({ ...formCessionario, valor_oficio_pagamento: formattedValue });
               }}
               placeholder="Digite o valor"
               className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 h-[34px] focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] w-full"

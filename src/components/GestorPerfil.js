@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import useAuth from "../hooks/useAuth";
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 export default function GestorPerfil({ user }) {
   const [users, setUsers] = useState([]);
-  const [gestoresSelecionados, setGestoresSelecionados] = useState([]);
   const [selectedGestores, setSelectedGestores] = useState([]);
+  const [originalGestores, setOriginalGestores] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const axiosPrivate = useAxiosPrivate();
-  const { auth } = useAuth();
 
   const customStyles = {
     control: base => ({
@@ -20,35 +18,40 @@ export default function GestorPerfil({ user }) {
     })
   };
 
+  // Formata todos os usuários para o Select
+  const handleSelectValues = (array, value) => {
+    return array.map(item => ({
+      value: item.id,
+      label: item[value]
+    }));
+  };
+
+  const handleChange = (selectedOptions) => {
+    setSelectedGestores(selectedOptions || []);
+  };
+
+  const fetchAllData = async () => {
+    try {
+      setIsLoading(true);
+      const [usersRes, gestoresRes] = await Promise.all([
+        axiosPrivate.get('/users'),
+        axiosPrivate.get(`/gestores/${user.id}`)
+      ]);
+
+      setUsers(usersRes.data);
+
+      setSelectedGestores(gestoresRes.data);
+      setOriginalGestores(gestoresRes.data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
-
-    const fetchData = async (url, setter) => {
-      try {
-        setIsLoading(true);
-        const { data } = await axiosPrivate.get(url, {
-          signal: controller.signal
-        });
-        if (isMounted) setter(data);
-      } catch (err) {
-        console.log(err);
-        setIsLoading(false);
-      }
-    };
-
-    const fetchAllData = async () => {
-      try {
-        await Promise.all([
-          fetchData('/users', setUsers),
-          fetchData(`/cliente/${user.id}`, setGestoresSelecionados),
-        ]);
-        setIsLoading(false);
-      } catch (err) {
-        console.log(err);
-        setIsLoading(false);
-      }
-    };
 
     fetchAllData();
 
@@ -58,55 +61,28 @@ export default function GestorPerfil({ user }) {
     };
   }, [axiosPrivate, user.id]);
 
-  useEffect(() => {
-    const mappedGestores = gestoresSelecionados.map(gestorSelecionado => {
-      const user = users.find(u => u.id === parseInt(gestorSelecionado.id_gestor));
-      if (user) {
-        return {
-          value: gestorSelecionado.id_gestor,
-          label: user.nome
-        };
-      } else {
-        return null;
-      }
-    }).filter(g => g !== null); // Remove gestores que foram mapeados como `null`
-
-    setSelectedGestores(mappedGestores);
-  }, [gestoresSelecionados, users]);
-
-  const handleSelectValues = (array, value) => {
-    return array.map(item => {
-      return {
-        value: item.id,
-        label: item[value]
-      };
-    });
-  };
-
-  const handleChange = (selectedOptions) => {
-    setSelectedGestores(selectedOptions || []);
-  };
-
   const handleSaveGestores = async () => {
     const isDarkMode = localStorage.getItem('darkMode');
+
     try {
       setIsLoading(true);
       const currentGestores = selectedGestores.map(g => g.value);
+      const originalIds = originalGestores.map(g => g.value);
 
-      // Adicionar novos gestores
-      const newGestores = selectedGestores.filter(g => !gestoresSelecionados.some(gg => gg.id_gestor === g.value));
+      // Gestores adicionados
+      const newGestores = selectedGestores.filter(g => !originalIds.includes(g.value));
       for (const gestor of newGestores) {
         await axiosPrivate.post('/cliente', { id_cliente: user.id, id_gestor: gestor.value });
       }
 
-      // Remover gestores que foram desmarcados
-      const gestoresToRemove = gestoresSelecionados.filter(gg => !currentGestores.includes(gg.id_gestor));
+      // Gestores removidos
+      const gestoresToRemove = originalGestores.filter(g => !currentGestores.includes(g.value));
       for (const gestor of gestoresToRemove) {
-        await axiosPrivate.delete(`/cliente/${user.id}/${gestor.id_gestor}`);
+        await axiosPrivate.delete(`/cliente/${user.id}/${gestor.value}`);
       }
 
-      // Recarregar os dados após salvar
       await fetchAllData();
+
       toast.success('Gestor(es) salvo(s) com sucesso!', {
         position: "top-right",
         autoClose: 1000,
@@ -117,12 +93,10 @@ export default function GestorPerfil({ user }) {
         progress: false,
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
-        onClose: () => window.location.reload(), // Recarrega após o toast ser fechado
       });
-
     } catch (err) {
       console.log(err);
-      toast.error('Error ao salvar gestor(es): ' + err, {
+      toast.error('Erro ao salvar gestor(es): ' + err.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -135,17 +109,6 @@ export default function GestorPerfil({ user }) {
       });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const fetchAllData = async () => {
-    try {
-      await Promise.all([
-        fetchData('/users', setUsers),
-        fetchData(`/cliente/${user.id}`, setGestoresSelecionados),
-      ]);
-    } catch (err) {
-      console.log(err);
     }
   };
 
@@ -193,7 +156,6 @@ export default function GestorPerfil({ user }) {
             >
               Salvar gestores
             </button>
-
           </div>
         </section>
       )}

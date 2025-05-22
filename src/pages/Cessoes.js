@@ -39,6 +39,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     comissao: '',
     percentual: '',
     exp_recebimento: '',
+    valor_oficio_pagamento: '',
     recebido: '',
     assinatura: '',
     mandado: '',

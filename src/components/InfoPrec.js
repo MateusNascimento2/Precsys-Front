@@ -11,7 +11,6 @@ import useAuth from "../hooks/useAuth";
 
 
 export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
-    const [key, setKey] = useState(0); // Add key state here
     const [loadingFiles, setLoadingFiles] = useState({});
     const { auth } = useAuth();
     const { precID } = useParams();
@@ -121,6 +120,7 @@ export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
                             </div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Óbito: </span><span className='text-[#666] dark:text-neutral-400'>{precInfoNew.falecido ? precInfoNew.falecido : '-'}</span></div>
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'><span className='font-[500] dark:text-neutral-200'>Anuência: </span><span className='text-[#666] dark:text-neutral-400'>{precInfoNew.anuencia_advogado ? precInfoNew.anuencia_advogado : '-'}</span></div>
+
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'>
                                 <span className='font-[500] dark:text-neutral-200'>Requisitório:</span>
                                 {loadingFiles[precInfoNew.requisitorio] ? (
@@ -137,6 +137,7 @@ export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
 
 
                             </div>
+
                             <div className='text-[14px] flex gap-1 items-center max-[700px]:col-span-2'>
                                 <span className='font-[500] dark:text-neutral-200'>Escritura: </span>
                                 {loadingFiles[precInfoNew.escritura] ? (
@@ -151,6 +152,7 @@ export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
 
                                 )}
                             </div>
+
                         </div>
                     </div>
                     <div className='flex flex-col max-[700px]:mb-20px'>

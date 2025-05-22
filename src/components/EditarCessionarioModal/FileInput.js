@@ -3,7 +3,6 @@ import React, { useState, useRef } from 'react'
 function FileInput({ label, name, formCessionario, inputFileName, setFormDataCessionario, fileCessionario, setFileCessionario }) {
   const [file, setFile] = useState(null);
   const inputRef = useRef(null);
-  console.log(fileCessionario)
 
   return (
     <div className='dark:text-white text-black flex flex-col md:items-start gap-1 w-full'>

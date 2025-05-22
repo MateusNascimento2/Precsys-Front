@@ -10,6 +10,7 @@ import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import useAuth from "../hooks/useAuth";
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { v4 as uuidv4 } from 'uuid';
 
 function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
   if (!isOpen) return null;
@@ -51,6 +52,22 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
   const [formDataCessionario, setFormDataCessionario] = useState({
     user_id: '',
     valor_pago: '',
+    valor_oficio_pagamento: '',
+    comissao: '',
+    percentual: '',
+    exp_recebimento: '',
+    recebido: '',
+    assinatura: '',
+    mandado: '',
+    comprovante: '',
+    expedido: '',
+    obs: '',
+    nota: ''
+  })
+  const [formDataCessionarioEditar, setFormDataCessionarioEditar] = useState({
+    user_id: '',
+    valor_pago: '',
+    valor_oficio_pagamento: '',
     comissao: '',
     percentual: '',
     exp_recebimento: '',
@@ -67,8 +84,12 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
     mandado: '',
     comprovante: ''
   })
-  const [cessionariosQtd, setCessionariosQtd] = useState([{ id: idCessionarioForm, nomeTab: '', formDataCessionario: { ...formDataCessionario }, fileCessionarios: { ...fileCessionario } }]);
-  const [idCessionarioForm, setIdCessionarioForm] = useState(0);
+  const [fileCessionarioEditar, setFileCessionarioEditar] = useState({
+    nota: '',
+    mandado: '',
+    comprovante: ''
+  })
+  const [cessionariosQtd, setCessionariosQtd] = useState([{ id: uuidv4(), nomeTab: '', formDataCessionario: { ...formDataCessionario }, fileCessionarios: { ...fileCessionario } }]);
 
   const handleCessionarioInputChange = (id, values, name) => {
 
@@ -165,12 +186,15 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
   }
 
   const handleAddCessionario = () => {
-    setIdCessionarioForm(prevId => prevId + 1);
+    const newCessionario = {
+      id: uuidv4(),
+      nomeTab: '',
+      formDataCessionario: { ...formDataCessionario },
+      fileCessionarios: { ...fileCessionario },
+    };
 
-    setCessionariosQtd(
-      [...cessionariosQtd, { id: idCessionarioForm, nomeTab: '', formDataCessionario: { ...formDataCessionario }, fileCessionarios: { ...fileCessionario } }]
-    )
-  }
+    setCessionariosQtd(prev => [...prev, newCessionario]);
+  };
 
   const handleDeleteCessionarioForm = (id) => {
     setCessionariosQtd(
@@ -479,12 +503,11 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
     try {
 
       //  Validação dos cessionários
-
-      const algumCessionarioInvalido = !formDataCessionario.user_id ||
-        !formDataCessionario.valor_pago ||
-        !formDataCessionario.comissao ||
-        !formDataCessionario.exp_recebimento ||
-        !formDataCessionario.percentual;
+      const algumCessionarioInvalido = !formDataCessionarioEditar.user_id ||
+        !formDataCessionarioEditar.valor_pago ||
+        !formDataCessionarioEditar.comissao ||
+        !formDataCessionarioEditar.exp_recebimento ||
+        !formDataCessionarioEditar.percentual;
 
 
       if (algumCessionarioInvalido) {
@@ -531,11 +554,11 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
 
       //  Montagem do payload
       const payload = {
-        ...formDataCessionario
+        ...formDataCessionarioEditar
       };
 
       //  Envio da cessão
-      const response = await axiosPrivate.put(`/cessionarios/${formDataCessionario.cessionario_id}`, payload);
+      const response = await axiosPrivate.put(`/cessionarios/${formDataCessionarioEditar.cessionario_id}`, payload);
 
       toast.success('Cessionário editado com sucesso!', {
         position: "top-right",
@@ -581,7 +604,6 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
   const downloadFile = async (filename) => {
     const isDarkMode = localStorage.getItem('darkMode');
     const path = filename.split('/')[0];
-    console.log(path)
     const file = filename.split('/')[1];
 
     setLoadingFiles(prev => ({ ...prev, [filename]: true }));
@@ -655,6 +677,10 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
     return previousValue + changePorcentagemToFloat(currentValue.percentual);
   }, 0);
 
+  const valorOficioTotal = cessionario.reduce((previousValue, currentValue) => {
+    return previousValue + changeStringFloat(currentValue.valor_oficio_pagamento)
+  }, 0);
+
   return cessionario.length > 0 ? (
     <div className="w-full mb-[60px] flex flex-col">
       <div className="mb-[16px] flex items-center justify-between">
@@ -670,11 +696,12 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
           <div className="min-w-[120px] w-[17%] text-center dark:text-white">comissão</div>
           <div className="min-w-[60px] w-[5%] text-center dark:text-white">%</div>
           <div className="min-w-[120px] w-[17%] text-center dark:text-white">expectativa</div>
+          {auth.user.admin ? <div className="min-w-[120px] w-[17%] text-center dark:text-white">valor do ofício</div> : null}
           <div className="min-w-[180px] w-[18%] text-center dark:text-white">nota</div>
           <div className="min-w-[50px] w-[5%] ml-auto text-center dark:text-white"></div>
         </div>
-        {cessionario.map((c) => (
-          <div className="w-max lg:w-full flex text-[12px] items-center border-b dark:border-neutral-600 last:border-0 py-[10px] border-gray-300" key={c.id}>
+        {cessionario.map((c, index) => (
+          <div className="w-max lg:w-full flex text-[12px] items-center border-b dark:border-neutral-600 last:border-0 py-[10px] border-gray-300" key={index}>
             <div className="min-w-[250px] w-[24%]">
               <div className="flex flex-col justify-center text-[12px]">
                 <span className="font-bold dark:text-neutral-200">{c.nome} </span>
@@ -685,6 +712,8 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
             <div className="min-w-[120px] w-[17%] text-center dark:text-neutral-200">{c.comissao}</div>
             <div className="min-w-[60px] w-[5%] text-center dark:text-neutral-200">{c.percentual}</div>
             <div className="min-w-[120px] w-[17%] text-center dark:text-neutral-200">{c.exp_recebimento}</div>
+            {auth.user.admin ? <div className="min-w-[120px] w-[17%] text-center dark:text-neutral-200">{c.valor_oficio_pagamento}</div> : null}
+
             <div className="min-w-[180px] w-[18%] text-center">
               {c.nota ? <button title="Baixar nota" className="cursor-pointer text-[12px] hover:underline dark:text-white" onClick={() => downloadFile(c.nota)}>
                 {loadingFiles[c.nota] ? (
@@ -711,7 +740,7 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
                 <>
                   <DotsButton isModal={true}>
 
-                    <ModalEditarCessionario dadosCessionario={c} status={status} handleCessionarioInputChange={handleCessionarioInputChange} formDataCessionario={formDataCessionario} setFormDataCessionario={setFormDataCessionario} fileCessionario={fileCessionario} setFileCessionario={setFileCessionario} handleEditarCessionarioSubmit={handleEditarCessionarioSubmit} />
+                    <ModalEditarCessionario dadosCessionario={c} status={status} handleCessionarioInputChange={handleCessionarioInputChange} formDataCessionario={formDataCessionarioEditar} setFormDataCessionario={setFormDataCessionarioEditar} fileCessionario={fileCessionarioEditar} setFileCessionario={setFileCessionarioEditar} handleEditarCessionarioSubmit={handleEditarCessionarioSubmit} />
 
                     <button onClick={openModal} className="hover:bg-red-800 bg-red-600 text-white text-sm px-4 py-2 rounded">
                       Excluir
@@ -734,6 +763,7 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
           <div className="min-w-[120px] w-[17%] font-bold text-center dark:text-neutral-200">R$ {localeTwoDecimals(valorComissaoTotal)}</div>
           <div className="min-w-[60px] w-[5%] font-bold text-center dark:text-neutral-200">{valorPorcentagemTotal.toLocaleString()}%</div>
           <div className="min-w-[120px] w-[17%] font-bold text-center dark:text-neutral-200">R$ {localeTwoDecimals(valorExpTotal)}</div>
+          {auth.user.admin ? <div className="min-w-[120px] w-[17%] font-bold text-center dark:text-neutral-200">R$ {localeTwoDecimals(valorOficioTotal)}</div> : null}
           <div className="min-w-[180px] w-[18%] text-center dark:text-neutral-200"></div>
           <div className="min-w-[50px] w-[5%] ml-auto text-center dark:text-neutral-200"></div>
         </div>
