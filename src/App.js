@@ -6,7 +6,7 @@ import Cessoes from './pages/Cessoes';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import PersistLogin from './components/PersistLogin';
-import { RequireAdminAuth, RequireNormalUserAuth } from './components/RequireAuth';
+import { RequireAdminAuth, RequireNormalUserAuth, RequireAdminOrAdvogadoAuth } from './components/RequireAuth';
 import Unauthorized from './pages/Unauthorized';
 import Usuarios from './pages/Usuarios';
 import Precatorio from './pages/Precatorio';
@@ -22,8 +22,7 @@ import Juridicos from './pages/Juridicos';
 import Forbidden from './pages/Forbidden';
 import { TesteModal } from './pages/TesteModal';
 
-function App() {
-
+function App() {  
   return (
     <Routes>
 
@@ -42,12 +41,16 @@ function App() {
             <Route path='cliente/:id' element={<MeuPerfil />} />
           </Route>
 
+          <Route element={<RequireAdminOrAdvogadoAuth />}>
+            <Route path='todas-cessoes' element={<Cessoes />} />
+          </Route>
+
           <Route element={<RequireAdminAuth />}>
             <Route path='todas-cessoes' element={<Cessoes />} />
             <Route path='usuarios' element={<Usuarios />} />
             <Route path='usuario/:id' element={<MeuPerfil />} />
             <Route path='calculo' element={<Calculo />} />
-            <Route path ='logs/login' element={<LoginLogs />}/>
+            <Route path='logs/login' element={<LoginLogs />} />
             <Route path='logs/propostas' element={<PropostasLogs />} />
             <Route path='empresas' element={<Empresas />} />
             <Route path='orcamentos' element={<Orcamentos />} />
@@ -55,9 +58,11 @@ function App() {
             <Route path='juridicos' element={<Juridicos />} />
             <Route path='testeModal' element={<TesteModal />} />
           </Route>
+
+
         </Route>
 
-        <Route path='*' element={<Unauthorized />} />
+        <Route path='/unauthorized' element={<Unauthorized />} />
         <Route path='/forbidden' element={<Forbidden />} />
       </Route>
     </Routes>

@@ -47,13 +47,13 @@ export default function CessoesPerfil({ user }) {
       }
     };
 
-    fetchData(`/cessoes-usuario/${id ? id : user.id}`, setCessoes);
+    fetchData(`/cessoes-usuario/${user.id}`, setCessoes);
 
     return () => {
       isMounted = false;
       controller.abort();
     };
-  }, []);
+  }, [user.id]);
 
   // Filtra as cessões de acordo com a aba ativa
   const filteredCessoes = cessoes.filter(cessao => {

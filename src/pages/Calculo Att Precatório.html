@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <style>
+    main {
+      padding: 0 8px;
+    }
+
+    @media (min-width: 1024px) {
+      main {
+        padding: 0 30px;
+      }
+    }
+
+    .layout {
+      width: 100%;
+      margin-bottom: 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    @media (min-width: 1024px) {
+      .layout {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 1.5rem;
+        position: relative;
+        border-left: 1px solid #525252;
+      }
+    }
+
+    .form-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-bottom: 1rem;
+      margin-bottom: 1px;
+      border-color: #525252;
+      width: 100%;
+    }
+
+    @media (min-width: 1280px) {
+      .form-wrapper {
+        position: fixed;
+        top: 7%;
+        width: 380px;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+    }
+
+    .label {
+      font-size: 14px;
+      font-weight: 500;
+      color: white;
+    }
+
+    .input {
+      background-color: #262626;
+      border: 1px solid #525252;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 14px;
+      color: #d1d5db;
+      outline: none;
+    }
+
+    .button-submit {
+      background-color: white;
+      color: black;
+      width: 100%;
+      margin-top: 1rem;
+      padding: 4px;
+      font-weight: 500;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    body {
+      background-color: #121212;
+      font-family: sans-serif;
+    }
+
+    .pdf-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .section {
+      overflow-x: auto;
+      color: #000;
+    }
+
+    .section-header {
+      width: 100%;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      border-bottom: 2px solid #111;
+      padding-bottom: 4px;
+      margin-bottom: 4px;
+      color: #FFF;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      width: 100%;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .header-column {
+      font-weight: bold;
+      border-left: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+      background-color: #121212;
+      color: #FFF
+    }
+
+    .indent {
+      padding-left: 20px !important;
+      color: #c9c9c9
+    }
+
+    .data-column,
+    .info-column {
+      border-left: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+      background-color: #121212;
+      color: #FFF;
+
+    }
+
+    .data-column div,
+    .header-column div,
+    .info-column div {
+      padding: 8px;
+      border-top: 1px solid #ddd;
+    }
+
+    /* Escuro (modo noturno) - opcional */
+    body.dark .section {
+      color: white;
+    }
+
+    body.dark .section-header {
+      border-color: #666;
+    }
+
+    body.dark .column {
+      border-color: #555;
+    }
+
+    body.dark .header-column {
+      background-color: #222;
+    }
+  </style>
+
+  <main>
+    <div class="layout">
+      <form id="form">
+        <div class="form-wrapper">
+          <div class="form-group">
+            <label class="label" for="precatorio">Precatório</label>
+            <input class="input" type="text" placeholder="Numero do precatório" name="precatorio" />
+          </div>
+
+          <div class="form-group">
+            <label class="label" for="orcamento">Orçamento</label>
+            <input class="input" type="text" placeholder="Orçamento" name="orcamento" />
+          </div>
+
+          <div class="form-group">
+            <label class="label" for="valorPrincipal">Valor principal</label>
+            <input class="input" type="text" name="valorPrincipal" placeholder="Valor Principal" />
+          </div>
+
+          <div class="form-group">
+            <label class="label" for="valorJuros">Valor dos Juros</label>
+            <input class="input" type="text" name="valorJuros" placeholder="Valor dos Juros" />
+          </div>
+
+          <div class="form-group">
+            <label class="label" for="rioPrevidencia">Rioprevidência</label>
+            <input class="input" type="text" name="rioPrevidencia" placeholder="Rioprevidência" />
+          </div>
+
+          <div class="form-group">
+            <label class="label" for="dataBase">Data Base</label>
+            <input class="input" type="date" name="dataBase" placeholder="Data Base" />
+          </div>
+
+          <div class="form-group">
+            <label class="label" for="dataAtualizacao">Data de Atualização</label>
+            <input class="input" type="date" name="dataAtualizacao" placeholder="Data de Atualização" />
+          </div>
+
+          <button type="submit" class="button-submit">Fazer cálculo</button>
+        </div>
+      </form>
+
+      <div class="pdf-container">
+
+        <!-- CÁLCULO INICIAL -->
+        <div class="section">
+          <div class="section-header">Cálculo Inicial</div>
+          <div class="grid-3">
+            <div class="column header-column">
+              <div>Data</div>
+              <div>Valor Principal</div>
+              <div>Valor Juros</div>
+              <div>Valor Total</div>
+            </div>
+            <div class="column data-column">
+              <div>{calculoInicialDataBase}</div>
+              <div>{calculoIncialPrincipal}</div>
+              <div>{calculoIncialJuros}</div>
+              <div>{calculoIncialTotal}</div>
+            </div>
+            <div class="column info-column">
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INÍCIO DO PERÍODO DA GRAÇA -->
+        <div class="section">
+          <div class="section-header">Início do Período da Graça</div>
+          <div class="grid-3">
+            <div class="column header-column">
+              <div>Data</div>
+              <div>Correção Monetária</div>
+              <div class="indent">Fator</div>
+              <div class="indent">Valor Principal Corrigido</div>
+              <div class="indent">Valor Juros Corrigido</div>
+              <div class="indent">Valor Total Corrigido</div>
+              <div>Juros</div>
+              <div class="indent">Número Dias</div>
+              <div class="indent">Taxa de Juros</div>
+              <div class="indent">Valor Juros</div>
+              <div>Valor Atualizado</div>
+              <div class="indent">Valor Principal Corrigido</div>
+              <div class="indent">Valor Juros Corrigido</div>
+              <div class="indent">Valor Total</div>
+            </div>
+            <div class="column data-column">
+              <div>{segundoQuadranteIPCAE1}</div>
+              <div>-</div>
+              <div>{segundoQuadranteIPCAE2}</div>
+              <div>{segundoQuadranteIPCAE3}</div>
+              <div>{segundoQuadranteIPCAE4}</div>
+              <div>{segundoQuadranteIPCAE5}</div>
+              <div>-</div>
+              <div>{segundoQuadranteIPCAE6}</div>
+              <div>{segundoQuadranteIPCAE7}</div>
+              <div>{segundoQuadranteIPCAE8}</div>
+              <div>-</div>
+              <div>{segundoQuadranteIPCAE3}</div>
+              <div>{segundoQuadranteIPCAE9}</div>
+              <div>{segundoQuadranteIPCAE10}</div>
+            </div>
+            <div class="column info-column">
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>Correção Monetária do Valor Principal * Taxa de Juros</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FINAL DO PERÍODO DA GRAÇA -->
+        <div class="section">
+          <div class="section-header">Final do Período da Graça</div>
+          <div class="grid-3">
+            <div class="column header-column">
+              <div>Data</div>
+              <div>Correção Monetária</div>
+              <div class="indent">Fator</div>
+              <div class="indent">Valor Principal Corrigido</div>
+              <div class="indent">Valor Juros Corrigido</div>
+              <div class="indent">Valor Total Corrigido</div>
+            </div>
+            <div class="column data-column">
+              <div>{terceiroQuadranteIPCAE1}</div>
+              <div>-</div>
+              <div>{terceiroQuadranteIPCAE2}</div>
+              <div>{terceiroQuadranteIPCAE3}</div>
+              <div>{terceiroQuadranteIPCAE4}</div>
+              <div>{terceiroQuadranteIPCAE5}</div>
+            </div>
+            <div class="column info-column">
+              <div>-</div>
+              <div>-</div>
+              <div>Entre as datas 01/07/2019 e 31/12/2020</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INÍCIO TAXA SELIC -->
+        <div class="section">
+          <div class="section-header">Início Taxa Selic</div>
+          <div class="grid-3">
+            <div class="column header-column">
+              <div>Data</div>
+              <div>Correção Monetária</div>
+              <div class="indent">Fator</div>
+              <div class="indent">Valor Principal Corrigido</div>
+              <div class="indent">Valor Juros Corrigido</div>
+              <div class="indent">Valor Total Corrigido</div>
+              <div>Juros</div>
+              <div class="indent">Número Dias</div>
+              <div class="indent">Taxa de Juros</div>
+              <div class="indent">Valor Juros</div>
+              <div>Valor Atualizado</div>
+              <div class="indent">Valor Principal Corrigido</div>
+              <div class="indent">Valor Juros Corrigido</div>
+              <div class="indent">Valor Total</div>
+            </div>
+            <div class="column data-column">
+              <div>{quartoQuadranteIPCAE1}</div>
+              <div>-</div>
+              <div>{quartoQuadranteIPCAE2}</div>
+              <div>{quartoQuadranteIPCAE3}</div>
+              <div>{quartoQuadranteIPCAE4}</div>
+              <div>{quartoQuadranteIPCAE5}</div>
+              <div>-</div>
+              <div>{quartoQuadranteIPCAE6}</div>
+              <div>{quartoQuadranteIPCAE7}</div>
+              <div>{quartoQuadranteIPCAE8}</div>
+              <div>-</div>
+              <div>{quartoQuadranteIPCAE3}</div>
+              <div>{quartoQuadranteIPCAE9}</div>
+              <div>{quartoQuadranteIPCAE10}</div>
+            </div>
+            <div class="column info-column">
+              <div>-</div>
+              <div>-</div>
+              <div>Entre as datas 05/05/2015 e 01/07/2019</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>Entre as datas 05/05/2015 e 01/07/2019</div>
+              <div>Correção Monetária do Valor Principal * Taxa de Juros</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CÁLCULO FINAL -->
+        <div class="section">
+          <div class="section-header">Cálculo Final</div>
+          <div class="grid-3">
+            <div class="column header-column">
+              <div>Data</div>
+              <div>Valor Base para Correção (01/12/2021)</div>
+              <div class="indent">Valor Principal</div>
+              <div class="indent">Valor Juros</div>
+              <div class="indent">Valor Total</div>
+              <div>Correção Monetária</div>
+              <div class="indent">Fator</div>
+              <div class="indent">Valor Principal Corrigido</div>
+              <div class="indent">Valor Juros Corrigido</div>
+              <div class="indent">Valor Total Corrigido</div>
+            </div>
+            <div class="column data-column">
+              <div>{quartoQuadranteSELIC1}</div>
+              <div>-</div>
+              <div>{quartoQuadranteSELIC2}</div>
+              <div>{quartoQuadranteSELIC3}</div>
+              <div>{quartoQuadranteSELIC4}</div>
+              <div>-</div>
+              <div>{quartoQuadranteSELIC5}</div>
+              <div>{quartoQuadranteSELIC6}</div>
+              <div>{quartoQuadranteSELIC7}</div>
+              <div>{quartoQuadranteSELIC8}</div>
+            </div>
+            <div class="column info-column">
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+              <div>Entre as datas 01/12/2021 e 12/12/2023</div>
+              <div>-</div>
+              <div>-</div>
+              <div>-</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+</body>
+
+</html>
+
+<script>
+  function submitForm(event) {
+    event.preventDefault();
+
+    const precatorio = document.querySelector('input[name="precatorio"]').value;
+    const orcamento = document.querySelector('input[name="orcamento"]').value;
+    const valorPrincipal = document.querySelector('input[name="valorPrincipal"]').value;
+    const valorJuros = document.querySelector('input[name="valorJuros"]').value;
+    const rioPrevidencia = document.querySelector('input[name="rioPrevidencia"]').value;
+    const dataBaseStr = document.querySelector('input[name="dataBase"]').value;
+    const dataAtualizacaoStr = document.querySelector('input[name="dataAtualizacao"]').value;
+    console.log(dataBaseStr)
+
+    let dataInicioPeriodoDaGracaStr = "";
+    let dataVencimentoPeriodoDaGracaStr = "";
+
+    if (orcamento === "2020") {
+      dataInicioPeriodoDaGracaStr = "2019-07-02";
+      dataVencimentoPeriodoDaGracaStr = "2021-01-01";
+    } else if (orcamento === "2021") {
+      dataInicioPeriodoDaGracaStr = "2020-07-02";
+      dataVencimentoPeriodoDaGracaStr = "2022-01-01";
+    } else if (orcamento === "2022") {
+      dataInicioPeriodoDaGracaStr = "2021-07-02";
+      dataVencimentoPeriodoDaGracaStr = "2023-01-01";
+    } else if (orcamento === "2023") {
+      dataInicioPeriodoDaGracaStr = "2022-04-03";
+      dataVencimentoPeriodoDaGracaStr = "2024-01-01";
+    } else if (orcamento === "2024") {
+      dataInicioPeriodoDaGracaStr = "2023-04-03";
+      dataVencimentoPeriodoDaGracaStr = "2025-01-01";
+    } else if (orcamento === "2025") {
+      dataInicioPeriodoDaGracaStr = "2024-04-03";
+      dataVencimentoPeriodoDaGracaStr = "2026-01-01";
+    } else if (orcamento === "2026") {
+      dataInicioPeriodoDaGracaStr = "2025-04-03";
+      dataVencimentoPeriodoDaGracaStr = "2027-01-01";
+    } else if (orcamento === "2027") {
+      dataInicioPeriodoDaGracaStr = "2026-04-03";
+      dataVencimentoPeriodoDaGracaStr = "2028-01-01";
+    }
+
+    const dataBase = new Date(dataBaseStr);
+    const dataAtualizacao = new Date(dataAtualizacaoStr);
+    const dataInicioPeriodoDaGraca = new Date(dataInicioPeriodoDaGracaStr);
+    const dataVencimentoPeriodoDaGraca = new Date(dataVencimentoPeriodoDaGracaStr);
+    const marco = new Date("2021-12-01");
+
+    async function calcularValores(dataBase, dataInicioPeriodoDaGraca, dataVencimentoPeriodoDaGraca, valorPrincipal, valorJuros, rioPrevidencia, dataAtualizacao, marco) {
+
+      // Informações Gerais
+      console.log("Precatório:");
+      console.log("Orçamento:", orcamento);
+      console.log("Valor Principal:", parseFloat(valorPrincipal).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      console.log("Valor Juros:", parseFloat(valorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      console.log("Rioprevidência:", parseFloat(rioPrevidencia).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      console.log("Data Base:", new Date(dataBaseStr).toLocaleDateString("pt-BR"));
+      console.log("Data de Atualização:", new Date(dataAtualizacaoStr).toLocaleDateString("pt-BR"));
+
+
+      // Primeiro Cálculo Abatendo RioPrev
+      console.log("Cálculo Inicial");
+      console.log("Data:", new Date(dataBaseStr).toLocaleDateString("pt-BR"));
+
+      // Conversão dos valores
+      const principalNum = parseFloat(valorPrincipal);
+      const jurosNum = parseFloat(valorJuros);
+      const rioprevNum = parseFloat(rioPrevidencia);
+
+      // Total bruto antes do abate
+      const totalBruto = principalNum + jurosNum;
+
+      // Proporções
+      const propPrincipal = principalNum / totalBruto;
+      const propJuros = jurosNum / totalBruto;
+
+      // Abate proporcional
+      const abatimentoPrincipal = propPrincipal * rioprevNum;
+      const abatimentoJuros = propJuros * rioprevNum;
+
+      // Valores finais após abatimento
+      const principalFinal = principalNum - abatimentoPrincipal;
+      const jurosFinal = jurosNum - abatimentoJuros;
+      const totalFinal = principalFinal + jurosFinal;
+
+      // Impressão formatada
+      console.log("Valor Principal:", principalFinal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      console.log("Valor Juros:", jurosFinal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      console.log("Valor Total:", totalFinal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+
+
+      let nValorPrincipal = principalFinal;
+      let nValorJuros = jurosFinal;
+
+      // Segunda parte do Cáluclo (Primeira Correção vendo sobre o marco da Selic!)
+      if (dataBase < marco) {
+        if (dataInicioPeriodoDaGraca < marco) {
+          // Cálculo Até o Periodo da Graça (ipca-E/jUROS)
+          let FatorIPCAEDataBase = await PegarDataDoJSON(dataBaseStr, 'fatorNT');
+          let FatorIPCAEInicioPG = await PegarDataDoJSON(dataInicioPeriodoDaGracaStr, 'fatorNT');
+          let FatorJurosPoupancaDataBase = await PegarDataDoJSON(dataBaseStr, 'jurosPoupanca');
+          let FatorJurosPoupancaInicioPG = await PegarDataDoJSON(dataInicioPeriodoDaGracaStr, 'jurosPoupanca');
+
+          console.log("Início do Período da Graça (", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), ")");
+          console.log("Data:", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"));
+
+          console.log("\nCorreção Monetária");
+          console.log("Fator:", FatorIPCAEDataBase / FatorIPCAEInicioPG, "Entre as datas: ", dataBase.toLocaleDateString("pt-BR"), " e ", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), "");
+
+          nValorPrincipal = nValorPrincipal * (FatorIPCAEDataBase / FatorIPCAEInicioPG);
+          console.log("Valor Principal Corrigido: ", nValorPrincipal);
+
+          nValorJuros = nValorJuros * (FatorIPCAEDataBase / FatorIPCAEInicioPG);
+          console.log("Valor Juros Corrigido: ", nValorJuros);
+
+          console.log("Valor Total Corrigido: ", nValorPrincipal + nValorJuros);
+
+          console.log("\nJuros");
+          console.log("Número de Dias:", Math.floor((dataInicioPeriodoDaGraca - dataBase) / (1000 * 60 * 60 * 24)));
+          console.log("Taxa de Juros:", (FatorJurosPoupancaDataBase - FatorJurosPoupancaInicioPG) * 100, "Entre as datas: ", dataBase.toLocaleDateString("pt-BR"), " e ", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), "");
+          console.log("Valor Juros: ", nValorPrincipal * (FatorJurosPoupancaDataBase - FatorJurosPoupancaInicioPG));
+          nValorJuros = nValorJuros + (nValorPrincipal * (FatorJurosPoupancaDataBase - FatorJurosPoupancaInicioPG));
+          console.log("Fórmula: Correção Monetária do Valor Principal * Taxa de Juros");
+
+          console.log("\nValor Atualizado");
+          console.log("Valor Principal Corrigido: ", nValorPrincipal);
+          console.log("Valor Juros Corrigido: ", nValorJuros);
+          console.log("Valor Total: ", nValorPrincipal + nValorJuros);
+
+        } else if (dataInicioPeriodoDaGraca > marco) {
+          // Cálculo Até o Marco (ipca-E/jUROS)
+          let FatorIPCAEMarco = await PegarDataDoJSON(marcoStr, 'fatorNT');
+          let FatorIPCAEInicioPG = await PegarDataDoJSON(dataInicioPeriodoDaGracaStr, 'fatorNT');
+          let FatorJurosPoupancaMarco = await PegarDataDoJSON(marcoStr, 'jurosPoupanca');
+          let FatorJurosPoupancaInicioPG = await PegarDataDoJSON(dataInicioPeriodoDaGracaStr, 'jurosPoupanca');
+
+          console.log("Início do Período da Graça (", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), ")");
+          console.log("Data:", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"));
+
+          console.log("\nCorreção Monetária");
+          console.log("Fator:", FatorIPCAEMarco / FatorIPCAEInicioPG, "Entre as datas: ", marco.toLocaleDateString("pt-BR"), " e ", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), "");
+
+          nValorPrincipal = nValorPrincipal * (FatorIPCAEMarco / FatorIPCAEInicioPG);
+          console.log("Valor Principal Corrigido: ", nValorPrincipal);
+
+          nValorJuros = nValorJuros * (FatorIPCAEMarco / FatorIPCAEInicioPG);
+          console.log("Valor Juros Corrigido: ", nValorJuros);
+
+          console.log("Valor Total Corrigido: ", nValorPrincipal + nValorJuros);
+
+          console.log("\nJuros");
+          console.log("Número de Dias:", Math.floor((dataInicioPeriodoDaGraca - marco) / (1000 * 60 * 60 * 24)));
+          console.log("Taxa de Juros:", (FatorJurosPoupancaMarco - FatorJurosPoupancaInicioPG) * 100, "Entre as datas: ", marco.toLocaleDateString("pt-BR"), " e ", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), "");
+          console.log("Valor Juros: ", nValorPrincipal * (FatorJurosPoupancaMarco - FatorJurosPoupancaInicioPG));
+          nValorJuros = nValorJuros + (nValorPrincipal * (FatorJurosPoupancaMarco - FatorJurosPoupancaInicioPG));
+          console.log("Fórmula: Correção Monetária do Valor Principal * Taxa de Juros");
+
+          console.log("\nValor Atualizado");
+          console.log("Valor Principal Corrigido: ", nValorPrincipal);
+          console.log("Valor Juros Corrigido: ", nValorJuros);
+          console.log("Valor Total: ", nValorPrincipal + nValorJuros);
+
+          // Do Marco até o Período da Graça (Selic)
+
+        }
+
+      } else if (dataBase >= marco) {
+        // Cálculo Até o Periodo da Graça (Selic)
+      }
+
+      // Terceira Parte do Cálculo (Período da Graça)
+      if (dataVencimentoPeriodoDaGraca > dataAtualizacao) {
+        // Corrigir IPCA-E só até a data da Atualização
+      } else if (dataVencimentoPeriodoDaGraca < dataAtualizacao) {
+        //Corrigir IPCA-E Período da Graça
+      }
+
+      // Quarta Parte do Cálculo (Até a data da Atualização)
+      if (dataVencimentoPeriodoDaGraca < dataAtualizacao) {
+        if (dataVencimentoPeriodoDaGraca < marco) {
+          // Corrigir IPCA-E e Juros até o marco.
+          // Depois do marco corrigir selic até a data Atualização
+        } else if (dataVencimentoPeriodoDaGraca > marco) {
+          // Corrigir Selic até a data Atualização
+        }
+      }
+
+    }
+
+    calcularValores(dataBase, dataInicioPeriodoDaGraca, dataVencimentoPeriodoDaGraca, valorPrincipal, valorJuros, rioPrevidencia, dataAtualizacao, marco);
+
+    alert('Formulário enviado com sucesso!');
+
+    async function PegarDataDoJSON(data, nomeArquivo) {
+      const dataSplit = data.split('-');
+      const dataFormatada = `${dataSplit[1]}/01/${dataSplit[0]}`
+      const response = await fetch(`../json/${nomeArquivo}.json`);
+      const dados = await response.json();
+      const resultado = dados.find((dado) => dado.data === dataFormatada);
+      return resultado.fator
+    }
+
+
+  }
+
+  const form = document.getElementById('form');
+  form.addEventListener('submit', submitForm);
+
+  // ✅ AUTOPREENCHIMENTO (dados da imagem)
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('input[name="precatorio"]').value = "0001234-89.2020.8.19.0001";
+    document.querySelector('input[name="orcamento"]').value = "2021";
+    document.querySelector('input[name="valorPrincipal"]').value = "238140.52";
+    document.querySelector('input[name="valorJuros"]').value = "115756.30";
+    document.querySelector('input[name="rioPrevidencia"]').value = "2467.87";
+    document.querySelector('input[name="dataBase"]').value = "2015-05-12";
+    document.querySelector('input[name="dataAtualizacao"]').value = "2024-05-15";
+  });
+
+
+</script>
+
+<script>
+
+
+</script>

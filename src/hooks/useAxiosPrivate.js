@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 function useAxiosPrivate() {
   const refresh = useRefreshToken();
-  const { auth } = useAuth();
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
 
 
@@ -43,7 +43,6 @@ function useAxiosPrivate() {
         if (error.response?.status === 403) {
           navigate('/forbidden', { replace: true });
         }
-
 
         return Promise.reject(error);
       }

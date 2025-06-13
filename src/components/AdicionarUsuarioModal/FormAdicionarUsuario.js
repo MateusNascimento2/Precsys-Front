@@ -1,42 +1,7 @@
-import React, { useState, forwardRef } from 'react';
+import React from 'react'
 import CurrencyFormat from 'react-currency-format';
 
-const AdicionarUsuario = forwardRef(({ onSubmit }, ref) => {
-  const [nome, setNome] = useState('');
-  const [nomeError, setNomeError] = useState(false);
-  const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
-  const [cpfcnpj, setCpfCnpj] = useState('');
-  const [email, setEmail] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [endereco, setEndereco] = useState('');
-  const [qualificacao, setQualificacao] = useState('');
-  const [cargo, setCargo] = useState({
-    admin: 0,
-    advogado: 0,
-  })
-  const [admin, setAdmin] = useState('');
-  const [isAdvogado, setIsAdvogado] = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = {
-      nome,
-      password,
-      cpfcnpj,
-      email,
-      telefone,
-      endereco,
-      qualificacao,
-      admin,
-      isAdvogado,
-      ativo: 1,
-      permissao_email: 0,
-      permissao_proposta: 0,
-      permissao_expcartorio: 0
-    };
-    onSubmit(formData);
-  };
+export default function FormAdicionarUsuario({ usuarioFormData, setUsuarioFormData, handleSubmit }) {
 
   const handleCpfCnpjChange = (event) => {
     let data = event.target.value.replace(/\D/g, "");
@@ -60,11 +25,11 @@ const AdicionarUsuario = forwardRef(({ onSubmit }, ref) => {
       }
       data = cpf;
     }
-    setCpfCnpj(data);
+    setUsuarioFormData({ ...usuarioFormData, cpfcnpj: data });
   };
 
   return (
-    <form className='mt-[20px]' onSubmit={handleSubmit} ref={ref}>
+    <form className='mt-[20px]' onSubmit={handleSubmit}>
       <div className='px-3'>
         <div className='grid grid-cols-1 md:grid-cols-2 w-full'>
           {/* Nome */}
@@ -73,14 +38,14 @@ const AdicionarUsuario = forwardRef(({ onSubmit }, ref) => {
             <input
               className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400'
               name={'nome'}
-              value={nome}
+              value={usuarioFormData.nome}
               required={true}
               onChange={(e) => {
-                setNome(e.target.value);
-                e.target.value.length < 3 ? setNomeError(true) : setNomeError(false);
+                setUsuarioFormData({ ...usuarioFormData, nome: e.target.value });
+                /* e.target.value.length < 3 ? setNomeError(true) : setNomeError(false); */
               }}
             />
-            {nomeError && <p className='text-red-600 text-[11px]'>Nome inválido</p>}
+            {/* {nomeError && <p className='text-red-600 text-[11px]'>Nome inválido</p>} */}
           </div>
 
           {/* Senha */}
@@ -89,13 +54,13 @@ const AdicionarUsuario = forwardRef(({ onSubmit }, ref) => {
             <input
               className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400'
               name={'password'}
-              value={password}
+              value={usuarioFormData.password}
               onChange={(e) => {
-                setPassword(e.target.value);
-                e.target.value.length < 3 ? setPasswordError(true) : setPasswordError(false);
+                setUsuarioFormData({ ...usuarioFormData, password: e.target.value });
+                /* e.target.value.length < 3 ? setPasswordError(true) : setPasswordError(false); */
               }}
             />
-            {passwordError && <p className='text-red-600 text-[11px]'>Senha inválida</p>}
+            {/* {passwordError && <p className='text-red-600 text-[11px]'>Senha inválida</p>} */}
           </div>
 
           {/* CPF/CNPJ */}
@@ -104,7 +69,7 @@ const AdicionarUsuario = forwardRef(({ onSubmit }, ref) => {
             <input
               className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400'
               name='cpfcnpj'
-              value={cpfcnpj}
+              value={usuarioFormData.cpfcnpj}
               onChange={(value) => handleCpfCnpjChange(value)}
             />
           </div>
@@ -115,8 +80,8 @@ const AdicionarUsuario = forwardRef(({ onSubmit }, ref) => {
             <input
               className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400'
               name='email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={usuarioFormData.email}
+              onChange={(e) => setUsuarioFormData({ ...usuarioFormData, email: e.target.value })}
             />
           </div>
 
@@ -124,11 +89,11 @@ const AdicionarUsuario = forwardRef(({ onSubmit }, ref) => {
           <div className='dark:text-white text-black flex flex-col gap-2 py-2 px-2'>
             <label className='text-[14px] font-medium' htmlFor="telefone">Telefone</label>
             <CurrencyFormat
-              value={telefone}
+              value={usuarioFormData.telefone}
               format={'(##)#####-####'}
               onValueChange={(values) => {
                 const { formattedValue } = values;
-                setTelefone(formattedValue);
+                setUsuarioFormData({ ...usuarioFormData, telefone: formattedValue });
               }}
               name='telefone'
               className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400'
@@ -142,8 +107,8 @@ const AdicionarUsuario = forwardRef(({ onSubmit }, ref) => {
               rows={12}
               cols={6}
               className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] h-[34px]'
-              value={endereco}
-              onChange={(e) => setEndereco(e.target.value)}
+              value={usuarioFormData.endereco}
+              onChange={(e) => setUsuarioFormData({ ...usuarioFormData, endereco: e.target.value })}
               name='endereco'
             />
           </div>
@@ -155,8 +120,8 @@ const AdicionarUsuario = forwardRef(({ onSubmit }, ref) => {
               rows={12}
               cols={6}
               className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400 text-[15px] h-[110px]'
-              value={qualificacao}
-              onChange={(e) => setQualificacao(e.target.value)}
+              value={usuarioFormData.qualificacao}
+              onChange={(e) => setUsuarioFormData({ ...usuarioFormData, qualificacao: e.target.value })}
               name='qualificacao'
             />
           </div>
@@ -166,17 +131,17 @@ const AdicionarUsuario = forwardRef(({ onSubmit }, ref) => {
             <p className='text-[14px] font-medium dark:text-white'>Cargo</p>
             <div className='flex flex-col divide-y dark:divide-neutral-600 divide-dashed gap-2'>
               <div className='dark:text-white py-2 relative'>
-                <input id="admin" value={1} onChange={(e) => setAdmin(e.target.value)} className="absolute left-0 top-[40%] w-4 h-4 appearance-none checked:bg-neutral-800 bg-neutral-200 checked:border-neutral-200 checked:border-[4px] dark:border-[4px] border-black dark:border-white rounded-full dark:bg-white dark:checked:bg-neutral-800" type="radio" name="user-type" />
+                <input id="admin" value={1} onChange={(e) => setUsuarioFormData({ ...usuarioFormData, admin: Number(e.target.value), advogado: 0 })} className="absolute left-0 top-[40%] w-4 h-4 appearance-none checked:bg-neutral-800 bg-neutral-200 checked:border-neutral-200 checked:border-[4px] dark:border-[4px] border-black dark:border-white rounded-full dark:bg-white dark:checked:bg-neutral-800" type="radio" name="user-type" />
                 <label htmlFor="admin" className="ml-8">Administrador</label>
                 <p className='text-neutral-600 dark:text-neutral-400 text-[14px] ml-8'>Acesso total a todas as funções.</p>
               </div>
               <div className='dark:text-white py-2 relative'>
-                <input id="advogado" value={1} onChange={(e) => setIsAdvogado(e.target.value)} className="absolute left-0 top-[40%] w-4 h-4 appearance-none checked:bg-neutral-800 bg-neutral-200 checked:border-neutral-200 checked:border-[4px] dark:border-[4px] border-black dark:border-white rounded-full dark:bg-white dark:checked:bg-neutral-800" type="radio" name="user-type" />
+                <input id="advogado" value={1} onChange={(e) => setUsuarioFormData({ ...usuarioFormData, advogado: Number(e.target.value), admin: 0 })} className="absolute left-0 top-[40%] w-4 h-4 appearance-none checked:bg-neutral-800 bg-neutral-200 checked:border-neutral-200 checked:border-[4px] dark:border-[4px] border-black dark:border-white rounded-full dark:bg-white dark:checked:bg-neutral-800" type="radio" name="user-type" />
                 <label htmlFor="advogado" className="ml-8">Jurídico</label>
                 <p className='text-neutral-600 dark:text-neutral-400 text-[14px] ml-8'>Acesso a todos os detalhes das cessões.</p>
               </div>
               <div className='dark:text-white py-2 relative'>
-                <input id="user" value={0} onChange={(e) => setAdmin(e.target.value)} className="absolute left-0 top-[40%] w-4 h-4 appearance-none checked:bg-neutral-800 bg-neutral-200 checked:border-neutral-200 checked:border-[4px] dark:border-[4px] border-black dark:border-white rounded-full dark:bg-white dark:checked:bg-neutral-800" type="radio" name="user-type" />
+                <input id="user" value={0} onChange={(e) => setUsuarioFormData({ ...usuarioFormData, admin: Number(e.target.value), advogado: 0 })} className="absolute left-0 top-[40%] w-4 h-4 appearance-none checked:bg-neutral-800 bg-neutral-200 checked:border-neutral-200 checked:border-[4px] dark:border-[4px] border-black dark:border-white rounded-full dark:bg-white dark:checked:bg-neutral-800" type="radio" name="user-type" />
                 <label htmlFor="user" className="ml-8">Usuário</label>
                 <p className='text-neutral-600 dark:text-neutral-400 text-[14px] ml-8'>Acesso limitado ao sistema.</p>
               </div>
@@ -188,7 +153,5 @@ const AdicionarUsuario = forwardRef(({ onSubmit }, ref) => {
         </div>
       </div>
     </form>
-  );
-});
-
-export default AdicionarUsuario;
+  )
+}

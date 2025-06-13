@@ -140,7 +140,7 @@ export default function Filtro({ onSetShow, show, dadosFiltro, selectedFilters, 
 
           <AbaFiltro abaNome={'Ente'} dadosFiltro={dadosFiltro.ente} selectedFilters={selectedFilters['ente']} handleFilterChange={(value) => handleFilterChange('ente', value)} />
 
-          {auth.user.admin ? <AbaFiltro abaNome={'Empresa'} dadosFiltro={dadosFiltro.empresa} selectedFilters={selectedFilters['empresa']} handleFilterChange={(value) => handleFilterChange('empresa', value)} /> : null}
+          {auth.user.admin || auth.user.advogado ? <AbaFiltro abaNome={'Empresa'} dadosFiltro={dadosFiltro.empresa} selectedFilters={selectedFilters['empresa']} handleFilterChange={(value) => handleFilterChange('empresa', value)} /> : null}
 
           <AbaFiltro abaNome={'Natureza'} dadosFiltro={dadosFiltro.natureza} selectedFilters={selectedFilters['natureza']} handleFilterChange={(value) => handleFilterChange('natureza', value)} />
 
@@ -148,7 +148,7 @@ export default function Filtro({ onSetShow, show, dadosFiltro, selectedFilters, 
 
           <AbaFiltro abaNome={'Óbito'} dadosFiltro={dadosFiltro.falecido} selectedFilters={selectedFilters['falecido']} handleFilterChange={(value) => handleFilterChange('falecido', value)} />
 
-          {auth.user.admin ? <AbaFiltro abaNome={'Rep. Comercial'} dadosFiltro={dadosFiltro.tele} selectedFilters={selectedFilters['tele']} handleFilterChange={(value) => handleFilterChange('tele', value)} /> : null}
+          {auth.user.admin || auth.user.advogado ? <AbaFiltro abaNome={'Rep. Comercial'} dadosFiltro={dadosFiltro.tele} selectedFilters={selectedFilters['tele']} handleFilterChange={(value) => handleFilterChange('tele', value)} /> : null}
 
           <AbaFiltro abaNome={'Data da Cessão'} selectedFilters={selectedFilters['data_cessao']} handleDateChange={handleDateChange} />
           

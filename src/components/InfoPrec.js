@@ -41,18 +41,40 @@ export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
             a.click();
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            toast.error(`Erro ao baixar arquivo: ${error}`, {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: false,
-                theme: isDarkMode === 'true' ? 'dark' : 'light',
-                transition: Bounce,
-            });
-            console.error('Error downloading the file:', error);
+            console.log(error)
+            const blob = error.response?.data;
+            const contentType = error.response?.headers['content-type'];
+
+            if (blob && contentType === 'application/json; charset=utf-8') {
+                const text = await blob.text();
+                const json = JSON.parse(text); 
+
+                toast.error(`${json.error}`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: false,
+                    theme: isDarkMode === 'true' ? 'dark' : 'light',
+                    transition: Bounce,
+                });
+            } else {
+                toast.error(`Erro ao baixar arquivo.`, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: false,
+                    theme: isDarkMode === 'true' ? 'dark' : 'light',
+                    transition: Bounce,
+                });
+            }
+
+
         } finally {
             setLoadingFiles(prev => ({ ...prev, [filename]: false }));
         }
@@ -177,7 +199,7 @@ export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
             <ListaCessionarios cessionario={precInfoNew.cessionarios} precID={precID} fetchDataCessao={fetchDataCessao} />
 
             {
-                auth.user.admin ? <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
+                auth.user.admin || auth.user.advogado ? <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                     <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 dark:bg-neutral-900 xl:divide-x-[1px] dark:divide-neutral-600 mt-2 lg:mt-0'>
                         <div className='cursor-pointer lg:px-4 lg:py-2 lg:my-0 xl:my-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 lg:border-r lg:border-b xl:border-r-0 xl:border-b-0 dark:border-neutral-600' id='juridico'>
                             <Topics data={precInfoNew.juridico_data} texto={'Jurídico Feito'} atualizacaoJuridico={precInfoNew.juridico_feito} textoExplicativo={'A etapa "Jurídico Feito" representa a conclusão bem-sucedida de todos os procedimentos legais necessários na gestão e transferência de precatórios.'} />
@@ -197,7 +219,7 @@ export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
             }
 
             {
-                precInfoNew.cessoes_relacionadas.length > 0 && auth.user.admin ? (
+                precInfoNew.cessoes_relacionadas.length > 0 && (auth.user.admin || auth.user.advogado) ? (
                     <div className='w-full mb-[60px] flex flex-col max-[700px]:mb-60px'>
                         <span className="font-[700] dark:text-white mb-[16px]" id='relacionados'>Relacionados</span>
                         <div className="mb-4 dark:bg-neutral-900">

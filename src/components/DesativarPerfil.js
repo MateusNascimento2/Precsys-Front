@@ -5,14 +5,18 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
+import useLogout from '../hooks/useLogout'
+import { useNavigate } from 'react-router-dom';
 
-export default function DesativarPerfil({ user, id }) {
+
+
+export default function DesativarPerfil({ setUser, user, id }) {
   const { auth, setAuth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
-
-  const currentUser = user || auth.user; // Usar o usuário passado como prop ou o usuário autenticado
   const [isChecked, setIsChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const logout = useLogout();
+  const navigate = useNavigate();
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
@@ -25,20 +29,8 @@ export default function DesativarPerfil({ user, id }) {
     if (isChecked) {
       try {
         setIsLoading(true);
-        await axiosPrivate.put(`/users/${currentUser.id}`, {
-          nome: currentUser.nome,
-          cpfcnpj: currentUser.cpfcnpj,
-          email: currentUser.email,
-          telefone: currentUser.telefone,
-          endereco: currentUser.endereco,
-          obs: currentUser.obs,
-          qualificacao: currentUser.qualificacao,
-          foto: currentUser.foto,
-          admin: currentUser.admin,
+        await axiosPrivate.put(`/users/${user.id}/desativar`, {
           ativo: 0, // Desativa o usuário
-          permissao_email: currentUser.permissao_email,
-          permissao_proposta: currentUser.permissao_proposta,
-          permissao_expcartorio: currentUser.permissao_expcartorio
         });
 
         // Atualiza o estado de auth para refletir a desativação
@@ -50,6 +42,9 @@ export default function DesativarPerfil({ user, id }) {
               ativo: 0
             }
           }));
+        } else {
+          const updatedUser = await axiosPrivate.get(`users/${user.id}`)
+          setUser(updatedUser.data)
         }
 
 
@@ -57,7 +52,7 @@ export default function DesativarPerfil({ user, id }) {
 
         toast.success('Perfil desativado com sucesso!', {
           position: "top-right",
-          autoClose: 1000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -65,17 +60,13 @@ export default function DesativarPerfil({ user, id }) {
           progress: false,
           theme: isDarkMode === 'true' ? 'dark' : 'light',
           transition: Bounce,
-          onClose: () =>  window.location.href = '/', // Recarrega após o toast ser fechado
         });
-
-        // Opcional: Redirecionar o usuário para uma página de logout ou uma página informativa
-        // Exemplo: window.location.href = '/logout';
 
       } catch (err) {
         console.log(err);
-        toast.error(`Erro ao desativar perfil: ${err}`, {
+        toast.error(`Erro ao desativar perfil: ${err.response.data.error}`, {
           position: "top-right",
-          autoClose: 1000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -89,7 +80,7 @@ export default function DesativarPerfil({ user, id }) {
     } else {
       toast.error('Erro ao desativar perfil!', {
         position: "top-right",
-        autoClose: 1000,
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,

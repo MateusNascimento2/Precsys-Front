@@ -1,16 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import CountUp from 'react-countup';
 import { axiosPrivate } from '../api/axios';
 import useAuth from "../hooks/useAuth";
 
 export default function NumerosPerfil({ user }) {
   const { auth } = useAuth();
-  const currentUser = user || auth.user; // Usar o usuário passado ou auth.user
-  const [cessoes, setCessoes] = useState([]);
-  const [cessionarios, setCessionarios] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState([]);
-  const [myCessions, setMyCessions] = useState([]);
+  const [cessoesUsuario, setCessoesUsuario] = useState([]);
 
   const [expAReceber, setExpAReceber] = useState(0);
   const [expRecebida, setExpRecebida] = useState(0);
@@ -43,62 +40,41 @@ export default function NumerosPerfil({ user }) {
       }
     };
 
-    fetchData('/cessoes', setCessoes);
-    fetchData('/cessionarios', setCessionarios);
-    fetchData('/status', setStatus);
+    fetchData(`/dashboard/${user.id}`, setCessoesUsuario);
 
     return () => {
       isMounted = false;
       controller.abort();
     };
-  }, []);
+  }, [user.id]);
+
 
   useEffect(() => {
-    if (cessionarios.length > 0 && cessoes.length > 0 && status.length > 0) { // Verificação para garantir que os dados estejam prontos
-      const cessionariosPorIDdoUsuarios = cessionarios.filter(cessionario => String(cessionario.user_id) === String(currentUser.id));
+    if (cessoesUsuario.length > 0) {
 
-      const minhasCessoes = cessionariosPorIDdoUsuarios
-        .map(cessionario => {
-          const cessao = cessoes.find(cessao => cessao && String(cessao.id) === String(cessionario.cessao_id));
-          if (cessao) {
-            cessao.exp_recebimento = changeStringFloat(cessionario.exp_recebimento);
-          }
-          return cessao;
-        })
-        .filter(cessao => cessao !== undefined);
+      const totalExpAReceber = cessoesUsuario
+        .filter(cessao => cessao.status !== 'Recebido')
+        .reduce((total, cessao) => total + parseFloat(changeStringFloat(cessao.exp_recebimento)), 0);
 
-      setQtdCessao(minhasCessoes.length);
+      const totalExpRecebida = cessoesUsuario
+        .filter(cessao => cessao.status === 'Recebido')
+        .reduce((total, cessao) => total + parseFloat(changeStringFloat(cessao.exp_recebimento)), 0);
 
-      status.forEach(statusItem => {
-        minhasCessoes.forEach(cessao => {
-          if (cessao.status === String(statusItem.id)) {
-            cessao.x = statusItem.nome;
-          }
-        });
-      });
+      const totalValorGasto = cessoesUsuario
+        .reduce((total, cessao) => total + parseFloat(changeStringFloat(cessao.valor_pago)), 0);
 
-      setMyCessions(minhasCessoes);
-
-      const totalExpAReceber = minhasCessoes
-        .filter(cessao => cessao.x !== 'Recebido')
-        .reduce((total, cessao) => total + parseFloat(cessao.exp_recebimento), 0);
-
-      const totalExpRecebida = minhasCessoes
-        .filter(cessao => cessao.x === 'Recebido')
-        .reduce((total, cessao) => total + parseFloat(cessao.exp_recebimento), 0);
-
-      const totalValorGasto = cessionariosPorIDdoUsuarios
-        .reduce((total, cessionario) => total + parseFloat(changeStringFloat(cessionario.valor_pago)), 0);
-
-      const totalComissao = cessionariosPorIDdoUsuarios
-        .reduce((total, cessionario) => total + parseFloat(changeStringFloat(cessionario.comissao)), 0);
+      const totalComissao = cessoesUsuario
+        .reduce((total, cessao) => total + parseFloat(changeStringFloat(cessao.comissao)), 0);
 
       setExpAReceber(totalExpAReceber);
       setExpRecebida(totalExpRecebida);
       setValorGasto(totalValorGasto);
       setComissao(totalComissao);
+      setQtdCessao(cessoesUsuario.length);
     }
-  }, [cessionarios, cessoes, status, currentUser.id]);
+  }, [cessoesUsuario])
+
+
 
   return (
     <>

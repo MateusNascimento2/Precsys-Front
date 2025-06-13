@@ -107,7 +107,9 @@ export default function FerramentasPerfil({ user, id }) {
 
     try {
       setIsLoading(true);
+
       await axiosPrivate.put(`/users/${user.id}`, updates);
+
       if (isCheckedRepComercial) {
         await axiosPrivate.post('/tele', { id_usuario: user.id, sala: sala, ativo: user.ativo, })
       } else {
@@ -157,11 +159,6 @@ export default function FerramentasPerfil({ user, id }) {
       });
       setIsLoading(false);
     }
-  };
-
-  // Função para adicionar novos inputs
-  const addNewInput = () => {
-    setExtraInputs([...extraInputs, { apelido: '', email: '', senha: '', link: '' }]);
   };
 
   // Função para atualizar os valores dos inputs extras
@@ -229,8 +226,6 @@ export default function FerramentasPerfil({ user, id }) {
   useEffect(async () => {
 
     const response = await axiosPrivate.get(`/pegar-api-key/${id ? id : auth.user.id}`)
-    console.log(response.data.chave)
-    console.log(response.data.expires_at)
     setApiKey(response.data.chave)
     setApiKeyExpiresAt(response.data.expires_at)
 
@@ -285,15 +280,6 @@ export default function FerramentasPerfil({ user, id }) {
                               <label htmlFor={'email-corporativo'} key={'email-corporativo'} className='dark:text-white font-medium'>E-mail Corporativo</label>
                               <span className='text-neutral-400 text-sm'>Acesso rápido aos e-mails corporativos</span>
                             </div>
-                            {isCheckedPermissaoEmail && <div>
-                              {/* <button
-                                                type="button"
-                                                onClick={addNewInput}
-                                                className='flex items-center justify-center dark:text-white w-10 h-10 text-lg dark:hover:bg-neutral-800 rounded-full'
-                                              >
-                                                +
-                                              </button> */}
-                            </div>}
                           </div>
                         </div>
 

@@ -1,0 +1,1483 @@
+[
+  {
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.360245
+  },
+  {
+    "data": "06\/01\/1997",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.355245
+  },
+  {
+    "data": "07\/01\/1997",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.350245
+  },
+  {
+    "data": "08\/01\/1997",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.345245
+  },
+  {
+    "data": "09\/01\/1997",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.340245
+  },
+  {
+    "data": "10\/01\/1997",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.335245
+  },
+  {
+    "data": "11\/01\/1997",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.330245
+  },
+  {
+    "data": "12\/01\/1997",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.325245
+  },
+  {
+    "data": "01\/01\/1998",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.320245
+  },
+  {
+    "data": "02\/01\/1998",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.315245
+  },
+  {
+    "data": "03\/01\/1998",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.310245
+  },
+  {
+    "data": "04\/01\/1998",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.305245
+  },
+  {
+    "data": "05\/01\/1998",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.300245
+  },
+  {
+    "data": "06\/01\/1998",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.295245
+  },
+  {
+    "data": "07\/01\/1998",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.290245
+  },
+  {
+    "data": "08\/01\/1998",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.285245
+  },
+  {
+    "data": "09\/01\/1998",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.280245
+  },
+  {
+    "data": "10\/01\/1998",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.275245
+  },
+  {
+    "data": "11\/01\/1998",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.270245
+  },
+  {
+    "data": "12\/01\/1998",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.265245
+  },
+  {
+    "data": "01\/01\/1999",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.260245
+  },
+  {
+    "data": "02\/01\/1999",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.255245
+  },
+  {
+    "data": "03\/01\/1999",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.250245
+  },
+  {
+    "data": "04\/01\/1999",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.245245
+  },
+  {
+    "data": "05\/01\/1999",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.240245
+  },
+  {
+    "data": "06\/01\/1999",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.235245
+  },
+  {
+    "data": "07\/01\/1999",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.230245
+  },
+  {
+    "data": "08\/01\/1999",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.225245
+  },
+  {
+    "data": "09\/01\/1999",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.220245
+  },
+  {
+    "data": "10\/01\/1999",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.215245
+  },
+  {
+    "data": "11\/01\/1999",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.210245
+  },
+  {
+    "data": "12\/01\/1999",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.205245
+  },
+  {
+    "data": "01\/01\/2000",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.200245
+  },
+  {
+    "data": "02\/01\/2000",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.195245
+  },
+  {
+    "data": "03\/01\/2000",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.190245
+  },
+  {
+    "data": "04\/01\/2000",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.185245
+  },
+  {
+    "data": "05\/01\/2000",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.180245
+  },
+  {
+    "data": "06\/01\/2000",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.175245
+  },
+  {
+    "data": "07\/01\/2000",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.170245
+  },
+  {
+    "data": "08\/01\/2000",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.165245
+  },
+  {
+    "data": "09\/01\/2000",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.160245
+  },
+  {
+    "data": "10\/01\/2000",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.155245
+  },
+  {
+    "data": "11\/01\/2000",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.150245
+  },
+  {
+    "data": "12\/01\/2000",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.145245
+  },
+  {
+    "data": "01\/01\/2001",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.140245
+  },
+  {
+    "data": "02\/01\/2001",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.135245
+  },
+  {
+    "data": "03\/01\/2001",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.130245
+  },
+  {
+    "data": "04\/01\/2001",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.125245
+  },
+  {
+    "data": "05\/01\/2001",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.120245
+  },
+  {
+    "data": "06\/01\/2001",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.115245
+  },
+  {
+    "data": "07\/01\/2001",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.110245
+  },
+  {
+    "data": "08\/01\/2001",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.105245
+  },
+  {
+    "data": "09\/01\/2001",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.100245
+  },
+  {
+    "data": "10\/01\/2001",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.095245
+  },
+  {
+    "data": "11\/01\/2001",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.090245
+  },
+  {
+    "data": "12\/01\/2001",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.085245
+  },
+  {
+    "data": "01\/01\/2002",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.080245
+  },
+  {
+    "data": "02\/01\/2002",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.075245
+  },
+  {
+    "data": "03\/01\/2002",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.070245
+  },
+  {
+    "data": "04\/01\/2002",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.065245
+  },
+  {
+    "data": "05\/01\/2002",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.060245
+  },
+  {
+    "data": "06\/01\/2002",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.055245
+  },
+  {
+    "data": "07\/01\/2002",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.050245
+  },
+  {
+    "data": "08\/01\/2002",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.045245
+  },
+  {
+    "data": "09\/01\/2002",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.040245
+  },
+  {
+    "data": "10\/01\/2002",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.035245
+  },
+  {
+    "data": "11\/01\/2002",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.030245
+  },
+  {
+    "data": "12\/01\/2002",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.025245
+  },
+  {
+    "data": "01\/01\/2003",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.020245
+  },
+  {
+    "data": "02\/01\/2003",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.015245
+  },
+  {
+    "data": "03\/01\/2003",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.010245
+  },
+  {
+    "data": "04\/01\/2003",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.005245
+  },
+  {
+    "data": "05\/01\/2003",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 2.000245
+  },
+  {
+    "data": "06\/01\/2003",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.995245
+  },
+  {
+    "data": "07\/01\/2003",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.990245
+  },
+  {
+    "data": "08\/01\/2003",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.985245
+  },
+  {
+    "data": "09\/01\/2003",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.980245
+  },
+  {
+    "data": "10\/01\/2003",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.975245
+  },
+  {
+    "data": "11\/01\/2003",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.970245
+  },
+  {
+    "data": "12\/01\/2003",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.965245
+  },
+  {
+    "data": "01\/01\/2004",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.960245
+  },
+  {
+    "data": "02\/01\/2004",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.955245
+  },
+  {
+    "data": "03\/01\/2004",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.950245
+  },
+  {
+    "data": "04\/01\/2004",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.945245
+  },
+  {
+    "data": "05\/01\/2004",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.940245
+  },
+  {
+    "data": "06\/01\/2004",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.935245
+  },
+  {
+    "data": "07\/01\/2004",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.930245
+  },
+  {
+    "data": "08\/01\/2004",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.925245
+  },
+  {
+    "data": "09\/01\/2004",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.920245
+  },
+  {
+    "data": "10\/01\/2004",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.915245
+  },
+  {
+    "data": "11\/01\/2004",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.910245
+  },
+  {
+    "data": "12\/01\/2004",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.905245
+  },
+  {
+    "data": "01\/01\/2005",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.900245
+  },
+  {
+    "data": "02\/01\/2005",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.895245
+  },
+  {
+    "data": "03\/01\/2005",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.890245
+  },
+  {
+    "data": "04\/01\/2005",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.885245
+  },
+  {
+    "data": "05\/01\/2005",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.880245
+  },
+  {
+    "data": "06\/01\/2005",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.875245
+  },
+  {
+    "data": "07\/01\/2005",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.870245
+  },
+  {
+    "data": "08\/01\/2005",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.865245
+  },
+  {
+    "data": "09\/01\/2005",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.860245
+  },
+  {
+    "data": "10\/01\/2005",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.855245
+  },
+  {
+    "data": "11\/01\/2005",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.850245
+  },
+  {
+    "data": "12\/01\/2005",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.845245
+  },
+  {
+    "data": "01\/01\/2006",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.840245
+  },
+  {
+    "data": "02\/01\/2006",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.835245
+  },
+  {
+    "data": "03\/01\/2006",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.830245
+  },
+  {
+    "data": "04\/01\/2006",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.825245
+  },
+  {
+    "data": "05\/01\/2006",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.820245
+  },
+  {
+    "data": "06\/01\/2006",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.815245
+  },
+  {
+    "data": "07\/01\/2006",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.810245
+  },
+  {
+    "data": "08\/01\/2006",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.805245
+  },
+  {
+    "data": "09\/01\/2006",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.800245
+  },
+  {
+    "data": "10\/01\/2006",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.795245
+  },
+  {
+    "data": "11\/01\/2006",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.790245
+  },
+  {
+    "data": "12\/01\/2006",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.785245
+  },
+  {
+    "data": "01\/01\/2007",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.780245
+  },
+  {
+    "data": "02\/01\/2007",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.775245
+  },
+  {
+    "data": "03\/01\/2007",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.770245
+  },
+  {
+    "data": "04\/01\/2007",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.765245
+  },
+  {
+    "data": "05\/01\/2007",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.760245
+  },
+  {
+    "data": "06\/01\/2007",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.755245
+  },
+  {
+    "data": "07\/01\/2007",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.750245
+  },
+  {
+    "data": "08\/01\/2007",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.745245
+  },
+  {
+    "data": "09\/01\/2007",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.740245
+  },
+  {
+    "data": "10\/01\/2007",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.735245
+  },
+  {
+    "data": "11\/01\/2007",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.730245
+  },
+  {
+    "data": "12\/01\/2007",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.725245
+  },
+  {
+    "data": "01\/01\/2008",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.720245
+  },
+  {
+    "data": "02\/01\/2008",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.715245
+  },
+  {
+    "data": "03\/01\/2008",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.710245
+  },
+  {
+    "data": "04\/01\/2008",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.705245
+  },
+  {
+    "data": "05\/01\/2008",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.700245
+  },
+  {
+    "data": "06\/01\/2008",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.695245
+  },
+  {
+    "data": "07\/01\/2008",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.690245
+  },
+  {
+    "data": "08\/01\/2008",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.685245
+  },
+  {
+    "data": "09\/01\/2008",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.680245
+  },
+  {
+    "data": "10\/01\/2008",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.675245
+  },
+  {
+    "data": "11\/01\/2008",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.670245
+  },
+  {
+    "data": "12\/01\/2008",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.665245
+  },
+  {
+    "data": "01\/01\/2009",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.660245
+  },
+  {
+    "data": "02\/01\/2009",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.655245
+  },
+  {
+    "data": "03\/01\/2009",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.650245
+  },
+  {
+    "data": "04\/01\/2009",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.645245
+  },
+  {
+    "data": "05\/01\/2009",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.640245
+  },
+  {
+    "data": "06\/01\/2009",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.635245
+  },
+  {
+    "data": "07\/01\/2009",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.630245
+  },
+  {
+    "data": "08\/01\/2009",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.625245
+  },
+  {
+    "data": "09\/01\/2009",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.620245
+  },
+  {
+    "data": "10\/01\/2009",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.615245
+  },
+  {
+    "data": "11\/01\/2009",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.610245
+  },
+  {
+    "data": "12\/01\/2009",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.605245
+  },
+  {
+    "data": "01\/01\/2010",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.600245
+  },
+  {
+    "data": "02\/01\/2010",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.595245
+  },
+  {
+    "data": "03\/01\/2010",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.590245
+  },
+  {
+    "data": "04\/01\/2010",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.585245
+  },
+  {
+    "data": "05\/01\/2010",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.580245
+  },
+  {
+    "data": "06\/01\/2010",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.575245
+  },
+  {
+    "data": "07\/01\/2010",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.570245
+  },
+  {
+    "data": "08\/01\/2010",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.565245
+  },
+  {
+    "data": "09\/01\/2010",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.560245
+  },
+  {
+    "data": "10\/01\/2010",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.555245
+  },
+  {
+    "data": "11\/01\/2010",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.550245
+  },
+  {
+    "data": "12\/01\/2010",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.545245
+  },
+  {
+    "data": "01\/01\/2011",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.540245
+  },
+  {
+    "data": "02\/01\/2011",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.535245
+  },
+  {
+    "data": "03\/01\/2011",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.530245
+  },
+  {
+    "data": "04\/01\/2011",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.525245
+  },
+  {
+    "data": "05\/01\/2011",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.520245
+  },
+  {
+    "data": "06\/01\/2011",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.515245
+  },
+  {
+    "data": "07\/01\/2011",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.510245
+  },
+  {
+    "data": "08\/01\/2011",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.505245
+  },
+  {
+    "data": "09\/01\/2011",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.500245
+  },
+  {
+    "data": "10\/01\/2011",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.495245
+  },
+  {
+    "data": "11\/01\/2011",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.490245
+  },
+  {
+    "data": "12\/01\/2011",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.485245
+  },
+  {
+    "data": "01\/01\/2012",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.480245
+  },
+  {
+    "data": "02\/01\/2012",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.475245
+  },
+  {
+    "data": "03\/01\/2012",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.470245
+  },
+  {
+    "data": "04\/01\/2012",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.465245
+  },
+  {
+    "data": "05\/01\/2012",
+    "remuneracaoBasicaPoupanca": 0.4828,
+    "fator": 1.460245
+  },
+  {
+    "data": "06\/01\/2012",
+    "remuneracaoBasicaPoupanca": 0.4828,
+    "fator": 1.455417
+  },
+  {
+    "data": "07\/01\/2012",
+    "remuneracaoBasicaPoupanca": 0.4551,
+    "fator": 1.450589
+  },
+  {
+    "data": "08\/01\/2012",
+    "remuneracaoBasicaPoupanca": 0.4273,
+    "fator": 1.446038
+  },
+  {
+    "data": "09\/01\/2012",
+    "remuneracaoBasicaPoupanca": 0.4273,
+    "fator": 1.441765
+  },
+  {
+    "data": "10\/01\/2012",
+    "remuneracaoBasicaPoupanca": 0.4134,
+    "fator": 1.437492
+  },
+  {
+    "data": "11\/01\/2012",
+    "remuneracaoBasicaPoupanca": 0.4134,
+    "fator": 1.433358
+  },
+  {
+    "data": "12\/01\/2012",
+    "remuneracaoBasicaPoupanca": 0.4134,
+    "fator": 1.429224
+  },
+  {
+    "data": "01\/01\/2013",
+    "remuneracaoBasicaPoupanca": 0.4134,
+    "fator": 1.42509
+  },
+  {
+    "data": "02\/01\/2013",
+    "remuneracaoBasicaPoupanca": 0.4134,
+    "fator": 1.420956
+  },
+  {
+    "data": "03\/01\/2013",
+    "remuneracaoBasicaPoupanca": 0.4134,
+    "fator": 1.416822
+  },
+  {
+    "data": "04\/01\/2013",
+    "remuneracaoBasicaPoupanca": 0.4273,
+    "fator": 1.412688
+  },
+  {
+    "data": "05\/01\/2013",
+    "remuneracaoBasicaPoupanca": 0.4551,
+    "fator": 1.408415
+  },
+  {
+    "data": "06\/01\/2013",
+    "remuneracaoBasicaPoupanca": 0.4551,
+    "fator": 1.403864
+  },
+  {
+    "data": "07\/01\/2013",
+    "remuneracaoBasicaPoupanca": 0.4828,
+    "fator": 1.399313
+  },
+  {
+    "data": "08\/01\/2013",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.394485
+  },
+  {
+    "data": "09\/01\/2013",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.389485
+  },
+  {
+    "data": "10\/01\/2013",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.384485
+  },
+  {
+    "data": "11\/01\/2013",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.379485
+  },
+  {
+    "data": "12\/01\/2013",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.374485
+  },
+  {
+    "data": "01\/01\/2014",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.369485
+  },
+  {
+    "data": "02\/01\/2014",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.364485
+  },
+  {
+    "data": "03\/01\/2014",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.359485
+  },
+  {
+    "data": "04\/01\/2014",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.354485
+  },
+  {
+    "data": "05\/01\/2014",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.349485,
+    "Column10": 1.354485
+  },
+  {
+    "data": "06\/01\/2014",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.344485,
+    "Column10": 1.061251
+  },
+  {
+    "data": "07\/01\/2014",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.339485,
+    "Column9": 0.293234
+  },
+  {
+    "data": "08\/01\/2014",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.334485
+  },
+  {
+    "data": "09\/01\/2014",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.329485
+  },
+  {
+    "data": "10\/01\/2014",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.324485
+  },
+  {
+    "data": "11\/01\/2014",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.319485
+  },
+  {
+    "data": "12\/01\/2014",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.314485
+  },
+  {
+    "data": "01\/01\/2015",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.309485
+  },
+  {
+    "data": "02\/01\/2015",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.304485
+  },
+  {
+    "data": "03\/01\/2015",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.299485
+  },
+  {
+    "data": "04\/01\/2015",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.294485
+  },
+  {
+    "data": "05\/01\/2015",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.289485
+  },
+  {
+    "data": "06\/01\/2015",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.284485
+  },
+  {
+    "data": "07\/01\/2015",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.279485
+  },
+  {
+    "data": "08\/01\/2015",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.274485
+  },
+  {
+    "data": "09\/01\/2015",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.269485
+  },
+  {
+    "data": "10\/01\/2015",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.264485
+  },
+  {
+    "data": "11\/01\/2015",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.259485
+  },
+  {
+    "data": "12\/01\/2015",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.254485
+  },
+  {
+    "data": "01\/01\/2016",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.249485
+  },
+  {
+    "data": "02\/01\/2016",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.244485
+  },
+  {
+    "data": "03\/01\/2016",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.239485
+  },
+  {
+    "data": "04\/01\/2016",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.234485
+  },
+  {
+    "data": "05\/01\/2016",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.229485
+  },
+  {
+    "data": "06\/01\/2016",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.224485
+  },
+  {
+    "data": "07\/01\/2016",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.219485
+  },
+  {
+    "data": "08\/01\/2016",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.214485
+  },
+  {
+    "data": "09\/01\/2016",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.209485
+  },
+  {
+    "data": "10\/01\/2016",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.204485
+  },
+  {
+    "data": "11\/01\/2016",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.199485
+  },
+  {
+    "data": "12\/01\/2016",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.194485
+  },
+  {
+    "data": "01\/01\/2017",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.189485
+  },
+  {
+    "data": "02\/01\/2017",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.184485
+  },
+  {
+    "data": "03\/01\/2017",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.179485
+  },
+  {
+    "data": "04\/01\/2017",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.174485
+  },
+  {
+    "data": "05\/01\/2017",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.169485
+  },
+  {
+    "data": "06\/01\/2017",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.164485
+  },
+  {
+    "data": "07\/01\/2017",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.159485
+  },
+  {
+    "data": "08\/01\/2017",
+    "remuneracaoBasicaPoupanca": 0.5,
+    "fator": 1.154485
+  },
+  {
+    "data": "09\/01\/2017",
+    "remuneracaoBasicaPoupanca": 0.469,
+    "fator": 1.149485
+  },
+  {
+    "data": "10\/01\/2017",
+    "remuneracaoBasicaPoupanca": 0.4273,
+    "fator": 1.144795
+  },
+  {
+    "data": "11\/01\/2017",
+    "remuneracaoBasicaPoupanca": 0.4273,
+    "fator": 1.140522
+  },
+  {
+    "data": "12\/01\/2017",
+    "remuneracaoBasicaPoupanca": 0.3994,
+    "fator": 1.136249
+  },
+  {
+    "data": "01\/01\/2018",
+    "remuneracaoBasicaPoupanca": 0.3994,
+    "fator": 1.132255
+  },
+  {
+    "data": "02\/01\/2018",
+    "remuneracaoBasicaPoupanca": 0.3855,
+    "fator": 1.128261
+  },
+  {
+    "data": "03\/01\/2018",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.124406
+  },
+  {
+    "data": "04\/01\/2018",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.120691
+  },
+  {
+    "data": "05\/01\/2018",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.116976
+  },
+  {
+    "data": "06\/01\/2018",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.113261
+  },
+  {
+    "data": "07\/01\/2018",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.109546
+  },
+  {
+    "data": "08\/01\/2018",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.105831
+  },
+  {
+    "data": "09\/01\/2018",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.102116
+  },
+  {
+    "data": "10\/01\/2018",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.098401
+  },
+  {
+    "data": "11\/01\/2018",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.094686
+  },
+  {
+    "data": "12\/01\/2018",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.090971
+  },
+  {
+    "data": "01\/01\/2019",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.087256
+  },
+  {
+    "data": "02\/01\/2019",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.083541
+  },
+  {
+    "data": "03\/01\/2019",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.079826
+  },
+  {
+    "data": "04\/01\/2019",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.076111
+  },
+  {
+    "data": "05\/01\/2019",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.072396
+  },
+  {
+    "data": "06\/01\/2019",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.068681
+  },
+  {
+    "data": "07\/01\/2019",
+    "remuneracaoBasicaPoupanca": 0.3715,
+    "fator": 1.064966
+  },
+  {
+    "data": "08\/01\/2019",
+    "remuneracaoBasicaPoupanca": 0.3434,
+    "fator": 1.061251
+  },
+  {
+    "data": "09\/01\/2019",
+    "remuneracaoBasicaPoupanca": 0.3434,
+    "fator": 1.057817
+  },
+  {
+    "data": "10\/01\/2019",
+    "remuneracaoBasicaPoupanca": 0.3153,
+    "fator": 1.054383
+  },
+  {
+    "data": "11\/01\/2019",
+    "remuneracaoBasicaPoupanca": 0.2871,
+    "fator": 1.05123
+  },
+  {
+    "data": "12\/01\/2019",
+    "remuneracaoBasicaPoupanca": 0.2871,
+    "fator": 1.048359
+  },
+  {
+    "data": "01\/01\/2020",
+    "remuneracaoBasicaPoupanca": 0.2588,
+    "fator": 1.045488
+  },
+  {
+    "data": "02\/01\/2020",
+    "remuneracaoBasicaPoupanca": 0.2588,
+    "fator": 1.0429
+  },
+  {
+    "data": "03\/01\/2020",
+    "remuneracaoBasicaPoupanca": 0.2446,
+    "fator": 1.040312
+  },
+  {
+    "data": "04\/01\/2020",
+    "remuneracaoBasicaPoupanca": 0.2162,
+    "fator": 1.037866
+  },
+  {
+    "data": "05\/01\/2020",
+    "remuneracaoBasicaPoupanca": 0.2162,
+    "fator": 1.035704
+  },
+  {
+    "data": "06\/01\/2020",
+    "remuneracaoBasicaPoupanca": 0.1733,
+    "fator": 1.033542
+  },
+  {
+    "data": "07\/01\/2020",
+    "remuneracaoBasicaPoupanca": 0.1303,
+    "fator": 1.031809
+  },
+  {
+    "data": "08\/01\/2020",
+    "remuneracaoBasicaPoupanca": 0.1303,
+    "fator": 1.030506
+  },
+  {
+    "data": "09\/01\/2020",
+    "remuneracaoBasicaPoupanca": 0.1159,
+    "fator": 1.029203
+  },
+  {
+    "data": "10\/01\/2020",
+    "remuneracaoBasicaPoupanca": 0.1159,
+    "fator": 1.028044
+  },
+  {
+    "data": "11\/01\/2020",
+    "remuneracaoBasicaPoupanca": 0.1159,
+    "fator": 1.026885
+  },
+  {
+    "data": "12\/01\/2020",
+    "remuneracaoBasicaPoupanca": 0.1159,
+    "fator": 1.025726
+  },
+  {
+    "data": "01\/01\/2021",
+    "remuneracaoBasicaPoupanca": 0.1159,
+    "fator": 1.024567
+  },
+  {
+    "data": "02\/01\/2021",
+    "remuneracaoBasicaPoupanca": 0.1159,
+    "fator": 1.023408
+  },
+  {
+    "data": "03\/01\/2021",
+    "remuneracaoBasicaPoupanca": 0.1159,
+    "fator": 1.022249
+  },
+  {
+    "data": "04\/01\/2021",
+    "remuneracaoBasicaPoupanca": 0.159,
+    "fator": 1.02109
+  },
+  {
+    "data": "05\/01\/2021",
+    "remuneracaoBasicaPoupanca": 0.159,
+    "fator": 1.0195
+  },
+  {
+    "data": "06\/01\/2021",
+    "remuneracaoBasicaPoupanca": 0.2019,
+    "fator": 1.01791
+  },
+  {
+    "data": "07\/01\/2021",
+    "remuneracaoBasicaPoupanca": 0.2446,
+    "fator": 1.015891
+  },
+  {
+    "data": "08\/01\/2021",
+    "remuneracaoBasicaPoupanca": 0.2446,
+    "fator": 1.013445
+  },
+  {
+    "data": "09\/01\/2021",
+    "remuneracaoBasicaPoupanca": 0.3012,
+    "fator": 1.010999
+  },
+  {
+    "data": "10\/01\/2021",
+    "remuneracaoBasicaPoupanca": 0.3575,
+    "fator": 1.007987
+  },
+  {
+    "data": "11\/01\/2021",
+    "remuneracaoBasicaPoupanca": 0.4412,
+    "fator": 1.004412
+  },
+  {
+    "data": "12\/01\/2021",
+    "fator": 1
+  }
+]

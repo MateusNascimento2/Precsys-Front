@@ -188,7 +188,7 @@ export default function Precatorio() {
                   <div className="flex flex-col justify-center text-xs pl-2 w-full">
                     <div className="flex justify-between items-center w-full">
                       <span className="font-bold dark:text-white text-2xl">{precDataNew.precatorio}</span>
-                      {auth.user.admin && (
+                      {auth.user.admin ? (
                         <>
                           <DotsButton isModal>
                             <Modal cessaoInfo={precDataNew} precID={precID} fetchDataCessao={fetchDataCessao} />
@@ -196,7 +196,7 @@ export default function Precatorio() {
                           </DotsButton>
                           <DeleteConfirmationModal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} onConfirm={confirmDelete} />
                         </>
-                      )}
+                      ) : null}
                     </div>
                     <span className="text-neutral-400 font-medium line-clamp-1">{precDataNew.cedente}</span>
                   </div>

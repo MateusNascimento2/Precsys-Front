@@ -48,6 +48,7 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
   const { auth } = useAuth();
   const [loadingFiles, setLoadingFiles] = useState({});
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [cessionarioSelecionado, setCessionarioSelecionado] = useState(null);
   const [status, setStatus] = useState('typing');
   const [formDataCessionario, setFormDataCessionario] = useState({
     user_id: '',
@@ -248,10 +249,10 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
         return true;
       } else if (flag === 'Editar') {
 
-        const files = fileCessionario || {};
+        const files = fileCessionarioEditar || {};
+
 
         if (files.nota) {
-          // Verifica se `files.nota` é um array antes de adicionar os arquivos corretamente
 
           formDataCessionarios.append("nota", files.nota);
 
@@ -415,11 +416,20 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
 
   const navigate = useNavigate();
 
-  const openModal = () => setModalIsOpen(true);
-  const closeModal = () => setModalIsOpen(false);
+  const openModal = (cessionario) => {
+    setCessionarioSelecionado(cessionario);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setCessionarioSelecionado(null);
+    setModalIsOpen(false);
+  };
 
   const confirmDelete = async (id, files) => {
     const isDarkMode = localStorage.getItem('darkMode');
+
+    console.log(id)
 
     const deleteFile = async (path, fileName) => {
       try {
@@ -714,20 +724,20 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
             <div className="min-w-[120px] w-[17%] text-center dark:text-neutral-200">{c.exp_recebimento}</div>
             {auth.user.admin ? <div className="min-w-[120px] w-[17%] text-center dark:text-neutral-200">{c.valor_oficio_pagamento}</div> : null}
 
-            <div className="min-w-[180px] w-[18%] text-center">
+            <div className="min-w-[180px] w-[18%] text-center overflow-hidden">
               {c.nota ? <button title="Baixar nota" className="cursor-pointer text-[12px] hover:underline dark:text-white" onClick={() => downloadFile(c.nota)}>
                 {loadingFiles[c.nota] ? (
                   <div className="flex items-center gap-1">
-                    <div className="w-4 h-4"><LoadingSpinner /></div>
+                    <div className="w-4 h-4 shrink-0"><LoadingSpinner /></div>
 
                     <span>{c.nota ? c.nota.split('/')[1] : null}</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                  <div className="flex items-center gap-1 overflow-hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 shrink-0">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                     </svg>
-                    <span className="cursor-pointer text-[12px] hover:underline dark:text-white">{c.nota ? c.nota.split('/')[1] : null}</span>
+                    <span className="cursor-pointer text-[12px] hover:underline dark:text-white overflow-hidden text-ellipsis">{c.nota ? c.nota.split('/')[1] : null}</span>
 
                   </div>
 
@@ -742,12 +752,12 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
 
                     <ModalEditarCessionario dadosCessionario={c} status={status} handleCessionarioInputChange={handleCessionarioInputChange} formDataCessionario={formDataCessionarioEditar} setFormDataCessionario={setFormDataCessionarioEditar} fileCessionario={fileCessionarioEditar} setFileCessionario={setFileCessionarioEditar} handleEditarCessionarioSubmit={handleEditarCessionarioSubmit} />
 
-                    <button onClick={openModal} className="hover:bg-red-800 bg-red-600 text-white text-sm px-4 py-2 rounded">
+                    <button onClick={() => openModal(c)} className="hover:bg-red-800 bg-red-600 text-white text-sm px-4 py-2 rounded">
                       Excluir
                     </button>
                   </DotsButton>
 
-                  <DeleteConfirmationModal isOpen={modalIsOpen} onRequestClose={closeModal} onConfirm={() => confirmDelete(c.cessionario_id, { nota: c.nota, comprovante: c.comprovante, mandado: c.mandado })} />
+                  <DeleteConfirmationModal isOpen={modalIsOpen} onRequestClose={closeModal} onConfirm={() => confirmDelete(cessionarioSelecionado?.cessionario_id, { nota: cessionarioSelecionado?.nota, comprovante: cessionarioSelecionado?.comprovante, mandado: cessionarioSelecionado?.mandado })} />
                 </> : null}
 
             </div>

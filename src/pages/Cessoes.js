@@ -708,7 +708,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     setStatus({ status: "sending", message: "Enviando dados..." });
 
     try {
-      // 🟡 Validação da cessão
+      // Validação da cessão
       const camposObrigatorios = [
         'precatorio',
         'processo',
@@ -736,7 +736,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
         return;
       }
 
-      // 🟡 Validação dos cessionários
+      // Validação dos cessionários
       if (cessionariosQtd.length > 0) {
         const algumCessionarioInvalido = cessionariosQtd.some((cessionario) => {
           const {
@@ -759,7 +759,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
         }
       }
 
-      // 📤 Upload dos arquivos
+      // Upload dos arquivos
       const uploadResponse = await uploadFiles();
 
       if (!uploadResponse) {
@@ -770,13 +770,13 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
         return;
       }
 
-      // 🧾 Montagem do payload
+      // Montagem do payload
       const payload = {
         ...formDataCessao,
         cessionarios: cessionariosQtd.map(c => c.formDataCessionario),
       };
 
-      // 📡 Envio da cessão (comentado por enquanto)
+      // Envio da cessão
       const response = await axiosPrivate.post("/cessoes", payload);
 
       setStatus({
@@ -831,7 +831,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
               >
                 Cessões
               </motion.h2>}
-            {!minhascessoes && !isInPerfilUsuario ?
+            {!minhascessoes && !isInPerfilUsuario && auth.user.admin ?
               <div>
                 <Modal {...modalProps} />
               </div>
