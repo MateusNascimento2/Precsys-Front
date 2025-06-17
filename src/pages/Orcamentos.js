@@ -40,7 +40,7 @@ export default function Orcamentos() {
       }
     };
 
-    fetchData('OrcamentosComAnos', setOrcamentos)
+    fetchData('pegarOrcamentosComAnos', setOrcamentos)
 
 
     return () => {

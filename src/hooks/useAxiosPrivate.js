@@ -2,10 +2,14 @@ import axios, { axiosPrivate } from "../api/axios";
 import React, { useEffect } from 'react';
 import useRefreshToken from "./useRefreshToken";
 import useAuth from "./useAuth";
+import { useNavigate } from 'react-router-dom';
 
-function useAxiosPrivate () {
+
+function useAxiosPrivate() {
   const refresh = useRefreshToken();
   const { auth } = useAuth();
+  const navigate = useNavigate();
+
 
   useEffect(() => {
 
@@ -16,7 +20,7 @@ function useAxiosPrivate () {
         }
 
         return config;
-      } , (error) => Promise.reject(error)
+      }, (error) => Promise.reject(error)
     )
 
     const responseIntercept = axiosPrivate.interceptors.response.use(
@@ -25,10 +29,22 @@ function useAxiosPrivate () {
         const prevRequest = error?.config;
         if (error?.response?.status === 403 && !prevRequest.sent) {
           prevRequest.sent = true;
-          const newAccessToken = await refresh();
-          prevRequest.headers.authorization = `Bearer ${newAccessToken}`;
-          return axiosPrivate(prevRequest);
+          try {
+            const newAccessToken = await refresh();
+            prevRequest.headers.authorization = `Bearer ${newAccessToken}`;
+            return axiosPrivate(prevRequest);
+          } catch (err) {
+            // Falha no refresh: redireciona para login
+            navigate('/', { replace: true });
+            return Promise.reject(err);
+          }
         }
+
+        if (error.response?.status === 403) {
+          navigate('/forbidden', { replace: true });
+        }
+
+
         return Promise.reject(error);
       }
     );

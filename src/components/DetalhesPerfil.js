@@ -1,6 +1,7 @@
 import React from 'react'
 import { ButtonEditProfile } from '../pages/MeuPerfil';
-
+/* import PieChart from './PieChart';
+ */
 export default function DetalhesPerfil({ user, handleItemClick }) {
 
   return (
@@ -47,6 +48,10 @@ export default function DetalhesPerfil({ user, handleItemClick }) {
           <span className='dark:text-white font-medium text-[14px]'>{user.qualificacao}</span>
         </div>
       </div>
+
+{/*       <div className='mt-4'>
+        <PieChart />
+      </div> */}
     </section>
   )
 }

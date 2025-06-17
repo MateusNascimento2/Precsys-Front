@@ -1,141 +1,106 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import SearchInput from '../components/SearchInput';
 import Lista from '../components/List';
 import FilterButton from '../components/FilterButton';
 import Filter from '../layout/Filter';
-import Modal from '../components/Modal';
-import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
-import AdicionarCessao from "../components/AdicionarCessao";
-import AdicionarCessionario from "../components/AdicionarCessionario";
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { ToastContainer, toast, Bounce } from 'react-toastify';
+import { useParams } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { v4 as uuidv4 } from 'uuid';
 import { motion } from 'framer-motion';
 import ScrollToTopButton from '../components/ScrollToTopButton';
 import * as XLSX from 'xlsx';
+import { Modal } from '../components/CessaoCessionarioModal/Modal';
+import useAuth from "../hooks/useAuth";
+import Filtro from '../components/FiltroCessoes/Filtro';
 
-export default function AllCessoes() {
-  const [voltarAdicionarCessao, setVoltarAdicionarCessao] = useState(false);
-  const [varas, setVaras] = useState([]);
-  const [teles, setTeles] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [escreventes, setEscreventes] = useState([]);
-  const [orcamentos, setOrcamentos] = useState([]);
-  const [orcamentosAno, setOrcamentosAno] = useState([]);
-  const [naturezas, setNaturezas] = useState([]);
-  const [empresas, setEmpresas] = useState([]);
-  const [juridicos, setJuridicos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showModalAdicionarCessionario, setShowModalAdicionarCessionario] = useState(false);
-  const [cessionarios, setCessionarios] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCheckboxes, setSelectedCheckboxes] = useState(() => {
-    const savedFilters = localStorage.getItem('filters');
-    return savedFilters ? JSON.parse(savedFilters) : [];
+export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
+  const [formDataCessao, setFormDataCessao] = useState({
+    precatorio: '',
+    processo: '',
+    cedente: '',
+    vara_processo: '',
+    ente_id: '',
+    ano: '',
+    natureza: '',
+    empresa_id: '',
+    data_cessao: '',
+    escrevente_id: '',
+    juridico_id: '',
+    tele_id: '',
+    requisitorio: '',
+    escritura: '',
+    status: '1'
   });
+  const [formDataCessionario, setFormDataCessionario] = useState({
+    user_id: '',
+    valor_pago: '',
+    comissao: '',
+    percentual: '',
+    exp_recebimento: '',
+    valor_oficio_pagamento: '',
+    recebido: '',
+    assinatura: '',
+    mandado: '',
+    comprovante: '',
+    expedido: '',
+    obs: '',
+    nota: ''
+  })
+  const [fileCessao, setFileCessao] = useState({
+    requisitorio: '',
+    escritura: ''
+  })
+  const [fileCessionario, setFileCessionario] = useState({
+    nota: '',
+    mandado: '',
+    comprovante: ''
+  })
+  const [selectedFilters, setSelectedFilters] = useState(() => {
+    const saved = localStorage.getItem('selectedFilters');
+    const parsed = saved ? JSON.parse(saved) : {};
+
+    return {
+      status: parsed.status || [],
+      ente: parsed.ente || [],
+      empresa: parsed.empresa || [],
+      natureza: parsed.natureza || [],
+      anuencia_advogado: parsed.anuencia_advogado || [],
+      falecido: parsed.falecido || [],
+      tele: parsed.tele || [],
+      data_cessao: Array.isArray(parsed.data_cessao) ? parsed.data_cessao : [],
+      requisitorio: parsed.requisitorio || [],
+      escritura: parsed.escritura || [],
+    };
+  });
+
+  const [status, setStatus] = useState('typing');
+  const [cessionariosQtd, setCessionariosQtd] = useState([]);
+  const [idCessionarioForm, setIdCessionarioForm] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState('');
   const [show, setShow] = useState(false);
-  const [dataCessoes, setDataCessoes] = useState([]);
+  const [cessoes, setCessoes] = useState([]);
+  const [dadosFiltro, setDadosFiltro] = useState([]);
   const axiosPrivate = useAxiosPrivate();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const adicionarCessaoRef = useRef(null);
 
-  const [precatorio, setPrecatorio] = useState('');
-  const [processo, setProcesso] = useState('');
-  const [cedente, setCedente] = useState('');
-  const [vara, setVara] = useState(null);
-  const [ente, setEnte] = useState(null);
-  const [ano, setAno] = useState(null);
-  const [natureza, setNatureza] = useState(null);
-  const [empresa, setEmpresa] = useState(null);
-  const [dataCessao, setDataCessao] = useState(null);
-  const [repComercial, setRepComercial] = useState(null);
-  const [escrevente, setEscrevente] = useState(null);
-  const [juridico, setJuridico] = useState(null);
-  const [requisitorio, setRequisitorio] = useState(null);
-  const [escritura, setEscritura] = useState(null);
-
-  const [valorPago, setValorPago] = useState('');
-  const [comissao, setComissao] = useState('');
-  const [percentual, setPercentual] = useState('');
-  const [expectativa, setExpectativa] = useState('');
-
-  const [filteredCessoes, setFilteredCessoes] = useState([]);
   const [selectedExportFields, setSelectedExportFields] = useState([
     "id",
     "precatorio",
     "cedente",
     "status",
-    "ente_id",
+    "ente",
     "natureza",
     "data_cessao",
-    "empresa_id",
-    "adv",
+    "empresa",
+    "anuencia_advogado",
     "falecido",
   ]);
-  const [valorTotalExcel, setValorTotalExcel] = useState({})
-
-  useEffect(() => {
-    let isMounted = true;
-    const controller = new AbortController();
-
-    const fetchValores = async () => {
-      try {
-        const ids = filteredCessoes.map((cessao) => cessao.id);
-        const { data } = await axiosPrivate.post(
-          '/valorTotalExcel',
-          { cessao_ids: ids },
-          { signal: controller.signal }
-        );
-
-        if (isMounted) {
-          // Organize os valores em um objeto
-          const valoresTotais = data.reduce(
-            (acc, item) => {
-              // Função para converter o valor string para número
-              const parseValor = (valor) => {
-                if (!valor) return 0;
-                return parseFloat(
-                  valor.replace("R$", "").replace(".", "").replace(",", ".").trim()
-                );
-              };
-
-              acc.valorPago += parseValor(item.valor_pago);
-              acc.comissao += parseValor(item.comissao);
-              acc.expRecebimento += parseValor(item.exp_recebimento);
-              return acc;
-            },
-            { valorPago: 0, comissao: 0, expRecebimento: 0 } // Valores iniciais
-          );
-
-          setValorTotalExcel(valoresTotais);
-          setIsLoading(false);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchValores();
-
-    return () => {
-      isMounted = false;
-      controller.abort();
-    };
-  }, [filteredCessoes]);
-
-
-  const handleFilteredCessoes = (filteredData) => {
-    setFilteredCessoes(filteredData);
-  };
-
-  const [valoresCessionarios, setValoresCessionarios] = useState([]);
 
   const { minhascessoes } = useParams();
-
+  const { auth } = useAuth();
 
   useEffect(() => {
     let isMounted = true;
@@ -143,82 +108,185 @@ export default function AllCessoes() {
 
     const fetchData = async (url, setter) => {
       try {
+        setIsLoading(true)
         const { data } = await axiosPrivate.get(url, {
-          signal: controller.signal
+          signal: controller.signal,
         });
         if (isMounted) setter(data);
-        setIsLoading(false);
+        setIsLoading(false)
       } catch (err) {
-        console.log(err);
+        setIsLoading(false)
+        console.error(`Failed to fetch ${url}:`, err);
       }
     };
 
-    fetchData('/vara', setVaras);
-    fetchData('/tele', setTeles);
-    fetchData('/escreventes', setEscreventes);
-    fetchData('/users', setUsers);
-    fetchData('/orcamentos', setOrcamentos);
-    fetchData('/orcamentosAnos', setOrcamentosAno)
-    fetchData('/natureza', setNaturezas);
-    fetchData('/empresas', setEmpresas);
-    fetchData('/juridicos', setJuridicos);
+    const fetchAllData = async () => {
+      try {
+        const urlCessoes = minhascessoes || isInPerfilUsuario ? `/cessoes-usuario/${userIdUrlParam ? userIdUrlParam : auth.user.id}` : '/todas-cessoes';
+        const urlFiltros = auth.user.admin ? '/filtros' : '/filtros-usuario';
+        await Promise.all([
+          fetchData(urlCessoes, setCessoes),
+          fetchData(urlFiltros, setDadosFiltro)
+        ]);
 
+      } catch (err) {
+        console.error('Erro ao buscar informações sobre cessões:', err);
+      }
+    };
+
+    fetchAllData();
 
     return () => {
       isMounted = false;
       controller.abort();
     };
-  }, []);
-
-
-  const addCessionario = () => {
-    setShowModalAdicionarCessionario(true);
-    if (voltarAdicionarCessao) {
-      setVoltarAdicionarCessao(false);
-      return;
-    } else {
-      const id = uuidv4();
-      const novoCessionario = {
-        componente: <AdicionarCessionario valorPago={valorPago} setValorPago={setValorPago} comissao={comissao} setComissao={setComissao} percentual={percentual} setPercentual={setPercentual} expectativa={expectativa} setExpectativa={setExpectativa} key={id} users={users} enviarValores={(valores) => handleReceberValoresCessionario(valores, id)} />,
-        index: id,
-        valores: {} // Inicialmente os valores são um objeto vazio
-      };
-      setCessionarios([...cessionarios, novoCessionario]);
-      setValoresCessionarios([...valoresCessionarios, {}]);
-    }
-  }
-
-  const handleReceberValoresCessionario = (valores, id) => {
-    setCessionarios(prev => {
-      return prev.map(cessionario => {
-        if (cessionario.index === id) {
-          return { ...cessionario, valores: valores };
-        } else {
-          return cessionario;
-        }
-      });
-    });
-  };
-
-  const handleExcluirCessionario = (id) => {
-    const novaListaCessionarios = cessionarios.filter(cessionario => cessionario.index !== id);
-    setCessionarios(novaListaCessionarios);
-    setValoresCessionarios(prev => {
-      return prev.filter((_, index) => index !== id);
-    });
-  };
+  }, [axiosPrivate, minhascessoes, auth.user?.id]);
 
   useEffect(() => {
-    localStorage.setItem('filters', JSON.stringify(selectedCheckboxes));
-  }, [selectedCheckboxes]);
+    localStorage.setItem('selectedFilters', JSON.stringify(selectedFilters));
+  }, [selectedFilters]);
+
+  // Função para atualizar o estado dos filtros
+  const handleFilterChange = (filterCategory, value) => {
+    setSelectedFilters(prevState => {
+      const newFilter = prevState[filterCategory].includes(value)
+        ? prevState[filterCategory].filter(item => item !== value)
+        : [...prevState[filterCategory], value];
+
+      return { ...prevState, [filterCategory]: newFilter };
+    });
+  };
+
+  // Função para limpar todos os filtros
+  const clearAllFilters = () => {
+    const emptyFilters = {
+      status: [],
+      ente: [],
+      empresa: [],
+      natureza: [],
+      anuencia_advogado: [],
+      falecido: [],
+      tele: [],
+      data_cessao: [],
+      requisitorio: [],
+      escritura: [],
+    };
+
+    setSelectedFilters(emptyFilters);
+    localStorage.removeItem('selectedFilters');
+  };
+
+  const handleDateChange = (id, value) => {
+    setSelectedFilters((prevState) => {
+      let newDataCessao = [...prevState.data_cessao];
+
+      if (id === 'data_cessao_inicial') {
+        newDataCessao[0] = value;  // Atualiza a data inicial
+        // Se a data final ainda não foi preenchida, define como a data de hoje
+        if (!newDataCessao[1]) {
+          newDataCessao[1] = new Date().toISOString().split('T')[0];  // Data de hoje no formato yyyy-mm-dd
+        }
+      } else if (id === 'data_cessao_final') {
+        newDataCessao[1] = value;  // Atualiza a data final
+      }
+
+      return {
+        ...prevState,
+        data_cessao: newDataCessao,  // Atualiza o array de datas
+      };
+    });
+  };
+
+  // Função para filtrar os dados das cessões com base nos filtros selecionados
+  const filteredData = cessoes.filter(item => {
+
+    // 1. Filtro de pesquisa (searchQuery) em todos os campos do item
+    const filterSearchInput = searchQuery
+      ? Object.values(item).some(value =>
+        // Concatenando "ente - ano" na pesquisa
+        (value && value.toString().toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (`${item.ente} - ${item.ano}`.toLowerCase().includes(searchQuery.toLowerCase()))  // Concatenando ente + ano
+      )
+      : true;
+
+    // 2. Filtro de "status"
+    const filterStatus = selectedFilters.status.length
+      ? selectedFilters.status.includes(item.status)  // Verifica se o status está selecionado
+      : true;  // Se não houver filtro de status, retorna true (sem filtro)
+
+    // 3. Filtro de "ente + ano" (ex: "Estado RJ - 2017")
+    const filterEnteAno = selectedFilters.ente.length
+      ? selectedFilters.ente.includes(`${item.ente} - ${item.ano}`)  // Concatenando ente e ano com " - "
+      : true;  // Se não houver filtro de ente/ano, retorna true
+
+    // 4. Filtro de "empresa"
+    const filterEmpresa = selectedFilters.empresa.length
+      ? selectedFilters.empresa.includes(item.empresa)  // Verifica se a empresa está selecionada
+      : true;  // Se não houver filtro de empresa, retorna true
+
+    // 5. Filtro de "natureza"
+    const filterNatureza = selectedFilters.natureza.length
+      ? selectedFilters.natureza.includes(item.natureza)  // Verifica se a natureza está selecionada
+      : true;  // Se não houver filtro de natureza, retorna true
+
+    // 6. Filtro de "anuencia_advogado"
+    const filterAnuenciaAdvogado = selectedFilters.anuencia_advogado.length
+      ? selectedFilters.anuencia_advogado.includes(item.anuencia_advogado)  // Verifica se a anuência do advogado está selecionada
+      : true;  // Se não houver filtro de anuência, retorna true
+
+    // 7. Filtro de "falecido"
+    const filterFalecido = selectedFilters.falecido.length
+      ? selectedFilters.falecido.includes(item.falecido)  // Verifica se o valor de falecido está selecionado
+      : true;  // Se não houver filtro de falecido, retorna true
+
+    // 8. Filtro de "tele"
+    const filterTele = selectedFilters.tele.length
+      ? selectedFilters.tele.includes(item.tele)  // Verifica se o tele está selecionado
+      : true;  // Se não houver filtro de tele, retorna true
+
+    // 9. Filtro de "data_cessao"
+    // Filtro de data_cessao com base no intervalo de data inicial e final (dentro do array)
+    const filterDataCessao = selectedFilters.data_cessao.length === 2
+      ? new Date(item.data_cessao) >= new Date(selectedFilters.data_cessao[0]) &&
+      new Date(item.data_cessao) <= new Date(selectedFilters.data_cessao[1])
+      : true;
+
+    const filterRequisitorioFaltando = selectedFilters.requisitorio.length
+      ? selectedFilters.requisitorio.includes(item.requisitorio)  // Verifica se o tele está selecionado
+      : true;  // Se não houver filtro de tele, retorna true
+
+    const filterEscrituraFaltando = selectedFilters.escritura.length
+      ? selectedFilters.escritura.includes(item.escritura)  // Verifica se o tele está selecionado
+      : true;  // Se não houver filtro de tele, retorna true
+
+    // 10. Verifica se todos os filtros são verdadeiros
+    return (
+      filterSearchInput &&
+      filterStatus &&
+      filterEnteAno &&
+      filterEmpresa &&
+      filterNatureza &&
+      filterAnuenciaAdvogado &&
+      filterFalecido &&
+      filterTele &&
+      filterDataCessao &&
+      filterRequisitorioFaltando &&
+      filterEscrituraFaltando
+    );
+  });
 
   const handleInputChange = (query) => {
     setSearchQuery(query);
   }
 
-  const handleData = (data) => {
-    setDataCessoes(data);
-  }
+  const fetchCessoes = async () => {
+    try {
+      const { data } = await axiosPrivate.get('/todas-cessoes');
+      setCessoes(data);// atualiza a lista
+    } catch (error) {
+      console.error('Erro ao buscar as cessões após cadastro:', error);
+    }
+  };
 
   const handleShow = () => {
     setShow((prevState) => !prevState);
@@ -228,300 +296,6 @@ export default function AllCessoes() {
       document.body.style.overflow = 'scroll';
     }
   }
-
-  const handleSelectedCheckboxesChange = (childData) => {
-    setSelectedCheckboxes(childData);
-  };
-
-  const handleVoltarAdicionarCessao = () => {
-    setVoltarAdicionarCessao(true);
-    setShowModalAdicionarCessionario(prevState => !prevState);
-  }
-
-  const handleReceberValoresCessao = (valores) => {
-    setPrecatorio(valores.precatorio);
-    setProcesso(valores.processo);
-    setCedente(valores.cedente);
-    setVara(valores.vara);
-    setEnte(valores.ente);
-    setAno(valores.ano);
-    setNatureza(valores.natureza);
-    setEmpresa(valores.empresa);
-    setDataCessao(valores.dataCessao);
-    setRepComercial(valores.repComercial);
-    setEscrevente(valores.escrevente);
-    setJuridico(valores.juridico);
-    setRequisitorio(valores.requisitorio);
-    setEscritura(valores.escritura);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const isDarkMode = localStorage.getItem('darkMode');
-
-    // Verifica se há cessionários e se todos têm os valores corretos
-    if (cessionarios.length > 0) {
-      for (const cessionario of cessionarios) {
-        if (!cessionario.valores.cessionario) {
-          toast.error(`Adicione um cessionário!`, {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: false,
-            theme: isDarkMode === 'true' ? 'dark' : 'light',
-            transition: Bounce,
-          });
-          return;
-        }
-      }
-    }
-
-    // Verifica se todos os campos obrigatórios da cessão foram preenchidos
-    if (precatorio.length < 12 || processo.length < 12 || !cedente || !vara || !ente || !ano || !natureza || !empresa || !dataCessao || !repComercial || !escrevente || !juridico) {
-      toast.error('Todos os campos da cessão precisam ser preenchidos!', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: false,
-        theme: isDarkMode === 'true' ? 'dark' : 'light',
-        transition: Bounce,
-      });
-      return;
-    }
-
-    // Cria o objeto inicial da cessão, sem os arquivos
-    const cessao = {
-      precatorio,
-      processo,
-      cedente,
-      vara,
-      ente,
-      ano,
-      natureza,
-      empresa,
-      dataCessao,
-      repComercial,
-      escrevente,
-      juridico,
-      status: "1",
-      escritura: null, // Arquivo será adicionado depois
-      requisitorio: null // Arquivo será adicionado depois
-    };
-
-    let cessaoId;
-
-    try {
-      setIsLoading(true);
-
-      // Primeiro POST para criar a cessão e obter o cessaoId
-      const response = await axiosPrivate.post('/cessoes', cessao);
-      cessaoId = response.data.insertId;
-
-      // Agora que temos o cessaoId, podemos atualizar o objeto cessao com os arquivos
-      /*       if (requisitorio) {
-              cessao.requisitorio = `cessoes_requisitorios/${cessaoId}-requisitorio-${requisitorio.name}`;
-            }
-            if (escritura) {
-              cessao.escritura = `cessoes_escrituras/${cessaoId}-escritura-${escritura.name}`;
-            } */
-
-      // Agora que temos o cessaoId, podemos atualizar o objeto cessao com os arquivos
-      // Agora que temos o cessaoId, podemos criar o objeto com os nomes que o backend espera
-      const cessaoEditada = {
-        precatorioEditado: precatorio,
-        processoEditado: processo,
-        cedenteEditado: cedente,
-        varaEditado: vara,
-        enteEditado: ente,
-        anoEditado: ano,
-        naturezaEditado: natureza,
-        empresaEditado: empresa,
-        dataCessaoEditado: dataCessao,
-        repComercialEditado: repComercial,
-        escreventeEditado: escrevente,
-        juridicoEditado: juridico,
-        requisitorioEditado: requisitorio ? `cessoes_requisitorios/${cessaoId}-requisitorio-${requisitorio.name}` : null,
-        escrituraEditado: escritura ? `cessoes_escrituras/${cessaoId}-escritura-${escritura.name}` : null
-      };
-
-      // Atualiza o registro da cessão com os arquivos usando o novo objeto
-      await axiosPrivate.put(`/cessoes/${cessaoId}`, cessaoEditada);
-
-      // Agora, se houver arquivos, fazemos o upload
-      if (requisitorio || escritura) {
-        const filesToUpload = [];
-        if (requisitorio) {
-          filesToUpload.push({ name: 'requisitorio', file: requisitorio, path: cessaoEditada.requisitorio, isRequisitorio: true });
-        }
-        if (escritura) {
-          filesToUpload.push({ name: 'escritura', file: escritura, path: cessaoEditada.escritura, isEscritura: true });
-        }
-
-        // Função de upload dos arquivos
-        await uploadFiles(filesToUpload, cessaoId);
-      }
-
-    } catch (err) {
-      toast.error(`Erro ao adicionar Cessão: ${err}`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: false,
-        theme: isDarkMode === 'true' ? 'dark' : 'light',
-        transition: Bounce,
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    // Adiciona os cessionários, se houver
-    if (cessionarios.length > 0) {
-      try {
-        for (const cessionario of cessionarios) {
-          cessionario.valores.id_cessao = cessaoId;
-
-          // Adiciona os caminhos dos arquivos no cessionário
-          if (cessionario.valores.nota) {
-            cessionario.valores.notaPath = `cessionarios_nota/${cessionario.valores.nota.name}`;
-          }
-          if (cessionario.valores.oficioTransferencia) {
-            cessionario.valores.oficioTransferenciaPath = `cessionarios_mandado/${cessionario.valores.oficioTransferencia.name}`;
-          }
-          if (cessionario.valores.comprovantePagamento) {
-            cessionario.valores.comprovantePagamentoPath = `cessionarios_comprovante/${cessionario.valores.comprovantePagamento.name}`;
-          }
-
-          // POST para adicionar o cessionário
-          await axiosPrivate.post('/cessionarios', cessionario.valores);
-
-          // Upload de arquivos do cessionário, se houver
-          const filesToUpload = [];
-          if (cessionario.valores.nota) {
-            filesToUpload.push({ name: 'nota', file: cessionario.valores.nota });
-          }
-          if (cessionario.valores.oficioTransferencia) {
-            filesToUpload.push({ name: 'oficio_transferencia', file: cessionario.valores.oficioTransferencia });
-          }
-          if (cessionario.valores.comprovantePagamento) {
-            filesToUpload.push({ name: 'comprovante_pagamento', file: cessionario.valores.comprovantePagamento });
-          }
-          if (filesToUpload.length > 0) {
-            await uploadFilesCessionario(filesToUpload);
-          }
-        }
-      } catch (err) {
-        toast.error(`Erro ao adicionar cessionário: ${err}`, {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: false,
-          theme: isDarkMode === 'true' ? 'dark' : 'light',
-          transition: Bounce,
-        });
-        setIsLoading(false);
-        return;
-      }
-    }
-
-    toast.success('Cessão cadastrada com sucesso!', {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: false,
-      theme: isDarkMode === 'true' ? 'dark' : 'light',
-      transition: Bounce,
-    });
-
-    setIsLoading(false);
-    adicionarCessaoRef.current.resetForm();
-    navigate('/todas-cessoes');
-  };
-
-  // Função para upload de arquivos
-  const uploadFiles = async (files, cessaoId) => {
-    const formData = new FormData();
-
-    files.forEach((file) => {
-      const fileNameWithPrecID = `${cessaoId}-${file.name}-${file.file.name}`
-      formData.append(file.name, new File([file.file], fileNameWithPrecID));  // Adiciona o arquivo
-      formData.append('path', file.path);     // Adiciona o caminho do arquivo com o cessaoId
-
-    });
-
-    try {
-      
-      await axiosPrivate.post('/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-    } catch (err) {
-      const isDarkMode = localStorage.getItem('darkMode');
-      toast.error(`Erro ao enviar arquivos: ${err}`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: false,
-        theme: isDarkMode === 'true' ? 'dark' : 'light',
-        transition: Bounce,
-      });
-      setIsLoading(false);
-      return;
-    }
-  };
-
-  const uploadFilesCessionario = async (files) => {
-    const formData = new FormData();
-
-    files.forEach((file) => {
-      const fileNameWithPrecID = `${file.file.name}`
-      formData.append(file.name, new File([file.file], fileNameWithPrecID));  // Adiciona o arquivo
-      formData.append('path', file.path);     // Adiciona o caminho do arquivo com o cessaoId
-
-    });
-
-    try {
-      
-      await axiosPrivate.post('/uploadFileCessionario', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-    } catch (err) {
-      const isDarkMode = localStorage.getItem('darkMode');
-      toast.error(`Erro ao enviar arquivos: ${err}`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: false,
-        theme: isDarkMode === 'true' ? 'dark' : 'light',
-        transition: Bounce,
-      });
-      setIsLoading(false);
-      return;
-    }
-  };
 
   const exportPDF = (filteredData) => {
 
@@ -587,11 +361,11 @@ export default function AllCessoes() {
                       {
                         columns: [
                           { text: cessao.status, style: 'status', color: statusColors[cessao.status] || '#000000' },
-                          ...(cessao.ente_id ? [{ text: cessao.ente_id, style: 'badge' }] : []),
+                          ...(cessao.ente ? [{ text: `${cessao.ente} - ${cessao.ano}`, style: 'badge' }] : []),
                           ...(cessao.natureza ? [{ text: cessao.natureza, style: 'badge' }] : []),
                           ...(cessao.data_cessao ? [{ text: cessao.data_cessao.split('-').reverse().join('/'), style: 'badge' }] : []),
-                          ...(cessao.empresa_id ? [{ text: cessao.empresa_id, style: 'badge' }] : []),
-                          ...(cessao.adv ? [{ text: cessao.adv, style: 'badge' }] : []),
+                          ...(cessao.empresa ? [{ text: cessao.empresa, style: 'badge' }] : []),
+                          ...(cessao.anuencia_advogado ? [{ text: cessao.anuencia_advogado, style: 'badge' }] : []),
                           ...(cessao.falecido ? [{ text: cessao.falecido, style: 'badge' }] : []),
                         ],
                         columnGap: 5,
@@ -656,6 +430,15 @@ export default function AllCessoes() {
     pdfMake.createPdf(docDefinition).download('lista.pdf');
   };
 
+
+  const handleFieldSelectionChange = (field) => {
+    setSelectedExportFields((prevState) =>
+      prevState.includes(field)
+        ? prevState.filter((item) => item !== field)
+        : [...prevState, field]
+    );
+  };
+
   const exportToExcel = (filteredData, selectedFields) => {
     // Mapeamento de rótulos personalizados
     const fieldLabels = {
@@ -664,11 +447,11 @@ export default function AllCessoes() {
       processo: "Processo",
       cedente: "Cedente",
       status: "Status",
-      ente_id: "Ente Público",
+      ente: "Ente Público",
       natureza: "Natureza",
       data_cessao: "Data da Cessão",
-      empresa_id: "Empresa",
-      adv: "Anuência",
+      empresa: "Empresa",
+      anuencia_advogado: "Anuência",
       falecido: "Falecido",
     };
 
@@ -676,9 +459,16 @@ export default function AllCessoes() {
     const selectedData = filteredData.map((item) => {
       const filteredItem = {};
       selectedFields.forEach((field) => {
-        const label = fieldLabels[field] || field; // Usa o rótulo personalizado ou a chave original
-        filteredItem[label] = item[field];
+
+        if (fieldLabels[field] === 'Ente Público') {
+          const label = fieldLabels[field] || field; // Usa o rótulo personalizado ou a chave original
+          filteredItem[label] = `${item[field]} - ${item.ano}`;
+        } else {
+          const label = fieldLabels[field] || field; // Usa o rótulo personalizado ou a chave original
+          filteredItem[label] = item[field];
+        }
       });
+
       return filteredItem;
     });
 
@@ -691,140 +481,393 @@ export default function AllCessoes() {
     XLSX.writeFile(workbook, "cessoes.xlsx");
   };
 
-  const handleFieldSelectionChange = (field) => {
-    setSelectedExportFields((prevState) =>
-      prevState.includes(field)
-        ? prevState.filter((item) => item !== field)
-        : [...prevState, field]
+
+  //Funções do Modal
+  const handleCessaoInputChange = (value, name) => {
+
+    if (value instanceof File) {
+      let values;
+      let file;
+
+      if (name === 'escritura') {
+        values = `cessoes_escrituras/${value.name}`
+        file = value
+      } else if (name === 'requisitorio') {
+        values = `cessoes_requisitorios/${value.name}`
+        file = value
+      }
+
+      setFormDataCessao({ ...formDataCessao, [name]: values });
+      setFileCessao({ ...fileCessao, [name]: file })
+
+    } else if (value instanceof Object) {
+
+      setFormDataCessao({ ...formDataCessao, [name]: value?.formattedValue ? value.formattedValue : value.value });
+
+    } else if (value === null) {
+      let values;
+      let file;
+
+      if (name === 'escritura') {
+        values = ''
+        file = ''
+      } else if (name === 'requisitorio') {
+        values = ''
+        file = ''
+      }
+
+      setFormDataCessao({ ...formDataCessao, [name]: values });
+      setFileCessao({ ...fileCessao, [name]: file })
+
+    } else {
+      setFormDataCessao({ ...formDataCessao, [name]: value?.formattedValue ? value.formattedValue : value });
+    }
+
+
+  };
+
+  const handleCessionarioInputChange = (id, values, name) => {
+
+    //Função para checar se é um objeto por causa dos inputs que possuem a lib "Select" que retornam um object no parametro values
+    function isObject(obj) {
+      return obj === Object(obj) && !obj instanceof File
+    }
+
+
+    if (isObject(values)) {
+
+      const { value } = values;
+
+      setCessionariosQtd(prevCessionarios =>
+        prevCessionarios.map(cessionario =>
+          cessionario.id === id
+            ? { ...cessionario, formDataCessionario: { ...cessionario.formDataCessionario, [name]: value } }
+            : cessionario
+        )
+      );
+
+    } else if (values instanceof File) {
+      let value;
+      let file;
+
+      if (name === 'nota') {
+        value = `cessionarios_nota/${values.name}`
+        file = values
+      } else if (name === 'mandado') {
+        value = `cessionarios_mandado/${values.name}`
+        file = values
+      } else if (name === 'comprovante') {
+        value = value = `cessionarios_comprovante/${values.name}`
+        file = values
+      }
+
+      setCessionariosQtd(prevCessionarios =>
+        prevCessionarios.map(cessionario =>
+          cessionario.id === id
+            ? { ...cessionario, formDataCessionario: { ...cessionario.formDataCessionario, [name]: value }, fileCessionarios: { ...cessionario.fileCessionarios, [name]: file } }
+            : cessionario
+        )
+      );
+
+
+    } else if (values === null) {
+      let value;
+      let file;
+
+      if (name === 'nota') {
+        value = ''
+        file = ''
+      } else if (name === 'mandado') {
+        value = ''
+        file = ''
+      } else if (name === 'comprovante') {
+        value = ''
+        file = ''
+      }
+
+      setCessionariosQtd(prevCessionarios =>
+        prevCessionarios.map(cessionario =>
+          cessionario.id === id
+            ? { ...cessionario, formDataCessionario: { ...cessionario.formDataCessionario, [name]: value }, fileCessionarios: { ...cessionario.fileCessionarios, [name]: file } }
+            : cessionario
+        )
+      );
+
+    }
+
+    else {
+
+      setCessionariosQtd(prevCessionarios =>
+        prevCessionarios.map(cessionario =>
+          cessionario.id === id
+            ? { ...cessionario, formDataCessionario: { ...cessionario.formDataCessionario, [name]: values } }
+            : cessionario
+        )
+      );
+
+    }
+
+
+  };
+
+  const handleNomeTab = (nome, id) => {
+    setCessionariosQtd(prevCessionarios =>
+      prevCessionarios.map(cessionario =>
+        cessionario.id === id
+          ? { ...cessionario, nomeTab: nome }
+          : cessionario
+      )
     );
+  }
+
+  const handleAddCessionario = () => {
+    setIdCessionarioForm(prevId => prevId + 1);
+
+    setCessionariosQtd(
+      [...cessionariosQtd, { id: idCessionarioForm, nomeTab: '', formDataCessionario: { ...formDataCessionario }, fileCessionarios: { ...fileCessionario } }]
+    )
+  }
+
+  const handleDeleteCessionarioForm = (id) => {
+    setCessionariosQtd(
+      cessionariosQtd.filter(cessionarioForm => cessionarioForm.id !== id)
+    )
+  }
+
+  const uploadFiles = async () => {
+    try {
+      const formDataCessao = new FormData();
+      const formDataCessionarios = new FormData();
+
+      // 🔹 Adicionando os arquivos da cessão ao formDataCessao
+      if (fileCessao.requisitorio) {
+        formDataCessao.append("requisitorio", fileCessao.requisitorio);
+      }
+
+      if (fileCessao.escritura) {
+        formDataCessao.append("escritura", fileCessao.escritura);
+      }
+
+      // 🔹 Adicionando arquivos dos cessionários ao formDataCessionarios
+      cessionariosQtd.forEach((cessionario) => {
+        const files = cessionario.fileCessionarios || {};
+
+        if (files.nota) {
+          // Verifica se `files.nota` é um array antes de adicionar os arquivos corretamente
+          if (Array.isArray(files.nota)) {
+            files.nota.forEach((file) => formDataCessionarios.append("nota", file));
+          } else {
+            formDataCessionarios.append("nota", files.nota);
+          }
+        }
+
+        if (files.mandado) {
+          if (Array.isArray(files.mandado)) {
+            files.mandado.forEach((file) => formDataCessionarios.append("oficio_transferencia", file));
+          } else {
+            formDataCessionarios.append("oficio_transferencia", files.mandado);
+          }
+        }
+
+        if (files.comprovante) {
+          if (Array.isArray(files.comprovante)) {
+            files.comprovante.forEach((file) => formDataCessionarios.append("comprovante_pagamento", file));
+          } else {
+            formDataCessionarios.append("comprovante_pagamento", files.comprovante);
+          }
+        }
+      });
+
+      // 🔹 Enviar arquivos da cessão primeiro
+      if (fileCessao.requisitorio || fileCessao.escritura) {
+        await axiosPrivate.post("/upload", formDataCessao, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        console.log("✅ Upload dos arquivos da cessão realizado com sucesso!");
+      }
+
+      // 🔹 Enviar arquivos dos cessionários, se existirem
+      if (formDataCessionarios.has("nota") || formDataCessionarios.has("oficio_transferencia") || formDataCessionarios.has("comprovante_pagamento")) {
+        await axiosPrivate.post("/uploadFileCessionario", formDataCessionarios, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        console.log("✅ Upload dos arquivos dos cessionários realizado com sucesso!");
+      }
+
+      return true;
+    } catch (error) {
+      console.error("❌ Erro ao enviar os arquivos:", error);
+      return false;
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Estado inicial: envio iniciado
+    setStatus({ status: "sending", message: "Enviando dados..." });
+
+    try {
+      // Validação da cessão
+      const camposObrigatorios = [
+        'precatorio',
+        'processo',
+        'cedente',
+        'vara_processo',
+        'ente_id',
+        'ano',
+        'natureza',
+        'data_cessao',
+        'escrevente_id',
+        'juridico_id',
+      ];
+
+      const algumCampoVazio = camposObrigatorios.some((campo) => !formDataCessao[campo]);
+
+      if (
+        algumCampoVazio ||
+        !formDataCessao.precatorio || formDataCessao.precatorio.length < 12 ||
+        !formDataCessao.processo || formDataCessao.processo.length < 25
+      ) {
+        setStatus({
+          status: 'error',
+          message: 'Preencha todos os campos obrigatórios da cessão!',
+        });
+        return;
+      }
+
+      // Validação dos cessionários
+      if (cessionariosQtd.length > 0) {
+        const algumCessionarioInvalido = cessionariosQtd.some((cessionario) => {
+          const {
+            user_id,
+            valor_pago,
+            comissao,
+            exp_recebimento,
+            percentual,
+          } = cessionario.formDataCessionario;
+
+          return !user_id || !valor_pago || !comissao || !exp_recebimento || !percentual;
+        });
+
+        if (algumCessionarioInvalido) {
+          setStatus({
+            status: 'error',
+            message: 'Preencha todos os campos obrigatórios do cessionário!',
+          });
+          return;
+        }
+      }
+
+      // Upload dos arquivos
+      const uploadResponse = await uploadFiles();
+
+      if (!uploadResponse) {
+        setStatus({
+          status: 'error',
+          message: 'Erro no upload dos arquivos. Cadastro cancelado.',
+        });
+        return;
+      }
+
+      // Montagem do payload
+      const payload = {
+        ...formDataCessao,
+        cessionarios: cessionariosQtd.map(c => c.formDataCessionario),
+      };
+
+      // Envio da cessão
+      const response = await axiosPrivate.post("/cessoes", payload);
+
+      setStatus({
+        status: 'success',
+        message: 'Cessão cadastrada com sucesso!',
+      });
+
+      await fetchCessoes();
+    } catch (error) {
+      console.error("Erro ao cadastrar cessão e cessionários:", error);
+      setStatus({
+        status: 'error',
+        message: 'Erro ao enviar dados. Tente novamente.',
+      });
+    }
+  };
+
+  const modalProps = {
+    onAddCessionario: handleAddCessionario,
+    handleCessionarioInputChange,
+    onDeleteCessionarioForm: handleDeleteCessionarioForm,
+    cessionariosQtd,
+    formCessionario: formDataCessionario,
+    setFormDataCessionario,
+    formDataCessao,
+    handleCessaoInputChange,
+    handleSubmit,
+    status,
+    handleNomeTab
   };
 
   return (
     <>
-      <Header />
-      <main className={show ? 'container mx-auto pt-[120px] dark:bg-neutral-900 h-full relative' : 'relative container mx-auto pt-[120px] dark:bg-neutral-900 h-full'}>
+      {!isInPerfilUsuario ? <Header /> : null}
+      <main className={show ? `container mx-auto ${isInPerfilUsuario ? '' : 'pt-[120px]'} dark:bg-neutral-900 h-full` : `container mx-auto ${isInPerfilUsuario ? '' : 'pt-[120px]'} dark:bg-neutral-900 h-full`}>
         <ToastContainer />
-        <div className='px-[20px]'>
+        <div className={isInPerfilUsuario ? '' : 'px-[20px]'}>
           <div className='flex justify-between items-center md:items-end'>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className='font-[700] text-[32px] md:mt-[16px] dark:text-white'
-              id='cessoes'
-            >
-              Cessões
-            </motion.h2>
-            {!minhascessoes ?
-              <Modal
-                botaoAbrirModal={
-                  <motion.button
-                    title='Adicionar nova cessão'
-                    className='hover:bg-neutral-100 flex items-center justify-center dark:text-white dark:hover:bg-neutral-800 rounded text-[20px] p-1 lg:mb-0 lg:p-2 md:text-[25px] w-[35px] h-[35px] md:w-[40px] md:h-[40px]'
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                    </svg>
+            {isInPerfilUsuario ?
+              <div className='flex flex-col'>
+                <span className='font-semibold dark:text-white'>Cessões</span>
+                <span class="text-[12px] font-medium dark:text-neutral-400 text-neutral-600">Acompanhe suas cessões no sistema</span>
+              </div>
 
-                  </motion.button>
-                }
-                tituloModal={
-                  showModalAdicionarCessionario && cessionarios.length > 0
-                    ? (
-                      <div className='flex gap-2 items-center'>
-                        <button className='rounded hover:bg-neutral-100 dark:hover:bg-neutral-800' onClick={() => handleVoltarAdicionarCessao()}>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
-                          </svg>
-                        </button>
-                        <span>Adicionar cessão</span>
-                      </div>
-                    )
-                    : (<span>Adicionar cessão</span>)
-                }
-                botaoSalvar={
-                  <motion.button
-                    className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'
-                    onClick={(e) => handleSubmit(e)}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    Salvar
-                  </motion.button>
-                }
-                botaoAdicionarCessionario={
-                  <motion.button
-                    onClick={() => addCessionario()}
-                    className='bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700'
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    Adicionar cessionário
-                  </motion.button>
-                }
+              :
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className='font-[700] text-[32px] md:mt-[16px] dark:text-white'
+                id='cessoes'
               >
-                <div className='h-[450px] overflow-auto relative'>
-                  <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? 'absolute left-[-1800px] transition-all ease-in-out duration-300 overflow-hidden' : 'absolute left-0 transition-all ease-in-out duration-300 overflow-y-hidden w-full'}>
-                    {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
-                      <div className='absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>
-                        <LoadingSpinner />
-                      </div>
-                    </div>)}
-                    <AdicionarCessao ref={adicionarCessaoRef} varas={varas} orcamentos={orcamentos} orcamentosAnos={orcamentosAno} naturezas={naturezas} empresas={empresas} users={users} teles={teles} escreventes={escreventes} juridicos={juridicos} enviarValores={handleReceberValoresCessao} />
-                  </div>
-
-                  <div className={showModalAdicionarCessionario && cessionarios.length !== 0 ? "absolute right-0 transition-all ease-in-out duration-300 overflow-y-auto w-full" : 'w-full absolute right-[1800px] transition-all ease-in-out duration-300 overflow-y-hidden'}>
-                    <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
-                      {isLoading && (<div className='absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20'>
-                        <div className='absolute left-1/2 top-[33%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8'>
-                          <LoadingSpinner />
-                        </div>
-                      </div>)}
-                      {cessionarios.map((componente) => (
-                        <div key={componente.index} className='w-full pt-5'>
-                          <div className='px-4 flex justify-between items-center'>
-                            <span className='dark:text-white text-black font-medium py-2 text-[18px]'>Adicionar cessionário</span>
-                            <button onClick={() => handleExcluirCessionario(componente.index)} className='rounded hover:bg-neutral-100 float-right w-4 h-4 dark:hover:bg-neutral-800'>
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                              </svg>
-                            </button>
-                          </div>
-                          {componente.componente}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </Modal> : null}
+                Cessões
+              </motion.h2>}
+            {!minhascessoes && !isInPerfilUsuario && auth.user.admin ?
+              <div>
+                <Modal {...modalProps} />
+              </div>
+              : null}
           </div>
         </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className='mt-[24px] px-5 dark:bg-neutral-900'
+          className={isInPerfilUsuario ? 'mt-[24px]' : 'mt-[24px] px-5 dark:bg-neutral-900'}
         >
           <div className='flex gap-3 items-center mb-4 w-full'>
             <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'py-3'} />
+
             <FilterButton onSetShow={handleShow} />
           </div>
 
           <div className={`lg:flex lg:gap-4 lg:items-start`}>
-            <div className='hidden lg:block lg:sticky lg:top-[5%]'>
-              <Filter show={true} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} onExportExcel={(fields) => exportToExcel(filteredCessoes, fields)} onFieldSelectionChange={handleFieldSelectionChange} selectedExportFields={selectedExportFields} valoresTotalExcel={valorTotalExcel} />
+
+            {/* Filtro no Desktop */}
+            <div className={isInPerfilUsuario ? 'hidden lg:block lg:sticky lg:top-[7%] lg:w-[320px]' : 'hidden lg:block lg:sticky lg:top-[7%] lg:w-[320px]'}>
+              <Filtro show={show} dadosFiltro={dadosFiltro} selectedFilters={selectedFilters} handleFilterChange={handleFilterChange} handleDateChange={handleDateChange} exportPDF={() => exportPDF(filteredData)} exportExcel={(fields) => exportToExcel(filteredData, fields)} selectedExportFields={selectedExportFields} handleFieldSelectionChange={handleFieldSelectionChange} clearAllFilters={clearAllFilters} />
             </div>
+
+            {/* Lista de Cessões */}
             <div className='w-full h-full max-h-full'>
-              <Lista searchQuery={searchQuery} selectedFilters={selectedCheckboxes} setData={handleData} isPerfilCessoes={false} onFilteredCessoes={handleFilteredCessoes} />
+              <Lista cessoes={cessoes} filteredCessoes={filteredData} searchQuery={searchQuery} isLoading={isLoading} />
             </div>
           </div>
         </motion.div>
-        <Filter show={show} onSetShow={handleShow} onSelectedCheckboxesChange={handleSelectedCheckboxesChange} selectedCheckboxes={selectedCheckboxes} dataCessoes={dataCessoes} onExportPDF={() => exportPDF(filteredCessoes)} onExportExcel={(fields) => exportToExcel(filteredCessoes, fields)} onFieldSelectionChange={handleFieldSelectionChange} selectedExportFields={selectedExportFields} />
+
+        {/* Filtro no Mobile */}
+        <div className='lg:hidden'>
+          <Filtro onSetShow={handleShow} setShow={setShow} show={show} dadosFiltro={dadosFiltro} selectedFilters={selectedFilters} handleFilterChange={handleFilterChange} handleDateChange={handleDateChange} exportPDF={() => exportPDF(filteredData)} exportExcel={(fields) => exportToExcel(filteredData, fields)} selectedExportFields={selectedExportFields} handleFieldSelectionChange={handleFieldSelectionChange} clearAllFilters={clearAllFilters} />
+        </div>
 
         {/* Scroll-to-top button */}
         <ScrollToTopButton />

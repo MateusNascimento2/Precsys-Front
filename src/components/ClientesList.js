@@ -10,12 +10,11 @@ import useAuth from "../hooks/useAuth";
 
 
 function ClientesList({ searchQuery, user }) {
-  const [users, setUsers] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [cessionarios, setCessionarios] = useState([]);
   const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
-
+  
   // Estado para gerenciar o tema
   const [isDarkTheme, setIsDarkTheme] = useState(false);
 
@@ -44,17 +43,13 @@ function ClientesList({ searchQuery, user }) {
     const loadData = async () => {
       try {
         setIsLoading(true);
-        const [usersData, cessionariosData, clientesData] = await Promise.all([
-          axiosPrivate.get('/users', { signal: controller.signal }),
-          axiosPrivate.get('/cessionarios', { signal: controller.signal }),
-          axiosPrivate.get('/cliente', { signal: controller.signal }),
+        const [clientes] = await Promise.all([
+          axiosPrivate.get(`/cliente/${user ? user.id : auth.user.id}`, { signal: controller.signal })
         ]);
 
         if (isMounted) {
-          setCessionarios(cessionariosData.data);
-          const filteredUsers = filterUsersByGestor(usersData.data, clientesData.data, user ? String(user.id) : String(auth.user.id));
-          setUsers(filteredUsers);
           setIsLoading(false);
+          setClientes(clientes.data);
         }
       } catch (err) {
         console.log(err);
@@ -74,40 +69,36 @@ function ClientesList({ searchQuery, user }) {
     defaultHeight: 50,
   }), []);
 
-  const filterUsersByGestor = (users, clientes, gestorId) => {
-    // Filtra os clientes que têm o `gestorId` como gestor
-    const clientesDoGestor = clientes.filter(cliente => String(cliente.id_gestor) === String(gestorId));
+  /*   const filterUsersByGestor = (users, clientes, gestorId) => {
+      // Filtra os clientes que têm o `gestorId` como gestor
+      const clientesDoGestor = clientes.filter(cliente => String(cliente.id_gestor) === String(gestorId));
+  
+      // Pega os IDs dos usuários que têm o `gestorId` como gestor
+      const usuariosIds = clientesDoGestor.map(cliente => cliente.id_usuario);
+  
+      // Filtra os usuários que têm IDs correspondentes aos `usuariosIds`
+      return users.filter(user => usuariosIds.includes(String(user.id)));
+    }; */
 
-    // Pega os IDs dos usuários que têm o `gestorId` como gestor
-    const usuariosIds = clientesDoGestor.map(cliente => cliente.id_usuario);
-
-    // Filtra os usuários que têm IDs correspondentes aos `usuariosIds`
-    return users.filter(user => usuariosIds.includes(String(user.id)));
-  };
-
-  const filteredUsers = useMemo(() => {
-    return users.filter(user =>
-      Object.entries(user).some(([key, value]) => {
+  const filteredClientes = useMemo(() => {
+    return clientes.filter(cliente =>
+      Object.entries(cliente).some(([key, value]) => {
         if (key === 'id') {
           return value.toString().includes(searchQuery);
         }
         if (typeof value === 'string' && value && ![
-          'admin', 'ativo', 'email', 'password', 'endereco', 'telefone',
-          'qualificacao', 'obs', 'permissao_email', 'permissao_proposta',
-          'permissao_expcartorio', 'foto', 'refreshToken'
+          'admin', 'ativo', 'total_cessoes'
         ].includes(key)) {
           return value.toLowerCase().includes(searchQuery.toLowerCase());
         }
         return false;
       })
     );
-  }, [users, searchQuery]);
-  
+  }, [clientes, searchQuery]);
+
 
   const renderRow = useCallback(({ index, parent, key, style }) => {
-    const user = filteredUsers[index];
-    const cessoesDoUsuario = cessionarios.filter((cessionario) => cessionario.user_id === String(user.id));
-    user.qtdCessoes = cessoesDoUsuario.length;
+    const cliente = filteredClientes[index];
 
     return (
       <CellMeasurer cache={cache} parent={parent} columnIndex={0} rowIndex={index} key={key}>
@@ -122,13 +113,13 @@ function ClientesList({ searchQuery, user }) {
             <div className="flex border dark:border-neutral-700 dark:bg-neutral-900 px-2 py-1 justify-between rounded-t items-center">
               <div className="flex divide-x my-2 dark:divide-neutral-600">
                 <div className="w-[40px] h-[40px] mr-2 flex justify-center bg-neutral-100 rounded">
-                  <ProfileImage userImage={user.photoUrl} />
+                  <ProfileImage userImage={cliente.avatarUrl} />
                 </div>
                 <div className="flex flex-col justify-center text-[12px] pl-2">
-                  <Link to={`/cliente/${String(user.id)}`}>
-                    <span className="font-bold dark:text-white hover:underline">{user.nome}</span>
+                  <Link to={`/cliente/${String(cliente.id_usuario)}`}>
+                    <span className="font-bold dark:text-white hover:underline">{cliente.nome_cliente}</span>
                   </Link>
-                  <span className="text-neutral-400 font-medium line-clamp-1 dark:text-neutral-300">{user.cpfcnpj}</span>
+                  <span className="text-neutral-400 font-medium line-clamp-1 dark:text-neutral-300">{cliente.cpfcnpj}</span>
                 </div>
               </div>
             </div>
@@ -141,7 +132,7 @@ function ClientesList({ searchQuery, user }) {
                 >
                   <span className="bg-[#181c32] dark:bg-white dark:text-[#181c32] text-white font-bold px-2 py-1 rounded flex gap-1">
                     {/* Assumindo que você tenha `qtdCessoes` no objeto `user`, caso contrário, remova essa linha */}
-                    {user.qtdCessoes || 0}
+                    {cliente.total_cessoes}
                   </span>
                 </a>
                 <a
@@ -149,7 +140,7 @@ function ClientesList({ searchQuery, user }) {
                   data-tooltip-content='Tipo de usuário'
                   data-tooltip-place='right'
                 >
-                  {user.admin
+                  {cliente.admin
                     ? <span className='bg-[#181c32] dark:bg-white dark:text-[#181c32] text-white font-bold px-2 py-1 rounded flex gap-1'>ADM</span>
                     : <span className='text-black font-bold dark:text-neutral-100 px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700'>Usuário</span>}
                 </a>
@@ -158,7 +149,7 @@ function ClientesList({ searchQuery, user }) {
                   data-tooltip-content='Status do usuário'
                   data-tooltip-place='right'
                 >
-                  {user.ativo
+                  {cliente.ativo
                     ? <span className='bg-[#181c32] dark:bg-white dark:text-[#181c32] text-white font-bold px-2 py-1 rounded flex gap-1'>Ativo</span>
                     : <span className='text-black font-bold dark:text-neutral-100 px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700'>Desativado</span>}
                 </a>
@@ -224,7 +215,7 @@ function ClientesList({ searchQuery, user }) {
         />
       </CellMeasurer>
     );
-  }, [filteredUsers, cache, isDarkTheme]);
+  }, [filteredClientes, cache, isDarkTheme]);
 
   return (
     <>
@@ -240,7 +231,7 @@ function ClientesList({ searchQuery, user }) {
             <section className="container dark:bg-neutral-900" style={{ width: "100%" }}>
               <div className="dark:bg-neutral-900 relative h-full">
                 <p className="text-[12px] font-medium lg:font-normal lg:text-[10px] lg:text-end text-neutral-500 dark:text-neutral-300">
-                  Mostrando {filteredUsers.length} de {users.length} usuários
+                  Mostrando {filteredClientes.length} de {clientes.length} usuários
                 </p>
                 <AutoSizer style={{ width: '100%', height: '100%' }}>
                   {({ width }) => (
@@ -252,7 +243,7 @@ function ClientesList({ searchQuery, user }) {
                         width={width}
                         autoHeight
                         height={height}
-                        rowCount={filteredUsers.length}
+                        rowCount={filteredClientes.length}
                         scrollTop={scrollTop}
                         deferredMeasurementCache={cache}
                         rowHeight={cache.rowHeight}

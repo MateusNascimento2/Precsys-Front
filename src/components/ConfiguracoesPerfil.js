@@ -12,38 +12,60 @@ import AdministradorPerfil from './AdministradorPerfil';
 import GestorPerfil from './GestorPerfil';
 import { motion } from 'framer-motion';
 
-export default function ConfiguracoesPerfil({ user, id }) {
+export default function ConfiguracoesPerfil({ setUser, user, id }) {
   const { auth, setAuth } = useAuth();
 
   const axiosPrivate = useAxiosPrivate();
   const [isLoading, setIsLoading] = useState(false);
 
-  const [nome, setNome] = useState(user ? user.nome : auth.user.nome);
-  const [cpfcnpj, setCpfCnpj] = useState(user ? user.cpfcnpj : auth.user.cpfcnpj);
-  const [telefone, setTelefone] = useState(user ? user.telefone : auth.user.telefone);
-  const [endereco, setEndereco] = useState(user ? user.endereco : auth.user.endereco);
-  const [obs, setObs] = useState(user ? user.obs : auth.user.obs);
-  const [qualificacao, setQualificacao] = useState(user ? user.qualificacao : auth.user.qualificacao);
-  const [foto, setFoto] = useState(user ? user.foto : auth.user.foto);
+  const [nome, setNome] = useState(user.nome);
+  const [cpfcnpj, setCpfCnpj] = useState(user.cpfcnpj);
+  const [telefone, setTelefone] = useState(user.telefone);
+  const [endereco, setEndereco] = useState(user.endereco);
+  const [obs, setObs] = useState(user.obs);
+  const [qualificacao, setQualificacao] = useState(user.qualificacao);
+  const [foto, setFoto] = useState(user.foto);
   const [avatar, setAvatar] = useState(null); // Armazena o arquivo de imagem
-  const [fotoParaMostrar, setFotoParaMostrar] = useState(user.photoUrl ? user.photoUrl : auth.userImage);
+  const [fotoParaMostrar, setFotoParaMostrar] = useState(id ? user.photoUrl : auth.userImage);
 
   // Toggle Switch State
-  const [isSwitchOn, setIsSwitchOn] = useState(user ? user.ver_dashboard === 1 : auth.user.ver_dashboard === 1);
+  const [isSwitchOn, setIsSwitchOn] = useState(user.ver_dashboard);
 
-  useEffect(() => {
-    if (user) {
-      setNome(user.nome);
-      setCpfCnpj(user.cpfcnpj);
-      setTelefone(user.telefone);
-      setEndereco(user.endereco);
-      setObs(user.obs);
-      setQualificacao(user.qualificacao);
-      setFoto(user.foto);
-      setFotoParaMostrar(user.photoUrl ? user.photoUrl : null);
-      setIsSwitchOn(user.ver_dashboard === 1); // Inicializa o switch com base em ver_dashboard
+  /*   useEffect(() => {
+      if (user) {
+        setFoto(user.foto);
+        setFotoParaMostrar(user.photoUrl ? user.photoUrl : null);
+        setIsSwitchOn(user.ver_dashboard === 1); // Inicializa o switch com base em ver_dashboard
+      }
+    }, [user]); */
+
+  const uploadAvatarFile = async (files) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append(file.name, file.file);
+    });
+
+    try {
+      await axiosPrivate.post('/uploadAvatar', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    } catch (err) {
+      toast.error(`Erro ao enviar foto de perfil: ${err}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+      return;
     }
-  }, [user]);
+  };
 
   const handleEditUserInformation = async (e) => {
     e.preventDefault();
@@ -51,51 +73,39 @@ export default function ConfiguracoesPerfil({ user, id }) {
 
     try {
       setIsLoading(true);
-      const email = user ? user.email : auth.user.email;
-      const userId = user ? user.id : auth.user.id;
 
-      await axiosPrivate.put(`/users/${userId}`, {
+      // Enviar o avatar se existir
+      if (avatar) {
+        const filesToUpload = [{ name: 'avatar', file: avatar }];
+        await uploadAvatarFile(filesToUpload);
+      }
+
+      const response = await axiosPrivate.put(`/users/${user.id}/perfil`, {
         nome,
         cpfcnpj,
-        email,
         telefone,
         endereco,
         obs,
         qualificacao,
         foto: foto !== user.foto ? foto : user.foto,
-        admin: user ? user.admin : auth.user.admin,
-        ativo: user ? user.ativo : auth.user.ativo,
-        permissao_email: user ? user.permissao_email : auth.user.permissao_email,
-        permissao_proposta: user ? user.permissao_proposta : auth.user.permissao_proposta,
-        permissao_expcartorio: user ? user.permissao_expcartorio : auth.user.permissao_expcartorio,
         ver_dashboard: isSwitchOn ? 1 : 0, // Atualiza o valor de ver_dashboard
       });
 
-      const uploadFiles = async (files) => {
-        const formData = new FormData();
-        files.forEach((file) => {
-          formData.append(file.name, file.file);
-        });
+      setIsLoading(false);
 
-        try {
-          await axiosPrivate.post('/uploadAvatar', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
-        } catch (err) {
-          console.log(`Erro ao enviar arquivos: ${err}`);
-          return;
-        }
-      };
+      toast.success('Perfil alterado com sucesso!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
 
-      // Enviar o avatar se existir
-      if (avatar) {
-        const filesToUpload = [{ name: 'avatar', file: avatar }];
-        await uploadFiles(filesToUpload);
-      }
-
-      // Atualiza o estado do auth com as novas informações
+      // Atualiza o estado do auth com as novas informações se for a pagina de configuração do próprio usuário
       if (!id) {
         setAuth(prev => ({
           ...prev,
@@ -112,28 +122,16 @@ export default function ConfiguracoesPerfil({ user, id }) {
           },
           userImage: fotoParaMostrar, // Atualiza a imagem do usuário
         }));
+      } else {
+        const updatedUser = await axiosPrivate.get(`users/${user.id}`)
+        setUser(updatedUser.data)
       }
 
-
-      setIsLoading(false);
-
-      toast.success('Perfil alterado com sucesso!', {
-        position: "top-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: false,
-        theme: isDarkMode === 'true' ? 'dark' : 'light',
-        transition: Bounce,
-        onClose: () => window.location.reload(), // Recarrega após o toast ser fechado
-      });
     } catch (err) {
       console.log(err.response.data.error);
       toast.error(`Erro ao editar perfil: ${err.response.data.error}`, {
         position: "top-right",
-        autoClose: 1000,
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -197,18 +195,8 @@ export default function ConfiguracoesPerfil({ user, id }) {
       setObs(user.obs);
       setQualificacao(user.qualificacao);
       setFoto(user.foto);
-      setFotoParaMostrar(user.photoUrl);
-      setIsSwitchOn(user.ver_dashboard === 1); // Reinicia o switch baseado em ver_dashboard
-    } else {
-      setNome(auth.user.nome);
-      setCpfCnpj(auth.user.cpfcnpj);
-      setTelefone(auth.user.telefone);
-      setEndereco(auth.user.endereco);
-      setObs(auth.user.obs);
-      setQualificacao(auth.user.qualificacao);
-      setFoto(auth.user.foto);
-      setFotoParaMostrar(auth.userImage);
-      setIsSwitchOn(auth.user.ver_dashboard === 1); // Reinicia o switch baseado em ver_dashboard
+      setFotoParaMostrar(id ? user.photoUrl : auth.userImage);
+      setIsSwitchOn(user.ver_dashboard);
     }
     setAvatar(null);
   };
@@ -302,22 +290,25 @@ export default function ConfiguracoesPerfil({ user, id }) {
                   </div>
 
                   {/* Toggle Switch */}
-                  {auth.user.admin ? <div>
-                    <p className='dark:text-neutral-200 text-neutral-600 font-medium text-[15px] mb-2 lg:mb-0'>Ativar Gráfico do Dashboard</p>
-                    <motion.div
-                      className={`${isSwitchOn ? "bg-green-600" : "bg-red-600"
-                        } w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-700`}
-                      onClick={() => setIsSwitchOn(!isSwitchOn)}
-
-                    >
+                  {auth.user.admin ?
+                    <div>
+                      <p className='dark:text-neutral-200 text-neutral-600 font-medium text-[15px] mb-2 lg:mb-0'>Ativar Gráfico do Dashboard</p>
                       <motion.div
-                        className={`${isSwitchOn ? "bg-neutral-100" : "bg-black"
-                          } w-4 h-4 rounded-full shadow-md transform ${isSwitchOn ? "translate-x-6" : "translate-x-0"}`}
-                        layout
-                        transition={{ type: "spring", stiffness: 500, damping: 50 }}
-                      />
-                    </motion.div>
-                  </div> : null}
+                        className={`${isSwitchOn ? "bg-green-600" : "bg-red-600"
+                          } w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-700`}
+                        onClick={() => setIsSwitchOn(!isSwitchOn)}
+
+                      >
+                        <motion.div
+                          className={`${isSwitchOn ? "bg-neutral-100" : "bg-black"
+                            } w-4 h-4 rounded-full shadow-md transform ${isSwitchOn ? "translate-x-6" : "translate-x-0"}`}
+                          layout
+                          transition={{ type: "spring", stiffness: 500, damping: 50 }}
+                        />
+                      </motion.div>
+                    </div> :
+                    null
+                  }
 
                 </div>
                 <button onClick={(e) => {
@@ -331,10 +322,10 @@ export default function ConfiguracoesPerfil({ user, id }) {
         </>
       )}
       <>
-        <SegurancaPerfil user={user} id={id} />
+        <SegurancaPerfil setUser={setUser} user={user} id={id} />
         {auth.user.admin ? <AdministradorPerfil user={user} id={id} /> : null}
         {auth.user.admin ? <GestorPerfil user={user} /> : null}
-        <DesativarPerfil user={user} id={id} />
+        <DesativarPerfil setUser={setUser} user={user} id={id} />
       </>
     </>
   );

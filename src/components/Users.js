@@ -10,8 +10,6 @@ import { motion } from 'framer-motion';
 
 function Users({ searchQuery, selectedFilters }) {
   const [users, setUsers] = useState([]);
-  const [cessionarios, setCessionarios] = useState([]);
-  const [clientes, setClientes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const axiosPrivate = useAxiosPrivate();
 
@@ -44,17 +42,12 @@ function Users({ searchQuery, selectedFilters }) {
     const loadData = async () => {
       try {
         setIsLoading(true)
-        const [usersData, cessionariosData, clientesData] = await Promise.all([
+        const [usersData] = await Promise.all([
           axiosPrivate.get('/users', { signal: controller.signal }),
-          axiosPrivate.get('/cessionarios', { signal: controller.signal }),
-          axiosPrivate.get('/cliente', { signal: controller.signal }),
         ]);
 
         if (isMounted) {
-          const usersWithGestores = mapUsersWithGestores(usersData.data, clientesData.data);
-          setUsers(usersWithGestores);
-          setCessionarios(cessionariosData.data);
-          setClientes(clientesData.data);
+          setUsers(usersData.data);
           setIsLoading(false);
         }
       } catch (err) {
@@ -76,51 +69,38 @@ function Users({ searchQuery, selectedFilters }) {
     defaultHeight: 50,
   }), []);
 
-
-  const mapUsersWithGestores = (users, clientes) => {
-    return users.map(user => {
-      // Inicializa a lista de gestores como um array vazio
-      user.gestores = [];
-
-      // Filtra os clientes que têm o user.id como usuário
-      const clientesDoUsuario = clientes.filter(cliente => String(cliente.id_usuario) === String(user.id));
-
-      if (clientesDoUsuario.length > 0) {
-        // Itera sobre os clientes e associa o(s) gestor(es) ao usuário
-        clientesDoUsuario.forEach(cliente => {
-          // Verifica se o gestor já não está na lista para evitar duplicatas
-          if (!user.gestores.includes(cliente.id_gestor)) {
-            // Encontra o nome do gestor no array de usuários
-            const gestor = users.find(u => String(u.id) === String(cliente.id_gestor));
-            if (gestor) {
-              user.gestores.push(gestor.nome);
-            }
-          }
-        });
-      }
-
-      return user;
-    });
-  };
-
   const filterUsers = useCallback(() => {
     return users.filter((user) => {
-      const statusMatch =
-        (selectedFilters.status.Ativo && user.ativo) ||
-        (selectedFilters.status.Desativado && !user.ativo) ||
-        (!selectedFilters.status.Ativo && !selectedFilters.status.Desativado);
+      // Filtro por Status
+      const statusAtivo = selectedFilters.status.Ativo;
+      const statusDesativado = selectedFilters.status.Desativado;
+      const statusValido =
+        (statusAtivo && user.ativo === 1) ||
+        (statusDesativado && user.ativo === 0) ||
+        (!statusAtivo && !statusDesativado); // Se nenhum for selecionado, ignora filtro
 
-      const tipoMatch =
-        (selectedFilters.tipo.Usuário && !user.admin) ||
-        (selectedFilters.tipo.Administrador && user.admin) ||
-        (!selectedFilters.tipo.Usuário && !selectedFilters.tipo.Administrador);
+      // Filtro por Tipo
+      const tipoAdmin = selectedFilters.tipo.Administrador;
+      const tipoUsuario = selectedFilters.tipo.Usuário;
+      const tipoAdvogado = selectedFilters.tipo.Advogado;
+      const tipoValido =
+        (tipoAdmin && user.admin === 1) ||
+        (tipoUsuario && user.admin === 0) ||
+        (tipoAdvogado && user.advogado === 1) ||
+        (!tipoAdmin && !tipoUsuario && !tipoAdvogado); // Se nenhum for selecionado, ignora filtro
 
-      const gestorMatch =
-        Object.keys(selectedFilters.gestores).some(gestorNome =>
-          selectedFilters.gestores[gestorNome] && user.gestores.includes(gestorNome)
-        ) || Object.values(selectedFilters.gestores).every(v => !v); // Se nenhum gestor estiver selecionado, não filtra por gestor
+      // Filtro por Gestor
+      const gestoresSelecionados = Object.entries(selectedFilters.gestores)
+        .filter(([_, value]) => value)
+        .map(([key]) => key);
 
-      return statusMatch && tipoMatch && gestorMatch;
+      const gestorValido =
+
+        gestoresSelecionados.length === 0 || // Nenhum selecionado → passa tudo
+        user.gestores.some(g => gestoresSelecionados.includes(g.nome_gestor));
+
+      // Retorna usuário que passa por todos os filtros
+      return statusValido && tipoValido && gestorValido;
     });
   }, [users, selectedFilters]);
 
@@ -147,8 +127,6 @@ function Users({ searchQuery, selectedFilters }) {
 
   const renderRow = useCallback(({ index, parent, key, style }) => {
     const user = filteredUsers[index];
-    const cessoesDoUsuario = cessionarios.filter((cessionario) => cessionario.user_id === String(user.id));
-    user.qtdCessoes = cessoesDoUsuario.length;
 
     return (
       <CellMeasurer cache={cache} parent={parent} columnIndex={0} rowIndex={index} key={key}>
@@ -191,6 +169,8 @@ function Users({ searchQuery, selectedFilters }) {
                 >
                   {user.admin
                     ? <span className='bg-[#181c32] dark:bg-white dark:text-[#181c32] text-white font-bold px-2 py-1 rounded flex gap-1'>ADM</span>
+                    : user.advogado 
+                    ?  <span className='bg-amber-800 dark:bg-orange-400 dark:text-[#181c32] text-white font-bold px-2 py-1 rounded flex gap-1'>Jurídico</span>
                     : <span className='text-black font-bold dark:text-neutral-100 px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700'>Usuário</span>}
                 </a>
                 <a
@@ -202,30 +182,20 @@ function Users({ searchQuery, selectedFilters }) {
                     ? <span className='bg-[#181c32] dark:bg-white dark:text-[#181c32] text-white font-bold px-2 py-1 rounded flex gap-1'>Ativo</span>
                     : <span className='text-black font-bold dark:text-neutral-100 px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700'>Desativado</span>}
                 </a>
-                {clientes.map((cliente) => {
-                  if (String(cliente.id_usuario) === String(user.id)) {
-                    return (
-                      <a
-                        key={cliente.id}
-                        data-tooltip-id='gestorUsuario'
-                        data-tooltip-content='Gestor do usuário'
-                        data-tooltip-place='right'
-                      >
-                        <span className='text-black font-bold dark:text-neutral-100 px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700'>{users.map((user) => {
-                          if (String(user.id) === String(cliente.id_gestor)) {
-                            user.gestor = user.nome
-                            return user.nome
-                          } else {
-                            return null
-                          }
-                          /* String(user.id) === String(cliente.id_gestor) ? user.nome : null */
-                        })}
-                        </span>
-                      </a>
-                    );
-                  } else {
-                    return null;
-                  }
+                {user.gestores.map((gestor) => {
+
+                  return (
+                    <a
+                      key={gestor.id_gestor}
+                      data-tooltip-id='gestorUsuario'
+                      data-tooltip-content='Gestor do usuário'
+                      data-tooltip-place='right'
+                    >
+                      <span className='text-black font-bold dark:text-neutral-100 px-2 py-1 rounded flex gap-1 bg-neutral-200 dark:bg-neutral-700'>{gestor.nome_gestor}
+                      </span>
+                    </a>
+                  );
+
                 })}
               </div>
             </div>
@@ -289,7 +259,7 @@ function Users({ searchQuery, selectedFilters }) {
         />
       </CellMeasurer>
     );
-  }, [filteredUsers, cessionarios, cache, isDarkTheme]);
+  }, [filteredUsers, cache, isDarkTheme]);
 
   return (
     <>

@@ -8,15 +8,12 @@ import { motion, AnimatePresence } from 'framer-motion'; // Importando framer-mo
 
 export default function AdministradorPerfil({ user, id }) {
   const { auth, setAuth } = useAuth(); // Adiciona setAuth para atualizar o contexto
-  const currentUser = user || auth.user; // Usar o usuário passado ou auth.user
+  
   const [isLoading, setIsLoading] = useState(false);
   const axiosPrivate = useAxiosPrivate();
-  const [admin, setAdmin] = useState(currentUser.admin);
+  const [admin, setAdmin] = useState(user.admin);
+  const [advogado, setAdvogado] = useState(user.advogado)
   const [showSaveButton, setShowSaveButton] = useState(false);
-
-  useEffect(() => {
-    setAdmin(currentUser.admin);
-  }, [currentUser.admin]);
 
   const handleEditCargo = async (e) => {
     e.preventDefault();
@@ -25,20 +22,9 @@ export default function AdministradorPerfil({ user, id }) {
     if (admin !== null) {
       try {
         setIsLoading(true);
-        await axiosPrivate.put(`/users/${currentUser.id}`, {
-          nome: currentUser.nome,
-          cpfcnpj: currentUser.cpfcnpj,
-          email: currentUser.email,
-          telefone: currentUser.telefone,
-          endereco: currentUser.endereco,
-          obs: currentUser.obs,
-          qualificacao: currentUser.qualificacao,
-          foto: currentUser.foto,
+        await axiosPrivate.put(`/users/${user.id}/cargo`, {
           admin,
-          ativo: currentUser.ativo,
-          permissao_email: currentUser.permissao_email,
-          permissao_proposta: currentUser.permissao_proposta,
-          permissao_expcartorio: currentUser.permissao_expcartorio
+          advogado,
         });
 
         // Atualiza o estado de auth com o novo cargo
@@ -47,7 +33,8 @@ export default function AdministradorPerfil({ user, id }) {
             ...prev,
             user: {
               ...prev.user,
-              admin
+              admin,
+              advogado
             }
           }));
         }
@@ -56,21 +43,20 @@ export default function AdministradorPerfil({ user, id }) {
         setIsLoading(false);
 
         toast.success('Cargo alterado com sucesso!', {
-        position: "top-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: false,
-        theme: isDarkMode === 'true' ? 'dark' : 'light',
-        transition: Bounce,
-        onClose: () => window.location.reload(), // Recarrega após o toast ser fechado
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
         });
       } catch (err) {
-        toast.error(`Erro ao editar cargo: ${err}`, {
+        toast.error(`Erro ao editar cargo: ${err.response.data.error}`, {
           position: "top-right",
-          autoClose: 1000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -84,7 +70,7 @@ export default function AdministradorPerfil({ user, id }) {
     } else {
       toast.error('Erro ao editar cargo: Cargo não selecionado!', {
         position: "top-right",
-        autoClose: 1000,
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -98,6 +84,7 @@ export default function AdministradorPerfil({ user, id }) {
 
   const handleRadioChange = (value) => {
     setAdmin(value);
+    setAdvogado(0);
     setShowSaveButton(true); // Mostra o botão quando o usuário muda a seleção
   };
 
@@ -128,10 +115,27 @@ export default function AdministradorPerfil({ user, id }) {
             </div>
             <div className='dark:text-white py-2 relative'>
               <input
+                id="advogado"
+                value={1}
+                onChange={() => {
+                  setAdvogado(1)
+                  setAdmin(0)
+                  setShowSaveButton(true)
+                }}
+                checked={advogado === 1}
+                className="cursor-pointer absolute left-0 top-[40%] w-4 h-4 appearance-none checked:bg-neutral-800 bg-neutral-200 checked:border-neutral-200 checked:border-[4px] dark:border-[4px] border-black dark:border-white rounded-full dark:bg-white dark:checked:bg-neutral-800"
+                type="radio"
+                name="user-type"
+              />
+              <label htmlFor="advogado" className="ml-8 dark:text-neutral-200 text-neutral-600 font-medium text-[15px]">Jurídico</label>
+              <p className='text-neutral-400 font-medium w-full text-[14px] ml-8'>Acesso a todos os detalhes das cessões.</p>
+            </div>
+            <div className='dark:text-white py-2 relative'>
+              <input
                 id="user"
                 value={0}
                 onChange={() => handleRadioChange(0)}
-                checked={admin === 0}
+                checked={(admin === 0 && advogado === 0)}
                 className="cursor-pointer absolute left-0 top-[40%] w-4 h-4 appearance-none checked:bg-neutral-800 bg-neutral-200 checked:border-neutral-200 checked:border-[4px] dark:border-[4px] border-black dark:border-white rounded-full dark:bg-white dark:checked:bg-neutral-800"
                 type="radio"
                 name="user-type"

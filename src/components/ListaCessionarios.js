@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import Modal from './Modal';
+import { Modal } from './AdicionarCessionarioModal/Modal';
 import { useNavigate } from 'react-router-dom';
 import EditarCessionario from './EditarCessionario';
 import AdicionarCessionario from './AdicionarCessionario';
+import { ModalEditarCessionario } from './EditarCessionarioModal/ModalEditarCessionario';
 import DotsButton from './DotsButton';
-import { v4 as uuidv4 } from 'uuid';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import { ToastContainer, toast, Bounce } from 'react-toastify';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import useAuth from "../hooks/useAuth";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { v4 as uuidv4 } from 'uuid';
 
 function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
   if (!isOpen) return null;
@@ -41,43 +43,393 @@ function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
   );
 }
 
-export default function ListaCessionarios({ cessionario, users, precID }) {
-  const [valorPago, setValorPago] = useState('');
-  const [comissao, setComissao] = useState('');
-  const [percentual, setPercentual] = useState('');
-  const [expectativa, setExpectativa] = useState('');
-  const [cessionarios, setCessionarios] = useState([]);
-  const [valoresCessionarios, setValoresCessionarios] = useState([]);
+export default function ListaCessionarios({ cessionario, precID, fetchDataCessao }) {
   const [isLoading, setIsLoading] = useState(false);
   const { auth } = useAuth();
-
-  const [valorPagoEditado, setValorPagoEditado] = useState('');
-  const [comissaoEditado, setComissaoEditado] = useState('');
-  const [percentualEditado, setPercentualEditado] = useState('');
-  const [expectativaEditado, setExpectativaEditado] = useState('');
-  const [cessionarioEditado, setCessionarioEditado] = useState('');
-  const [obsEditado, setObsEditado] = useState('');
-  const [assinaturaEditado, setAssinaturaEditado] = useState(false);
-  const [expedidoEditado, setExpedidoEditado] = useState(false);
-  const [recebidoEditado, setRecebidoEditado] = useState(false);
-  const [notaEditado, setNotaEditado] = useState(cessionario.nota ? cessionario.nota : null);
-  const [oficioTransferenciaEditado, setOficioTransferenciaEditado] = useState(cessionario.mandado ? cessionario.mandado : null);
-  const [comprovantePagamentoEditado, setComprovantePagamentoEditado] = useState(cessionario.comprovante ? cessionario.comprovante : null); // Change to null
-  const [notaFile, setNotaFile] = useState('');
-  const [oficioTransferenciaFile, setOficioTransferenciaFile] = useState('');
-  const [comprovantePagamentoFile, setComprovantePagamentoFile] = useState('');
-
   const [loadingFiles, setLoadingFiles] = useState({});
-
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [cessionarioSelecionado, setCessionarioSelecionado] = useState(null);
+  const [status, setStatus] = useState('typing');
+  const [formDataCessionario, setFormDataCessionario] = useState({
+    user_id: '',
+    valor_pago: '',
+    valor_oficio_pagamento: '',
+    comissao: '',
+    percentual: '',
+    exp_recebimento: '',
+    recebido: '',
+    assinatura: '',
+    mandado: '',
+    comprovante: '',
+    expedido: '',
+    obs: '',
+    nota: ''
+  })
+  const [formDataCessionarioEditar, setFormDataCessionarioEditar] = useState({
+    user_id: '',
+    valor_pago: '',
+    valor_oficio_pagamento: '',
+    comissao: '',
+    percentual: '',
+    exp_recebimento: '',
+    recebido: '',
+    assinatura: '',
+    mandado: '',
+    comprovante: '',
+    expedido: '',
+    obs: '',
+    nota: ''
+  })
+  const [fileCessionario, setFileCessionario] = useState({
+    nota: '',
+    mandado: '',
+    comprovante: ''
+  })
+  const [fileCessionarioEditar, setFileCessionarioEditar] = useState({
+    nota: '',
+    mandado: '',
+    comprovante: ''
+  })
+  const [cessionariosQtd, setCessionariosQtd] = useState([{ id: uuidv4(), nomeTab: '', formDataCessionario: { ...formDataCessionario }, fileCessionarios: { ...fileCessionario } }]);
+
+  const handleCessionarioInputChange = (id, values, name) => {
+
+    //Função para checar se é um objeto por causa dos inputs que possuem a lib "Select" que retornam um object no parametro values
+    function isObject(obj) {
+      return obj === Object(obj) && !obj instanceof File
+    }
+
+
+    if (isObject(values)) {
+
+      const { value } = values;
+
+      setCessionariosQtd(prevCessionarios =>
+        prevCessionarios.map(cessionario =>
+          cessionario.id === id
+            ? { ...cessionario, formDataCessionario: { ...cessionario.formDataCessionario, [name]: value } }
+            : cessionario
+        )
+      );
+
+    } else if (values instanceof File) {
+      let value;
+      let file;
+
+      if (name === 'nota') {
+        value = `cessionarios_nota/${values.name}`
+        file = values
+      } else if (name === 'mandado') {
+        value = `cessionarios_mandado/${values.name}`
+        file = values
+      } else if (name === 'comprovante') {
+        value = value = `cessionarios_comprovante/${values.name}`
+        file = values
+      }
+
+      setCessionariosQtd(prevCessionarios =>
+        prevCessionarios.map(cessionario =>
+          cessionario.id === id
+            ? { ...cessionario, formDataCessionario: { ...cessionario.formDataCessionario, [name]: value }, fileCessionarios: { ...cessionario.fileCessionarios, [name]: file } }
+            : cessionario
+        )
+      );
+
+
+    } else if (values === null) {
+      let value;
+      let file;
+
+      if (name === 'nota') {
+        value = ''
+        file = ''
+      } else if (name === 'mandado') {
+        value = ''
+        file = ''
+      } else if (name === 'comprovante') {
+        value = ''
+        file = ''
+      }
+
+      setCessionariosQtd(prevCessionarios =>
+        prevCessionarios.map(cessionario =>
+          cessionario.id === id
+            ? { ...cessionario, formDataCessionario: { ...cessionario.formDataCessionario, [name]: value }, fileCessionarios: { ...cessionario.fileCessionarios, [name]: file } }
+            : cessionario
+        )
+      );
+
+    }
+
+    else {
+
+      setCessionariosQtd(prevCessionarios =>
+        prevCessionarios.map(cessionario =>
+          cessionario.id === id
+            ? { ...cessionario, formDataCessionario: { ...cessionario.formDataCessionario, [name]: values } }
+            : cessionario
+        )
+      );
+
+    }
+
+
+  };
+
+  const handleNomeTab = (nome, id) => {
+    setCessionariosQtd(prevCessionarios =>
+      prevCessionarios.map(cessionario =>
+        cessionario.id === id
+          ? { ...cessionario, nomeTab: nome }
+          : cessionario
+      )
+    );
+  }
+
+  const handleAddCessionario = () => {
+    const newCessionario = {
+      id: uuidv4(),
+      nomeTab: '',
+      formDataCessionario: { ...formDataCessionario },
+      fileCessionarios: { ...fileCessionario },
+    };
+
+    setCessionariosQtd(prev => [...prev, newCessionario]);
+  };
+
+  const handleDeleteCessionarioForm = (id) => {
+    setCessionariosQtd(
+      cessionariosQtd.filter(cessionarioForm => cessionarioForm.id !== id)
+    )
+  }
+
+  const uploadFiles = async (flag) => {
+    try {
+      const formDataCessionarios = new FormData();
+
+      if (flag === 'Adicionar') {
+        // Adicionando arquivos dos cessionários ao formDataCessionarios
+        cessionariosQtd.forEach((cessionario) => {
+          const files = cessionario.fileCessionarios || {};
+
+          if (files.nota) {
+            // Verifica se `files.nota` é um array antes de adicionar os arquivos corretamente
+            if (Array.isArray(files.nota)) {
+              files.nota.forEach((file) => formDataCessionarios.append("nota", file));
+            } else {
+              formDataCessionarios.append("nota", files.nota);
+            }
+          }
+
+          if (files.mandado) {
+            if (Array.isArray(files.mandado)) {
+              files.mandado.forEach((file) => formDataCessionarios.append("oficio_transferencia", file));
+            } else {
+              formDataCessionarios.append("oficio_transferencia", files.mandado);
+            }
+          }
+
+          if (files.comprovante) {
+            if (Array.isArray(files.comprovante)) {
+              files.comprovante.forEach((file) => formDataCessionarios.append("comprovante_pagamento", file));
+            } else {
+              formDataCessionarios.append("comprovante_pagamento", files.comprovante);
+            }
+          }
+        });
+
+        // Enviar arquivos dos cessionários, se existirem
+        if (formDataCessionarios.has("nota") || formDataCessionarios.has("oficio_transferencia") || formDataCessionarios.has("comprovante_pagamento")) {
+          await axiosPrivate.post("/uploadFileCessionario", formDataCessionarios, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          console.log("Upload dos arquivos dos cessionários realizado com sucesso!");
+        }
+
+        return true;
+      } else if (flag === 'Editar') {
+
+        const files = fileCessionarioEditar || {};
+
+
+        if (files.nota) {
+
+          formDataCessionarios.append("nota", files.nota);
+
+        }
+
+        if (files.mandado) {
+
+          formDataCessionarios.append("oficio_transferencia", files.mandado);
+
+        }
+
+        if (files.comprovante) {
+
+          formDataCessionarios.append("comprovante_pagamento", files.comprovante);
+
+        }
+
+
+        // Enviar arquivos dos cessionários, se existirem
+        if (formDataCessionarios.has("nota") || formDataCessionarios.has("oficio_transferencia") || formDataCessionarios.has("comprovante_pagamento")) {
+          await axiosPrivate.post("/uploadFileCessionario", formDataCessionarios, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          console.log("Upload dos arquivos dos cessionários realizado com sucesso!");
+        }
+
+        return true;
+      }
+    }
+
+    catch (error) {
+      console.error("Erro ao enviar os arquivos:", error);
+      return false;
+    }
+  };
+
+  const handleSubmitAdicionarCessionario = async (e) => {
+    e.preventDefault();
+    const isDarkMode = localStorage.getItem('darkMode');
+
+
+    // Estado inicial: envio iniciado
+    setStatus({ status: "sending", message: "Enviando dados..." });
+
+    try {
+
+      //  Validação dos cessionários
+      if (cessionariosQtd.length > 0) {
+        const algumCessionarioInvalido = cessionariosQtd.some((cessionario) => {
+          const {
+            user_id,
+            valor_pago,
+            comissao,
+            exp_recebimento,
+            percentual,
+          } = cessionario.formDataCessionario;
+
+          return !user_id || !valor_pago || !comissao || !exp_recebimento || !percentual;
+        });
+
+        if (algumCessionarioInvalido) {
+          toast.error(`Preencha todos os campos obrigatórios do cessionário!`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: false,
+            theme: isDarkMode === 'true' ? 'dark' : 'light',
+            transition: Bounce,
+          });
+          /*           setStatus({
+                      status: 'error',
+                      message: 'Preencha todos os campos obrigatórios do cessionário!',
+                    }); */
+          return;
+        }
+      }
+
+      //  Upload dos arquivos
+      const uploadResponse = await uploadFiles('Adicionar');
+
+      if (!uploadResponse) {
+        toast.error(`Erro no upload dos arquivos. Cadastro cancelado.`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
+        });
+        setStatus({
+          status: 'error',
+        });
+        return;
+      }
+
+      //  Montagem do payload
+      const payload = {
+        cessionarios: cessionariosQtd.map(c => c.formDataCessionario),
+      };
+
+      //  Envio da cessão
+      const response = await axiosPrivate.post(`/cessionarios/${precID}`, payload);
+
+      setStatus({
+        status: 'success',
+      });
+
+      toast.success(`Cessionário cadastrado com sucesso!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+
+      fetchDataCessao()
+
+    } catch (error) {
+      console.error("Erro ao cadastrar cessionário:", error);
+
+      toast.error(`Erro ao cadastrar cessionário: ${error}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
+
+      /*       setStatus({
+              status: 'error',
+              message: 'Erro ao enviar dados. Tente novamente.',
+            }); */
+    }
+  };
+
+  const modalProps = {
+    onAddCessionario: handleAddCessionario,
+    handleCessionarioInputChange,
+    onDeleteCessionarioForm: handleDeleteCessionarioForm,
+    cessionariosQtd,
+    formCessionario: formDataCessionario,
+    setFormDataCessionario,
+    handleSubmitAdicionarCessionario,
+    status,
+    handleNomeTab
+  };
 
   const navigate = useNavigate();
 
-  const openModal = () => setModalIsOpen(true);
-  const closeModal = () => setModalIsOpen(false);
+  const openModal = (cessionario) => {
+    setCessionarioSelecionado(cessionario);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setCessionarioSelecionado(null);
+    setModalIsOpen(false);
+  };
 
   const confirmDelete = async (id, files) => {
     const isDarkMode = localStorage.getItem('darkMode');
+
+    console.log(id)
 
     const deleteFile = async (path, fileName) => {
       try {
@@ -115,10 +467,21 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
 
       const response = await axiosPrivate.delete(`/cessionarios/${id}`);
 
+      toast.success(`Cessionário excluído com sucesso!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: false,
+        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        transition: Bounce,
+      });
 
-      localStorage.setItem('cessionarioExcluido', 'true');
+      fetchDataCessao();
 
-      window.location.reload();
+
     } catch (err) {
       toast.error(`Erro ao deletar cessionário: ${err}`, {
         position: 'top-right',
@@ -139,85 +502,26 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
 
   const axiosPrivate = useAxiosPrivate();
 
-  useEffect(() => {
-    addCessionario();
-  }, []);
-
-  const addCessionario = () => {
-    const id = uuidv4();
-    const novoCessionario = {
-      componente: (
-        <AdicionarCessionario
-          index={id}
-          valorPago={valorPago}
-          setValorPago={setValorPago}
-          comissao={comissao}
-          setComissao={setComissao}
-          percentual={percentual}
-          setPercentual={setPercentual}
-          expectativa={expectativa}
-          setExpectativa={setExpectativa}
-          key={id}
-          users={users}
-          enviarValores={(valores) => handleReceberValoresNovoCessionarios(valores, id)}
-        />
-      ),
-      index: id,
-      valores: {}, // Inicialmente os valores são um objeto vazio
-    };
-    setCessionarios([...cessionarios, novoCessionario]);
-    setValoresCessionarios([...valoresCessionarios, {}]);
-  };
-
-  const handleReceberValoresNovoCessionarios = (valores, id) => {
-    setCessionarios((prev) => {
-      return prev.map((cessionario) => {
-        if (cessionario.index === id) {
-          return { ...cessionario, valores: valores };
-        } else {
-          return cessionario;
-        }
-      });
-    });
-
-  };
-
-  const handleReceberValoresCessionarioEditado = (valores) => {
-    console.log(valores);
-    setValorPagoEditado(valores.valorPagoEditado);
-    setComissaoEditado(valores.comissaoEditado);
-    setPercentualEditado(valores.percentualEditado);
-    setExpectativaEditado(valores.expectativaEditado);
-    setCessionarioEditado(valores.cessionarioEditado);
-    setObsEditado(valores.obsEditado);
-    setAssinaturaEditado(valores.assinaturaEditado);
-    setExpedidoEditado(valores.expedidoEditado);
-    setRecebidoEditado(valores.recebidoEditado);
-    setNotaEditado(valores.notaEditado);
-    setOficioTransferenciaEditado(valores.oficioTransferenciaEditado);
-    setComprovantePagamentoEditado(valores.comprovantePagamentoEditado);
-    setNotaFile(valores.notaFile);
-    setOficioTransferenciaFile(valores.oficioTransferenciaFile);
-    setComprovantePagamentoFile(valores.comprovantePagamentoFile);
-  };
-
-  const handleExcluirCessionario = (id) => {
-    const novaListaCessionarios = cessionarios.filter((cessionario) => cessionario.index !== id);
-    setCessionarios(novaListaCessionarios);
-    setValoresCessionarios((prev) => {
-      return prev.filter((_, index) => index !== id);
-    });
-  };
-
-  const handleEditarCessionarioSubmit = async (id) => {
+  const handleEditarCessionarioSubmit = async (e) => {
+    e.preventDefault();
     const isDarkMode = localStorage.getItem('darkMode');
 
 
-    try {
-      setIsLoading(true);
+    // Estado inicial: envio iniciado
+    setStatus({ status: "sending", message: "Enviando dados..." });
 
-      if (!valorPagoEditado || !comissaoEditado || !percentualEditado || !expectativaEditado || !cessionarioEditado) {
-        toast.error('Os campos (cessionário, valor pago, comissão, porcentagem e expectativa) precisam ser preenchidos!', {
+    try {
+
+      //  Validação dos cessionários
+      const algumCessionarioInvalido = !formDataCessionarioEditar.user_id ||
+        !formDataCessionarioEditar.valor_pago ||
+        !formDataCessionarioEditar.comissao ||
+        !formDataCessionarioEditar.exp_recebimento ||
+        !formDataCessionarioEditar.percentual;
+
+
+      if (algumCessionarioInvalido) {
+        toast.error('Preencha todos os campos obrigatórios do cessionário!', {
           position: 'top-right',
           autoClose: 3000,
           hideProgressBar: false,
@@ -228,84 +532,44 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
           theme: isDarkMode === 'true' ? 'dark' : 'light',
           transition: Bounce,
         });
-
-        setIsLoading(false);
+        setStatus({
+          status: 'error',
+        });
         return;
       }
 
-      const cessionariosEditados = { valorPagoEditado, comissaoEditado, percentualEditado, expectativaEditado, cessionarioEditado, obsEditado, assinaturaEditado, expedidoEditado, recebidoEditado, notaEditado: notaFile ? `cessionarios_nota/${notaFile.name}` : notaEditado, oficioTransferenciaEditado: oficioTransferenciaFile ? `cessionarios_mandado/${oficioTransferenciaFile.name}` : oficioTransferenciaEditado, comprovantePagamentoEditado: comprovantePagamentoFile ? `cessionarios_comprovante/${comprovantePagamentoFile.name}` : comprovantePagamentoEditado };
 
-      const uploadFiles = async (files) => {
-        const formData = new FormData();
-        files.forEach((file) => {
-          formData.append(file.name, file.file);
+      //  Upload dos arquivos
+      const uploadResponse = await uploadFiles('Editar');
+
+      if (!uploadResponse) {
+
+        toast.error('Erro no upload dos arquivos. Cadastro cancelado.', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: false,
+          theme: isDarkMode === 'true' ? 'dark' : 'light',
+          transition: Bounce,
         });
 
-        try {
-          const response = await axiosPrivate.post('/uploadFileCessionario', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
-        } catch (err) {
-          toast.error(`Erro ao enviar arquivos: ${err}`, {
-            position: 'top-right',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: false,
-            theme: isDarkMode === 'true' ? 'dark' : 'light',
-            transition: Bounce,
-          });
-          setIsLoading(false);
-          return;
-
-        }
-      };
-
-      if (notaFile || oficioTransferenciaFile || comprovantePagamentoFile) {
-        await uploadFiles([
-          { name: 'nota', file: notaFile },
-          { name: 'oficio_transferencia', file: oficioTransferenciaFile },
-          { name: 'comprovante_pagamento', file: comprovantePagamentoFile },
-        ]);
+        setStatus({
+          status: 'error',
+        });
+        return;
       }
 
-      await axiosPrivate.put(`/cessionarios/${id}`, cessionariosEditados);
+      //  Montagem do payload
+      const payload = {
+        ...formDataCessionarioEditar
+      };
 
+      //  Envio da cessão
+      const response = await axiosPrivate.put(`/cessionarios/${formDataCessionarioEditar.cessionario_id}`, payload);
 
-
-
-      console.log('Cessionario editado com sucesso.');
-    } catch (err) {
-      toast.error(`Erro ao editar cessionário: ${err}`, {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: false,
-        theme: isDarkMode === 'true' ? 'dark' : 'light',
-        transition: Bounce,
-      });
-      setIsLoading(false);
-      console.error('Erro ao editar cessionario:', err);
-      return;
-    }
-
-    setIsLoading(false);
-
-    localStorage.setItem('cessionarioEditado', 'true');
-
-    window.location.reload();
-  };
-
-  useEffect(() => {
-    const isDarkMode = localStorage.getItem('darkMode');
-    if (localStorage.getItem('cessionarioEditado')) {
       toast.success('Cessionário editado com sucesso!', {
         position: "top-right",
         autoClose: 3000,
@@ -317,14 +581,18 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
       });
-      localStorage.removeItem('cessionarioEditado');
-    }
-  }, []);
 
-  useEffect(() => {
-    const isDarkMode = localStorage.getItem('darkMode');
-    if (localStorage.getItem('cessionarioAdicionado')) {
-      toast.success('Cessionário(s) adicionado(s) com sucesso!', {
+
+      setStatus({
+        status: 'success',
+      });
+
+      fetchDataCessao();
+
+    } catch (error) {
+      console.error("Erro ao editar cessionário:", error);
+
+      toast.err('Erro ao enviar dados. Tente novamente.', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -335,170 +603,17 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
       });
-      localStorage.removeItem('cessionarioAdicionado');
-    }
-  }, []);
 
-  useEffect(() => {
-    const isDarkMode = localStorage.getItem('darkMode');
-    if (localStorage.getItem('cessionarioExcluido')) {
-      toast.success('Cessionário excluído com sucesso!', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: false,
-        theme: isDarkMode === 'true' ? 'dark' : 'light',
-        transition: Bounce,
+      setStatus({
+        status: 'error',
       });
-      localStorage.removeItem('cessionarioExcluido');
-    }
-  }, []);
-
-  const handleSubmit = async () => {
-    const isDarkMode = localStorage.getItem('darkMode');
-    setIsLoading(true);
-
-    if (cessionarios.length > 0) {
-      for (const cessionario of cessionarios) {
-        if (!cessionario.valores.valorPago || !cessionario.valores.comissao || !cessionario.valores.percentual || !cessionario.valores.expectativa || !cessionario.valores.cessionario) {
-          toast.error('Os campos (cessionário, valor pago, comissão, porcentagem e expectativa) precisam ser preenchidos!', {
-            position: 'top-right',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: false,
-            theme: isDarkMode === 'true' ? 'dark' : 'light',
-            transition: Bounce,
-          });
-
-          setIsLoading(false);
-          return;
-        }
-      }
-
-      try {
-        for (const cessionario of cessionarios) {
-          cessionario.valores.id_cessao = precID;
-
-          if (cessionario.valores.nota) {
-            cessionario.valores.notaPath = `cessionarios_nota/${cessionario.valores.nota.name}`;
-          }
-
-          if (cessionario.valores.oficioTransferencia) {
-            cessionario.valores.oficioTransferenciaPath = `cessionarios_mandado/${cessionario.valores.oficioTransferencia.name}`;
-          }
-
-          if (cessionario.valores.comprovantePagamento) {
-            cessionario.valores.comprovantePagamentoPath = `cessionarios_comprovante/${cessionario.valores.comprovantePagamento.name}`
-          }
-
-
-          try {
-            setIsLoading(true)
-            await axiosPrivate.post('/cessionarios', cessionario.valores);
-
-            const uploadFiles = async (files) => {
-              const formData = new FormData();
-              files.forEach((file) => {
-                formData.append(file.name, file.file);
-              });
-
-              try {
-                const response = await axiosPrivate.post('/uploadFileCessionario', formData, {
-                  headers: {
-                    'Content-Type': 'multipart/form-data',
-                  },
-                });
-              } catch (err) {
-                toast.error(`Erro ao enviar arquivos: ${err}`, {
-                  position: 'top-right',
-                  autoClose: 3000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: false,
-                  theme: isDarkMode === 'true' ? 'dark' : 'light',
-                  transition: Bounce,
-                });
-                setIsLoading(false);
-              }
-            };
-
-            if (cessionario.valores.nota || cessionario.valores.oficioTransferencia || cessionario.valores.comprovantePagamento) {
-              await uploadFiles([
-                { name: 'nota', file: cessionario.valores.nota },
-                { name: 'oficio_transferencia', file: cessionario.valores.oficioTransferencia },
-                { name: 'comprovante_pagamento', file: cessionario.valores.comprovantePagamento },
-              ]);
-            }
-
-            console.log(`Cessionario ${cessionario.valores} adicionado com sucesso.`);
-            setIsLoading(false)
-          } catch (err) {
-            toast.error(`Erro ao adicionar cessionário: ${err}`, {
-              position: 'top-right',
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: false,
-              theme: isDarkMode === 'true' ? 'dark' : 'light',
-              transition: Bounce,
-            });
-            setIsLoading(false);
-            console.error('Erro ao adicionar cessionario:', err);
-            return;
-          }
-        }
-
-        localStorage.setItem('cessionarioAdicionado', 'true');
-
-        window.location.reload();
-      } catch (err) {
-        setIsLoading(false);
-        console.log(err);
-        return;
-      }
-
-      setIsLoading(false);
-
-      const id = uuidv4();
-      const novoCessionario = {
-        componente: (
-          <AdicionarCessionario
-            valorPago={''}
-            setValorPago={setValorPago}
-            comissao={''}
-            setComissao={setComissao}
-            percentual={''}
-            setPercentual={setPercentual}
-            expectativa={''}
-            setExpectativa={setExpectativa}
-            key={id}
-            users={users}
-            enviarValores={(valores) => handleReceberValoresNovoCessionarios(valores, id)}
-          />
-        ),
-        index: id,
-        valores: {}, // Inicialmente os valores são um objeto vazio
-      };
-      setCessionarios([novoCessionario]);
-
-      window.location.reload();
     }
   };
+
 
   const downloadFile = async (filename) => {
     const isDarkMode = localStorage.getItem('darkMode');
     const path = filename.split('/')[0];
-    console.log(path)
     const file = filename.split('/')[1];
 
     setLoadingFiles(prev => ({ ...prev, [filename]: true }));
@@ -572,69 +687,17 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
     return previousValue + changePorcentagemToFloat(currentValue.percentual);
   }, 0);
 
-  return cessionario.length !== 0 ? (
+  const valorOficioTotal = cessionario.reduce((previousValue, currentValue) => {
+    return previousValue + changeStringFloat(currentValue.valor_oficio_pagamento)
+  }, 0);
+
+  return cessionario.length > 0 ? (
     <div className="w-full mb-[60px] flex flex-col">
-      <ToastContainer />
       <div className="mb-[16px] flex items-center justify-between">
         <span className="font-[700] dark:text-white" id="cessionarios">
           Cessionários
         </span>
-        {auth.user.admin ?
-          <Modal
-            botaoAbrirModal={
-              <button title="Adicionar cessionário" className="hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:hover:bg-neutral-800 rounded w-[25px] h-[25px] p-[2px]">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[18px] h-[18px] dark:text-white">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-              </button>
-            }
-            tituloModal="Adicionar cessionário"
-            botaoSalvar={
-              <button
-                onClick={() => handleSubmit()}
-                className="bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700"
-              >
-                Salvar
-              </button>
-            }
-            botaoAdicionarCessionario={
-              <button
-                onClick={() => addCessionario()}
-                className="bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700"
-              >
-                Adicionar cessionário
-              </button>
-            }
-          >
-            <div className="h-[450px] overflow-auto">
-              {isLoading && (
-                <div className="absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20">
-                  <div className="absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 h-12 w-12">
-                    <LoadingSpinner />
-                  </div>
-                </div>
-              )}
-              <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
-                {cessionarios.map((componente) => (
-                  <div key={componente.index} className="w-full pt-5">
-                    <div className="px-4 flex justify-end items-center">
-                      <button
-                        onClick={() => handleExcluirCessionario(componente.index)}
-                        className={cessionarios.length > 1 ? 'rounded hover:bg-neutral-100 float-right w-4 h-4 dark:hover:bg-neutral-800' : 'hidden'}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-                    {componente.componente}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Modal> : null
-        }
-
+        {auth.user.admin ? <Modal {...modalProps} /> : null}
       </div>
       <div className="overflow-x-auto w-full">
         <div className="w-max lg:w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-600">
@@ -643,14 +706,15 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
           <div className="min-w-[120px] w-[17%] text-center dark:text-white">comissão</div>
           <div className="min-w-[60px] w-[5%] text-center dark:text-white">%</div>
           <div className="min-w-[120px] w-[17%] text-center dark:text-white">expectativa</div>
+          {auth.user.admin ? <div className="min-w-[120px] w-[17%] text-center dark:text-white">valor do ofício</div> : null}
           <div className="min-w-[180px] w-[18%] text-center dark:text-white">nota</div>
           <div className="min-w-[50px] w-[5%] ml-auto text-center dark:text-white"></div>
         </div>
-        {cessionario.map((c) => (
-          <div className="w-max lg:w-full flex text-[12px] items-center border-b dark:border-neutral-600 last:border-0 py-[10px] border-gray-300" key={c.id}>
+        {cessionario.map((c, index) => (
+          <div className="w-max lg:w-full flex text-[12px] items-center border-b dark:border-neutral-600 last:border-0 py-[10px] border-gray-300" key={index}>
             <div className="min-w-[250px] w-[24%]">
               <div className="flex flex-col justify-center text-[12px]">
-                <span className="font-bold dark:text-neutral-200">{c.nome_user} </span>
+                <span className="font-bold dark:text-neutral-200">{c.nome} </span>
                 <span className=" text-neutral-400 font-medium">{c.cpfcnpj}</span>
               </div>
             </div>
@@ -658,20 +722,22 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
             <div className="min-w-[120px] w-[17%] text-center dark:text-neutral-200">{c.comissao}</div>
             <div className="min-w-[60px] w-[5%] text-center dark:text-neutral-200">{c.percentual}</div>
             <div className="min-w-[120px] w-[17%] text-center dark:text-neutral-200">{c.exp_recebimento}</div>
-            <div className="min-w-[180px] w-[18%] text-center">
+            {auth.user.admin ? <div className="min-w-[120px] w-[17%] text-center dark:text-neutral-200">{c.valor_oficio_pagamento}</div> : null}
+
+            <div className="min-w-[180px] w-[18%] text-center overflow-hidden">
               {c.nota ? <button title="Baixar nota" className="cursor-pointer text-[12px] hover:underline dark:text-white" onClick={() => downloadFile(c.nota)}>
                 {loadingFiles[c.nota] ? (
                   <div className="flex items-center gap-1">
-                    <div className="w-4 h-4"><LoadingSpinner /></div>
+                    <div className="w-4 h-4 shrink-0"><LoadingSpinner /></div>
 
                     <span>{c.nota ? c.nota.split('/')[1] : null}</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                  <div className="flex items-center gap-1 overflow-hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 shrink-0">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                     </svg>
-                    <span className="cursor-pointer text-[12px] hover:underline dark:text-white">{c.nota ? c.nota.split('/')[1] : null}</span>
+                    <span className="cursor-pointer text-[12px] hover:underline dark:text-white overflow-hidden text-ellipsis">{c.nota ? c.nota.split('/')[1] : null}</span>
 
                   </div>
 
@@ -683,37 +749,15 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
               {auth.user.admin ?
                 <>
                   <DotsButton isModal={true}>
-                    <Modal
-                      botaoAbrirModal={
-                        <button title="Editar cessionário" className="hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm px-4 py-2 rounded">
-                          Editar
-                        </button>
-                      }
-                      tituloModal={`Editar cessionário #${c.id}`}
-                      botaoSalvar={
-                        <button
-                          onClick={() => handleEditarCessionarioSubmit(c.id)}
-                          className="bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700"
-                        >
-                          Salvar
-                        </button>
-                      }
-                    >
-                      {isLoading && (
-                        <div className="absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20">
-                          <div className="absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8">
-                            <LoadingSpinner />
-                          </div>
-                        </div>
-                      )}
-                      <EditarCessionario cessionario={c} users={users} enviarValores={(valores) => handleReceberValoresCessionarioEditado(valores)} />
-                    </Modal>
-                    <button onClick={openModal} className="hover:bg-red-800 bg-red-600 text-white text-sm px-4 py-2 rounded">
+
+                    <ModalEditarCessionario dadosCessionario={c} status={status} handleCessionarioInputChange={handleCessionarioInputChange} formDataCessionario={formDataCessionarioEditar} setFormDataCessionario={setFormDataCessionarioEditar} fileCessionario={fileCessionarioEditar} setFileCessionario={setFileCessionarioEditar} handleEditarCessionarioSubmit={handleEditarCessionarioSubmit} />
+
+                    <button onClick={() => openModal(c)} className="hover:bg-red-800 bg-red-600 text-white text-sm px-4 py-2 rounded">
                       Excluir
                     </button>
                   </DotsButton>
 
-                  <DeleteConfirmationModal isOpen={modalIsOpen} onRequestClose={closeModal} onConfirm={() => confirmDelete(c.id, { nota: c.nota, comprovante: c.comprovante, mandado: c.mandado })} />
+                  <DeleteConfirmationModal isOpen={modalIsOpen} onRequestClose={closeModal} onConfirm={() => confirmDelete(cessionarioSelecionado?.cessionario_id, { nota: cessionarioSelecionado?.nota, comprovante: cessionarioSelecionado?.comprovante, mandado: cessionarioSelecionado?.mandado })} />
                 </> : null}
 
             </div>
@@ -729,6 +773,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
           <div className="min-w-[120px] w-[17%] font-bold text-center dark:text-neutral-200">R$ {localeTwoDecimals(valorComissaoTotal)}</div>
           <div className="min-w-[60px] w-[5%] font-bold text-center dark:text-neutral-200">{valorPorcentagemTotal.toLocaleString()}%</div>
           <div className="min-w-[120px] w-[17%] font-bold text-center dark:text-neutral-200">R$ {localeTwoDecimals(valorExpTotal)}</div>
+          {auth.user.admin ? <div className="min-w-[120px] w-[17%] font-bold text-center dark:text-neutral-200">R$ {localeTwoDecimals(valorOficioTotal)}</div> : null}
           <div className="min-w-[180px] w-[18%] text-center dark:text-neutral-200"></div>
           <div className="min-w-[50px] w-[5%] ml-auto text-center dark:text-neutral-200"></div>
         </div>
@@ -740,59 +785,7 @@ export default function ListaCessionarios({ cessionario, users, precID }) {
         <span className="font-[400] text-[12px] dark:text-white" id="cessionarios">
           Não há cessionários
         </span>
-        {auth.user.admin ? <Modal
-          botaoAbrirModal={
-            <button title="Adicionar cessionário" className="hover:bg-neutral-100 flex justify-center items-center dark:text-white dark:hover:bg-neutral-800 rounded w-[20px] h-[20px] p-[1px]">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[18px] h-[18px] dark:text-white">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-            </button>
-          }
-          tituloModal="Adicionar cessionário"
-          botaoSalvar={
-            <button
-              onClick={() => handleSubmit()}
-              className="bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700"
-            >
-              Salvar
-            </button>
-          }
-          botaoAdicionarCessionario={
-            <button
-              onClick={() => addCessionario()}
-              className="bg-black dark:bg-neutral-800 text-white border rounded dark:border-neutral-600 text-[14px] font-medium px-4 py-1 float-right mr-5 mt-4 hover:bg-neutral-700 dark:hover:bg-neutral-700"
-            >
-              Adicionar cessionário
-            </button>
-          }
-        >
-          {isLoading && (
-            <div className="absolute bg-neutral-800 w-full h-full opacity-85 left-1/2 top-1/2 -translate-x-[50%] -translate-y-[50%] z-20">
-              <div className="absolute left-1/2 top-[40%] -translate-x-[50%] -translate-y-[50%] z-30 w-8 h-8">
-                <LoadingSpinner />
-              </div>
-            </div>
-          )}
-          <div className="h-[450px] overflow-auto">
-            <div className="w-full flex flex-col gap-10 divide-y dark:divide-neutral-600">
-              {cessionarios.map((componente) => (
-                <div key={componente.index} className="w-full pt-5">
-                  <div className="px-4 flex justify-end items-center">
-                    <button
-                      onClick={() => handleExcluirCessionario(componente.index)}
-                      className={cessionarios.length > 1 ? 'rounded hover:bg-neutral-100 float-right w-4 h-4 dark:hover:bg-neutral-800' : 'hidden'}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 dark:text-white">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                  {componente.componente}
-                </div>
-              ))}
-            </div>
-          </div>
-        </Modal> : null}
+        {auth.user.admin ? <Modal {...modalProps} /> : null}
       </div>
     </>
   );

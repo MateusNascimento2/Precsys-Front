@@ -1,499 +1,112 @@
 import React, { useState } from "react";
-import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import CurrencyFormat from 'react-currency-format';
+
 
 
 export default function TabelaGeneradaCalculo() {
   const pdfContentRef = React.useRef(null); // Referência para o conteúdo do PDF
 
-  const [precatorio, setPrecatorio] = useState("2019.02877-2");
-  const [orcamento, setOrcamento] = useState("2020");
-  const [valorPrincipal, setValorPrincipal] = useState(30759.41);
-  const [valorJuros, setValorJuros] = useState(18962.09);
-  const [rioPrevidencia, setRioPrevidencia] = useState("0");
-  const [dataBase, setDataBase] = useState("2017-08-23");
-  const [dataAtualizacao, setDataAtualizacao] = useState("2023-12-14");
+  const [precatorio, setPrecatorio] = useState("");
+  const [orcamento, setOrcamento] = useState("");
+  const [valorPrincipal, setValorPrincipal] = useState({valorFormatado: 'R$ 0,00', valorSemFormatacao: 0.00});
+  const [valorJuros, setValorJuros] = useState({valorFormatado: 'R$ 0,00', valorSemFormatacao: 0.00});
+  const [correcaoMonetaria, setCorrecaoMonetaria] = useState({valorFormatado: 'R$ 0,00', valorSemFormatacao: 0.00})
+  const [rioPrevidencia, setRioPrevidencia] = useState({valorFormatado: 'R$ 0,00', valorSemFormatacao: 0.00});
+  const [dataBaseStr, setDataBase] = useState('');
+  const [dataAtualizacaoStr, setDataAtualizacao] = useState(() => {
+    const hoje = new Date();
+    return hoje.toISOString().split('T')[0]; // retorna 'yyyy-mm-dd'
+  });
 
-  const axiosPrivate = useAxiosPrivate()
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [showTabelaCalculoInicial, setShowTabelaCalculoInicial] = useState(false)
+  const [showTabelaInicioPeriodoGraca, setShowTabelaInicioPeriodoGraca] = useState(false)
+  const [showTabelaInicioTaxaSelic, setShowTabelaInicioTaxaSelic] = useState(false)
+  const [showTabelaInicioPeriodoGraca2, setShowTabelaInicioPeriodoGraca2] = useState(false)
+  const [showTabelaFinalPeriodoGraca, setShowTabelaFinalPeriodoGraca] = useState(false)
+  const [showTabelaAteInicioSelic, setShowTabelaAteInicioSelic] = useState(false)
+  const [showTabelaCalculoFinal, setShowTabelaCalculoFinal] = useState(false);
 
-  //Impressão de Estados (Inicial)
-  const [calculoInicialDataBase, setCalculoInicialDataBase] = useState("");
-  const [calculoIncialPrincipal, setCalculoIncialPrincipal] = useState("");
-  const [calculoIncialJuros, setCalculoIncialJuros] = useState("");
-  const [calculoIncialTotal, setCalculoIncialTotal] = useState("");
+  //Valores da Tabela Cálculo Inicial
+  const [calculoInicialData, setCalculoInicialData] = useState("");
+  const [calculoInicialValorPrincipal, setCalculoInicialValorPrincipal] = useState("");
+  const [calculoInicialValorJuros, setCalculoInicialValorJuros] = useState("");
+  const [calculoInicialValorTotal, setCalculoInicialValorTotal] = useState("");
 
-  //Impressão de Estados (Segundo Quadrante / IPCAE)
-  const [segundoQuadranteIPCAE1, setSegundoQuadranteIPCAE1] = useState("");
-  const [segundoQuadranteIPCAE2, setSegundoQuadranteIPCAE2] = useState("");
-  const [segundoQuadranteIPCAE3, setSegundoQuadranteIPCAE3] = useState("");
-  const [segundoQuadranteIPCAE4, setSegundoQuadranteIPCAE4] = useState("");
-  const [segundoQuadranteIPCAE5, setSegundoQuadranteIPCAE5] = useState("");
-  const [segundoQuadranteIPCAE6, setSegundoQuadranteIPCAE6] = useState("");
-  const [segundoQuadranteIPCAE7, setSegundoQuadranteIPCAE7] = useState("");
-  const [segundoQuadranteIPCAE8, setSegundoQuadranteIPCAE8] = useState("");
-  const [segundoQuadranteIPCAE9, setSegundoQuadranteIPCAE9] = useState("");
-  const [segundoQuadranteIPCAE10, setSegundoQuadranteIPCAE10] = useState("");
+  //Valores da Tabela Início do Período da Graça
+  {/* Correção Monetária */ }
+  const [inicioPeriodoGracaData, setInicioPeriodoGracaData] = useState("");
+  const [inicioPeriodoGracaFator, setInicioPeriodoGracaFator] = useState('');
+  const [inicioPeriodoGracaFatorObs, setInicioPeriodoGracaFatorObs] = useState('');
+  const [inicioPeriodoGracaValorPrincipalCorrigido, setInicioPeriodoGracaValorPrincipalCorrigido] = useState("");
+  const [inicioPeriodoGracaValorJurosCorrigido, setInicioPeriodoGracaValorJurosCorrigido] = useState("");
+  const [inicioPeriodoGracaValorTotalCorrigido, setInicioPeriodoGracaValorTotalCorrigido] = useState("");
 
-  //Impressão de Estados (Terceiro Quadrante / IPCAE)
-  const [terceiroQuadranteIPCAE1, setTerceiroQuadranteIPCAE1] = useState("");
-  const [terceiroQuadranteIPCAE2, setTerceiroQuadranteIPCAE2] = useState("");
-  const [terceiroQuadranteIPCAE3, setTerceiroQuadranteIPCAE3] = useState("");
-  const [terceiroQuadranteIPCAE4, setTerceiroQuadranteIPCAE4] = useState("");
-  const [terceiroQuadranteIPCAE5, setTerceiroQuadranteIPCAE5] = useState("");
+  {/* Juros */ }
+  const [inicioPeriodoGracaNumeroDias, setInicioPeriodoGracaNumeroDias] = useState("");
+  const [inicioPeriodoGracaTaxaJuros, setInicioPeriodoGracaTaxaJuros] = useState("");
+  const [inicioPeriodoGracaTaxaJurosObs, setInicioPeriodoGracaTaxaJurosObs] = useState('');
+  const [inicioPeriodoGracaValorJuros, setInicioPeriodoGracaValorJuros] = useState("");
 
-  //Impressão de Estados (Quarto Quadrante / IPCA-E)
-  const [quartoQuadranteIPCAE1, setQuartoQuadranteIPCAE1] = useState("");
-  const [quartoQuadranteIPCAE2, setQuartoQuadranteIPCAE2] = useState("");
-  const [quartoQuadranteIPCAE3, setQuartoQuadranteIPCAE3] = useState("");
-  const [quartoQuadranteIPCAE4, setQuartoQuadranteIPCAE4] = useState("");
-  const [quartoQuadranteIPCAE5, setQuartoQuadranteIPCAE5] = useState("");
-  const [quartoQuadranteIPCAE6, setQuartoQuadranteIPCAE6] = useState("");
-  const [quartoQuadranteIPCAE7, setQuartoQuadranteIPCAE7] = useState("");
-  const [quartoQuadranteIPCAE8, setQuartoQuadranteIPCAE8] = useState("");
-  const [quartoQuadranteIPCAE9, setQuartoQuadranteIPCAE9] = useState("");
-  const [quartoQuadranteIPCAE10, setQuartoQuadranteIPCAE10] = useState("");
-
-  //Impressão de Estados (Quarto Quadrante / Selic / Calculo Final)
-  const [quartoQuadranteSELIC1, setQuartoQuadranteSELIC1] = useState("");
-  const [quartoQuadranteSELIC2, setQuartoQuadranteSELIC2] = useState("");
-  const [quartoQuadranteSELIC3, setQuartoQuadranteSELIC3] = useState("");
-  const [quartoQuadranteSELIC4, setQuartoQuadranteSELIC4] = useState("");
-  const [quartoQuadranteSELIC5, setQuartoQuadranteSELIC5] = useState("");
-  const [quartoQuadranteSELIC6, setQuartoQuadranteSELIC6] = useState("");
-  const [quartoQuadranteSELIC7, setQuartoQuadranteSELIC7] = useState("");
-  const [quartoQuadranteSELIC8, setQuartoQuadranteSELIC8] = useState("");
-
-  // States de Verificação de Campos
-  const [verfDBToIO, setVerfDBToIO] = useState(4);
-  const [verfVOToCF, setVerfVOToCF] = useState(4);
-
-  function pegarDiasData(date1, date2) {
-    // Verificar se as datas são válidas
-    if (isNaN(date1) || isNaN(date2)) {
-      throw new Error("Data inválida");
-    }
-
-    // Calcular a diferença em milissegundos
-    const differenceInMilliseconds = date2 - date1;
-
-    // Converter a diferença de milissegundos para dias
-    const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
-
-    // Retornar a diferença em dias (arredondada)
-    return Math.round(differenceInDays);
-  }
-
-  // Exemplo de uso:
-  /*   const date1 = '2024-05-01';
-  const date2 = '2024-05-23';
-  const daysBetween = getDaysBetweenDates(date1, date2);
-  console.log(daysBetween); // 22 */
-
-  const handleDate = (date, setter) => {
-    setter(date);
-  };
-
-  const getDataFromJSON = async (path) => {
-    const controller = new AbortController();
-    try {
-      const { data } = await axiosPrivate.get(path, {
-        signal: controller.signal
-      })
-
-      return data
-    } catch (err) {
-      console.error(err)
-    }
-    /*     const response = await fetch(path);
-        const data = await response.json();
-        return data; */
-  };
-
-  const fetchData = async (url, setter) => {
-    try {
-      const { data } = await axiosPrivate.get(url, {
-        signal: controller.signal
-      });
-      if (isMounted) setter(data);
-      setIsLoading(false);
-    } catch (err) {
-      console.log(err);
-      navigate('/', { state: { from: location }, replace: true });
-    }
-  };
-
-  const dateToPTBRFormat = (date) => {
-    const dateInPTBR = date.split("-");
-    return `${dateInPTBR[1]}/${dateInPTBR[2]}/${dateInPTBR[0]}`;
-  };
-
-  //Função usada para buscar por data nos arquivos JSON
-  const dateToSearchInJSONFiles = (date) => {
-    const dateFormated = date.split("/");
-    if (parseInt(dateFormated[0]) < 10) {
-      console.log("true");
-      return `0${dateFormated[0]}/01/${dateFormated[2]}`;
-    } else {
-      return `${dateFormated[0]}/01/${dateFormated[2]}`;
-    }
-  };
-
-  const procurarPorAlgumaCoisa = (x, arr) => {
-    const objAchado = arr.filter((obj) => {
-      for (const key in obj) {
-        if (x === obj[key]) {
-          return true;
-        }
-      }
-      return false;
-    });
-
-    return objAchado;
-  };
-
-  const acharFator = (data, fator) => {
-    const database = dateToSearchInJSONFiles(data.toLocaleDateString("en-US"));
-    console.log(database);
-    const resultadoDaBuscaNoFatorNT = fator.filter(
-      (fator) => fator.Data.trim() === database.trim(),
-    );
-    return resultadoDaBuscaNoFatorNT[0].fatorNT;
-  };
-
-  const arrendondarTJ = (number, precision) => {
-    // Multiplica o número pela potência de 10 e arredonda para o inteiro mais próximo
-    const multiplier = Math.pow(10, precision);
-    const roundedNumber = Math.round(number * multiplier) / multiplier;
-    return roundedNumber;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    try {
-      //Definindo Variaveis Mutaveis
-      let valorPAt = parseFloat(valorPrincipal);
-      let valorJAt = parseFloat(valorJuros);
-      let valorTAt = 0;
-      let valorNJ = 0;
-
-      // Definindo Data Selic
-      const dataSelic = new Date("12-01-2021");
-
-      console.log("Data Selic:" + dataSelic);
-
-      // Definindo Data Base
-      const dataBSplit = dataBase.split("-");
-      const dataB = new Date(
-        dataBSplit[1] + "-" + dataBSplit[2] + "-" + dataBSplit[0],
-      );
-      const dataATSplit = dataAtualizacao.split("-");
-      const dataAT = new Date(
-        dataATSplit[1] + "-" + dataATSplit[2] + "-" + dataATSplit[0],
-      );
-
-      console.log("Data Atuaização:" + dataAT);
-
-      // Definindo Datas Orçamento
-      let dataIO = new Date("");
-      let dataVO = new Date("");
-
-      // Criando orçamentos
-      if (orcamento === "2019") {
-        dataIO = new Date("07-01-2018");
-        dataVO = new Date("12-31-2019");
-      } else if (orcamento === "2020") {
-        dataIO = new Date("07-01-2019");
-        dataVO = new Date("12-31-2020");
-      } else if (orcamento === "2021") {
-        dataIO = new Date("07-01-2020");
-        dataVO = new Date("12-31-2021");
-      } else if (orcamento === "2022") {
-        dataIO = new Date("07-01-2021");
-        dataVO = new Date("12-31-2022");
-      } else if (orcamento === "2023") {
-        dataIO = new Date("04-02-2022");
-        dataVO = new Date("12-31-2023");
-      } else if (orcamento === "2024") {
-        dataIO = new Date("04-02-2023");
-        dataVO = new Date("12-31-2024");
-      } else if (orcamento === "2025") {
-        dataIO = new Date("04-02-024");
-        dataVO = new Date("12-31-2025");
-      }
-
-      console.log("Data Insc: " + dataIO);
-      console.log("Data Venc: " + dataVO);
-
-      // Iniciando Tabela Cálculo Inicial
-      setCalculoInicialDataBase(dataB.toLocaleDateString("PT-BR"));
-      setCalculoIncialPrincipal(
-        valorPAt.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-      );
-      setCalculoIncialJuros(
-        valorJAt.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-      );
-      setCalculoIncialTotal(
-        (valorPAt + valorJAt).toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }),
-      );
-      // Verificações
-
-      //Pegando todas as informações do arquivo FatorNT.json
-      const fatorNT = await getDataFromJSON("/fatorNT");
-      console.log(fatorNT);
-
-      //Pegando todas as informações do arquivo jurosPoupancaNovo.json
-      const jurosPoupanca = await getDataFromJSON(
-        "/jurosPoupanca",
-      );
-      console.log(jurosPoupanca);
-
-      //Pegando todas as informações do arquivo selicAcumuladoJF.json
-      const selicAcumuladoJF = await getDataFromJSON(
-        "/selicAcumuladoJF",
-      );
-
-      // Da database até o período da graça
-      if (dataB <= dataSelic && dataIO <= dataSelic) {
-        console.log("corrigir pela IPCA/JP. (0)");
-        setVerfDBToIO(0);
-
-        // Correção(IPCA-E)! Juros Poupança!
-        setSegundoQuadranteIPCAE1(dataIO.toLocaleDateString("PT-BR"));
-
-        let varDataBtoDataVO =
-          acharFator(dataB, fatorNT) / acharFator(dataIO, fatorNT);
-        varDataBtoDataVO = arrendondarTJ(varDataBtoDataVO, 14);
-        valorPAt = valorPAt * varDataBtoDataVO;
-        valorJAt = valorJAt * varDataBtoDataVO;
-        valorTAt = valorPAt + valorJAt;
-
-        setSegundoQuadranteIPCAE2(arrendondarTJ(varDataBtoDataVO, 8));
-        setSegundoQuadranteIPCAE3(
-          valorPAt.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-        setSegundoQuadranteIPCAE4(
-          valorJAt.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-        setSegundoQuadranteIPCAE5(
-          valorTAt.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-
-        let jurosPDataBtoDataVO =
-          (acharFator(dataB, jurosPoupanca) - acharFator(dataIO, jurosPoupanca)) *
-          100;
-        valorNJ = (valorPAt * jurosPDataBtoDataVO) / 100;
-        valorJAt = valorJAt + valorNJ;
-
-        setSegundoQuadranteIPCAE6(pegarDiasData(dataB, dataIO));
-        setSegundoQuadranteIPCAE7(arrendondarTJ(jurosPDataBtoDataVO, 6));
-        setSegundoQuadranteIPCAE8(
-          valorNJ.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-        setSegundoQuadranteIPCAE9(
-          valorJAt.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-        setSegundoQuadranteIPCAE10(
-          (valorPAt + valorJAt).toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-      } else if (dataB <= dataSelic && dataIO >= dataSelic) {
-        console.log(
-          "Vai corrigir pelo IPCA/JP até a selic e depois corrigir até a IO",
-        );
-      } else if (dataB >= dataSelic) {
-        console.log("Corrigir pela Selic até a IO");
-      }
-
-      // Da IO até o Final do Periodo da graça
-      let varDataIOtoVO =
-        acharFator(dataIO, fatorNT) / acharFator(dataVO, fatorNT);
-      varDataIOtoVO = arrendondarTJ(varDataIOtoVO, 14);
-
-      valorPAt = valorPAt * varDataIOtoVO;
-      valorJAt = valorJAt * varDataIOtoVO;
-
-      setTerceiroQuadranteIPCAE1(dataVO.toLocaleDateString("PT-BR"));
-      setTerceiroQuadranteIPCAE2(arrendondarTJ(varDataIOtoVO, 8));
-      setTerceiroQuadranteIPCAE3(
-        valorPAt.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }),
-      );
-      setTerceiroQuadranteIPCAE4(
-        valorJAt.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }),
-      );
-      setTerceiroQuadranteIPCAE5(
-        (valorPAt + valorJAt).toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }),
-      );
-
-      //Do final do período da graça até a Selic se tiver e depois até o pagamento.
-      if (dataVO >= dataSelic) {
-        console.log("Corrigir só pela Selic (Cálculo Final)");
-      } else if (dataVO < dataSelic) {
-        console.log(
-          "Corrigir até o início da taxa selic e depois para a data de hoje! (Fazer Inicio taxa selic e depois até Calculo Final)",
-        );
-
-        setVerfVOToCF(0);
-
-        // Correção(IPCA-E)! Juros Poupança!
-        setQuartoQuadranteIPCAE1(dataSelic.toLocaleDateString("PT-BR"));
-
-        let varDataVOtoDataSelic =
-          acharFator(dataVO, fatorNT) / acharFator(dataSelic, fatorNT);
-        varDataVOtoDataSelic = arrendondarTJ(varDataVOtoDataSelic, 14);
-        valorPAt = valorPAt * varDataVOtoDataSelic;
-        valorJAt = valorJAt * varDataVOtoDataSelic;
-        valorTAt = valorPAt + valorJAt;
-
-        setQuartoQuadranteIPCAE2(arrendondarTJ(varDataVOtoDataSelic, 8));
-        setQuartoQuadranteIPCAE3(
-          valorPAt.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-        setQuartoQuadranteIPCAE4(
-          valorJAt.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-        setQuartoQuadranteIPCAE5(
-          valorTAt.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-
-        let jurosPDataVOtoDataSelic =
-          (acharFator(dataVO, jurosPoupanca) -
-            acharFator(dataSelic, jurosPoupanca)) *
-          100;
-        valorNJ = (valorPAt * jurosPDataVOtoDataSelic) / 100;
-        valorJAt = valorJAt + valorNJ;
-
-        setQuartoQuadranteIPCAE6(pegarDiasData(dataVO, dataSelic));
-        setQuartoQuadranteIPCAE7(arrendondarTJ(jurosPDataVOtoDataSelic, 6));
-        setQuartoQuadranteIPCAE8(
-          valorNJ.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-        setQuartoQuadranteIPCAE9(
-          valorJAt.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-        setQuartoQuadranteIPCAE10(
-          (valorPAt + valorJAt).toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-
-        // Correção Calculo Final (Selic)!
-        setQuartoQuadranteSELIC1(dataAT.toLocaleDateString("PT-BR"));
-
-        setQuartoQuadranteSELIC2(
-          valorPAt.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-        setQuartoQuadranteSELIC3(
-          valorJAt.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-        setQuartoQuadranteSELIC4(
-          (valorPAt + valorJAt).toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-
-        let varDataSelictoDataAT =
-          acharFator(dataSelic, selicAcumuladoJF) -
-          acharFator(dataAT, selicAcumuladoJF) +
-          1;
-        varDataSelictoDataAT = arrendondarTJ(varDataSelictoDataAT, 14);
-        setQuartoQuadranteSELIC5(arrendondarTJ(varDataSelictoDataAT, 6));
-
-        valorPAt = valorPAt * varDataSelictoDataAT;
-        valorJAt = valorJAt * varDataSelictoDataAT;
-        valorTAt = valorPAt + valorJAt;
-
-        setQuartoQuadranteSELIC6(
-          valorPAt.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-        setQuartoQuadranteSELIC7(
-          valorJAt.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-        setQuartoQuadranteSELIC8(
-          (valorPAt + valorJAt).toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-          }),
-        );
-      }
-
-      console.log("Testar a formatação!");
-
-      const dataBaseInPTBR = dateToPTBRFormat(dataBase);
-      const dataAtualizacaoInPTBR = dateToPTBRFormat(dataAtualizacao);
-      console.log("Arriba: " + calculoInicialDataBase);
-
-    } catch (e) {
-      console.log(e)
-    }
+  {/* Valor Atualizado */ }
+  const [inicioPeriodoGracaAtualizadoValorPrincipalCorrigido, setInicioPeriodoGracaAtualizadoValorPrincipalCorrigido] = useState("");
+  const [inicioPeriodoGracaAtualizadoValorJurosCorrigido, setInicioPeriodoGracaAtualizadoValorJurosCorrigido] = useState("");
+  const [inicioPeriodoGracaAtualizadoValorTotal, setInicioPeriodoGracaAtualizadoValorTotal] = useState("");
 
 
-  };
+  //Valores da Tabela Início da Taxa Selic
+  {/* Correção Monetária */ }
+  const [inicioTaxaSelicData, setInicioTaxaSelicData] = useState("");
+  const [inicioTaxaSelicFator, setInicioTaxaSelicFator] = useState('');
+  const [inicioTaxaSelicFatorObs, setInicioTaxaSelicFatorObs] = useState('');
+  const [inicioTaxaSelicValorPrincipalCorrigido, setInicioTaxaSelicValorPrincipalCorrigido] = useState("");
+  const [inicioTaxaSelicValorJurosCorrigido, setInicioTaxaSelicValorJurosCorrigido] = useState("");
+  const [inicioTaxaSelicValorTotalCorrigido, setInicioTaxaSelicValorTotalCorrigido] = useState("");
 
-  /*   React.useEffect(() => {
-      handleSubmit();
-    }, [precatorio, rioPrevidencia, valorPrincipal, valorJuros, dataBase, dataAtualizacao, orcamento]); */
+  {/* Juros */ }
+  const [inicioTaxaSelicNumeroDias, setInicioTaxaSelicNumeroDias] = useState("");
+  const [inicioTaxaSelicTaxaJuros, setInicioTaxaSelicTaxaJuros] = useState("");
+  const [inicioTaxaSelicTaxaJurosObs, setInicioTaxaSelicTaxaJurosObs] = useState('');
+  const [inicioTaxaSelicValorJuros, setInicioTaxaSelicValorJuros] = useState("");
+
+  {/* Valor Atualizado */ }
+  const [inicioTaxaSelicAtualizadoValorPrincipalCorrigido, setInicioTaxaSelicAtualizadoValorPrincipalCorrigido] = useState("");
+  const [inicioTaxaSelicAtualizadoValorJurosCorrigido, setInicioTaxaSelicAtualizadoValorJurosCorrigido] = useState("");
+  const [inicioTaxaSelicAtualizadoValorTotal, setInicioTaxaSelicAtualizadoValorTotal] = useState("");
+
+  //Final do Período da Graça
+  const [finalPeriodoGracaData, setFinalPeriodoGracaData] = useState("");
+
+  {/* Correção Monetária */ }
+  const [finalPeriodoGracaFator, setFinalPeriodoGracaFator] = useState("");
+  const [finalPeriodoGracaFatorObs, setFinalPeriodoGracaFatorObs] = useState('');
+  const [finalPeriodoGracaValorPrincipalCorrigido, setFinalPeriodoGracaValorPrincipalCorrigido] = useState("");
+  const [finalPeriodoGracaValorJurosCorrigido, setFinalPeriodoGracaValorJurosCorrigido] = useState("");
+  const [finalPeriodoGracaValorTotalCorrigido, setFinalPeriodoGracaValorTotalCorrigido] = useState("");
+
+
+  //Até o Início da Selic
+  const [ateInicioSelicData, setAteInicioSelicData] = useState("");
+
+  {/* Correção Monetária */ }
+  const [ateInicioSelicFator, setAteInicioSelicFator] = useState("");
+  const [ateInicioSelicFatorObs, setAteInicioSelicFatorObs] = useState('');
+  const [ateInicioSelicValorPrincipalCorrigido, setAteInicioSelicValorPrincipalCorrigido] = useState("");
+  const [ateInicioSelicValorJurosCorrigido, setAteInicioSelicValorJurosCorrigido] = useState("");
+  const [ateInicioSelicValorTotalCorrigido, setAteInicioSelicValorTotalCorrigido] = useState("");
+
+
+  //Cálculo Final
+  const [calculoFinalData, setCalculoFinalData] = useState("");
+
+  {/* Correção Monetária */ }
+  const [calculoFinalFator, setCalculoFinalFator] = useState("");
+  const [calculoFinalFatorObs, setCalculoFinalFatorObs] = useState('');
+  const [calculoFinalValorPrincipalCorrigido, setCalculoFinalValorPrincipalCorrigido] = useState("");
+  const [calculoFinalValorJurosCorrigido, setCalculoFinalValorJurosCorrigido] = useState("");
+  const [calculoFinalValorTotalCorrigido, setCalculoFinalValorTotalCorrigido] = useState("");
+
 
   // Função para exportar para PDF usando useRef
   const handleExportPDF = () => {
@@ -615,31 +228,498 @@ export default function TabelaGeneradaCalculo() {
     doc.save("calculo_tabelas.pdf");
   };
 
+  const formatCurrency = (value) => {
+    // Remove tudo que não seja número
+    let numericValue = value.replace(/\D/g, "");
+
+    // Se o valor for vazio ou apenas "0", define como "0,00"
+    if (!numericValue) return { valorFormatado: "R$ 0,00", valorSemFormatacao: "0.00" };
+
+    // Garante que sempre teremos pelo menos 3 dígitos
+    while (numericValue.length < 3) {
+      numericValue = "0" + numericValue;
+    }
+
+    // Centavos: últimos 2 dígitos
+    const centavos = numericValue.slice(-2);
+
+    // Inteiros: o restante
+    let inteiros = numericValue.slice(0, -2);
+    inteiros = parseInt(inteiros, 10).toString(); // remove zeros à esquerda
+
+    // Formata com pontos de milhar
+    const inteirosFormatados = inteiros.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    // Valor formatado para exibição
+    const valorFormatado = `R$ ${inteirosFormatados},${centavos}`;
+
+    // Valor sem formatação, com ponto decimal
+    const valorSemFormatacao = Number(`${inteiros}${centavos}`.replace(/^0+/, "").replace(/(\d+)(\d{2})$/, "$1.$2"));
+
+    return {
+      valorFormatado,
+      valorSemFormatacao
+    };
+  };
+
+  console.log(valorPrincipal)
+
+  function submitForm(event) {
+    event.preventDefault();
+    setShowTabelaCalculoInicial(true)
+    setShowTabelaInicioPeriodoGraca(true)
+    setShowTabelaInicioTaxaSelic(true)
+    setShowTabelaInicioPeriodoGraca2(true)
+    setShowTabelaFinalPeriodoGraca(true)
+    setShowTabelaAteInicioSelic(true)
+    setShowTabelaCalculoFinal(true);
+    /*     const precatorio = document.querySelector('input[name="precatorio"]').value;
+    const orcamento = document.querySelector('input[name="orcamento"]').value;
+    const valorPrincipal = document.querySelector('input[name="valorPrincipal"]').value;
+    const valorJuros = document.querySelector('input[name="valorJuros"]').value;
+    const rioPrevidencia = document.querySelector('input[name="rioPrevidencia"]').value;
+    const dataBaseStr = document.querySelector('input[name="dataBase"]').value;
+    const dataAtualizacaoStr = document.querySelector('input[name="dataAtualizacao"]').value; */
+
+    let dataInicioPeriodoDaGracaStr = "";
+    let dataVencimentoPeriodoDaGracaStr = "";
+
+    if (orcamento === "2020") {
+      dataInicioPeriodoDaGracaStr = "2019-07-02";
+      dataVencimentoPeriodoDaGracaStr = "2021-01-01";
+    } else if (orcamento === "2021") {
+      dataInicioPeriodoDaGracaStr = "2020-07-02";
+      dataVencimentoPeriodoDaGracaStr = "2022-01-01";
+    } else if (orcamento === "2022") {
+      dataInicioPeriodoDaGracaStr = "2021-07-02";
+      dataVencimentoPeriodoDaGracaStr = "2023-01-01";
+    } else if (orcamento === "2023") {
+      dataInicioPeriodoDaGracaStr = "2022-04-03";
+      dataVencimentoPeriodoDaGracaStr = "2024-01-01";
+    } else if (orcamento === "2024") {
+      dataInicioPeriodoDaGracaStr = "2023-04-03";
+      dataVencimentoPeriodoDaGracaStr = "2025-01-01";
+    } else if (orcamento === "2025") {
+      dataInicioPeriodoDaGracaStr = "2024-04-03";
+      dataVencimentoPeriodoDaGracaStr = "2026-01-01";
+    } else if (orcamento === "2026") {
+      dataInicioPeriodoDaGracaStr = "2025-04-03";
+      dataVencimentoPeriodoDaGracaStr = "2027-01-01";
+    } else if (orcamento === "2027") {
+      dataInicioPeriodoDaGracaStr = "2026-04-03";
+      dataVencimentoPeriodoDaGracaStr = "2028-01-01";
+    }
+
+    const dataBase = new Date(dataBaseStr);
+    const dataAtualizacao = new Date(dataAtualizacaoStr);
+    const dataInicioPeriodoDaGraca = new Date(dataInicioPeriodoDaGracaStr);
+    const dataVencimentoPeriodoDaGraca = new Date(dataVencimentoPeriodoDaGracaStr);
+    const marco = new Date("2021-12-02");
+    const marcoStr = `${marco.getFullYear()}-${String(marco.getMonth() + 1).padStart(2, '0')}-${String(marco.getDate()).padStart(2, '0')}`;
+
+
+    async function calcularValores(dataBase, dataInicioPeriodoDaGraca, dataVencimentoPeriodoDaGraca, valorPrincipal, valorJuros, rioPrevidencia, dataAtualizacao, marco, correcaoMonetaria) {
+
+      valorPrincipal += correcaoMonetaria
+
+      // Informações Gerais (Ver para criar logica de quando deposita o valor de prioridade)
+      console.log("Precatório:");
+      console.log("Orçamento:", orcamento);
+      console.log("Valor Principal:", parseFloat(valorPrincipal).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      console.log("Valor Juros:", parseFloat(valorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      console.log("Rioprevidência:", parseFloat(rioPrevidencia).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      console.log("Data Base:", new Date(dataBaseStr).toLocaleDateString("pt-BR"));
+      console.log("Data de Atualização:", new Date(dataAtualizacaoStr).toLocaleDateString("pt-BR"));
+
+
+      // Primeiro Cálculo Abatendo RioPrev
+      setShowTabelaCalculoInicial(true)
+      console.log("Cálculo Inicial");
+      console.log("Data:", new Date(dataBaseStr).toLocaleDateString("pt-BR"));
+      setCalculoInicialData(new Date(dataBaseStr).toLocaleDateString("pt-BR"))
+
+      // Conversão dos valores
+      const principalNum = parseFloat(valorPrincipal);
+      const jurosNum = parseFloat(valorJuros);
+      const rioprevNum = parseFloat(rioPrevidencia);
+
+      // Total bruto antes do abate
+      const totalBruto = principalNum + jurosNum;
+
+      // Proporções
+      const propPrincipal = principalNum / totalBruto;
+      const propJuros = jurosNum / totalBruto;
+
+      // Abate proporcional
+      const abatimentoPrincipal = propPrincipal * rioprevNum;
+      const abatimentoJuros = propJuros * rioprevNum;
+
+      // Valores finais após abatimento
+      const principalFinal = principalNum - abatimentoPrincipal;
+      const jurosFinal = jurosNum - abatimentoJuros;
+      const totalFinal = principalFinal + jurosFinal;
+
+      // Impressão formatada
+      console.log("Valor Principal:", principalFinal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      setCalculoInicialValorPrincipal(principalFinal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+      console.log("Valor Juros:", jurosFinal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      setCalculoInicialValorJuros(jurosFinal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+      console.log("Valor Total:", totalFinal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      setCalculoInicialValorTotal(totalFinal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+
+      let nValorPrincipal = principalFinal;
+      let nValorJuros = jurosFinal;
+
+      // Segunda parte do Cáluclo (Primeira Correção vendo sobre o marco da Selic!)
+      if (dataBase < marco) {
+        if (dataInicioPeriodoDaGraca < marco) {
+          // Cálculo DataBase Até o Periodo da Graça (ipca-E/jUROS)
+          let FatorIPCAEDataBase = await PegarDataDoJSON(dataBaseStr, 'fatorNT');
+          let FatorIPCAEInicioPG = await PegarDataDoJSON(dataInicioPeriodoDaGracaStr, 'fatorNT');
+          let FatorJurosPoupancaDataBase = await PegarDataDoJSON(dataBaseStr, 'jurosPoupanca');
+          let FatorJurosPoupancaInicioPG = await PegarDataDoJSON(dataInicioPeriodoDaGracaStr, 'jurosPoupanca');
+
+
+          setShowTabelaInicioPeriodoGraca(true)
+          console.log("Início do Período da Graça (", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), ")");
+          console.log("Data:", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"));
+          setInicioPeriodoGracaData(dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"));
+
+          console.log("\nCorreção Monetária");
+          console.log("Fator:", FatorIPCAEDataBase / FatorIPCAEInicioPG, "Entre as datas: ", dataBase.toLocaleDateString("pt-BR"), " e ", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), "");
+          setInicioPeriodoGracaFator(FatorIPCAEDataBase / FatorIPCAEInicioPG)
+          setInicioPeriodoGracaFatorObs(`Entre as datas: ${dataBase.toLocaleDateString('pt-BR')} e ${dataInicioPeriodoDaGraca.toLocaleDateString('pt-BR')}`)
+
+          nValorPrincipal = nValorPrincipal * (FatorIPCAEDataBase / FatorIPCAEInicioPG);
+          console.log("Valor Principal Corrigido: ", nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+          setInicioPeriodoGracaValorPrincipalCorrigido(nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+          nValorJuros = nValorJuros * (FatorIPCAEDataBase / FatorIPCAEInicioPG);
+          console.log("Valor Juros Corrigido: ", nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+          setInicioPeriodoGracaValorJurosCorrigido(nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+          console.log("Valor Total Corrigido: ", (nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+          setInicioPeriodoGracaValorTotalCorrigido((nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+
+          console.log("\nJuros");
+          console.log("Número de Dias:", Math.floor((dataInicioPeriodoDaGraca - dataBase) / (1000 * 60 * 60 * 24)));
+          setInicioPeriodoGracaNumeroDias(Math.floor((dataInicioPeriodoDaGraca - dataBase) / (1000 * 60 * 60 * 24)))
+          console.log("Taxa de Juros:", (FatorJurosPoupancaDataBase - FatorJurosPoupancaInicioPG) * 100, "Entre as datas: ", dataBase.toLocaleDateString("pt-BR"), " e ", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), "");
+          setInicioPeriodoGracaTaxaJuros((FatorJurosPoupancaDataBase - FatorJurosPoupancaInicioPG) * 100)
+          setInicioPeriodoGracaTaxaJurosObs(`Entre as datas: ${dataBase.toLocaleDateString('pt-BR')} e ${dataInicioPeriodoDaGraca.toLocaleDateString('pt-BR')}`)
+          console.log("Valor Juros: ", nValorPrincipal * (FatorJurosPoupancaDataBase - FatorJurosPoupancaInicioPG));
+          setInicioPeriodoGracaValorJuros((nValorPrincipal * (FatorJurosPoupancaDataBase - FatorJurosPoupancaInicioPG)).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+          nValorJuros = nValorJuros + (nValorPrincipal * (FatorJurosPoupancaDataBase - FatorJurosPoupancaInicioPG));
+          console.log("Fórmula: Correção Monetária do Valor Principal * Taxa de Juros");
+
+          console.log("\nValor Atualizado");
+          console.log("Valor Principal Corrigido: ", nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+          setInicioPeriodoGracaAtualizadoValorPrincipalCorrigido(nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+          console.log("Valor Juros Corrigido: ", nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+          setInicioPeriodoGracaAtualizadoValorJurosCorrigido(nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+          console.log("Valor Total: ", (nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+          setInicioPeriodoGracaAtualizadoValorTotal((nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+
+        } else if (dataInicioPeriodoDaGraca > marco) {
+          // Cálculo DataBase Até o Marco (ipca-E/jUROS)
+          let FatorIPCAEDataBase = await PegarDataDoJSON(dataBaseStr, 'fatorNT');
+          let FatorIPCAEMarco = await PegarDataDoJSON(marcoStr, 'fatorNT');
+          let FatorJurosPoupancaDataBase = await PegarDataDoJSON(dataBaseStr, 'jurosPoupanca');
+          let FatorJurosPoupancaMarco = await PegarDataDoJSON(marcoStr, 'jurosPoupanca');
+
+          setShowTabelaInicioTaxaSelic(true)
+          console.log("\nInício da Taxa Selic (", marco.toLocaleDateString("pt-BR"), ")");
+          console.log("Data:", marco.toLocaleDateString("pt-BR"));
+          setInicioTaxaSelicData(marco.toLocaleDateString("pt-BR"))
+
+          console.log("\nCorreção Monetária");
+          console.log("Fator:", FatorIPCAEDataBase / FatorIPCAEMarco, "Entre as datas: ", dataBase.toLocaleDateString("pt-BR"), " e ", marco.toLocaleDateString("pt-BR"), "");
+          setInicioTaxaSelicFator(FatorIPCAEDataBase / FatorIPCAEMarco);
+          setInicioTaxaSelicFatorObs(`Entre as datas: ${dataBase.toLocaleDateString("pt-BR")} e ${marco.toLocaleDateString("pt-BR")}`)
+
+          nValorPrincipal = nValorPrincipal * (FatorIPCAEDataBase / FatorIPCAEMarco);
+          console.log("Valor Principal Corrigido: ", nValorPrincipal);
+          setInicioTaxaSelicValorPrincipalCorrigido(nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+          nValorJuros = nValorJuros * (FatorIPCAEDataBase / FatorIPCAEMarco);
+          console.log("Valor Juros Corrigido: ", nValorJuros);
+          setInicioTaxaSelicValorJurosCorrigido(nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+          console.log("Valor Total Corrigido: ", nValorPrincipal + nValorJuros);
+          setInicioTaxaSelicValorTotalCorrigido((nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+          console.log("\nJuros");
+          console.log("Número de Dias:", Math.floor((marco - dataBase) / (1000 * 60 * 60 * 24)));
+          setInicioTaxaSelicNumeroDias(Math.floor((marco - dataBase) / (1000 * 60 * 60 * 24)))
+          console.log("Taxa de Juros:", (FatorJurosPoupancaDataBase - FatorJurosPoupancaMarco) * 100, "Entre as datas: ", marco.toLocaleDateString("pt-BR"), " e ", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), "");
+          setInicioTaxaSelicTaxaJuros((FatorJurosPoupancaDataBase - FatorJurosPoupancaMarco) * 100)
+          setInicioTaxaSelicTaxaJurosObs(`Entre as datas: ${marco.toLocaleDateString('pt-BR')} e ${dataInicioPeriodoDaGraca.toLocaleDateString('pt-BR')}`)
+          console.log("Valor Juros: ", nValorPrincipal * (FatorJurosPoupancaDataBase - FatorJurosPoupancaMarco));
+          setInicioTaxaSelicValorJuros((nValorPrincipal * (FatorJurosPoupancaDataBase - FatorJurosPoupancaMarco)).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+          nValorJuros = nValorJuros + (nValorPrincipal * (FatorJurosPoupancaDataBase - FatorJurosPoupancaMarco));
+          console.log("Fórmula: Correção Monetária do Valor Principal * Taxa de Juros");
+
+          console.log("\nValor Atualizado");
+          console.log("Valor Principal Corrigido: ", nValorPrincipal);
+          setInicioTaxaSelicAtualizadoValorPrincipalCorrigido(nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+          console.log("Valor Juros Corrigido: ", nValorJuros);
+          setInicioTaxaSelicAtualizadoValorJurosCorrigido(nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+          console.log("Valor Total: ", nValorPrincipal + nValorJuros);
+          setInicioTaxaSelicAtualizadoValorTotal((nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+          // Do Marco até o Período da Graça (Selic)
+          let FatorSELICMarco = await PegarDataDoJSON(marcoStr, 'taxaSelic');
+          let FatorSelicInicioPG = await PegarDataDoJSON(dataInicioPeriodoDaGracaStr, 'taxaSelic');
+
+          setShowTabelaInicioPeriodoGraca2(true)
+          console.log("\nInício do Período da Graça");
+          console.log("Data: ", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"));
+          setInicioPeriodoGracaData(dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"))
+
+          console.log("\nCorreção Monetária / SELIC");
+          console.log("Fator:", ((FatorSELICMarco - FatorSelicInicioPG) / 100) + 1, "Entre as datas:", marco.toLocaleDateString("pt-BR"), " e ", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), ")");
+          setInicioPeriodoGracaFator(((FatorSELICMarco - FatorSelicInicioPG) / 100) + 1)
+          setInicioPeriodoGracaFatorObs(`Entre as datas: ${marco.toLocaleDateString('pt-BR')} e ${dataInicioPeriodoDaGraca.toLocaleDateString('pt-BR')}`)
+
+          nValorPrincipal = nValorPrincipal * (((FatorSELICMarco - FatorSelicInicioPG) / 100) + 1)
+          console.log("Valor Principal Corrigido: ", nValorPrincipal);
+          setInicioPeriodoGracaValorPrincipalCorrigido(nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+          nValorJuros = nValorJuros * (((FatorSELICMarco - FatorSelicInicioPG) / 100) + 1)
+          console.log("Valor Juros Corrigido: ", nValorJuros);
+          setInicioPeriodoGracaValorJurosCorrigido(nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+          console.log("Valor Total Corrigido: ", nValorPrincipal + nValorJuros);
+          setInicioPeriodoGracaValorTotalCorrigido((nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+        }
+
+      } else if (dataBase >= marco) {
+        // Cálculo DataBase Até o Periodo da Graça (Selic)
+        let FatorSELICDataBase = await PegarDataDoJSON(dataBaseStr, 'taxaSelic');
+        let FatorSELICInicioPG = await PegarDataDoJSON(dataInicioPeriodoDaGracaStr, 'taxaSelic');
+
+        setShowTabelaInicioPeriodoGraca2(true)
+        console.log("\nInício do Período da Graça");
+        console.log("Data: ", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"));
+        setInicioPeriodoGracaFator(dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"))
+
+        console.log("\nCorreção Monetária / SELIC");
+        console.log("Fator:", ((FatorSELICDataBase - FatorSELICInicioPG) / 100) + 1, "Entre as datas:", dataBase.toLocaleDateString("pt-BR"), " e ", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), ")");
+        setInicioPeriodoGracaFator(((FatorSELICDataBase - FatorSELICInicioPG) / 100) + 1)
+        setInicioPeriodoGracaFatorObs(`Entre as datas: ${dataBase.toLocaleDateString('pt-BR')} e ${dataInicioPeriodoDaGraca.toLocaleDateString('pt-BR')}`)
+
+        nValorPrincipal = nValorPrincipal * (((FatorSELICDataBase - FatorSELICInicioPG) / 100) + 1)
+        console.log("Valor Principal Corrigido: ", nValorPrincipal);
+        setInicioPeriodoGracaValorPrincipalCorrigido(nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+        nValorJuros = nValorJuros * (((FatorSELICDataBase - FatorSELICInicioPG) / 100) + 1)
+        console.log("Valor Juros Corrigido: ", nValorJuros);
+        setInicioPeriodoGracaValorJurosCorrigido(nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+        console.log("Valor Total Corrigido: ", nValorPrincipal + nValorJuros);
+        setInicioPeriodoGracaValorTotalCorrigido((nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+      }
+
+      // Terceira Parte do Cálculo (Período da Graça)
+      if (dataVencimentoPeriodoDaGraca > dataAtualizacao) {
+        // Corrigir IPCA-E só até a data da Atualização
+        let FatorIPCAEInicioPG = await PegarDataDoJSON(dataInicioPeriodoDaGracaStr, 'fatorNT');
+        let FatorIPCAEDataAtualizacao = await PegarDataDoJSON(dataAtualizacaoStr, 'fatorNT');
+
+        setShowTabelaFinalPeriodoGraca(true)
+        console.log("\nFim do Período da Graça ou Atualização");
+        console.log("Data: ", dataAtualizacao.toLocaleDateString("pt-BR"));
+        setFinalPeriodoGracaData(dataAtualizacao.toLocaleDateString("pt-BR"))
+
+        console.log("\nCorreção Monetária");
+        console.log("Fator:", FatorIPCAEInicioPG / FatorIPCAEDataAtualizacao, "Entre as datas:", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), " e ", dataAtualizacao.toLocaleDateString("pt-BR"), ")");
+        setFinalPeriodoGracaFator(FatorIPCAEInicioPG / FatorIPCAEDataAtualizacao)
+        setFinalPeriodoGracaFatorObs(`Entre as datas: ${dataInicioPeriodoDaGraca.toLocaleDateString('pt-BR')} e ${dataAtualizacao.toLocaleDateString('pt-BR')}`)
+
+        nValorPrincipal = nValorPrincipal * (FatorIPCAEInicioPG / FatorIPCAEDataAtualizacao);
+        console.log("Valor Principal Corrigido: ", nValorPrincipal);
+        setFinalPeriodoGracaValorPrincipalCorrigido(nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+        nValorJuros = nValorJuros * (FatorIPCAEInicioPG / FatorIPCAEDataAtualizacao)
+        console.log("Valor Juros Corrigido: ", nValorJuros);
+        setFinalPeriodoGracaValorJurosCorrigido(nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+        console.log("Valor Total Corrigido: ", nValorPrincipal + nValorJuros);
+        setFinalPeriodoGracaValorTotalCorrigido((nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+      } else if (dataVencimentoPeriodoDaGraca < dataAtualizacao) {
+        //Corrigir IPCA-E Período da Graça
+        let FatorIPCAEInicioPG = await PegarDataDoJSON(dataInicioPeriodoDaGracaStr, 'fatorNT');
+        let FatorIPCAEVencimentoPG = await PegarDataDoJSON(dataVencimentoPeriodoDaGracaStr, 'fatorNT');
+
+        setShowTabelaFinalPeriodoGraca(true)
+        console.log("\nFim do Período da Graça ou Atualização");
+        console.log("Data: ", dataVencimentoPeriodoDaGraca.toLocaleDateString("pt-BR"));
+        setFinalPeriodoGracaData(dataVencimentoPeriodoDaGraca.toLocaleDateString('pt-BR'));
+
+        console.log("\nCorreção Monetária");
+        console.log("Fator:", FatorIPCAEInicioPG / FatorIPCAEVencimentoPG, "Entre as datas:", dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR"), " e ", dataVencimentoPeriodoDaGraca.toLocaleDateString("pt-BR"), ")");
+        setFinalPeriodoGracaFator(FatorIPCAEInicioPG / FatorIPCAEVencimentoPG)
+        setFinalPeriodoGracaFatorObs(`Entre as datas: ${dataInicioPeriodoDaGraca.toLocaleDateString("pt-BR")} e ${dataVencimentoPeriodoDaGraca.toLocaleDateString("pt-BR")}`)
+
+        nValorPrincipal = nValorPrincipal * (FatorIPCAEInicioPG / FatorIPCAEVencimentoPG);
+        console.log("Valor Principal Corrigido: ", nValorPrincipal);
+        setFinalPeriodoGracaValorPrincipalCorrigido(nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+        nValorJuros = nValorJuros * (FatorIPCAEInicioPG / FatorIPCAEVencimentoPG)
+        console.log("Valor Juros Corrigido: ", nValorJuros);
+        setFinalPeriodoGracaValorJurosCorrigido(nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+        console.log("Valor Total Corrigido: ", nValorPrincipal + nValorJuros);
+        setFinalPeriodoGracaValorTotalCorrigido((nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+        // Quarta Parte do Cálculo (Até a data da Atualização)
+        if (dataVencimentoPeriodoDaGraca < dataAtualizacao) {
+          if (dataVencimentoPeriodoDaGraca < marco) {
+            // Corrigir IPCA-E e Juros até o marco. ???
+            let FatorIPCAEVencimentoPG = await PegarDataDoJSON(dataVencimentoPeriodoDaGracaStr, 'fatorNT');
+            let FatorIPCAEMarco = await PegarDataDoJSON(marcoStr, 'fatorNT');
+
+            setShowTabelaAteInicioSelic(true)
+            console.log("\nAté o Inicio da Selic");
+            console.log("Data: ", marco.toLocaleDateString("pt-BR"));
+            setAteInicioSelicData(marco.toLocaleDateString('pt-BR'))
+
+            console.log("\nCorreção Monetária");
+            console.log("Fator:", FatorIPCAEVencimentoPG / FatorIPCAEMarco, "Entre as datas:", dataVencimentoPeriodoDaGraca.toLocaleDateString("pt-BR"), " e ", marco.toLocaleDateString("pt-BR"), ")");
+            setAteInicioSelicFator(FatorIPCAEVencimentoPG / FatorIPCAEMarco)
+            setAteInicioSelicFatorObs(`Entre as datas: ${dataVencimentoPeriodoDaGraca.toLocaleDateString('pt-BR')} e ${marco.toLocaleDateString('pt-BR')}`)
+
+            nValorPrincipal = nValorPrincipal * (FatorIPCAEVencimentoPG / FatorIPCAEMarco);
+            console.log("Valor Principal Corrigido: ", nValorPrincipal);
+            setAteInicioSelicValorPrincipalCorrigido(nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+            nValorJuros = nValorJuros * (FatorIPCAEVencimentoPG / FatorIPCAEMarco)
+            console.log("Valor Juros Corrigido: ", nValorJuros);
+            setAteInicioSelicValorJurosCorrigido(nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+            console.log("Valor Total Corrigido: ", nValorPrincipal + nValorJuros);
+            setAteInicioSelicValorTotalCorrigido((nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+            // Depois do marco corrigir selic até a data Atualização ???
+            let FatorSELICMarco = await PegarDataDoJSON(marcoStr, 'taxaSelic');
+            let FatorSELICDataAtualizacao = await PegarDataDoJSON(dataAtualizacaoStr, 'taxaSelic');
+
+            setShowTabelaCalculoFinal(true)
+            console.log("\nCálculo Final");
+            console.log("Data: ", dataAtualizacao.toLocaleDateString("pt-BR"));
+            setCalculoFinalData(dataAtualizacao.toLocaleDateString("pt-BR"))
+
+
+            console.log("\nCorreção Monetária / SELIC");
+            console.log("Fator:", ((FatorSELICMarco - FatorSELICDataAtualizacao) / 100) + 1, "Entre as datas:", marco.toLocaleDateString("pt-BR"), " e ", dataAtualizacao.toLocaleDateString("pt-BR"), ")");
+            setCalculoFinalFator(((FatorSELICMarco - FatorSELICDataAtualizacao) / 100) + 1)
+            setCalculoFinalFatorObs(`Entre as datas: ${marco.toLocaleDateString("pt-BR")} e ${dataAtualizacao.toLocaleDateString('pt-BR')}`)
+
+            nValorPrincipal = nValorPrincipal * (((FatorSELICMarco - FatorSELICDataAtualizacao) / 100) + 1)
+            console.log("Valor Principal Corrigido: ", nValorPrincipal);
+            setCalculoFinalValorPrincipalCorrigido(nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+            nValorJuros = nValorJuros * (((FatorSELICMarco - FatorSELICDataAtualizacao) / 100) + 1)
+            console.log("Valor Juros Corrigido: ", nValorJuros);
+            setCalculoFinalValorJurosCorrigido(nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+            console.log("Valor Total Corrigido: ", nValorPrincipal + nValorJuros);
+            setCalculoFinalValorTotalCorrigido((nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+          } else if (dataVencimentoPeriodoDaGraca > marco) {
+            // Corrigir Selic até a data Atualização
+            let FatorSELICVencimentoPG = await PegarDataDoJSON(dataVencimentoPeriodoDaGracaStr, 'taxaSelic');
+            let FatorSELICDataAtualizacao = await PegarDataDoJSON(dataAtualizacaoStr, 'taxaSelic');
+
+            setShowTabelaCalculoFinal(true)
+            console.log("\nCálculo Final");
+            console.log("Data: ", dataAtualizacao.toLocaleDateString("pt-BR"));
+            setCalculoFinalData(dataAtualizacao.toLocaleDateString('pt-BR'))
+
+            console.log("\nCorreção Monetária / SELIC");
+            console.log("Fator:", ((FatorSELICVencimentoPG - FatorSELICDataAtualizacao) / 100) + 1, "Entre as datas:", dataVencimentoPeriodoDaGraca.toLocaleDateString("pt-BR"), " e ", dataAtualizacao.toLocaleDateString("pt-BR"), ")");
+            setCalculoFinalFator(((FatorSELICVencimentoPG - FatorSELICDataAtualizacao) / 100) + 1)
+            setCalculoFinalFatorObs(`Entre as datas: ${dataVencimentoPeriodoDaGraca.toLocaleDateString("pt-BR")} e ${dataAtualizacao.toLocaleDateString('pt-BR')}`)
+
+            nValorPrincipal = nValorPrincipal * (((FatorSELICVencimentoPG - FatorSELICDataAtualizacao) / 100) + 1)
+            console.log("Valor Principal Corrigido: ", nValorPrincipal);
+            setCalculoFinalValorPrincipalCorrigido(nValorPrincipal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+
+            nValorJuros = nValorJuros * (((FatorSELICVencimentoPG - FatorSELICDataAtualizacao) / 100) + 1)
+            console.log("Valor Juros Corrigido: ", nValorJuros);
+            setCalculoFinalValorJurosCorrigido(nValorJuros.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+
+            console.log("Valor Total Corrigido: ", nValorPrincipal + nValorJuros);
+            setCalculoFinalValorTotalCorrigido((nValorPrincipal + nValorJuros).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }))
+
+          }
+        }
+      }
+
+
+
+    }
+
+    calcularValores(dataBase, dataInicioPeriodoDaGraca, dataVencimentoPeriodoDaGraca, valorPrincipal.valorSemFormatacao, valorJuros.valorSemFormatacao, rioPrevidencia.valorSemFormatacao, dataAtualizacao, marco, correcaoMonetaria.valorSemFormatacao);
+
+    async function PegarDataDoJSON(data, nomeArquivo) {
+
+      if (nomeArquivo === 'taxaSelic') {
+        const dataSplit = data.split('-');
+        const dataFormatada = `01/${dataSplit[1]}/${dataSplit[0]}`
+        const response = await fetch(`/json/${nomeArquivo}.json`);
+        const dados = await response.json();
+        const resultado = dados.find((dado) => dado.data === dataFormatada);
+
+        return resultado.taxa_selic
+      }
+
+      const dataSplit = data.split('-');
+      const dataFormatada = `${dataSplit[1]}/01/${dataSplit[0]}`
+      const response = await fetch(`/json/${nomeArquivo}.json`);
+      const dados = await response.json();
+      const resultado = dados.find((dado) => dado.data === dataFormatada);
+
+      return resultado.fator
+    }
+
+
+  }
+
   return (
 
     <main className="px-2 lg:px-[30px]">
-      <div className="w-full mb-[60px] flex flex-col lg:grid lg:grid-cols-[380px_1fr] divide-x-[1px] dark:divide-neutral-600 gap-4 lg:relative">
+      <div className="w-full mb-[60px] flex flex-col lg:grid lg:grid-cols-[250px_1fr] xl:lg:grid-cols-[380px_1fr] divide-x-[1px] dark:divide-neutral-600 gap-4 lg:relative">
 
         <form
           className=" lg:relative"
 
-          onSubmit={(e) => handleSubmit(e)}
+          onSubmit={(e) => submitForm(e)}
         >
-          <div className="flex flex-col gap-2 lg:gap-2 xl:px-4 lg:fixed lg:top-[7%] lg:w-[350px]">
+          <div className="flex flex-col gap-2 lg:gap-2 xl:fixed xl:top-[7%] xl:w-[380px]  border-neutral-600 pb-4 mb-[1px]">
             <div className='flex flex-col gap-1 relative'>
               <button onClick={handleExportPDF} title="Exportar para PDF" className="hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded absolute right-0 top-[0px]">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.} stroke="currentColor" className="size-5  dark:text-white">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                 </svg>
               </button>
+
               <label className="text-[14px] font-medium dark:text-white" htmlFor="precatorio">Precatório</label>
-              <input
-                className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400"
-                type="text"
-                placeholder="Numero do precatório"
-                name="precatorio"
+              <CurrencyFormat
+                className='dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400'
+                placeholder={'Número do precatório'}
+                name='precatorio'
+                format={'####.#####-#'}
                 value={precatorio}
-                onChange={(e) => setPrecatorio(e.target.value)}
+                required={true}
+                onValueChange={(values) => {
+                  console.log(values.formattedValue)
+                  setPrecatorio(values.formattedValue)
+                }}
               />
             </div>
 
@@ -662,8 +742,13 @@ export default function TabelaGeneradaCalculo() {
                 type="text"
                 name="valorPrincipal"
                 placeholder="Valor Principal"
-                value={valorPrincipal}
-                onChange={(e) => setValorPrincipal(e.target.value)}
+                value={valorPrincipal.valorFormatado}
+                onChange={(e) => {
+                  const valueWithoutPrefix = e.target.value.replace(/^R\$\s?/, "");
+                  const formattedValue = formatCurrency(valueWithoutPrefix);
+                  setValorPrincipal(formattedValue)
+                }}
+              /* onChange={(e) => setValorPrincipal(e.target.value)} */
               />
             </div>
 
@@ -674,8 +759,28 @@ export default function TabelaGeneradaCalculo() {
                 type="text"
                 name="valorJuros"
                 placeholder="Valor dos Juros"
-                value={valorJuros}
-                onChange={(e) => setValorJuros(e.target.value)}
+                value={valorJuros.valorFormatado}
+                onChange={(e) => {
+                  const valueWithoutPrefix = e.target.value.replace(/^R\$\s?/, "");
+                  const formattedValue = formatCurrency(valueWithoutPrefix);
+                  setValorJuros(formattedValue)
+                }}
+              />
+            </div>
+
+            <div className='flex flex-col gap-1'>
+              <label className="text-[14px] font-medium dark:text-white" htmlFor="valorJuros">Correção Monetária</label>
+              <input
+                className="dark:bg-neutral-800 border rounded dark:border-neutral-600 py-1 px-2 focus:outline-none placeholder:text-[14px] text-gray-400"
+                type="text"
+                name="valorCorrecao"
+                placeholder="Valor da Correção"
+                value={correcaoMonetaria.valorFormatado}
+                onChange={(e) => {
+                  const valueWithoutPrefix = e.target.value.replace(/^R\$\s?/, "");
+                  const formattedValue = formatCurrency(valueWithoutPrefix);
+                  setCorrecaoMonetaria(formattedValue)
+                }}
               />
             </div>
 
@@ -686,8 +791,12 @@ export default function TabelaGeneradaCalculo() {
                 type="text"
                 name="rioPrevidencia"
                 placeholder="Rioprêvidencia"
-                value={rioPrevidencia}
-                onChange={(e) => setRioPrevidencia(e.target.value)}
+                value={rioPrevidencia.valorFormatado}
+                onChange={(e) => {
+                  const valueWithoutPrefix = e.target.value.replace(/^R\$\s?/, "");
+                  const formattedValue = formatCurrency(valueWithoutPrefix);
+                  setRioPrevidencia(formattedValue)
+                }}
               />
             </div>
 
@@ -698,8 +807,8 @@ export default function TabelaGeneradaCalculo() {
                 type="date"
                 name="dataBase"
                 placeholder="Data Base"
-                value={dataBase}
-                onChange={(e) => handleDate(e.target.value, setDataBase)}
+                value={dataBaseStr}
+                onChange={(e) => setDataBase(e.target.value)}
               />
             </div>
 
@@ -710,8 +819,8 @@ export default function TabelaGeneradaCalculo() {
                 type="date"
                 name="dataAtualizacao"
                 placeholder="Data de Atualização"
-                value={dataAtualizacao}
-                onChange={(e) => handleDate(e.target.value, setDataAtualizacao)}
+                value={dataAtualizacaoStr}
+                onChange={(e) => setDataAtualizacao(e.target.value)}
               />
             </div>
 
@@ -719,18 +828,22 @@ export default function TabelaGeneradaCalculo() {
             <button
               type="submit"
               className="bg-black text-white dark:bg-white dark:text-black w-full mt-4 rounded p-1 font-medium cursor-pointer"
-            >Fazer cálculo</button>
+            >Fazer cálculo
+            </button>
 
           </div>
 
-
         </form>
+
+
+
+        
         <div ref={pdfContentRef} className="flex flex-col justify-center gap-4 px-4 xl:px-8">
           {/* Calculo Inicial */}
-          <div className="overflow-x-auto dark:text-white">
+          <div className={showTabelaCalculoInicial ? "overflow-x-auto dark:text-white" : 'hidden'}>
             <div className="w-max md:w-full">
               <div className="w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
-                <div className="w-full">Calculo Inicial</div>
+                <div className="w-full">Cálculo Inicial</div>
               </div>
               <div className="grid grid-cols-3 overflow-x-auto w-full">
                 <div className="w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600 dark:divide-neutral-600">
@@ -744,13 +857,13 @@ export default function TabelaGeneradaCalculo() {
 
                 <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
                   <div className="p-2">
-                    {calculoInicialDataBase}
+                    {calculoInicialData}
                   </div>
                   <div className="p-2">
-                    {calculoIncialPrincipal}
+                    {calculoInicialValorPrincipal}
                   </div>
-                  <div className="p-2">{calculoIncialJuros}</div>
-                  <div className="p-2">{calculoIncialTotal}</div>
+                  <div className="p-2">{calculoInicialValorJuros}</div>
+                  <div className="p-2">{calculoInicialValorTotal}</div>
                 </div>
 
                 <div className="w-full border-r divide-y flex flex-col text-[12px] border-b dark:border-neutral-600   border-gray-300 dark:divide-neutral-600">
@@ -766,7 +879,7 @@ export default function TabelaGeneradaCalculo() {
 
           {/* Parte até a IO */}
 
-          <div className="overflow-x-auto dark:text-white">
+          <div className={showTabelaInicioPeriodoGraca ? "overflow-x-auto dark:text-white" : 'hidden'}>
             <div className="w-max md:w-full">
               <div className="w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
                 <div className="w-full">
@@ -807,53 +920,53 @@ export default function TabelaGeneradaCalculo() {
 
                 <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
                   <div className="p-2">
-                    {segundoQuadranteIPCAE1}
+                    {inicioPeriodoGracaData}
                   </div>
                   <div className="p-2">-</div>
                   <div className="p-2">
-                    {segundoQuadranteIPCAE2}
+                    {inicioPeriodoGracaFator}
                   </div>
                   <div className="p-2">
-                    {segundoQuadranteIPCAE3}
+                    {inicioPeriodoGracaValorPrincipalCorrigido}
                   </div>
                   <div className="p-2">
-                    {segundoQuadranteIPCAE4}
+                    {inicioPeriodoGracaValorJurosCorrigido}
                   </div>
                   <div className="p-2">
-                    {segundoQuadranteIPCAE5}
-                  </div>
-                  <div className="p-2">-</div>
-                  <div className="p-2">
-                    {segundoQuadranteIPCAE6}
-                  </div>
-                  <div className="p-2">
-                    {segundoQuadranteIPCAE7}
-                  </div>
-                  <div className="p-2">
-                    {segundoQuadranteIPCAE8}
+                    {inicioPeriodoGracaValorTotalCorrigido}
                   </div>
                   <div className="p-2">-</div>
                   <div className="p-2">
-                    {segundoQuadranteIPCAE3}
+                    {inicioPeriodoGracaNumeroDias}
                   </div>
                   <div className="p-2">
-                    {segundoQuadranteIPCAE9}
+                    {inicioPeriodoGracaTaxaJuros}
                   </div>
                   <div className="p-2">
-                    {segundoQuadranteIPCAE10}
+                    {inicioPeriodoGracaValorJuros}
+                  </div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">
+                    {inicioPeriodoGracaAtualizadoValorPrincipalCorrigido}
+                  </div>
+                  <div className="p-2">
+                    {inicioPeriodoGracaAtualizadoValorJurosCorrigido}
+                  </div>
+                  <div className="p-2">
+                    {inicioPeriodoGracaAtualizadoValorTotal}
                   </div>
                 </div>
 
                 <div className="w-full border-r divide-y flex flex-col text-[12px] border-b dark:border-neutral-600 border-gray-300 dark:divide-neutral-600">
                   <div className="p-2">-</div>
                   <div className="p-2">-</div>
+                  <div className="p-2">{inicioPeriodoGracaFatorObs}</div>
                   <div className="p-2">-</div>
                   <div className="p-2">-</div>
                   <div className="p-2">-</div>
                   <div className="p-2">-</div>
                   <div className="p-2">-</div>
-                  <div className="p-2">-</div>
-                  <div className="p-2">-</div>
+                  <div className="p-2">{inicioPeriodoGracaTaxaJurosObs}</div>
                   <div className="p-2">
                     Correção Monetária do Valor Principal * Taxa de Juros
                   </div>
@@ -867,12 +980,178 @@ export default function TabelaGeneradaCalculo() {
 
           </div>
 
-          {/* Até o Final do Período da Graça */}
-          <div className="overflow-x-auto w-full dark:text-white">
+          <div className={showTabelaInicioTaxaSelic ? "overflow-x-auto w-full dark:text-white" : 'hidden'}>
             <div className="w-max md:w-full">
               <div className="w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
                 <div className="w-full">
-                  Final do Período da Graça
+                  Início Taxa Selic ({inicioTaxaSelicData})
+                </div>
+              </div>
+              <div className="grid grid-cols-3">
+                <div className="w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600 border-gray-300 dark:divide-neutral-600">
+                  <div className="p-2 font-bold">Data</div>
+                  <div className="p-2 font-bold">
+                    Correção Monetária
+                  </div>
+                  <div className="p-2 pl-6">Fator</div>
+                  <div className="p-2 pl-6">
+                    Valor Principal Corrigido
+                  </div>
+                  <div className="p-2 pl-6">
+                    Valor Juros Corrigido
+                  </div>
+                  <div className="p-2 pl-6">
+                    Valor Total Corrigido
+                  </div>
+                  <div className="p-2 font-bold">Juros</div>
+                  <div className="p-2 pl-6">Número Dias</div>
+                  <div className="p-2 pl-6">
+                    Taxa de Juros
+                  </div>
+                  <div className="p-2 pl-6">Valor Juros</div>
+                  <div className="p-2 font-bold">
+                    Valor Atualizado
+                  </div>
+                  <div className="p-2 pl-6">
+                    Valor Principal Corrigido
+                  </div>
+                  <div className="p-2 pl-6">
+                    Valor Juros Corrigido
+                  </div>
+                  <div className="p-2 pl-6">
+                    Valor Total
+                  </div>
+                </div>
+
+                <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
+                  <div className="p-2">
+                    {inicioTaxaSelicData}
+                  </div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">
+                    {inicioTaxaSelicFator}
+                  </div>
+                  <div className="p-2">
+                    {inicioTaxaSelicValorPrincipalCorrigido}
+                  </div>
+                  <div className="p-2">
+                    {inicioTaxaSelicValorJurosCorrigido}
+                  </div>
+                  <div className="p-2">
+                    {inicioTaxaSelicValorTotalCorrigido}
+                  </div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">
+                    {inicioTaxaSelicNumeroDias}
+                  </div>
+                  <div className="p-2">
+                    {inicioTaxaSelicTaxaJuros}
+                  </div>
+                  <div className="p-2">
+                    {inicioTaxaSelicValorJuros}
+                  </div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">
+                    {inicioTaxaSelicAtualizadoValorPrincipalCorrigido}
+                  </div>
+                  <div className="p-2">
+                    {inicioTaxaSelicAtualizadoValorJurosCorrigido}
+                  </div>
+                  <div className="p-2">
+                    {inicioTaxaSelicAtualizadoValorTotal}
+                  </div>
+                </div>
+
+                <div className="w-full border-r divide-y flex flex-col text-[12px] border-b  dark:border-neutral-600  border-gray-300 dark:divide-neutral-600 ">
+                  <div className="p-2">-</div>
+                  <div className="p-2 ">-</div>
+                  <div className="p-2">
+                    {inicioTaxaSelicFatorObs}
+                  </div>
+                  <div className="p-2">-</div>
+                  <div className="p-2 ">-</div>
+                  <div className="p-2 ">-</div>
+                  <div className="p-2  ">-</div>
+                  <div className="p-2  ">-</div>
+                  <div className="p-2 ">
+                    {inicioTaxaSelicTaxaJurosObs}
+                  </div>
+                  <div className="p-2 ">
+                    Correção Monetária do Valor Principal * Taxa de Juros
+                  </div>
+                  <div className="p-2 ">-</div>
+                  <div className="p-2 ">-</div>
+                  <div className="p-2  ">-</div>
+                  <div className="p-2  ">-</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Inicio do Período da Graça 2 */}
+          <div className={showTabelaInicioPeriodoGraca2 ? "overflow-x-auto w-full dark:text-white" : 'hidden'}>
+            <div className="w-max md:w-full">
+              <div className="w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
+                <div className="w-full">
+                  Início do Período da Graça
+                </div>
+              </div>
+              <div className="grid grid-cols-3">
+                <div className="w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
+                  <div className="p-2 font-bold">Data</div>
+                  <div className="p-2 font-bold">
+                    Correção Monetária / SELIC
+                  </div>
+                  <div className="p-2 pl-6">Fator</div>
+                  <div className="p-2 pl-6">
+                    Valor Principal Corrigido
+                  </div>
+                  <div className="p-2 pl-6">
+                    Valor Juros Corrigido
+                  </div>
+                  <div className="p-2 pl-6">
+                    Valor Total Corrigido
+                  </div>
+                </div>
+                <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
+                  <div className="p-2">
+                    {inicioPeriodoGracaData}
+                  </div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">
+                    {inicioPeriodoGracaFator}
+                  </div>
+                  <div className="p-2">
+                    {inicioPeriodoGracaValorPrincipalCorrigido}
+                  </div>
+                  <div className="p-2">
+                    {inicioPeriodoGracaValorJurosCorrigido}
+                  </div>
+                  <div className="p-2">
+                    {inicioPeriodoGracaValorTotalCorrigido}
+                  </div>
+                </div>
+                <div className="w-full border-r divide-y flex flex-col text-[12px] border-b dark:border-neutral-600   border-gray-300 dark:divide-neutral-600 ">
+                  <div className="p-2">-</div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">
+                    {inicioPeriodoGracaFatorObs}
+                  </div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">-</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Até o Final do Período da Graça */}
+          <div className={showTabelaFinalPeriodoGraca ? "overflow-x-auto w-full dark:text-white" : 'hidden'}>
+            <div className="w-max md:w-full">
+              <div className="w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
+                <div className="w-full">
+                  Fim do Período da Graça ou Atualização
                 </div>
               </div>
               <div className="grid grid-cols-3">
@@ -894,27 +1173,27 @@ export default function TabelaGeneradaCalculo() {
                 </div>
                 <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
                   <div className="p-2">
-                    {terceiroQuadranteIPCAE1}
+                    {finalPeriodoGracaData}
                   </div>
                   <div className="p-2">-</div>
                   <div className="p-2">
-                    {terceiroQuadranteIPCAE2}
+                    {finalPeriodoGracaFator}
                   </div>
                   <div className="p-2">
-                    {terceiroQuadranteIPCAE3}
+                    {finalPeriodoGracaValorPrincipalCorrigido}
                   </div>
                   <div className="p-2">
-                    {terceiroQuadranteIPCAE4}
+                    {finalPeriodoGracaValorJurosCorrigido}
                   </div>
                   <div className="p-2">
-                    {terceiroQuadranteIPCAE5}
+                    {finalPeriodoGracaValorTotalCorrigido}
                   </div>
                 </div>
                 <div className="w-full border-r divide-y flex flex-col text-[12px] border-b dark:border-neutral-600   border-gray-300 dark:divide-neutral-600 ">
                   <div className="p-2">-</div>
                   <div className="p-2">-</div>
                   <div className="p-2">
-                    Entre as datas 01/07/2019 e 31/12/2020
+                    {finalPeriodoGracaFatorObs}
                   </div>
                   <div className="p-2">-</div>
                   <div className="p-2">-</div>
@@ -925,201 +1204,120 @@ export default function TabelaGeneradaCalculo() {
 
           </div>
 
-          <>
-
-            <div>
-              {/*Até Selic e depois Cálculo Final */}
-              <div className="overflow-x-auto w-full dark:text-white">
-                <div className="w-max md:w-full">
-                  <div className="w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
-                    <div className="w-full">
-                      Início Taxa Selic
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-3">
-                    <div className="w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600 border-gray-300 dark:divide-neutral-600">
-                      <div className="p-2 font-bold">Data</div>
-                      <div className="p-2 font-bold">
-                        Correção Monetária
-                      </div>
-                      <div className="p-2 pl-6">Fator</div>
-                      <div className="p-2 pl-6">
-                        Valor Principal Corrigido
-                      </div>
-                      <div className="p-2 pl-6">
-                        Valor Juros Corrigido
-                      </div>
-                      <div className="p-2 pl-6">
-                        Valor Total Corrigido
-                      </div>
-                      <div className="p-2 font-bold">Juros</div>
-                      <div className="p-2 pl-6">Número Dias</div>
-                      <div className="p-2 pl-6">
-                        Taxa de Juros
-                      </div>
-                      <div className="p-2 pl-6">Valor Juros</div>
-                      <div className="p-2 font-bold">
-                        Valor Atualizado
-                      </div>
-                      <div className="p-2 pl-6">
-                        Valor Principal Corrigido
-                      </div>
-                      <div className="p-2 pl-6">
-                        Valor Juros Corrigido
-                      </div>
-                      <div className="p-2 pl-6">
-                        Valor Total
-                      </div>
-                    </div>
-
-                    <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
-                      <div className="p-2">
-                        {quartoQuadranteIPCAE1}
-                      </div>
-                      <div className="p-2">-</div>
-                      <div className="p-2">
-                        {quartoQuadranteIPCAE2}
-                      </div>
-                      <div className="p-2">
-                        {quartoQuadranteIPCAE3}
-                      </div>
-                      <div className="p-2">
-                        {quartoQuadranteIPCAE4}
-                      </div>
-                      <div className="p-2">
-                        {quartoQuadranteIPCAE5}
-                      </div>
-                      <div className="p-2">-</div>
-                      <div className="p-2">
-                        {quartoQuadranteIPCAE6}
-                      </div>
-                      <div className="p-2">
-                        {quartoQuadranteIPCAE7}
-                      </div>
-                      <div className="p-2">
-                        {quartoQuadranteIPCAE8}
-                      </div>
-                      <div className="p-2">-</div>
-                      <div className="p-2">
-                        {quartoQuadranteIPCAE3}
-                      </div>
-                      <div className="p-2">
-                        {quartoQuadranteIPCAE9}
-                      </div>
-                      <div className="p-2">
-                        {quartoQuadranteIPCAE10}
-                      </div>
-                    </div>
-
-                    <div className="w-full border-r divide-y flex flex-col text-[12px] border-b  dark:border-neutral-600  border-gray-300 dark:divide-neutral-600 ">
-                      <div className="p-2">-</div>
-                      <div className="p-2 ">-</div>
-                      <div className="p-2">
-                        Entre as datas 05/05/2015 e 01/07/2019
-                      </div>
-                      <div className="p-2">-</div>
-                      <div className="p-2 ">-</div>
-                      <div className="p-2 ">-</div>
-                      <div className="p-2  ">-</div>
-                      <div className="p-2  ">-</div>
-                      <div className="p-2 ">
-                        Entre as datas 05/05/2015 e 01/07/2019
-                      </div>
-                      <div className="p-2 ">
-                        Correção Monetária do Valor Principal * Taxa de Juros
-                      </div>
-                      <div className="p-2 ">-</div>
-                      <div className="p-2 ">-</div>
-                      <div className="p-2  ">-</div>
-                      <div className="p-2  ">-</div>
-                    </div>
-                  </div>
+          {/* Até o Inicio da Selic */}
+          <div className={showTabelaAteInicioSelic ? "overflow-x-auto w-full dark:text-white" : 'hidden'}>
+            <div className="w-max md:w-full">
+              <div className="w-full flex text-[12px] font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
+                <div className="w-full">
+                  Até o Inicio da Selic
                 </div>
               </div>
-
-              <div className="overflow-x-auto w-full dark:text-white">
-                <div className="w-max md:w-full">
-                  <div className="w-full flex text-[12px] mt-4 font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
-                    <div className="w-full">Cálculo Final</div>
+              <div className="grid grid-cols-3">
+                <div className="w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
+                  <div className="p-2 font-bold">Data</div>
+                  <div className="p-2 font-bold">
+                    Correção Monetária
                   </div>
-                  <div className="grid grid-cols-3">
-                    <div className="w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600 border-gray-300 dark:divide-neutral-600">
-                      <div className="p-2 font-bold ">Data</div>
-                      <div className="p-2 font-bold ">
-                        Valor Base para Correção (01/12/2021)
-                      </div>
-                      <div className="p-2 pl-6 ">
-                        Valor Principal
-                      </div>
-                      <div className="p-2 pl-6 ">Valor Juros</div>
-                      <div className="p-2 pl-6 ">Valor Total</div>
-                      <div className="p-2 font-bold ">
-                        Correção Monetária
-                      </div>
-                      <div className="p-2 pl-6 ">Fator</div>
-                      <div className="p-2 pl-6 ">
-                        Valor Principal Corrigido
-                      </div>
-                      <div className="p-2 pl-6 ">
-                        Valor Juros Corrigido
-                      </div>
-                      <div className="p-2 pl-6 ">
-                        Valor Total Corrigido
-                      </div>
-                    </div>
-
-                    <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600 ">
-                      <div className="p-2">
-                        {quartoQuadranteSELIC1}
-                      </div>
-                      <div className="p-2">-</div>
-                      <div className="p-2">
-                        {quartoQuadranteSELIC2}
-                      </div>
-                      <div className="p-2 ">
-                        {quartoQuadranteSELIC3}
-                      </div>
-                      <div className="p-2">
-                        {quartoQuadranteSELIC4}
-                      </div>
-                      <div className="p-2">-</div>
-                      <div className="p-2">
-                        {quartoQuadranteSELIC5}
-                      </div>
-                      <div className="p-2">
-                        {quartoQuadranteSELIC6}
-                      </div>
-                      <div className="p-2">
-                        {quartoQuadranteSELIC7}
-                      </div>
-                      <div className="p-2">
-                        {quartoQuadranteSELIC8}
-                      </div>
-                    </div>
-
-                    <div className="w-full border-r divide-y flex flex-col text-[12px] border-b dark:border-neutral-600   border-gray-300 dark:divide-neutral-600">
-                      <div className="p-2">-</div>
-                      <div className="p-2">-</div>
-                      <div className="p-2">-</div>
-                      <div className="p-2">-</div>
-                      <div className="p-2">-</div>
-                      <div className="p-2">-</div>
-                      <div className="p-2">
-                        Entre as datas 01/12/2021 e 12/12/2023
-                      </div>
-                      <div className="p-2">-</div>
-                      <div className="p-2">-</div>
-                      <div className="p-2">-</div>
-                    </div>
+                  <div className="p-2 pl-6">Fator</div>
+                  <div className="p-2 pl-6">
+                    Valor Principal Corrigido
+                  </div>
+                  <div className="p-2 pl-6">
+                    Valor Juros Corrigido
+                  </div>
+                  <div className="p-2 pl-6">
+                    Valor Total Corrigido
                   </div>
                 </div>
-
+                <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
+                  <div className="p-2">
+                    {ateInicioSelicData}
+                  </div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">
+                    {ateInicioSelicFator}
+                  </div>
+                  <div className="p-2">
+                    {ateInicioSelicValorPrincipalCorrigido}
+                  </div>
+                  <div className="p-2">
+                    {ateInicioSelicValorJurosCorrigido}
+                  </div>
+                  <div className="p-2">
+                    {ateInicioSelicValorTotalCorrigido}
+                  </div>
+                </div>
+                <div className="w-full border-r divide-y flex flex-col text-[12px] border-b dark:border-neutral-600   border-gray-300 dark:divide-neutral-600 ">
+                  <div className="p-2">-</div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">
+                    {ateInicioSelicFatorObs}
+                  </div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">-</div>
+                </div>
               </div>
-
-
-
             </div>
-          </>
+
+          </div>
+
+
+          {/*Cálculo Final */}
+          <div className={showTabelaCalculoFinal ? "overflow-x-auto w-full dark:text-white" : 'hidden'}>
+            <div className="w-max md:w-full">
+              <div className="w-full flex text-[12px] mt-4 font-[600] uppercase border-b-2 border-[#111] dark:border-neutral-700">
+                <div className="w-full">Cálculo Final</div>
+              </div>
+              <div className="grid grid-cols-3">
+                <div className="w-full border-l border-b flex flex-col divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
+                  <div className="p-2 font-bold">Data</div>
+                  <div className="p-2 font-bold">
+                    Correção Monetária / SELIC
+                  </div>
+                  <div className="p-2 pl-6">Fator</div>
+                  <div className="p-2 pl-6">
+                    Valor Principal Corrigido
+                  </div>
+                  <div className="p-2 pl-6">
+                    Valor Juros Corrigido
+                  </div>
+                  <div className="p-2 pl-6">
+                    Valor Total Corrigido
+                  </div>
+                </div>
+                <div className="w-full flex flex-col border-r border-l border-b divide-y text-[12px] dark:border-neutral-600  border-gray-300 dark:divide-neutral-600">
+                  <div className="p-2">
+                    {calculoFinalData}
+                  </div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">
+                    {calculoFinalFator}
+                  </div>
+                  <div className="p-2">
+                    {calculoFinalValorPrincipalCorrigido}
+                  </div>
+                  <div className="p-2">
+                    {calculoFinalValorJurosCorrigido}
+                  </div>
+                  <div className="p-2">
+                    {calculoFinalValorTotalCorrigido}
+                  </div>
+                </div>
+                <div className="w-full border-r divide-y flex flex-col text-[12px] border-b dark:border-neutral-600   border-gray-300 dark:divide-neutral-600 ">
+                  <div className="p-2">-</div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">
+                    {calculoFinalFatorObs}
+                  </div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">-</div>
+                  <div className="p-2">-</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
 
       </div>
@@ -1129,3 +1327,5 @@ export default function TabelaGeneradaCalculo() {
 
   )
 }
+
+

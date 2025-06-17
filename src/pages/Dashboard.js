@@ -49,7 +49,7 @@ function Dashboard() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className='flex flex-col items-center justify-center gap-4 lg:gap-2'
           >
-            <button className='w-[200px] bg-black text-white rounded px-4 py-2 font-[600] shadow lg:px-8 dark:bg-white dark:text-black'><Link to={'/minhas-cessoes'}>Minhas Cessões</Link></button>
+            <Link to={'/minhas-cessoes'}><button className='w-[200px] bg-black text-white rounded px-4 py-2 font-[600] shadow lg:px-8 dark:bg-white dark:text-black'>Minhas Cessões</button></Link>
             <button className='w-[200px] border rounded border-gray-300 px-4 py-2 font-[600] shadow lg:px-8 dark:text-white dark:bg-neutral-800 dark:border-neutral-800'>Abrir Ticket</button>
           </motion.div>
         </div>

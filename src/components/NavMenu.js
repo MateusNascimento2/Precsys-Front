@@ -99,7 +99,7 @@ export default function NavMenu() {
                   Cessionários
                 </a>
               </li>
-              { auth.user.admin ? <li className={hideJuridico ? "py-2 px-1" : 'hidden'}>
+              { (auth.user.admin || auth.user.advogado) ? <li className={hideJuridico ? "py-2 px-1" : 'hidden'}>
                 <a
                   onClick={() => scroll('juridico', 60)}
                   className={
@@ -111,7 +111,7 @@ export default function NavMenu() {
                   Jurídico
                 </a>
               </li> : null}
-              { auth.user.admin ? <li className={hideRelacionados ? "py-2 px-1" : 'hidden'}>
+              { (auth.user.admin || auth.user.advogado) ? <li className={hideRelacionados ? "py-2 px-1" : 'hidden'}>
                 <a
                   onClick={() => scroll('relacionados', 60)}
                   className={
