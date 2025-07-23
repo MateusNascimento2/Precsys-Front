@@ -6,7 +6,7 @@ import AllCessoes from './pages/AllCessoes';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import PersistLogin from './components/PersistLogin';
-import { RequireAdminAuth, RequireNormalUserAuth, RequireAdminOrAdvogadoAuth } from './components/RequireAuth';
+import { RequireAdminAuth, RequireNormalUserAuth, RequireAdminOrAdvogadoAuth, RequirePublicacaoAuth } from './components/RequireAuth';
 import Unauthorized from './pages/Unauthorized';
 import Usuarios from './pages/Usuarios';
 import Precatorio from './pages/Precatorio';
@@ -20,8 +20,10 @@ import Orcamentos from './pages/Orcamentos';
 import Escreventes from './pages/Escreventes';
 import Juridicos from './pages/Juridicos';
 import Forbidden from './pages/Forbidden';
+import PublicacoesDiario from './pages/PublicacoesDiario';
 
-function App() {  
+
+function App() {
   return (
     <Routes>
 
@@ -38,10 +40,17 @@ function App() {
             <Route path='perfil' element={<MeuPerfil />} />
             <Route path='clientes' element={<Clientes />} />
             <Route path='cliente/:id' element={<MeuPerfil />} />
+            {/* <Route path='publicacoes-diario' element={<PublicacoesDiario />} /> */}
+
           </Route>
 
           <Route element={<RequireAdminOrAdvogadoAuth />}>
             <Route path='todas-cessoes' element={<AllCessoes />} />
+            {/* <Route path='publicacoes-diario' element={<PublicacoesDiario />} /> */}
+          </Route>
+
+          <Route element={<RequirePublicacaoAuth />} >
+            <Route path='publicacoes-diario' element={<PublicacoesDiario />} />
           </Route>
 
           <Route element={<RequireAdminAuth />}>
@@ -55,6 +64,8 @@ function App() {
             <Route path='orcamentos' element={<Orcamentos />} />
             <Route path='escreventes' element={<Escreventes />} />
             <Route path='juridicos' element={<Juridicos />} />
+            <Route path='publicacoes-diario' element={<PublicacoesDiario />} />
+
           </Route>
 
 

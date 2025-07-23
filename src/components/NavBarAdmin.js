@@ -218,7 +218,7 @@ function NavBarAdmin({ show }) {
                   )}
                 </AnimatePresence>
               </li>
-              {auth.user.ver_calculo || auth.user.permissao_proposta ? <li onClick={() => handleShow('ferramentas')} className='cursor-pointer p-2 lg:px-2 w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded'>
+              {auth.user.ver_calculo || auth.user.permissao_proposta || auth.user.ver_publicacoes || auth.user.acesso_api ? <li onClick={() => handleShow('ferramentas')} className='cursor-pointer p-2 lg:px-2 w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded'>
                 <div className='flex justify-between items-center lg:gap-3'>
                   <span className='font-[500] text-[#666666] dark:text-neutral-300 '>Ferramentas</span>
                   <span className='text-[12px] dark:text-neutral-300'>
@@ -252,6 +252,10 @@ function NavBarAdmin({ show }) {
                               <TabelaGeneradaCalculo />
                             </div>
                           </Modal>
+                        </li> : null}
+                        {auth.user.ver_publicacoes ? <li onClick={() => handleRoute('/publicacoes-diario')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                          <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Publicações</span>
+                          <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todas as Publicações do Diário Oficial</p>
                         </li> : null}
                         {auth.user.permissao_proposta ? <li onClick={handleClick}>
                           <Modal botaoAbrirModal={
@@ -382,6 +386,10 @@ function NavBarAdmin({ show }) {
                               <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Todas as Cessões</span>
                               <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todas as Cessões</p>
                             </li>
+                            {/*                             <li onClick={() => handleRoute('/publicacoes-diario')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                              <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Publicações</span>
+                              <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todas as Publicações do Diário Oficial</p>
+                            </li> */}
                             {/* <li onClick={() => handleRoute('/usuarios')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
                               <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Usuários</span>
                               <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todos os Usuários</p>
@@ -443,7 +451,7 @@ function NavBarAdmin({ show }) {
                     )}
                   </AnimatePresence>
                 </li> */}
-                {auth.user.ver_calculo || auth.user.permissao_proposta ? <li onClick={() => handleShow('ferramentas')} className='cursor-pointer p-2 lg:px-2 w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded'>
+                {auth.user.ver_calculo || auth.user.permissao_proposta || auth.user.ver_publicacoes || auth.user.acesso_api ? <li onClick={() => handleShow('ferramentas')} className='cursor-pointer p-2 lg:px-2 w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800 hover:rounded'>
                   <div className='flex justify-between items-center lg:gap-3'>
                     <span className='font-[500] text-[#666666] dark:text-neutral-300 '>Ferramentas</span>
                     <span className='text-[12px] dark:text-neutral-300'>
@@ -477,6 +485,10 @@ function NavBarAdmin({ show }) {
                                 <TabelaGeneradaCalculo />
                               </div>
                             </Modal>
+                          </li> : null}
+                          {auth.user.ver_publicacoes ? <li onClick={() => handleRoute('/publicacoes-diario')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                            <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Publicações</span>
+                            <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todas as Publicações do Diário Oficial</p>
                           </li> : null}
                           {auth.user.permissao_proposta ? <li onClick={handleClick}>
                             <Modal botaoAbrirModal={
@@ -552,7 +564,7 @@ function NavBarAdmin({ show }) {
                   <span className='font-[500] text-[#666666] dark:text-neutral-300 text-nowrap '>Meus Clientes</span>
                   {auth.user.admin ? <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver os Meus Clientes</p> : null}
                 </li>
-                {auth.user.ver_calculo || auth.user.permissao_proposta || auth.user.acesso_api ?
+                {auth.user.ver_calculo || auth.user.permissao_proposta || auth.user.ver_publicacoes || auth.user.acesso_api ?
                   <li onClick={() => handleShow('ferramentas')} className='cursor-pointer px-2 py-4 lg:p-2 lg:rounded w-full  lg:border-0 lg:hover:bg-neutral-100 lg:dark:hover:bg-neutral-800'>
                     <div className='flex justify-between items-center lg:gap-3'>
                       <span className='font-[500] text-[#666666] dark:text-neutral-300 '>Ferramentas</span>
@@ -585,6 +597,10 @@ function NavBarAdmin({ show }) {
                                   <TabelaGeneradaCalculo />
                                 </div>
                               </Modal>
+                            </li> : null}
+                            {auth.user.ver_publicacoes ? <li onClick={() => handleRoute('/publicacoes-diario')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                              <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Publicações</span>
+                              <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todas as Publicações do Diário Oficial</p>
                             </li> : null}
                             {auth.user.permissao_proposta ? <li onClick={handleClick}>
                               <Modal botaoAbrirModal={

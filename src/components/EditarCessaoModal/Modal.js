@@ -250,48 +250,43 @@ export function Modal({ precID, cessaoInfo, fetchDataCessao }) {
   }
 
   const handleCessaoInputChange = (value, name) => {
-
     if (value instanceof File) {
-      let values;
-      let file;
+      let values = '';
+      let file = '';
 
       if (name === 'escritura') {
-        values = `cessoes_escrituras/${value.name}`
-        file = value
+        values = `cessoes_escrituras/${value.name}`;
+        file = value;
       } else if (name === 'requisitorio') {
-        values = `cessoes_requisitorios/${value.name}`
-        file = value
+        values = `cessoes_requisitorios/${value.name}`;
+        file = value;
       }
 
-      setFormDataCessao({ ...formDataCessao, [name]: values });
-      setFileCessao({ ...fileCessao, [name]: file })
+      setFormDataCessao(prev => ({ ...prev, [name]: values }));
+      setFileCessao(prev => ({ ...prev, [name]: file }));
 
     } else if (value instanceof Object) {
-
-      setFormDataCessao({ ...formDataCessao, [name]: value?.formattedValue ? value.formattedValue : value.value });
+      const finalValue = value?.formattedValue ? value.formattedValue : value.value;
+      setFormDataCessao(prev => ({ ...prev, [name]: finalValue }));
 
     } else if (value === null) {
-      let values;
-      let file;
+      let values = '';
+      let file = '';
 
-      if (name === 'escritura') {
-        values = ''
-        file = ''
-      } else if (name === 'requisitorio') {
-        values = ''
-        file = ''
+      if (name === 'escritura' || name === 'requisitorio') {
+        values = '';
+        file = '';
+        setFormDataCessao(prev => ({ ...prev, [name]: values }));
+        setFileCessao(prev => ({ ...prev, [name]: file }));
+      } else {
+        setFormDataCessao(prev => ({ ...prev, [name]: '' }));
       }
 
-      setFormDataCessao({ ...formDataCessao, [name]: values });
-      setFileCessao({ ...fileCessao, [name]: file })
-
     } else {
-      setFormDataCessao({ ...formDataCessao, [name]: value?.formattedValue ? value.formattedValue : value });
+      const finalValue = value?.formattedValue ? value.formattedValue : value;
+      setFormDataCessao(prev => ({ ...prev, [name]: finalValue }));
     }
-
-
   };
-
 
   return (
     !isModalOpen ? (

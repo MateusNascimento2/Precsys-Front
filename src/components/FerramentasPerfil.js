@@ -10,12 +10,12 @@ export default function FerramentasPerfil({ user, id }) {
   const [isCheckedRepComercial, setIsCheckedRepComercial] = useState(false);
   const [isCheckedCalcEscritura, setIsCheckedCalcEscritura] = useState(false);
   const [isCheckedPropostaCliente, setIsCheckedPropostaCliente] = useState(false);
+  const [isCheckedPublicacoes, setIsCheckedPublicacoes] = useState(false);
   const [isCheckedPermissaoEmail, setIsCheckedPermissaoEmail] = useState(false);
   const [isCheckedAcessoApi, setIsCheckedAcessoApi] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [sala, setSala] = useState('');
   const [teles, setTeles] = useState([]);
-  const [empresas, setEmpresas] = useState([]);
   const [extraInputs, setExtraInputs] = useState([]); // estado para os inputs extras
   const [apiKey, setApiKey] = useState('');
   const [apiKeyExpiresAt, setApiKeyExpiresAt] = useState(null);
@@ -23,28 +23,27 @@ export default function FerramentasPerfil({ user, id }) {
   const { auth, setAuth } = useAuth();
 
   useEffect(() => {
-    let isMounted = true;
     const controller = new AbortController();
-
-
-    const fetchData = async (url, setter) => {
-      try {
-        const { data } = await axiosPrivate.get(url, {
-          signal: controller.signal
-        });
-        if (isMounted) setter(data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
+    let isMounted = true;
 
     const fetchAllData = async () => {
+      setIsLoading(true);
       try {
-        setIsLoading(true)
-        await Promise.all([fetchData('/tele', setTeles)]);
-        await Promise.all([fetchData('/empresas', setEmpresas)])
+        const [teleRes] = await Promise.all([
+          axiosPrivate.get('/tele', { signal: controller.signal }),
+        ]);
+
+        if (isMounted) {
+          setTeles(teleRes.data);
+        }
+      } catch (err) {
+        if (err.name !== 'CanceledError') {
+          console.error('Erro ao buscar dados:', err);
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -54,7 +53,6 @@ export default function FerramentasPerfil({ user, id }) {
       isMounted = false;
       controller.abort();
     };
-
   }, []);
 
   useEffect(() => {
@@ -72,6 +70,7 @@ export default function FerramentasPerfil({ user, id }) {
     setIsCheckedPropostaCliente(user.permissao_proposta === 1);
     setIsCheckedPermissaoEmail(user.permissao_email === 1);
     setIsCheckedAcessoApi(user.acesso_api === 1);
+    setIsCheckedPublicacoes(user.ver_publicacoes === 1);
 
   }, [teles]);
 
@@ -103,6 +102,7 @@ export default function FerramentasPerfil({ user, id }) {
       permissao_email: isCheckedPermissaoEmail ? 1 : 0,
       permissao_proposta: isCheckedPropostaCliente ? 1 : 0,
       acesso_api: isCheckedAcessoApi ? 1 : 0,
+      ver_publicacoes: isCheckedPublicacoes ? 1 : 0,
     };
 
     try {
@@ -126,7 +126,8 @@ export default function FerramentasPerfil({ user, id }) {
             ver_calculo: updates.ver_calculo,
             permissao_email: updates.permissao_email,
             permissao_proposta: updates.permissao_proposta,
-            acesso_api: updates.acesso_api
+            acesso_api: updates.acesso_api,
+            ver_publicacoes: updates.ver_publicacoes
           },
           userImage: prev.userImage,
         }));
@@ -142,7 +143,6 @@ export default function FerramentasPerfil({ user, id }) {
         progress: false,
         theme: isDarkMode === 'true' ? 'dark' : 'light',
         transition: Bounce,
-        onClose: () => window.location.reload(), // Recarrega após o toast ser fechado
       });
     } catch (err) {
       console.log(err);
@@ -387,6 +387,24 @@ export default function FerramentasPerfil({ user, id }) {
                       >
                         <motion.div
                           className={`w-4 h-4 rounded-full shadow-md transform ${isCheckedPropostaCliente ? "translate-x-6 bg-white dark:bg-black" : "translate-x-0 bg-white"}`}
+                        />
+                      </motion.div>
+                    </div>
+                  </div> : null}
+
+                  {/* Publicações do Diário */}
+                  {auth.user.admin ? <div className="py-4">
+                    <div className='flex items-center justify-between gap-2'>
+                      <div className='flex flex-col'>
+                        <label htmlFor={'publicacoes'} key={'publicacoes'} className='dark:text-white font-medium'>Publicações do Diário</label>
+                        <span className='text-neutral-400 text-sm'>Acesso à publicações do diário oficial</span>
+                      </div>
+                      <motion.div
+                        className={`${isCheckedPublicacoes ? "bg-black dark:bg-white flex-shrink-0" : "bg-neutral-200 dark:bg-neutral-600"} w-12 h-6 flex items-center rounded-full p-1 cursor-pointer flex-shrink-0`}
+                        onClick={() => setIsCheckedPublicacoes(!isCheckedPublicacoes)}
+                      >
+                        <motion.div
+                          className={`w-4 h-4 rounded-full shadow-md transform ${isCheckedPublicacoes ? "translate-x-6 bg-white dark:bg-black" : "translate-x-0 bg-white"}`}
                         />
                       </motion.div>
                     </div>

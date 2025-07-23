@@ -251,13 +251,13 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
       new Date(item.data_cessao) <= new Date(selectedFilters.data_cessao[1])
       : true;
 
-    const filterRequisitorioFaltando = selectedFilters.requisitorio.length
-      ? selectedFilters.requisitorio.includes(item.requisitorio)  // Verifica se o tele está selecionado
-      : true;  // Se não houver filtro de tele, retorna true
-
     const filterEscrituraFaltando = selectedFilters.escritura.length
-      ? selectedFilters.escritura.includes(item.escritura)  // Verifica se o tele está selecionado
-      : true;  // Se não houver filtro de tele, retorna true
+      ? selectedFilters.escritura.includes(null) && (item.escritura === null || item.escritura === '')
+      : true;
+
+    const filterRequisitorioFaltando = selectedFilters.requisitorio.length
+      ? selectedFilters.requisitorio.includes(null) && (item.requisitorio === null || item.requisitorio === '')
+      : true;
 
     // 10. Verifica se todos os filtros são verdadeiros
     return (

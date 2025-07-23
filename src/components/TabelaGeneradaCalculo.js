@@ -10,10 +10,10 @@ export default function TabelaGeneradaCalculo() {
 
   const [precatorio, setPrecatorio] = useState("");
   const [orcamento, setOrcamento] = useState("");
-  const [valorPrincipal, setValorPrincipal] = useState({valorFormatado: 'R$ 0,00', valorSemFormatacao: 0.00});
-  const [valorJuros, setValorJuros] = useState({valorFormatado: 'R$ 0,00', valorSemFormatacao: 0.00});
-  const [correcaoMonetaria, setCorrecaoMonetaria] = useState({valorFormatado: 'R$ 0,00', valorSemFormatacao: 0.00})
-  const [rioPrevidencia, setRioPrevidencia] = useState({valorFormatado: 'R$ 0,00', valorSemFormatacao: 0.00});
+  const [valorPrincipal, setValorPrincipal] = useState({ valorFormatado: 'R$ 0,00', valorSemFormatacao: 0.00 });
+  const [valorJuros, setValorJuros] = useState({ valorFormatado: 'R$ 0,00', valorSemFormatacao: 0.00 });
+  const [correcaoMonetaria, setCorrecaoMonetaria] = useState({ valorFormatado: 'R$ 0,00', valorSemFormatacao: 0.00 })
+  const [rioPrevidencia, setRioPrevidencia] = useState({ valorFormatado: 'R$ 0,00', valorSemFormatacao: 0.00 });
   const [dataBaseStr, setDataBase] = useState('');
   const [dataAtualizacaoStr, setDataAtualizacao] = useState(() => {
     const hoje = new Date();
@@ -266,13 +266,13 @@ export default function TabelaGeneradaCalculo() {
 
   function submitForm(event) {
     event.preventDefault();
-    setShowTabelaCalculoInicial(true)
+/*     setShowTabelaCalculoInicial(true)
     setShowTabelaInicioPeriodoGraca(true)
     setShowTabelaInicioTaxaSelic(true)
     setShowTabelaInicioPeriodoGraca2(true)
     setShowTabelaFinalPeriodoGraca(true)
     setShowTabelaAteInicioSelic(true)
-    setShowTabelaCalculoFinal(true);
+    setShowTabelaCalculoFinal(true); */
     /*     const precatorio = document.querySelector('input[name="precatorio"]').value;
     const orcamento = document.querySelector('input[name="orcamento"]').value;
     const valorPrincipal = document.querySelector('input[name="valorPrincipal"]').value;
@@ -307,6 +307,8 @@ export default function TabelaGeneradaCalculo() {
       dataVencimentoPeriodoDaGracaStr = "2027-01-01";
     } else if (orcamento === "2027") {
       dataInicioPeriodoDaGracaStr = "2026-04-03";
+
+
       dataVencimentoPeriodoDaGracaStr = "2028-01-01";
     }
 
@@ -675,6 +677,11 @@ export default function TabelaGeneradaCalculo() {
         const dados = await response.json();
         const resultado = dados.find((dado) => dado.data === dataFormatada);
 
+        console.log('-------------------- RESULTADO ---------------------')
+        console.log(data)
+        console.log(nomeArquivo)
+        console.log(resultado)
+
         return resultado.taxa_selic
       }
 
@@ -683,6 +690,11 @@ export default function TabelaGeneradaCalculo() {
       const response = await fetch(`/json/${nomeArquivo}.json`);
       const dados = await response.json();
       const resultado = dados.find((dado) => dado.data === dataFormatada);
+
+      console.log('-------------------- RESULTADO ---------------------')
+      console.log(nomeArquivo)
+      console.log(resultado)
+
 
       return resultado.fator
     }
@@ -837,7 +849,7 @@ export default function TabelaGeneradaCalculo() {
 
 
 
-        
+
         <div ref={pdfContentRef} className="flex flex-col justify-center gap-4 px-4 xl:px-8">
           {/* Calculo Inicial */}
           <div className={showTabelaCalculoInicial ? "overflow-x-auto dark:text-white" : 'hidden'}>

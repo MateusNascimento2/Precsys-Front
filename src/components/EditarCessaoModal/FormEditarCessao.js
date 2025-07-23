@@ -28,6 +28,7 @@ export function FormEditarCessao({ formDataCessao, handleCessaoInputChange }) {
         if (isMounted) {  // ✅ Só atualiza o estado se o componente ainda estiver montado
           setter(data);
         }
+
       } catch (e) {
         console.log(e);
       }
@@ -43,11 +44,18 @@ export function FormEditarCessao({ formDataCessao, handleCessaoInputChange }) {
       fetchData('/escreventes', setEscrevente),
     ]);
 
+    if (isMounted && formDataCessao.ente_id) {
+      await handleAnoOrcamento(formDataCessao.ente_id);
+    }
+
+
 
     return () => {
       isMounted = false; // ✅ Cleanup: evita atualização após desmontar
     };
   }, []);
+
+
 
   const handleAnoOrcamento = async (id) => {
 
@@ -76,7 +84,7 @@ export function FormEditarCessao({ formDataCessao, handleCessaoInputChange }) {
         label: item[value]
       };
     });
-  }  
+  }
 
   const handleSelectTelesValues = (array, value) => {
     return array.map(item => {
@@ -136,6 +144,7 @@ export function FormEditarCessao({ formDataCessao, handleCessaoInputChange }) {
               onChange={(selectedValue) => {
                 if (selectedValue) {
                   handleCessaoInputChange(selectedValue.value, 'ente_id');
+                  handleCessaoInputChange('', 'ano');
                   handleAnoOrcamento(selectedValue.value);
                 } else {
                   handleCessaoInputChange('', 'ente_id');
