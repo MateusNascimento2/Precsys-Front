@@ -8,6 +8,9 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import useAuth from "../hooks/useAuth";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import DotsButton from './DotsButton';
 
 
 export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
@@ -47,7 +50,7 @@ export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
 
             if (blob && contentType === 'application/json; charset=utf-8') {
                 const text = await blob.text();
-                const json = JSON.parse(text); 
+                const json = JSON.parse(text);
 
                 toast.error(`${json.error}`, {
                     position: "top-right",
@@ -80,14 +83,194 @@ export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
         }
     };
 
+    const exportarPDF = (precInfo, cessionarios) => {
+        const doc = new jsPDF();
+
+        const margin = 15;
+        let y = margin;
+
+        // === COLUNAS ===
+        const col1X = margin;
+        const col2X = 110;
+
+        const lineHeight = 7;
+
+        const formatarData = (dataIso) => {
+            const [ano, mes, dia] = dataIso.split('-');
+            return `${dia}/${mes}/${ano}`;
+        };
+
+        const text = (label, value, x, yPos, maxWidth = 80) => {
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${label}:`, x, yPos);
+
+            doc.setFont('helvetica', 'normal');
+            const textLines = doc.splitTextToSize(value || '-', maxWidth);
+            doc.text(textLines, x + 30, yPos);
+            return textLines.length * 7; // retorna altura ocupada
+        };
+
+        // === TITULOS ===
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Informações Gerais', col1X, y);
+        doc.text('Status', col2X, y);
+        y += lineHeight;
+
+        // === COLUNA 1: Informações Gerais ===
+        let col1Y = y;
+        text('Precatório', precInfo.precatorio, col1X, col1Y += lineHeight);
+        text('Processo', precInfo.processo, col1X, col1Y += lineHeight);
+        text('Cedente', precInfo.cedente, col1X, col1Y += lineHeight);
+        text('Vara', precInfo.vara, col1X, col1Y += lineHeight);
+        text('Orçamento', precInfo.ente && precInfo.ano ? `${precInfo.ente} - ${precInfo.ano}` : precInfo.ente || '-', col1X, col1Y += lineHeight);
+        text('Natureza', precInfo.natureza, col1X, col1Y += lineHeight);
+        text('Empresa', precInfo.empresa, col1X, col1Y += lineHeight);
+        text('Data da Cessão', precInfo.data_cessao ? formatarData(precInfo.data_cessao) : '-', col1X, col1Y += lineHeight);
+        text('Rep. Comercial', precInfo.tele, col1X, col1Y += lineHeight);
+        text('Escrevente', precInfo.escrevente, col1X, col1Y += lineHeight);
+        text('Óbito', precInfo.falecido, col1X, col1Y += lineHeight);
+        text('Anuência', precInfo.anuencia_advogado, col1X, col1Y += lineHeight);
+
+        // === COLUNA 2: Status ===
+        let col2Y = y + lineHeight;
+        let height1 = text('Status', precInfo.status, col2X, col2Y, 60);
+        let height2 = text('Substatus', precInfo.substatus, col2X, col2Y + height1, 60);
+
+        // Pula para a próxima seção
+        y = Math.max(col1Y, col2Y + height1 + height2) + 20;
+
+        // === TABELA DE CESSIONÁRIOS ===
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Cessionários', margin, y);
+        y += 5;
+
+        if (cessionarios.length === 0) {
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Nenhum cessionário registrado.', margin, y + 10);
+        } else {
+            // Montar linhas da tabela
+            const body = cessionarios.map(c => [
+                `${c.nome}\n${c.cpfcnpj || ''}`,
+                c.valor_pago || 'R$ 0,00',
+                c.comissao || 'R$ 0,00',
+                c.percentual || '0%',
+                c.exp_recebimento || 'R$ 0,00',
+                c.valor_oficio_pagamento || 'R$ 0,00'
+            ]);
+
+            // Calcular totais
+            const total = (field) =>
+                cessionarios.reduce((soma, c) => {
+                    const valor = parseFloat((c[field] || '0').replace(/[^\d,-]/g, '').replace(',', '.'));
+                    return soma + (isNaN(valor) ? 0 : valor);
+                }, 0);
+
+            const percentualTotal = cessionarios.reduce((soma, c) => {
+                const val = parseFloat((c.percentual || '0').replace(',', '.'));
+                return soma + (isNaN(val) ? 0 : val);
+            }, 0);
+
+            body.push([
+                'TOTAL',
+                `R$ ${total('valor_pago').toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+                `R$ ${total('comissao').toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+                `${percentualTotal.toFixed(2).replace('.', ',')}%`,
+                `R$ ${total('exp_recebimento').toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+                `R$ ${total('valor_oficio_pagamento').toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+            ]);
+
+            autoTable(doc, {
+                startY: y,
+                head: [['NOME', 'VALOR PAGO', 'COMISSÃO', '%', 'EXPECTATIVA', 'VALOR RECEBIDO']],
+                body: body,
+                styles: {
+                    fontSize: 8,
+                    cellPadding: 3,
+                    halign: 'center',
+                },
+                headStyles: {
+                    fillColor: false,       // ❌ sem fundo no cabeçalho
+                    textColor: 0,           // texto preto
+                    fontStyle: 'bold',
+                    lineColor: [0, 0, 0],   // borda preta
+                    lineWidth: 0            // desativamos aqui para controlar via didParseCell
+                },
+                bodyStyles: {
+                    fillColor: false,        // ❌ sem fundo nas células
+                    textColor: 20,
+                    lineColor: [200, 200, 200], // borda cinza mais suave
+                    lineWidth: 0,
+                    backgroundColor: false,             // desativamos aqui para controlar via didParseCell
+                },
+                alternateRowStyles: {
+                    fillColor: false
+                },
+                columnStyles: {
+                    0: { halign: 'left', cellWidth: 50 }, // NOME à esquerda
+                    1: { halign: 'center' },
+                    2: { halign: 'center' },
+                    3: { halign: 'center' },
+                    4: { halign: 'center' },
+                    5: { halign: 'center' },
+                },
+                didParseCell: function (data) {
+                    if (data.section === 'head') {
+                        data.cell.styles.lineWidth = { top: 0, right: 0, bottom: 0.4, left: 0 };
+                        data.cell.styles.lineColor = [0, 0, 0]; // preto
+                    }
+
+                    if (data.section === 'body') {
+                        const isLastRow = data.row.index === data.table.body.length - 1;
+
+                        data.cell.styles.lineWidth = {
+                            top: 0,
+                            right: 0,
+                            bottom: isLastRow ? 0 : 0.2, // ❌ sem borda na última linha
+                            left: 0
+                        };
+
+                        data.cell.styles.lineColor = [200, 200, 200];
+                        data.cell.styles.fontStyle = isLastRow ? 'bold' : 'normal'
+                    }
+
+                    // Alinhar apenas o cabeçalho da coluna NOME à esquerda
+                    if (data.section === 'head' && data.column.index === 0) {
+                        data.cell.styles.halign = 'left';
+                    }
+                }
+
+            });
+        }
+
+
+        doc.save('informacoes-precatorio.pdf');
+    };
+
     return (
         <div className='max-w-full flex flex-col mb-[60px]'>
+            <div className='mt-4' >
+                <DotsButton >
+                    <button
+                        onClick={() => exportarPDF(precInfoNew, precInfoNew.cessionarios)}
+                        className="px-2 py-1  dark:text-white text-[12px] dark:hover:bg-neutral-800 hover:bg-neutral-200"
+                        title='Exportar para PDF'
+                    >
+                        Exportar para PDF
+                    </button>
+
+                </DotsButton>
+            </div>
             <div className='flex flex-col mb-[16px] max-[700px]:mb-16px'>
                 <span className='text-gray-400 text-[10px]'><Link className='hover:underline cursor-pointer' to={'/dashboard'}>Dashboard</Link> &gt; <a className='hover:underline cursor-pointer' onClick={navigation}>Cessões</a> &gt; <span>{precInfoNew.precatorio}</span></span>
             </div>
             <div className='flex flex-col mb-[60px] max-[700px]:mb-60px'>
                 <div className='grid max-[700px]:grid-cols-1 grid-cols-2' id='info-gerais'>
                     <div className='flex flex-col '>
+
                         <div className='flex items-center justify-between mb-[16px]'>
                             <span className="font-[700] dark:text-white" >Informações Gerais</span>
                         </div>

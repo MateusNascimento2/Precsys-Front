@@ -706,7 +706,7 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
           <div className="min-w-[120px] w-[17%] text-center dark:text-white">comissão</div>
           <div className="min-w-[60px] w-[5%] text-center dark:text-white">%</div>
           <div className="min-w-[120px] w-[17%] text-center dark:text-white">expectativa</div>
-          {auth.user.admin ? <div className="min-w-[120px] w-[17%] text-center dark:text-white">valor do ofício</div> : null}
+          {auth.user.admin ? <div className="min-w-[120px] w-[17%] text-center dark:text-white">Valor recebido</div> : null}
           <div className="min-w-[180px] w-[18%] text-center dark:text-white">nota</div>
           <div className="min-w-[50px] w-[5%] ml-auto text-center dark:text-white"></div>
         </div>

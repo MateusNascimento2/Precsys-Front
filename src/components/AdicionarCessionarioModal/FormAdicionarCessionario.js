@@ -178,7 +178,7 @@ export function FormAdicionarCessionario({ cessionario, formCessionario, setForm
             <label
               className='text-[14px] font-medium'
               htmlFor="valor_oficio_pagamento">
-              Valor do Ofício de Pagamento
+              Valor Recebido
             </label>
             <input
               id="valor_oficio_pagamento"
