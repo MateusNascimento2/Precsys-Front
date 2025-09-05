@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SearchInput from '../components/SearchInput';
 import PublicacoesDiarioList from '../components/PublicacoesDiarioList';
 import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
@@ -21,6 +21,8 @@ export default function PublicacoesDiario() {
   const [totalResultados, setTotalResultados] = useState(0);
   const itensPorPagina = 100;
   const axiosPrivate = useAxiosPrivate();
+  const abortControllerRef = useRef(null);
+
 
   const handleInputChange = (query) => {
     setSearchQuery(query);
@@ -29,26 +31,41 @@ export default function PublicacoesDiario() {
 
   useEffect(() => {
     fetchPublicacoes();
-  }, [searchQuery, dataInicial, dataFinal, paginaAtual]);
+  }, [searchQuery, dataInicial, paginaAtual]);
 
   const fetchPublicacoes = async () => {
     try {
+      // cancela a requisição anterior (se existir)
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
       setIsLoading(true);
+
       const { data } = await axiosPrivate.get('/publicacoes-diario', {
+        signal: controller.signal, // <-- anexa o controller à requisição
         params: {
           search: searchQuery,
           dataInicial,
-          dataFinal,
           pagina: paginaAtual,
           limite: itensPorPagina,
         },
       });
+
       setPublicacoes(data.dados);
       setTotalResultados(data.total);
       setIsLoading(false);
+
     } catch (error) {
-      console.error('Erro ao buscar as publicações do diario:', error);
-      setIsLoading(false);
+      if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') {
+        console.log('Requisição cancelada');
+      } else {
+        console.error('Erro ao buscar as publicações do diário:', error);
+        setIsLoading(false);
+      }
     }
   };
 
@@ -159,7 +176,6 @@ export default function PublicacoesDiario() {
                       </button>
 
                       <button onClick={() => {
-                        setDataFinal('')
                         setDataInicial('')
                       }} title='Limpar Todos os Filtros' className="cursor-pointer hover:rounded p-1 text-black hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-white">
                         <svg
@@ -190,29 +206,13 @@ export default function PublicacoesDiario() {
 
                     <div className="flex justify-between border dark:border-neutral-600 rounded px-2 py-1 items-center">
                       <label className="text-[12px] font-bold">
-                        Data Inicial:
+                        Data :
                       </label>
                       <input
                         type="date"
                         value={dataInicial}
                         onChange={(e) => {
                           setDataInicial(e.target.value);
-                          setPaginaAtual(1);
-                        }}
-                        className="text-[12px] outline-none dark:bg-neutral-800 px-2 rounded"
-                      />
-                    </div>
-
-
-                    <div className="flex justify-between border dark:border-neutral-600 rounded px-2 py-1 items-center">
-                      <label className="text-[12px] font-bold">
-                        Data Final:
-                      </label>
-                      <input
-                        type="date"
-                        value={dataFinal}
-                        onChange={(e) => {
-                          setDataFinal(e.target.value);
                           setPaginaAtual(1);
                         }}
                         className="text-[12px] outline-none dark:bg-neutral-800 px-2 rounded"
@@ -279,7 +279,6 @@ export default function PublicacoesDiario() {
                     <span className="font-[700] dark:text-white">Filtros</span>
 
                     <button onClick={() => {
-                      setDataFinal('')
                       setDataInicial('')
                     }} title='Limpar Todos os Filtros' className="cursor-pointer hover:rounded p-1 text-black hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-white">
                       <svg
@@ -307,29 +306,13 @@ export default function PublicacoesDiario() {
 
                     <div className="flex justify-between border dark:border-neutral-600 rounded px-2 py-1 items-center">
                       <label className="text-[12px] font-bold">
-                        Data Inicial:
+                        Data :
                       </label>
                       <input
                         type="date"
                         value={dataInicial}
                         onChange={(e) => {
                           setDataInicial(e.target.value);
-                          setPaginaAtual(1);
-                        }}
-                        className="text-[12px] outline-none dark:bg-neutral-800 px-2 rounded"
-                      />
-                    </div>
-
-
-                    <div className="flex justify-between border dark:border-neutral-600 rounded px-2 py-1 items-center">
-                      <label className="text-[12px] font-bold">
-                        Data Final:
-                      </label>
-                      <input
-                        type="date"
-                        value={dataFinal}
-                        onChange={(e) => {
-                          setDataFinal(e.target.value);
                           setPaginaAtual(1);
                         }}
                         className="text-[12px] outline-none dark:bg-neutral-800 px-2 rounded"

@@ -9,8 +9,10 @@ import { motion } from 'framer-motion';
 export default function FerramentasPerfil({ user, id }) {
   const [isCheckedRepComercial, setIsCheckedRepComercial] = useState(false);
   const [isCheckedCalcEscritura, setIsCheckedCalcEscritura] = useState(false);
+  const [isCheckedCalcLiquido, setIsCheckedCalcLiquido] = useState(false);
   const [isCheckedPropostaCliente, setIsCheckedPropostaCliente] = useState(false);
   const [isCheckedPublicacoes, setIsCheckedPublicacoes] = useState(false);
+  const [isCheckedPublicacoesIntimadas, setIsCheckedPublicacoesIntimadas] = useState(false);
   const [isCheckedPermissaoEmail, setIsCheckedPermissaoEmail] = useState(false);
   const [isCheckedAcessoApi, setIsCheckedAcessoApi] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -67,10 +69,12 @@ export default function FerramentasPerfil({ user, id }) {
     }
 
     setIsCheckedCalcEscritura(user.ver_calculo === 1);
+    setIsCheckedCalcLiquido(user.ver_calculo_liquido === 1);
     setIsCheckedPropostaCliente(user.permissao_proposta === 1);
     setIsCheckedPermissaoEmail(user.permissao_email === 1);
     setIsCheckedAcessoApi(user.acesso_api === 1);
     setIsCheckedPublicacoes(user.ver_publicacoes === 1);
+    setIsCheckedPublicacoesIntimadas(user.ver_publicacoes_intimadas === 1);
 
   }, [teles]);
 
@@ -99,10 +103,12 @@ export default function FerramentasPerfil({ user, id }) {
     const updates = {
       ...restOfUser,
       ver_calculo: isCheckedCalcEscritura ? 1 : 0,
+      ver_calculo_liquido: isCheckedCalcLiquido ? 1 : 0,
       permissao_email: isCheckedPermissaoEmail ? 1 : 0,
       permissao_proposta: isCheckedPropostaCliente ? 1 : 0,
       acesso_api: isCheckedAcessoApi ? 1 : 0,
       ver_publicacoes: isCheckedPublicacoes ? 1 : 0,
+      ver_publicacoes_intimadas: isCheckedPublicacoesIntimadas ? 1 : 0
     };
 
     try {
@@ -124,10 +130,12 @@ export default function FerramentasPerfil({ user, id }) {
           user: {
             ...prev.user,
             ver_calculo: updates.ver_calculo,
+            ver_calculo_liquido: updates.ver_calculo_liquido,
             permissao_email: updates.permissao_email,
             permissao_proposta: updates.permissao_proposta,
             acesso_api: updates.acesso_api,
-            ver_publicacoes: updates.ver_publicacoes
+            ver_publicacoes: updates.ver_publicacoes,
+            ver_publicacoes_intimadas: updates.ver_publicacoes_intimadas
           },
           userImage: prev.userImage,
         }));
@@ -410,6 +418,24 @@ export default function FerramentasPerfil({ user, id }) {
                     </div>
                   </div> : null}
 
+                  {/* Publicações do Diário Intimadas */}
+                  {auth.user.admin ? <div className="py-4">
+                    <div className='flex items-center justify-between gap-2'>
+                      <div className='flex flex-col'>
+                        <label htmlFor={'publicacoes-intimadas'} key={'publicacoes-intimadas'} className='dark:text-white font-medium'>Publicações do Diário Intimadas</label>
+                        <span className='text-neutral-400 text-sm'>Acesso à publicações do diário oficial que foram intimadas</span>
+                      </div>
+                      <motion.div
+                        className={`${isCheckedPublicacoesIntimadas ? "bg-black dark:bg-white flex-shrink-0" : "bg-neutral-200 dark:bg-neutral-600"} w-12 h-6 flex items-center rounded-full p-1 cursor-pointer flex-shrink-0`}
+                        onClick={() => setIsCheckedPublicacoesIntimadas(!isCheckedPublicacoesIntimadas)}
+                      >
+                        <motion.div
+                          className={`w-4 h-4 rounded-full shadow-md transform ${isCheckedPublicacoesIntimadas ? "translate-x-6 bg-white dark:bg-black" : "translate-x-0 bg-white"}`}
+                        />
+                      </motion.div>
+                    </div>
+                  </div> : null}
+
                   {/* Representante Comercial */}
                   {auth.user.admin ? <div className="py-4">
                     <div className='flex items-center justify-between gap-2'>
@@ -432,6 +458,24 @@ export default function FerramentasPerfil({ user, id }) {
                         <input className='text-neutral-400 border dark:border-neutral-600 text font-medium w-[80px] p-1 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]' value={sala} onChange={e => setSala(e.target.value)} />
                       </div>
                     ) : null}
+                  </div> : null}
+
+                  {/* Calc. Líquido */}
+                  {auth.user.admin ? <div className="py-4">
+                    <div className='flex items-center justify-between gap-2'>
+                      <div className='flex flex-col'>
+                        <label htmlFor={'calc-liquido'} key={'calc-liquido'} className='dark:text-white font-medium'>Calc. Líquido</label>
+                        <span className='text-neutral-400 text-sm'>Calculadora do valor líquido do precatório</span>
+                      </div>
+                      <motion.div
+                        className={`${isCheckedCalcLiquido ? "bg-black dark:bg-white flex-shrink-0" : "bg-neutral-200 dark:bg-neutral-600"} w-12 h-6 flex items-center rounded-full p-1 cursor-pointer flex-shrink-0`}
+                        onClick={() => setIsCheckedCalcLiquido(!isCheckedCalcLiquido)}
+                      >
+                        <motion.div
+                          className={`w-4 h-4 rounded-full shadow-md transform  ${isCheckedCalcLiquido ? "translate-x-6 bg-white dark:bg-black" : "translate-x-0 bg-white"}`}
+                        />
+                      </motion.div>
+                    </div>
                   </div> : null}
 
                   {/* Calc. Escritura */}

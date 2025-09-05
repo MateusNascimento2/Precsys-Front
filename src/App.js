@@ -21,6 +21,7 @@ import Escreventes from './pages/Escreventes';
 import Juridicos from './pages/Juridicos';
 import Forbidden from './pages/Forbidden';
 import PublicacoesDiario from './pages/PublicacoesDiario';
+import PublicacoesDiarioIntimadas from './pages/PublicacoesDiarioIntimadas'
 
 
 function App() {
@@ -40,17 +41,15 @@ function App() {
             <Route path='perfil' element={<MeuPerfil />} />
             <Route path='clientes' element={<Clientes />} />
             <Route path='cliente/:id' element={<MeuPerfil />} />
-            {/* <Route path='publicacoes-diario' element={<PublicacoesDiario />} /> */}
-
           </Route>
 
           <Route element={<RequireAdminOrAdvogadoAuth />}>
             <Route path='todas-cessoes' element={<AllCessoes />} />
-            {/* <Route path='publicacoes-diario' element={<PublicacoesDiario />} /> */}
           </Route>
 
           <Route element={<RequirePublicacaoAuth />} >
             <Route path='publicacoes-diario' element={<PublicacoesDiario />} />
+            <Route path='publicacoes-intimadas' element={<PublicacoesDiarioIntimadas />} />
           </Route>
 
           <Route element={<RequireAdminAuth />}>
@@ -65,7 +64,7 @@ function App() {
             <Route path='escreventes' element={<Escreventes />} />
             <Route path='juridicos' element={<Juridicos />} />
             <Route path='publicacoes-diario' element={<PublicacoesDiario />} />
-
+            <Route path='publicacoes-intimadas' element={<PublicacoesDiarioIntimadas />} />
           </Route>
 
 

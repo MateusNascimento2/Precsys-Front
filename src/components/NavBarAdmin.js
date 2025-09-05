@@ -6,6 +6,7 @@ import Modal from './Modal';
 import useAuth from "../hooks/useAuth";
 import GerarProposta from './GerarProposta';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import TabelaCalculoLiquido from './TabelaCalculoLiquido';
 
 function NavBarAdmin({ show }) {
   const [showMenu, setShowMenu] = useState(false);
@@ -253,9 +254,34 @@ function NavBarAdmin({ show }) {
                             </div>
                           </Modal>
                         </li> : null}
+                        {auth.user.ver_calculo_liquido ? (
+                          <li onClick={handleClick}>
+                            <Modal
+                              botaoAbrirModal={
+                                <button
+                                  title="Fazer cálculo"
+                                  className="w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                >
+                                  Cálculo Líquido
+                                  <p className="font-[600] text-[12px] text-[#666666]">
+                                    Fazer Cálculo Líquido{" "}
+                                  </p>
+                                </button>
+                              }
+                            >
+                              <div className="h-[500px] lg:h-[650px] overflow-auto">
+                                <TabelaCalculoLiquido />
+                              </div>
+                            </Modal>
+                          </li>
+                        ) : null}
                         {auth.user.ver_publicacoes ? <li onClick={() => handleRoute('/publicacoes-diario')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
                           <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Publicações</span>
                           <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todas as Publicações do Diário Oficial</p>
+                        </li> : null}
+                        {auth.user.ver_publicacoes_intimadas ? <li onClick={() => handleRoute('/publicacoes-intimadas')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                          <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Publicações Intimadas</span>
+                          <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver Publicações Intimadas</p>
                         </li> : null}
                         {auth.user.permissao_proposta ? <li onClick={handleClick}>
                           <Modal botaoAbrirModal={
@@ -486,9 +512,34 @@ function NavBarAdmin({ show }) {
                               </div>
                             </Modal>
                           </li> : null}
+                          {auth.user.ver_calculo_liquido ? (
+                            <li onClick={handleClick}>
+                              <Modal
+                                botaoAbrirModal={
+                                  <button
+                                    title="Fazer cálculo"
+                                    className="w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                  >
+                                    Cálculo Líquido
+                                    <p className="font-[600] text-[12px] text-[#666666]">
+                                      Fazer Cálculo Líquido{" "}
+                                    </p>
+                                  </button>
+                                }
+                              >
+                                <div className="h-[500px] lg:h-[650px] overflow-auto">
+                                  <TabelaCalculoLiquido />
+                                </div>
+                              </Modal>
+                            </li>
+                          ) : null}
                           {auth.user.ver_publicacoes ? <li onClick={() => handleRoute('/publicacoes-diario')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
                             <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Publicações</span>
                             <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todas as Publicações do Diário Oficial</p>
+                          </li> : null}
+                          {auth.user.ver_publicacoes_intimadas ? <li onClick={() => handleRoute('/publicacoes-intimadas')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                            <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Publicações Intimadas</span>
+                            <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver Publicações Intimadas</p>
                           </li> : null}
                           {auth.user.permissao_proposta ? <li onClick={handleClick}>
                             <Modal botaoAbrirModal={
@@ -598,9 +649,34 @@ function NavBarAdmin({ show }) {
                                 </div>
                               </Modal>
                             </li> : null}
+                            {auth.user.ver_calculo_liquido ? (
+                              <li onClick={handleClick}>
+                                <Modal
+                                  botaoAbrirModal={
+                                    <button
+                                      title="Fazer cálculo"
+                                      className="w-full text-start font-[600] text-[14px] text-[#171717] dark:text-neutral-300 p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                    >
+                                      Cálculo Líquido
+                                      <p className="font-[600] text-[12px] text-[#666666]">
+                                        Fazer Cálculo Líquido{" "}
+                                      </p>
+                                    </button>
+                                  }
+                                >
+                                  <div className="h-[500px] lg:h-[650px] overflow-auto">
+                                    <TabelaCalculoLiquido />
+                                  </div>
+                                </Modal>
+                              </li>
+                            ) : null}
                             {auth.user.ver_publicacoes ? <li onClick={() => handleRoute('/publicacoes-diario')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
                               <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Publicações</span>
                               <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver todas as Publicações do Diário Oficial</p>
+                            </li> : null}
+                            {auth.user.ver_publicacoes_intimadas ? <li onClick={() => handleRoute('/publicacoes-intimadas')} className='p-2 rounded cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800'>
+                              <span className='font-[600] text-[14px] text-[#171717] dark:text-neutral-300'>Publicações Intimadas</span>
+                              <p className='font-[500] text-[#666666] dark:text-neutral-500'>Ver Publicações Intimadas</p>
                             </li> : null}
                             {auth.user.permissao_proposta ? <li onClick={handleClick}>
                               <Modal botaoAbrirModal={
