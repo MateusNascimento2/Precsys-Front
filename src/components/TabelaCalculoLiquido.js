@@ -242,49 +242,49 @@ export default function TabelaCalculoLiquido() {
         }
 
       } else {
-        const valorRequisitorio = valorRequisitorio.valorSemFormatacao * valorPercentual
+        const valorRequisitorioPercentual = valorRequisitorio.valorSemFormatacao * valorPercentual
 
-        if (valorRequisitorio <= 49903.08) {
+        if (valorRequisitorioPercentual <= 49903.08) {
           return 1390.19
-        } else if (valorRequisitorio <= 66537.45) {
+        } else if (valorRequisitorioPercentual <= 66537.45) {
           return 1577.26
-        } else if (valorRequisitorio <= 88716.59) {
+        } else if (valorRequisitorioPercentual <= 88716.59) {
           return 2360.09
-        } else if (valorRequisitorio <= 110895.75) {
+        } else if (valorRequisitorioPercentual <= 110895.75) {
           return 2684.40
-        } else if (valorRequisitorio <= 221791.51) {
+        } else if (valorRequisitorioPercentual <= 221791.51) {
           return 3432.82
-        } else if (valorRequisitorio <= 443583.03) {
+        } else if (valorRequisitorioPercentual <= 443583.03) {
           return 3642.32
-        } else if (valorRequisitorio <= 554478.78) {
+        } else if (valorRequisitorioPercentual <= 554478.78) {
           return 3914.98
-        } else if (valorRequisitorio <= 665374.53) {
+        } else if (valorRequisitorioPercentual <= 665374.53) {
           return 4187.64
-        } else if (valorRequisitorio <= 776270.28) {
+        } else if (valorRequisitorioPercentual <= 776270.28) {
           return 4460.27
-        } else if (valorRequisitorio <= 887166.03) {
+        } else if (valorRequisitorioPercentual <= 887166.03) {
           return 4732.93
-        } else if (valorRequisitorio <= 998061.78) {
+        } else if (valorRequisitorioPercentual <= 998061.78) {
           return 5005.60
-        } else if (valorRequisitorio <= 1108957.53) {
+        } else if (valorRequisitorioPercentual <= 1108957.53) {
           return 5278.25
-        } else if (valorRequisitorio <= 1219853.28) {
+        } else if (valorRequisitorioPercentual <= 1219853.28) {
           return 5550.89
-        } else if (valorRequisitorio <= 1330749.03) {
+        } else if (valorRequisitorioPercentual <= 1330749.03) {
           return 5823.54
-        } else if (valorRequisitorio <= 1441644.78) {
+        } else if (valorRequisitorioPercentual <= 1441644.78) {
           return 6096.20
-        } else if (valorRequisitorio <= 1552540.53) {
+        } else if (valorRequisitorioPercentual <= 1552540.53) {
           return 6368.85
-        } else if (valorRequisitorio <= 1663436.28) {
+        } else if (valorRequisitorioPercentual <= 1663436.28) {
           return 6641.49
-        } else if (valorRequisitorio <= 1774332.03) {
+        } else if (valorRequisitorioPercentual <= 1774332.03) {
           return 6914.15
-        } else if (valorRequisitorio <= 1885227.78) {
+        } else if (valorRequisitorioPercentual <= 1885227.78) {
           return 7186.80
-        } else if (valorRequisitorio <= 1996123.53) {
+        } else if (valorRequisitorioPercentual <= 1996123.53) {
           return 7459.45
-        } else if (valorRequisitorio <= 2107019.28) {
+        } else if (valorRequisitorioPercentual <= 2107019.28) {
           return 7732.11
         } else {
           return 'A consultar'
@@ -468,7 +468,6 @@ export default function TabelaCalculoLiquido() {
                 const formattedValue = formatCurrency(valueWithoutPrefix);
                 setValorAtualizado(formattedValue);
               }}
-            /* onChange={(e) => setValorPrincipal(e.target.value)} */
             />
           </div>
 
