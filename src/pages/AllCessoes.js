@@ -3,7 +3,6 @@ import Header from '../components/Header';
 import SearchInput from '../components/SearchInput';
 import Lista from '../components/List';
 import FilterButton from '../components/FilterButton';
-import Filter from '../layout/Filter';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -31,8 +30,9 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     tele_id: '',
     requisitorio: '',
     escritura: '',
-    status: '1'
+    status: '1' //Novas cessões adicionadas sempre vão começar com o status '1' (Em Andamento)
   });
+
   const [formDataCessionario, setFormDataCessionario] = useState({
     user_id: '',
     valor_pago: '',
@@ -48,15 +48,19 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     obs: '',
     nota: ''
   })
+
   const [fileCessao, setFileCessao] = useState({
     requisitorio: '',
     escritura: ''
   })
+
   const [fileCessionario, setFileCessionario] = useState({
     nota: '',
     mandado: '',
     comprovante: ''
   })
+
+  // Estado que vai pegar os filtos salvos no local storage
   const [selectedFilters, setSelectedFilters] = useState(() => {
     const saved = localStorage.getItem('selectedFilters');
     const parsed = saved ? JSON.parse(saved) : {};
@@ -72,6 +76,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
       data_cessao: Array.isArray(parsed.data_cessao) ? parsed.data_cessao : [],
       requisitorio: parsed.requisitorio || [],
       escritura: parsed.escritura || [],
+      gestoresEClientes: parsed.gestoresEClientes || []
     };
   });
 
@@ -86,6 +91,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
   const [dadosFiltro, setDadosFiltro] = useState([]);
   const axiosPrivate = useAxiosPrivate();
 
+  // Estado para selecionar os campos da cessão que o usuário vai exportar para excel
   const [selectedExportFields, setSelectedExportFields] = useState([
     "id",
     "precatorio",
@@ -120,10 +126,11 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
       }
     };
 
+    {/* Função que vai pegar as cessões e os filtros de acordo com a página em que o usuário está ou se ele for um admin */ }
     const fetchAllData = async () => {
       try {
         const urlCessoes = minhascessoes || isInPerfilUsuario ? `/cessoes-usuario/${userIdUrlParam ? userIdUrlParam : auth.user.id}` : '/todas-cessoes';
-        const urlFiltros = auth.user.admin ? '/filtros' : '/filtros-usuario';
+        const urlFiltros = auth.user.admin || auth.user.advogado ? '/filtros' : '/filtros-usuario';
         await Promise.all([
           fetchData(urlCessoes, setCessoes),
           fetchData(urlFiltros, setDadosFiltro)
@@ -142,18 +149,42 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     };
   }, [axiosPrivate, minhascessoes, auth.user?.id]);
 
+  // Vai guardar os valores selecionados no filtro no local storage
   useEffect(() => {
     localStorage.setItem('selectedFilters', JSON.stringify(selectedFilters));
   }, [selectedFilters]);
 
   // Função para atualizar o estado dos filtros
   const handleFilterChange = (filterCategory, value) => {
-    setSelectedFilters(prevState => {
-      const newFilter = prevState[filterCategory].includes(value)
-        ? prevState[filterCategory].filter(item => item !== value)
-        : [...prevState[filterCategory], value];
 
-      return { ...prevState, [filterCategory]: newFilter };
+    setSelectedFilters(prevState => {
+      // Pega a lista atual de filtros para essa categoria
+      const currentFilters = prevState[filterCategory];
+
+      let updatedFilters;
+
+      if (currentFilters.includes(value)) {
+        // Se já tinha o valor, remove ele (desmarcando)
+        updatedFilters = currentFilters.filter(item => item !== value);
+
+      } else if (filterCategory === 'gestoresEClientes' && currentFilters.some(dado => dado.cliente_id === value.cliente_id)) {
+
+        updatedFilters = currentFilters.filter(item => item.cliente_id !== value.cliente_id)
+
+      } else if (filterCategory === 'gestoresEClientes' && currentFilters.some(dado => dado.gestor_id === value.gestor_id)) {
+
+        updatedFilters = currentFilters.filter(item => item.gestor_id !== value.gestor_id)
+
+      } else {
+        // Se não tinha, adiciona o valor (marcando)
+        updatedFilters = [...currentFilters, value];
+      }
+
+      // Retorna o novo objeto de filtros atualizado
+      return {
+        ...prevState,
+        [filterCategory]: updatedFilters
+      };
     });
   };
 
@@ -170,12 +201,14 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
       data_cessao: [],
       requisitorio: [],
       escritura: [],
+      gestoresEClientes: [],
     };
 
     setSelectedFilters(emptyFilters);
     localStorage.removeItem('selectedFilters');
   };
 
+  // Função para lidar com a data do filtro de cessões
   const handleDateChange = (id, value) => {
     setSelectedFilters((prevState) => {
       let newDataCessao = [...prevState.data_cessao];
@@ -251,15 +284,23 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
       new Date(item.data_cessao) <= new Date(selectedFilters.data_cessao[1])
       : true;
 
+
+    // 10. Filtro de "documentos faltantes"
     const filterEscrituraFaltando = selectedFilters.escritura.length
       ? selectedFilters.escritura.includes(null) && (item.escritura === null || item.escritura === '')
       : true;
 
+    // 11. Filtro de "documentos faltantes"
     const filterRequisitorioFaltando = selectedFilters.requisitorio.length
       ? selectedFilters.requisitorio.includes(null) && (item.requisitorio === null || item.requisitorio === '')
       : true;
 
-    // 10. Verifica se todos os filtros são verdadeiros
+    // 12. Filtro de "Gestores e Clientes"
+    const filterCessoesGestoresEClientes = selectedFilters.gestoresEClientes.length
+      ? selectedFilters.gestoresEClientes.some(dado => (dado.cessoes_cliente?.includes(item.id) || dado.cessoes_gestor?.includes(item.id)))
+      : true
+
+    // 13. Verifica se todos os filtros são verdadeiros
     return (
       filterSearchInput &&
       filterStatus &&
@@ -271,13 +312,15 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
       filterTele &&
       filterDataCessao &&
       filterRequisitorioFaltando &&
-      filterEscrituraFaltando
+      filterEscrituraFaltando &&
+      filterCessoesGestoresEClientes
     );
   });
 
   const handleInputChange = (query) => {
     setSearchQuery(query);
   }
+
 
   const fetchCessoes = async () => {
     try {
@@ -288,6 +331,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     }
   };
 
+  {/* Função para manejar o estado de visibilidade e scroll do filtro no mobile */ }
   const handleShow = () => {
     setShow((prevState) => !prevState);
     if (document.body.style.overflow !== "hidden") {
@@ -297,6 +341,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     }
   }
 
+  {/* Função para exportar os itens da lista de cessões para um documento PDF */ }
   const exportPDF = (filteredData) => {
 
     const statusColors = {
@@ -430,7 +475,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     pdfMake.createPdf(docDefinition).download('lista.pdf');
   };
 
-
+  {/* Função para manejar quais colunas vão ser exportadas para o excel */ }
   const handleFieldSelectionChange = (field) => {
     setSelectedExportFields((prevState) =>
       prevState.includes(field)
@@ -439,6 +484,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     );
   };
 
+  {/* Função para exportar os itens da lista de cessões para uma planilha de excel */ }
   const exportToExcel = (filteredData, selectedFields) => {
     // Mapeamento de rótulos personalizados
     const fieldLabels = {
@@ -483,12 +529,13 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
 
 
   //Funções do Modal
+  {/* Função de manipulação dos campos do formulário de cessão */ }
   const handleCessaoInputChange = (value, name) => {
-
     if (value instanceof File) {
       let values;
       let file;
 
+      //Vai adicionar o caminho dos arquivos do drive no nome do arquivo
       if (name === 'escritura') {
         values = `cessoes_escrituras/${value.name}`
         file = value
@@ -500,10 +547,13 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
       setFormDataCessao({ ...formDataCessao, [name]: values });
       setFileCessao({ ...fileCessao, [name]: file })
 
-    } else if (value instanceof Object) {
 
+      //Vai capturar o valor formatado do input do número de precatório e do processo
+    } else if (value instanceof Object) {
       setFormDataCessao({ ...formDataCessao, [name]: value?.formattedValue ? value.formattedValue : value.value });
 
+
+      //Pega o valor do input de arquivo se o usuario remover o arquivo do input (que no caso vai ser null quando ele remover o arquivo)
     } else if (value === null) {
       let values;
       let file;
@@ -519,15 +569,17 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
       setFormDataCessao({ ...formDataCessao, [name]: values });
       setFileCessao({ ...fileCessao, [name]: file })
 
+      //Pega o valor do resto dos inputs
     } else {
       setFormDataCessao({ ...formDataCessao, [name]: value?.formattedValue ? value.formattedValue : value });
     }
-
-
   };
 
+  {/* Função de manipulação dos campos do formulário de cessionário */ }
   const handleCessionarioInputChange = (id, values, name) => {
+    console.log(values)
 
+    //Acho que nao precisa mais dessa funcao '-'
     //Função para checar se é um objeto por causa dos inputs que possuem a lib "Select" que retornam um object no parametro values
     function isObject(obj) {
       return obj === Object(obj) && !obj instanceof File
@@ -561,6 +613,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
         file = values
       }
 
+      //Vai loopando para encontrar o formulario certo e preenche as informações no state
       setCessionariosQtd(prevCessionarios =>
         prevCessionarios.map(cessionario =>
           cessionario.id === id
@@ -610,6 +663,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
 
   };
 
+  //Muda o nome da aba de cessionario de acordo com o nome selecionado no input
   const handleNomeTab = (nome, id) => {
     setCessionariosQtd(prevCessionarios =>
       prevCessionarios.map(cessionario =>
@@ -620,6 +674,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     );
   }
 
+  {/* Função de adicionar um cessionário no modal de adicionar cessão/cessionário */ }
   const handleAddCessionario = () => {
     setIdCessionarioForm(prevId => prevId + 1);
 
@@ -628,18 +683,20 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     )
   }
 
+  {/* Função de remover um cessionário do modal de adicionar cessão/cessionário */ }
   const handleDeleteCessionarioForm = (id) => {
     setCessionariosQtd(
       cessionariosQtd.filter(cessionarioForm => cessionarioForm.id !== id)
     )
   }
 
+  {/* Função de enviar arquivos da cessão e dos cessionários  */ }
   const uploadFiles = async () => {
     try {
       const formDataCessao = new FormData();
       const formDataCessionarios = new FormData();
 
-      // 🔹 Adicionando os arquivos da cessão ao formDataCessao
+      // Adicionando os arquivos da cessão ao formDataCessao
       if (fileCessao.requisitorio) {
         formDataCessao.append("requisitorio", fileCessao.requisitorio);
       }
@@ -648,7 +705,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
         formDataCessao.append("escritura", fileCessao.escritura);
       }
 
-      // 🔹 Adicionando arquivos dos cessionários ao formDataCessionarios
+      // Adicionando arquivos dos cessionários ao formDataCessionarios
       cessionariosQtd.forEach((cessionario) => {
         const files = cessionario.fileCessionarios || {};
 
@@ -678,7 +735,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
         }
       });
 
-      // 🔹 Enviar arquivos da cessão primeiro
+      // Enviar arquivos da cessão primeiro
       if (fileCessao.requisitorio || fileCessao.escritura) {
         await axiosPrivate.post("/upload", formDataCessao, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -686,7 +743,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
         console.log("✅ Upload dos arquivos da cessão realizado com sucesso!");
       }
 
-      // 🔹 Enviar arquivos dos cessionários, se existirem
+      // Enviar arquivos dos cessionários, se existirem
       if (formDataCessionarios.has("nota") || formDataCessionarios.has("oficio_transferencia") || formDataCessionarios.has("comprovante_pagamento")) {
         await axiosPrivate.post("/uploadFileCessionario", formDataCessionarios, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -701,6 +758,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     }
   };
 
+  {/* Função de adicionar cessão e cessionários dessa cessão */ }
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -794,6 +852,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
     }
   };
 
+  {/* Props do componente de CessaoCessionarioModal */ }
   const modalProps = {
     onAddCessionario: handleAddCessionario,
     handleCessionarioInputChange,
@@ -810,11 +869,14 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
 
   return (
     <>
+      {/* Esse componente é reutilizado no componente MeuPerfil.js */}
+      {/* Se estiver no componente MeuPerfil.js, é retirado o componente Header junto com modificações no CSS */}
       {!isInPerfilUsuario ? <Header /> : null}
       <main className={show ? `container mx-auto ${isInPerfilUsuario ? '' : 'pt-[120px]'} dark:bg-neutral-900 h-full` : `container mx-auto ${isInPerfilUsuario ? '' : 'pt-[120px]'} dark:bg-neutral-900 h-full`}>
         <ToastContainer />
         <div className={isInPerfilUsuario ? '' : 'px-[20px]'}>
           <div className='flex justify-between items-center md:items-end'>
+
             {isInPerfilUsuario ?
               <div className='flex flex-col'>
                 <span className='font-semibold dark:text-white'>Cessões</span>
@@ -830,12 +892,19 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
                 id='cessoes'
               >
                 Cessões
-              </motion.h2>}
-            {!minhascessoes && !isInPerfilUsuario && auth.user.admin ?
+              </motion.h2>
+            }
+
+            {/* Se não estiver nas minhas cessões e não estiver no componente MeuPerfil.js e o usuário for um admin, é mostrado o botão de adicionar cessão */}
+            {!minhascessoes && !isInPerfilUsuario && auth.user.admin
+              ?
               <div>
+                {/* Componente que vem da pasta CessaoCessionarioModal */}
                 <Modal {...modalProps} />
               </div>
-              : null}
+              : null
+            }
+
           </div>
         </div>
         <motion.div
@@ -845,8 +914,10 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
           className={isInPerfilUsuario ? 'mt-[24px]' : 'mt-[24px] px-5 dark:bg-neutral-900'}
         >
           <div className='flex gap-3 items-center mb-4 w-full'>
+            {/* Barra de Pesquisa */}
             <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'py-3'} />
 
+            {/* Botão do Filtro no mobile */}
             <FilterButton onSetShow={handleShow} />
           </div>
 
@@ -869,7 +940,7 @@ export default function Cessoes({ isInPerfilUsuario, userIdUrlParam }) {
           <Filtro onSetShow={handleShow} setShow={setShow} show={show} dadosFiltro={dadosFiltro} selectedFilters={selectedFilters} handleFilterChange={handleFilterChange} handleDateChange={handleDateChange} exportPDF={() => exportPDF(filteredData)} exportExcel={(fields) => exportToExcel(filteredData, fields)} selectedExportFields={selectedExportFields} handleFieldSelectionChange={handleFieldSelectionChange} clearAllFilters={clearAllFilters} />
         </div>
 
-        {/* Scroll-to-top button */}
+        {/* Botão Scroll-to-top */}
         <ScrollToTopButton />
       </main>
     </>

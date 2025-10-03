@@ -11,6 +11,7 @@ import useAuth from "../hooks/useAuth";
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
+import { Tooltip } from 'react-tooltip';
 
 function DeleteConfirmationModal({ isOpen, onRequestClose, onConfirm }) {
   if (!isOpen) return null;
@@ -91,6 +92,26 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
     comprovante: ''
   })
   const [cessionariosQtd, setCessionariosQtd] = useState([{ id: uuidv4(), nomeTab: '', formDataCessionario: { ...formDataCessionario }, fileCessionarios: { ...fileCessionario } }]);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+
+  useEffect(() => {
+    // Verifica se a classe 'dark' está presente no HTML
+    const checkDarkMode = () => {
+      const htmlElement = document.documentElement;
+      setIsDarkTheme(htmlElement.classList.contains('dark'));
+    };
+
+    // Adiciona um evento de escuta para mudanças na classe do HTML
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true });
+
+    // Checa inicialmente o tema
+    checkDarkMode();
+
+    // Limpa o observador quando o componente é desmontado
+    return () => observer.disconnect();
+  }, []);
+
 
   const handleCessionarioInputChange = (id, values, name) => {
 
@@ -713,10 +734,21 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
         {cessionario.map((c, index) => (
           <div className="w-max lg:w-full flex text-[12px] items-center border-b dark:border-neutral-600 last:border-0 py-[10px] border-gray-300" key={index}>
             <div className="min-w-[250px] w-[24%]">
-              <div className="flex flex-col justify-center text-[12px]">
-                <span className="font-bold dark:text-neutral-200">{c.nome} </span>
+              <div className={`flex flex-col justify-center text-[12px] ${c.nome_gestor ? 'mb-1' : ''}`}>
+                <span className="font-bold dark:text-neutral-200">
+                  {c.nome}
+                </span>
                 <span className=" text-neutral-400 font-medium">{c.cpfcnpj}</span>
               </div>
+              {c.nome_gestor ? <span
+                data-tooltip-id="gestores"
+                data-tooltip-content={`${c.nome_gestor ? c.nome_gestor : ''}`}
+                data-tooltip-place="right"
+                className='py-1'
+              >
+                <span className='text-black font-medium dark:text-neutral-100 px-2 py-1 rounded gap-1 bg-neutral-200 dark:bg-neutral-700'>Gestores</span>
+              </span>
+                : null}
             </div>
             <div className="min-w-[120px] w-[15%] text-center dark:text-neutral-200">{c.valor_pago}</div>
             <div className="min-w-[120px] w-[17%] text-center dark:text-neutral-200">{c.comissao}</div>
@@ -778,6 +810,7 @@ export default function ListaCessionarios({ cessionario, precID, fetchDataCessao
           <div className="min-w-[50px] w-[5%] ml-auto text-center dark:text-neutral-200"></div>
         </div>
       </div>
+      <Tooltip id="gestores" style={{ position: 'absolute', zIndex: 60, backgroundColor: isDarkTheme ? 'rgb(38 38 38)' : '#FFF', color: isDarkTheme ? '#FFF' : '#000', fontSize: '12px', fontWeight: '500', maxWidth: '220px' }} border={isDarkTheme ? "1px solid rgb(82 82 82)" : "1px solid #d4d4d4"} opacity={100} place="right" />
     </div>
   ) : (
     <>

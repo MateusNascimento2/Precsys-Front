@@ -3,7 +3,7 @@ import AbaFiltro from './AbaFiltro'
 import Modal from '../Modal'
 import useAuth from '../../hooks/useAuth';
 
-export default function Filtro({ onSetShow, show, dadosFiltro, selectedFilters, handleFilterChange, handleDateChange, exportPDF, exportExcel,  selectedExportFields, handleFieldSelectionChange, clearAllFilters, isInPerfilUsuario }) {
+export default function Filtro({ onSetShow, show, dadosFiltro, selectedFilters, handleFilterChange, handleDateChange, exportPDF, exportExcel, selectedExportFields, handleFieldSelectionChange, clearAllFilters, isInPerfilUsuario }) {
 
   const { auth } = useAuth();
 
@@ -151,8 +151,10 @@ export default function Filtro({ onSetShow, show, dadosFiltro, selectedFilters, 
           {auth.user.admin || auth.user.advogado ? <AbaFiltro abaNome={'Rep. Comercial'} dadosFiltro={dadosFiltro.tele} selectedFilters={selectedFilters['tele']} handleFilterChange={(value) => handleFilterChange('tele', value)} /> : null}
 
           <AbaFiltro abaNome={'Data da Cessão'} selectedFilters={selectedFilters['data_cessao']} handleDateChange={handleDateChange} />
-          
+
           {auth.user.admin ? <AbaFiltro abaNome={'Documentos Faltantes'} selectedFilters={selectedFilters} handleFilterChange={handleFilterChange} /> : null}
+
+          {auth.user.admin || auth.user.advogado ? <AbaFiltro abaNome={'Gestores e Clientes'} dadosFiltro={dadosFiltro.gestoresEClientes} selectedFilters={selectedFilters['gestoresEClientes']} handleFilterChange={(value) => handleFilterChange('gestoresEClientes', value)} /> : null}
 
         </div>
       </div>

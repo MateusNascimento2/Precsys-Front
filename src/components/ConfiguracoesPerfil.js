@@ -252,12 +252,12 @@ export default function ConfiguracoesPerfil({ setUser, user, id }) {
 
                   <div>
                     <p className='dark:text-neutral-200 text-neutral-600 font-medium text-[15px] mb-2 lg:mb-0'>Nome <span className='text-red-500'>*</span> </p>
-                    <input className='text-neutral-400 border dark:border-neutral-600 font-medium w-full p-2 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]' value={nome ? nome : ''} onChange={(e) => setNome(e.target.value)} />
+                    <input className='text-neutral-400 border dark:border-neutral-600 font-medium w-full p-2 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]' disabled={!auth.user.admin} value={nome ? nome : ''} onChange={(e) => setNome(e.target.value)} />
                   </div>
 
                   <div>
                     <p className='dark:text-neutral-200 text-neutral-600 font-medium text-[15px] mb-2 lg:mb-0'>CPF/CNPJ <span className='text-red-500'>*</span></p>
-                    <input className='text-neutral-400 border dark:border-neutral-600 text font-medium w-full p-2 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]' value={cpfcnpj ? cpfcnpj : ''} onChange={(value) => handleCpfCnpjChange(value)} />
+                    <input className='text-neutral-400 border dark:border-neutral-600 text font-medium w-full p-2 rounded dark:bg-neutral-800 outline-none text-sm lg:text-[16px]' disabled={!auth.user.admin} value={cpfcnpj ? cpfcnpj : ''} onChange={(value) => handleCpfCnpjChange(value)} />
                   </div>
 
                   <div>

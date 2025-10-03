@@ -76,30 +76,39 @@ function Usuarios() {
     };
   }, []);
 
-  // Segundo useEffect: Inicializa os filtros sempre que 'clientes' ou 'gestores' forem atualizados
+  // Segundo useEffect: roda sempre que 'clientes' ou 'users' mudarem
   useEffect(() => {
+
+    /**
+     * Função auxiliar que cria os filtros de gestores
+     * a partir da relação entre clientes e usuários.
+     */
     const initializeFilters = (clientes, users) => {
-      // Filtra os gestores que têm um cliente associado
+      // 1. Filtra somente os gestores que têm pelo menos um cliente associado
       const gestoresFiltrados = users.filter(user =>
         clientes.some(cliente => String(cliente.id_gestor) === String(user.id))
       );
 
-      // Inicializa os nomes dos gestores como false
+      // 2. Cria um objeto com os nomes dos gestores,
+      //    inicializando todos como "false" (não selecionados)
       const gestoresNomes = gestoresFiltrados.reduce((acc, gestor) => {
         acc[gestor.nome] = false;
         return acc;
       }, {});
 
+      // 3. Atualiza o estado 'filters' preservando o que já existia
+      //    e adicionando o grupo de gestores recém-criado
       setFilters((prevFilters) => ({
         ...prevFilters,
         gestores: gestoresNomes,
       }));
     };
 
+    // Só inicializa se houver clientes e usuários carregados
     if (clientes.length > 0 && users.length > 0) {
       initializeFilters(clientes, users);
     }
-  }, [clientes, users]);
+  }, [clientes, users]); // dependências → dispara quando 'clientes' ou 'users' mudam
 
   const handleSubmit = async () => {
     const isDarkMode = localStorage.getItem('darkMode');
@@ -196,12 +205,6 @@ function Usuarios() {
     document.body.style.overflow = show ? 'scroll' : 'hidden';
   };
 
-  const handleSaveClick = () => {
-    if (formRef.current) {
-      formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-    }
-  };
-
   return (
     <>
       <Header />
@@ -223,26 +226,33 @@ function Usuarios() {
             Usuários
           </motion.h2>
 
-
+          {/* Botão de adicionar novos usuários no sistema que vem do componente AdicionarUsuarioModal*/}
           <Modal status={status} isLoading={isLoading} usuarioFormData={usuarioFormData} setUsuarioFormData={setUsuarioFormData} handleSubmit={handleSubmit} />
         </div>
 
         <div className='mt-[24px] dark:bg-neutral-900'>
           <div className='flex gap-3 items-center mb-4 w-full'>
+            {/* Input de Pesquisa */}
             <SearchInput searchQuery={searchQuery} onSearchQueryChange={handleInputChange} p={'py-3'} />
+
+            {/* Botão do Filtro no mobile */}
             <FilterButton onSetShow={handleShow} />
           </div>
 
           <div className={`lg:flex lg:gap-4 lg:items-start`}>
             <div className='hidden lg:block lg:sticky lg:top-[5%]'>
+              {/* Filtro de usuários */}
               <UserFilter show={true} onSetShow={handleShow} filters={filters} onSelectedCheckboxesChange={updateFilters} resetFilters={resetFilters} />
             </div>
             <div className='w-full h-full max-h-full'>
+              {/* Lista de usuários */}
               <Users searchQuery={searchQuery} selectedFilters={filters} />
             </div>
           </div>
         </div>
+        {/* Filtro de usuários no mobile */}
         {show && (
+          
           <UserFilter show={show} onSetShow={handleShow} filters={filters} onSelectedCheckboxesChange={updateFilters} resetFilters={resetFilters} />
         )}
 

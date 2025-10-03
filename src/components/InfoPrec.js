@@ -11,6 +11,7 @@ import useAuth from "../hooks/useAuth";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import DotsButton from './DotsButton';
+import PublicacoesDiario from '../pages/PublicacoesDiario';
 
 
 export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
@@ -443,6 +444,10 @@ export default function InfoPrec({ precInfoNew, status, fetchDataCessao }) {
                         </div>
                     </div>
                 ) : null
+            }
+
+            {
+                <PublicacoesDiario numeroPrecatorio={precInfoNew.precatorio} />
             }
         </div>
     );

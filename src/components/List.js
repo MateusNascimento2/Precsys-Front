@@ -43,27 +43,42 @@ export default function Lista({ cessoes, filteredCessoes, isLoading }) {
     return () => observer.disconnect();
   }, []);
 
+  // Função assíncrona para baixar arquivos
   const downloadFile = async (filename) => {
+    // Verifica se o usuário está no modo escuro (para configurar o toast)
     const isDarkMode = localStorage.getItem('darkMode');
+
+    // Quebra o filename em duas partes: caminho (path) e nome do arquivo (file)
     const path = filename.split('/')[0];
     const file = filename.split('/')[1];
 
+    // Marca o arquivo como "em carregamento" no state (ex.: para mostrar spinner)
     setLoadingFiles(prev => ({ ...prev, [filename]: true }));
 
     try {
+      // Faz a requisição GET para a API, pedindo o arquivo no formato binário (blob)
       const response = await axiosPrivate.get(`/download/${path}/${file}`, {
-        responseType: 'blob',
+        responseType: 'blob', // necessário para tratar o retorno como arquivo binário
       });
 
+      // Cria uma URL temporária que aponta para o blob retornado pela API
       const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      // Cria dinamicamente um link <a> invisível
       const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = file;
+      a.style.display = 'none';   // esconde o link da tela
+      a.href = url;               // aponta o link para o blob temporário
+      a.download = file;          // sugere ao navegador o nome do arquivo no download
+
+      // Adiciona o link ao DOM e simula um clique para iniciar o download
       document.body.appendChild(a);
       a.click();
+
+      // Libera a URL temporária da memória, já que não será mais usada
       window.URL.revokeObjectURL(url);
+
     } catch (error) {
+      // Se der erro, mostra uma notificação amigável para o usuário
       toast.error(`Erro ao baixar arquivo: ${error}`, {
         position: "top-right",
         autoClose: 3000,
@@ -72,14 +87,18 @@ export default function Lista({ cessoes, filteredCessoes, isLoading }) {
         pauseOnHover: true,
         draggable: true,
         progress: false,
-        theme: isDarkMode === 'true' ? 'dark' : 'light',
+        theme: isDarkMode === 'true' ? 'dark' : 'light', // tema depende do darkMode
         transition: Bounce,
       });
+
+      // Log do erro para debug no console do dev
       console.error('Error downloading the file:', error);
     } finally {
+      // Independentemente do resultado, marca o arquivo como "não carregando" no state
       setLoadingFiles(prev => ({ ...prev, [filename]: false }));
     }
   };
+
 
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
 

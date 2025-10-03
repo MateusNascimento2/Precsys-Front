@@ -4,6 +4,7 @@ export default function AbaFiltro({ abaNome, dadosFiltro, selectedFilters, handl
   const [isOpen, setIsOpen] = useState(false);
   const [isComarcaOpen, setIsComarcaOpen] = useState(false);
   const [entesAbertos, setEntesAbertos] = useState({});
+  const [gestoresAbertos, setGestoresAbertos] = useState({});
 
   const handleIsOpen = () => {
     setIsOpen(prevState => !prevState);
@@ -20,7 +21,14 @@ export default function AbaFiltro({ abaNome, dadosFiltro, selectedFilters, handl
     }));
   };
 
-  const checkboxClass = "peer relative h-4 w-4 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white";
+  const handleGestoresToggle = (index) => {
+    setGestoresAbertos(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
+
+  const checkboxClass = "peer relative h-4 w-4 shrink-0 cursor-pointer appearance-none rounded bg-neutral-200 transition-all checked:border-black checked:bg-black hover:before:opacity-10 dark:bg-neutral-600 dark:checked:bg-white";
 
   const checkIcon = (
     <span className="absolute text-white transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 dark:text-black">
@@ -32,10 +40,10 @@ export default function AbaFiltro({ abaNome, dadosFiltro, selectedFilters, handl
 
   const renderConteudo = () => {
 
-    {/* Ente */}
+    {/* Ente */ }
     if (abaNome === 'Ente') {
       return (
-        
+
         <ul>
           {/* Estado RJ, Municipio RJ, INSS, Federal RJ */}
           {dadosFiltro?.map((dado, index) => (
@@ -48,11 +56,11 @@ export default function AbaFiltro({ abaNome, dadosFiltro, selectedFilters, handl
                     <input type="checkbox" onClick={(e) => {
                       e.stopPropagation();
                       handleFilterChange(dado.nome);
-                      dado?.anos?.split(',').map((ano) => {
+                      dado?.anos?.split(',').forEach((ano) => {
                         handleFilterChange(`${dado.nome} - ${ano}`)
                       })
-                    }} 
-                    className={checkboxClass} />
+                    }}
+                      className={checkboxClass} />
                     {checkIcon}
                     <span className='text-sm'>{dado.nome}</span>
                   </div>
@@ -114,7 +122,7 @@ export default function AbaFiltro({ abaNome, dadosFiltro, selectedFilters, handl
                 </svg>
               </span>
             </div>
-            
+
             {/*Comarcas*/}
             <div className={`transition-all duration-300 overflow-hidden ${isComarcaOpen ? 'pt-2 max-h-48 overflow-y-auto' : 'max-h-0'}`}>
               {dadosFiltro?.map((dado, index) => (
@@ -168,7 +176,7 @@ export default function AbaFiltro({ abaNome, dadosFiltro, selectedFilters, handl
       );
     }
 
-    {/* Data da Cessão */}
+    {/* Data da Cessão */ }
     if (abaNome === 'Data da Cessão') {
       return (
         <div className="flex flex-col gap-2 py-3 text-neutral-600 dark:text-neutral-400">
@@ -184,28 +192,114 @@ export default function AbaFiltro({ abaNome, dadosFiltro, selectedFilters, handl
       );
     }
 
-    {/* Documentos Faltantes */}
+    {/* Documentos Faltantes */ }
     if (abaNome === 'Documentos Faltantes') {
       const documentos = ['requisitorio', 'escritura'];
       return documentos.map((doc) => (
         <div className="flex items-center gap-2 relative" key={doc}>
-          <input type="checkbox" checked={selectedFilters[doc].includes(null)} onChange={() => handleFilterChange(doc, null)}  id={doc} className={checkboxClass} />
+          <input type="checkbox" checked={selectedFilters[doc].includes(null)} onChange={() => handleFilterChange(doc, null)} id={doc} className={checkboxClass} />
           {checkIcon}
           <label htmlFor={doc}>{doc.charAt(0).toUpperCase() + doc.slice(1)}</label>
         </div>
       ));
     }
 
-    {/* Outros Filtros (Status, Empresa, Natureza, etc.) */}
+    if (abaNome === 'Gestores e Clientes') {
+      return (
+
+        <ul>
+          {dadosFiltro?.map((dado, index) => (
+            <li className='pb-2' key={index} >
+              <div className='flex items-center justify-between cursor-pointer' onClick={() => handleGestoresToggle(index)}>
+                <div className='flex items-center gap-2 relative text-[13px]'>
+
+
+                  <div className='flex items-center gap-2 relative text-[12px]' key={index}>
+                    <input type="checkbox" checked={selectedFilters.some(gestorFilter => gestorFilter.gestor_id === dado.id)} onClick={(e) => {
+                      e.stopPropagation();
+                      const cessoes_gestor = dado.cessoes_gestor.split(',').map(cessao => Number(cessao))
+
+                      const gestorCessoesParsed = { gestor_id: dado.id, cessoes_gestor: cessoes_gestor }
+
+                      handleFilterChange(gestorCessoesParsed)
+
+                    }
+                    } className={checkboxClass} />
+                    {checkIcon}
+                  </div>
+
+                  <span className='text-sm'>{dado.nome_gestor}</span>
+                </div>
+                <span className='text-[12px]'>
+                  <svg className='w-3 h-3' fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </span>
+              </div>
+
+
+
+              <div className={`transition-all overflow-hidden ${gestoresAbertos[index] ? 'max-h-48 overflow-y-auto' : 'max-h-0'}`}>
+                <div className='pl-2 mt-1 border-l dark:border-neutral-600'>
+                  {dado?.clientes?.map((cliente, i) => (
+
+                    <div className='flex items-center gap-2 relative text-[12px]' key={i}>
+                      <input type="checkbox" checked={selectedFilters.some(clienteFilter => clienteFilter.cliente_id === cliente.id)} onChange={() => {
+
+                        const cessoes_cliente = cliente.cessoes.split(',').map(cessao => Number(cessao))
+
+                        const clienteCessoesParsed = { cliente_id: cliente.id, cessoes_cliente: cessoes_cliente }
+
+                        handleFilterChange(clienteCessoesParsed)
+
+
+                      }
+                      } className={checkboxClass} />
+                      {checkIcon}
+                      <div className='py-1'>{cliente.nome}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+
+            </li>
+
+
+          ))
+          }
+
+        </ul >
+      );
+    }
+
+    {/* Outros Filtros (Status, Empresa, Natureza, etc.) */ }
     return (
       <ul className='flex flex-col gap-[6px]'>
-        {dadosFiltro?.map((dado, index) => (
-          <li className='flex gap-2 items-center relative text-[13px]' key={index}>
-            <input type="checkbox" checked={selectedFilters.includes(dado.nome)} onChange={() => handleFilterChange(dado.nome)} className={checkboxClass} />
-            {checkIcon}
-            <label>{dado.nome}</label>
-          </li>
-        ))}
+        {abaNome === 'Empresa' ?
+          <>
+            <li className='flex gap-2 items-center relative text-[13px]'>
+              <input type="checkbox" checked={selectedFilters.includes(null)} onChange={() => handleFilterChange(null)} className={checkboxClass} />
+              {checkIcon}
+              <label>Sem empresa</label>  
+            </li>
+
+            {dadosFiltro?.map((dado, index) => (
+              <li className='flex gap-2 items-center relative text-[13px]' key={index}>
+                <input type="checkbox" checked={selectedFilters.includes(dado.nome)} onChange={() => handleFilterChange(dado.nome)} className={checkboxClass} />
+                {checkIcon}
+                <label>{dado.nome}</label>
+              </li>
+            ))}
+          </>
+          :
+          dadosFiltro?.map((dado, index) => (
+            <li className='flex gap-2 items-center relative text-[13px]' key={index}>
+              <input type="checkbox" checked={selectedFilters.includes(dado.nome)} onChange={() => handleFilterChange(dado.nome)} className={checkboxClass} />
+              {checkIcon}
+              <label>{dado.nome}</label>
+            </li>
+          ))}
       </ul>
     );
   };

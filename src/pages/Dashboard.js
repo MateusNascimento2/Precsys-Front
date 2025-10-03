@@ -11,6 +11,7 @@ function Dashboard() {
   const { auth } = useAuth();
   const [isDarkTheme, setIsDarkTheme] = useState(false);
 
+  // Gambiarra para o tema dark pegar no Tooltip
   useEffect(() => {
     const checkDarkMode = () => {
       const htmlElement = document.documentElement;

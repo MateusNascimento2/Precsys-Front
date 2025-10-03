@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 
 
-export default function PublicacoesDiarioList({ publicacoesFiltradas, publicacoesQtd, updateHomologado, fetchPublicacoes }) {
+export default function PublicacoesDiarioList({ publicacoesFiltradas, publicacoesQtd, updateHomologado, fetchPublicacoes, isPaginaPrecatorio }) {
   const { pathname } = useLocation();
   const [showTextoPublicacao, setShowTextoPublicacao] = useState({});
 
@@ -110,7 +110,7 @@ export default function PublicacoesDiarioList({ publicacoesFiltradas, publicacoe
               <div className="border-b dark:border-neutral-700 px-4 py-2">
                 <div className="flex items-center justify-between">
                   <div className="relative flex items-center">
-                    <h2 className="text-black dark:text-white text-[16px] font-bold inline">
+                    <h2 className={`text-black dark:text-white ${isPaginaPrecatorio ? 'text-[14px]' : 'text-[16px]'} font-bold inline`}>
                       {publicacao.precatorio}
                     </h2>
                   </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useLayoutEffect, useState, useEffect } from 'react';
 import useAuth from "../hooks/useAuth";
 
 
@@ -8,27 +8,37 @@ export default function NavMenu() {
   const [hideCessionarios, setHideCessionarios] = useState(true);
   const [hideJuridico, setHideJuridico] = useState(true);
   const [hideRelacionados, setHideRelacionados] = useState(true);
+  const [hidePublicacoes, setHidePublicacoes] = useState(true);
   const { auth } = useAuth();
-
   const handleShow = () => {
     setShow((prevState) => !prevState);
   };
 
-  const checkIfIdExists = (id) => {
+/*   const checkIfIdExists = (id) => {
     const section = document.getElementById(id);
+    console.log(section)
 
     if (section === null) {
       return false
     } else {
       return true
     }
-  };
+  }; */
 
   useEffect(() => {
-    setHideInfo(checkIfIdExists('info-gerais'));
-    setHideCessionarios(checkIfIdExists('cessionarios'));
-    setHideJuridico(checkIfIdExists('juridico'));
-    setHideRelacionados(checkIfIdExists('relacionados'));
+    const setAll = () => {
+      setHideInfo(!!document.getElementById('info-gerais'));
+      setHideCessionarios(!!document.getElementById('cessionarios'));
+      setHideJuridico(!!document.getElementById('juridico'));
+      setHideRelacionados(!!document.getElementById('relacionados'));
+      setHidePublicacoes(!!document.getElementById('publicacoes')); // <- aparece depois
+    };
+
+    setAll(); // checagem inicial
+
+    const obs = new MutationObserver(() => setAll());
+    obs.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['id'] });
+    return () => obs.disconnect();
   }, []);
 
   const scroll = (id, padding) => {
@@ -99,7 +109,7 @@ export default function NavMenu() {
                   Cessionários
                 </a>
               </li>
-              { (auth.user.admin || auth.user.advogado) ? <li className={hideJuridico ? "py-2 px-1" : 'hidden'}>
+              {(auth.user.admin || auth.user.advogado) ? <li className={hideJuridico ? "py-2 px-1" : 'hidden'}>
                 <a
                   onClick={() => scroll('juridico', 60)}
                   className={
@@ -111,7 +121,7 @@ export default function NavMenu() {
                   Jurídico
                 </a>
               </li> : null}
-              { (auth.user.admin || auth.user.advogado) ? <li className={hideRelacionados ? "py-2 px-1" : 'hidden'}>
+              {(auth.user.admin || auth.user.advogado) ? <li className={hideRelacionados ? "py-2 px-1" : 'hidden'}>
                 <a
                   onClick={() => scroll('relacionados', 60)}
                   className={
@@ -123,6 +133,18 @@ export default function NavMenu() {
                   Relacionados
                 </a>
               </li> : null}
+              <li className={hidePublicacoes ? "py-2 px-1" : 'hidden'}>
+                <a
+                  onClick={() => scroll('publicacoes', 60)}
+                  className={
+                    hidePublicacoes
+                      ? 'text-[14px] text-gray-600 dark:text-neutral-400 cursor-pointer hover:underline'
+                      : 'hidden'
+                  }
+                >
+                  Publicações
+                </a>
+              </li>
             </ul>
           </div>
         </div>

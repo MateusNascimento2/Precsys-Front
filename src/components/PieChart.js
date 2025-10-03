@@ -40,6 +40,7 @@ function PieChart() {
     return () => observer.disconnect();
   }, []);
 
+  // Função para formatar os valores em reais do dashboard
   function changeStringFloat(a) {
     const virgulaParaBarra = a.replace(',', '/');
     const valorSemPonto = virgulaParaBarra.replace(/\./g, '');
@@ -85,7 +86,16 @@ function PieChart() {
     };
   }, [axiosPrivate]);
 
+
+  // useMemo vai memorizar o resultado dessa função e só recalcular se DashboardData mudar
   const minhasCessoesData = useMemo(() => {
+
+    // Array inicial com todos os status possíveis de uma cessão
+    // Cada objeto tem:
+    // x = nome do status
+    // y = quantidade de cessões nesse status (inicia em 0)
+    // color = cor associada (para o gráfico)
+    // expRecebimentoTotal = soma dos valores esperados de recebimento (inicia em 0)
     const statusQtd = [
       { x: 'Em Andamento', y: 0, color: '#d2c7b3', expRecebimentoTotal: 0 },
       { x: 'Em Andamento Com Depósito', y: 0, color: '#bdb4a9', expRecebimentoTotal: 0 },
@@ -97,15 +107,25 @@ function PieChart() {
       { x: 'Recebido', y: 0, color: '#bad3b9', expRecebimentoTotal: 0 }
     ];
 
+    // Percorre todos os registros que vieram da API
     DashboardData.forEach(cessao => {
+      // Procura no array statusQtd o índice do status que corresponde a essa cessão
       const statusIndex = statusQtd.findIndex(status => status.x === cessao.status);
+
+      // Se encontrou um status correspondente...
       if (statusIndex !== -1) {
+        // Incrementa o contador de quantas cessões estão nesse status
         statusQtd[statusIndex].y += 1;
+
+        // Soma o valor esperado de recebimento dessa cessão no total do status
         statusQtd[statusIndex].expRecebimentoTotal += parseFloat(changeStringFloat(cessao.exp_recebimento));
       }
     });
 
+    // Retorna o array já preenchido com as quantidades e totais
     return statusQtd;
+
+    // O cálculo só é refeito quando DashboardData mudar
   }, [DashboardData]);
 
   const allZero = minhasCessoesData.every(data => data.y === 0);
@@ -126,14 +146,30 @@ function PieChart() {
     }
   }, [endAngle]);
 
+  // useMemo memoriza o resultado e só recalcula quando uma das dependências mudar:
+  // DashboardData, selectedStatus ou filterText
   const filteredCessoes = useMemo(() => {
+
+    // Retorna um novo array filtrado a partir de DashboardData
     return DashboardData.filter(cessao => {
+
+      // 1) Verifica se precisa filtrar por status
+      // - Se selectedStatus tiver valor, compara se o status da cessão é igual
+      // - Se selectedStatus for vazio/null, retorna true (não filtra por status)
       const matchesStatus = selectedStatus ? cessao.status === selectedStatus : true;
-      const matchesText = cessao.precatorio.toLowerCase().includes(filterText.toLowerCase()) ||
+
+      // 2) Verifica se precisa filtrar por texto
+      // Transforma em lowercase para busca case-insensitive
+      // Verifica se o texto digitado está incluso no precatório OU no cedente
+      const matchesText =
+        cessao.precatorio.toLowerCase().includes(filterText.toLowerCase()) ||
         cessao.cedente.toLowerCase().includes(filterText.toLowerCase());
 
+      // A cessão só entra no resultado se passar pelos dois filtros
       return matchesStatus && matchesText;
     });
+
+    // Dependências: recalcula apenas quando os dados ou os filtros mudarem
   }, [DashboardData, selectedStatus, filterText]);
 
   // Conjunto de dados alternativo para quando todos os valores de y são 0
@@ -206,7 +242,7 @@ function PieChart() {
               </div>
               <div className="mt-4 h-[260px] overflow-y-auto">
                 {selectedStatus ? (
-                  <ul className="">
+                  <ul>
                     {filteredCessoes.map((cessao, index) => (
                       <li key={index} className="flex p-2 items-center border dark:border-neutral-600 rounded  mb-2">
                         <div className='border-r dark:border-neutral-600 pr-2'>
@@ -222,7 +258,7 @@ function PieChart() {
                     ))}
                   </ul>
                 ) : (
-                  <ul className="">
+                  <ul>
                     {filteredCessoes.filter(cessao =>
                       cessao.precatorio.toLowerCase().includes(filterText.toLowerCase()) ||
                       cessao.cedente.toLowerCase().includes(filterText.toLowerCase())

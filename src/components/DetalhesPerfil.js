@@ -1,12 +1,12 @@
 import React from 'react'
 import { ButtonEditProfile } from '../pages/MeuPerfil';
-/* import PieChart from './PieChart';
- */
+import PieChart from './PieChart';
+
 export default function DetalhesPerfil({ user, handleItemClick }) {
 
   return (
     <section className='px-2 mt-3 lg:mt-0'>
-      <div className='flex justify-between items-center pb-4'>
+      <div className='flex justify-between items-center'>
         <span className='font-semibold dark:text-white'>Detalhes do Perfil</span>
 
         <ButtonEditProfile handleItemClick={handleItemClick} />
@@ -48,10 +48,10 @@ export default function DetalhesPerfil({ user, handleItemClick }) {
           <span className='dark:text-white font-medium text-[14px]'>{user.qualificacao}</span>
         </div>
       </div>
-
-{/*       <div className='mt-4'>
+      <div className='mt-8'>
+        <p class="font-semibold dark:text-white mb-4">Resumo das Cessões</p>
         <PieChart />
-      </div> */}
+      </div>
     </section>
   )
 }
