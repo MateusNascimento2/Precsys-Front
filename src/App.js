@@ -22,6 +22,7 @@ import Juridicos from './pages/Juridicos';
 import Forbidden from './pages/Forbidden';
 import PublicacoesDiario from './pages/PublicacoesDiario';
 import PublicacoesDiarioIntimadas from './pages/PublicacoesDiarioIntimadas'
+import StatusPrecatorio from './pages/StatusPrecatorio';
 
 
 function App() {
@@ -45,7 +46,7 @@ function App() {
 
           <Route element={<RequireAdminOrAdvogadoAuth />}>
             <Route path='todas-cessoes' element={<AllCessoes />} />
-            <Route path='notificacoes/status' element={<Dashboard />} />
+            <Route path='notificacoes/status' element={<StatusPrecatorio />} />
           </Route>
 
           <Route element={<RequirePublicacaoAuth />} >
@@ -66,7 +67,7 @@ function App() {
             <Route path='juridicos' element={<Juridicos />} />
             <Route path='publicacoes-diario' element={<PublicacoesDiario />} />
             <Route path='publicacoes-intimadas' element={<PublicacoesDiarioIntimadas />} />
-            <Route path='notficacoes/status' element={<Dashboard />} />
+            <Route path='notificacoes/status' element={<StatusPrecatorio />} />
           </Route>
 
 
