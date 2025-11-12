@@ -45,6 +45,7 @@ function App() {
 
           <Route element={<RequireAdminOrAdvogadoAuth />}>
             <Route path='todas-cessoes' element={<AllCessoes />} />
+            <Route path='notificacoes/status' element={<Dashboard />} />
           </Route>
 
           <Route element={<RequirePublicacaoAuth />} >
@@ -65,6 +66,7 @@ function App() {
             <Route path='juridicos' element={<Juridicos />} />
             <Route path='publicacoes-diario' element={<PublicacoesDiario />} />
             <Route path='publicacoes-intimadas' element={<PublicacoesDiarioIntimadas />} />
+            <Route path='notficacoes/status' element={<Dashboard />} />
           </Route>
 
 
