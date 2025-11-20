@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { motion } from 'framer-motion';
 import ScrollToTopButton from '../components/ScrollToTopButton';
 import * as XLSX from 'xlsx';
-import Filtro from '../components/FiltroCessoes/Filtro';
+import Filtro from '../components/FiltroStatusCessoes/Filtro';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 
@@ -21,18 +21,11 @@ export default function StatusPrecatorio() {
 
     return {
       status: parsed.status || [],
-      ente: parsed.ente || [],
-      empresa: parsed.empresa || [],
-      natureza: parsed.natureza || [],
-      anuencia_advogado: parsed.anuencia_advogado || [],
-      falecido: parsed.falecido || [],
-      tele: parsed.tele || [],
-      data_cessao: Array.isArray(parsed.data_cessao) ? parsed.data_cessao : [],
-      requisitorio: parsed.requisitorio || [],
-      escritura: parsed.escritura || [],
-      gestoresEClientes: parsed.gestoresEClientes || []
+      status_antigo: parsed.status_antigo || [],
+      data_modificacao_status: Array.isArray(parsed.data_modificacao_status) ? parsed.data_modificacao_status : [],
     };
   });
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,17 +36,13 @@ export default function StatusPrecatorio() {
   const [selectedExportFields, setSelectedExportFields] = useState([
     "id",
     "precatorio",
-    "cedente",
-    "status",
-    "ente",
-    "natureza",
-    "data_cessao",
-    "empresa",
-    "anuencia_advogado",
-    "falecido",
+    "status_atual",
+    "status_antigo",
+    "data_modificacao_status",
   ]);
 
-  console.log(cessoes)
+  console.log(selectedFilters)
+
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
   useEffect(() => {
@@ -113,14 +102,6 @@ export default function StatusPrecatorio() {
         // Se já tinha o valor, remove ele (desmarcando)
         updatedFilters = currentFilters.filter(item => item !== value);
 
-      } else if (filterCategory === 'gestoresEClientes' && currentFilters.some(dado => dado.cliente_id === value.cliente_id)) {
-
-        updatedFilters = currentFilters.filter(item => item.cliente_id !== value.cliente_id)
-
-      } else if (filterCategory === 'gestoresEClientes' && currentFilters.some(dado => dado.gestor_id === value.gestor_id)) {
-
-        updatedFilters = currentFilters.filter(item => item.gestor_id !== value.gestor_id)
-
       } else {
         // Se não tinha, adiciona o valor (marcando)
         updatedFilters = [...currentFilters, value];
@@ -134,20 +115,14 @@ export default function StatusPrecatorio() {
     });
   };
 
+
+
   // Função para limpar todos os filtros
   const clearAllFilters = () => {
     const emptyFilters = {
       status: [],
-      ente: [],
-      empresa: [],
-      natureza: [],
-      anuencia_advogado: [],
-      falecido: [],
-      tele: [],
-      data_cessao: [],
-      requisitorio: [],
-      escritura: [],
-      gestoresEClientes: [],
+      status_antigo: [],
+      data_modificacao_status: [],
     };
 
     setSelectedFilters(emptyFilters);
@@ -157,24 +132,58 @@ export default function StatusPrecatorio() {
   // Função para lidar com a data do filtro de cessões
   const handleDateChange = (id, value) => {
     setSelectedFilters((prevState) => {
-      let newDataCessao = [...prevState.data_cessao];
+      const novoIntervalo = [...(prevState.data_modificacao_status || [])];
 
-      if (id === 'data_cessao_inicial') {
-        newDataCessao[0] = value;  // Atualiza a data inicial
-        // Se a data final ainda não foi preenchida, define como a data de hoje
-        if (!newDataCessao[1]) {
-          newDataCessao[1] = new Date().toISOString().split('T')[0];  // Data de hoje no formato yyyy-mm-dd
-        }
-      } else if (id === 'data_cessao_final') {
-        newDataCessao[1] = value;  // Atualiza a data final
+      if (id === 'data_modificacao_inicial') {
+        novoIntervalo[0] = value; // "dd/mm/aaaa"
+      } else if (id === 'data_modificacao_final') {
+        novoIntervalo[1] = value;
       }
 
       return {
         ...prevState,
-        data_cessao: newDataCessao,  // Atualiza o array de datas
+        data_modificacao_status: novoIntervalo,
       };
     });
   };
+
+  const parseDate = (data) => {
+    if (!data) return null;
+    if (data instanceof Date) return data;
+
+    if (typeof data !== 'string') return null;
+
+    // ISO do input: 2025-11-20
+    if (data.includes('-')) {
+      // garante que não entra fuso esquisito
+      return new Date(data + 'T00:00:00');
+    }
+
+    if (data.includes('/')) {
+      const [a, b, c] = data.split('/'); // pode ser dd/mm/yyyy, mm/dd/yyyy ou yyyy/mm/dd
+
+      // yyyy/mm/dd
+      if (a.length === 4) {
+        return new Date(`${a}-${b}-${c}`);
+      }
+
+      const nA = parseInt(a, 10);
+      const nB = parseInt(b, 10);
+
+      // se o primeiro número > 12, não pode ser mês → dd/mm/yyyy
+      if (nA > 12) {
+        // dd/mm/yyyy
+        return new Date(`${c}-${b}-${a}`);
+      }
+
+      // caso contrário, assume mm/dd/yyyy (teu caso: 11/20/2025)
+      return new Date(`${c}-${a}-${b}`);
+    }
+
+    // fallback
+    return new Date(data);
+  };
+
 
   const filteredData = cessoes.filter(item => {
 
@@ -182,83 +191,66 @@ export default function StatusPrecatorio() {
     const filterSearchInput = searchQuery
       ? Object.values(item).some(value =>
         // Concatenando "ente - ano" na pesquisa
-        (value && value.toString().toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (`${item.ente} - ${item.ano}`.toLowerCase().includes(searchQuery.toLowerCase()))  // Concatenando ente + ano
+        (value && value.toString().toLowerCase().includes(searchQuery.toLowerCase()))
       )
       : true;
 
-    // 2. Filtro de "status"
-    const filterStatus = selectedFilters.status.length
-      ? selectedFilters.status.includes(item.status)  // Verifica se o status está selecionado
-      : true;  // Se não houver filtro de status, retorna true (sem filtro)
+    const filterStatusAtualeAntigo = () => {
+      if (selectedFilters.status.length && !selectedFilters.status_antigo.length) {
+        return selectedFilters.status.includes(item.status_atual)
 
-    // 3. Filtro de "ente + ano" (ex: "Estado RJ - 2017")
-    const filterEnteAno = selectedFilters.ente.length
-      ? selectedFilters.ente.includes(`${item.ente} - ${item.ano}`)  // Concatenando ente e ano com " - "
-      : true;  // Se não houver filtro de ente/ano, retorna true
+      } else if (!selectedFilters.status.length && selectedFilters.status_antigo.length) {
+        return selectedFilters.status_antigo.includes(item.status_antigo)
 
-    // 4. Filtro de "empresa"
-    const filterEmpresa = selectedFilters.empresa.length
-      ? selectedFilters.empresa.includes(item.empresa)  // Verifica se a empresa está selecionada
-      : true;  // Se não houver filtro de empresa, retorna true
+      } else if (selectedFilters.status.length && selectedFilters.status_antigo.length) {
+        return (selectedFilters.status.includes(item.status_atual) && selectedFilters.status_antigo.includes(item.status_antigo))
 
-    // 5. Filtro de "natureza"
-    const filterNatureza = selectedFilters.natureza.length
-      ? selectedFilters.natureza.includes(item.natureza)  // Verifica se a natureza está selecionada
-      : true;  // Se não houver filtro de natureza, retorna true
+      } else {
+        return true
+      }
+    }
 
-    // 6. Filtro de "anuencia_advogado"
-    const filterAnuenciaAdvogado = selectedFilters.anuencia_advogado.length
-      ? selectedFilters.anuencia_advogado.includes(item.anuencia_advogado)  // Verifica se a anuência do advogado está selecionada
-      : true;  // Se não houver filtro de anuência, retorna true
-
-    // 7. Filtro de "falecido"
-    const filterFalecido = selectedFilters.falecido.length
-      ? selectedFilters.falecido.includes(item.falecido)  // Verifica se o valor de falecido está selecionado
-      : true;  // Se não houver filtro de falecido, retorna true
-
-    // 8. Filtro de "tele"
-    const filterTele = selectedFilters.tele.length
-      ? selectedFilters.tele.includes(item.tele)  // Verifica se o tele está selecionado
-      : true;  // Se não houver filtro de tele, retorna true
-
-    // 9. Filtro de "data_cessao"
+    // 4. Filtro de "data_cessao"
     // Filtro de data_cessao com base no intervalo de data inicial e final (dentro do array)
-    const filterDataCessao = selectedFilters.data_cessao.length === 2
-      ? new Date(item.data_cessao) >= new Date(selectedFilters.data_cessao[0]) &&
-      new Date(item.data_cessao) <= new Date(selectedFilters.data_cessao[1])
-      : true;
+    const filterDataModificacao = (() => {
+      const intervalo = selectedFilters.data_modificacao_status || [];
+      const [inicioStr, fimStr] = intervalo;
+
+      const temInicio = !!inicioStr;
+      const temFim = !!fimStr;
+
+      // se não tem nenhum dos dois no filtro → não filtra por data
+      if (!temInicio && !temFim) return true;
+
+      // item sem data de modificação → não entra no resultado
+      if (!item.data_modificacao_status) return false;
+
+      const dataItem = parseDate(item.data_modificacao_status);
+      if (!dataItem) return false;
+
+      const dataInicio = temInicio ? parseDate(inicioStr) : null;
+      const dataFim = temFim ? parseDate(fimStr) : null;
+
+      if (dataInicio && !dataFim) {
+        // só data inicial → a partir dessa data
+        return dataItem >= dataInicio;
+      }
+
+      if (!dataInicio && dataFim) {
+        // só data final → até essa data
+        return dataItem <= dataFim;
+      }
+
+      // data inicial e final → dentro do intervalo (inclusive)
+      return dataItem >= dataInicio && dataItem <= dataFim;
+    })();
 
 
-    // 10. Filtro de "documentos faltantes"
-    const filterEscrituraFaltando = selectedFilters.escritura.length
-      ? selectedFilters.escritura.includes(null) && (item.escritura === null || item.escritura === '')
-      : true;
-
-    // 11. Filtro de "documentos faltantes"
-    const filterRequisitorioFaltando = selectedFilters.requisitorio.length
-      ? selectedFilters.requisitorio.includes(null) && (item.requisitorio === null || item.requisitorio === '')
-      : true;
-
-    // 12. Filtro de "Gestores e Clientes"
-    const filterCessoesGestoresEClientes = selectedFilters.gestoresEClientes.length
-      ? selectedFilters.gestoresEClientes.some(dado => (dado.cessoes_cliente?.includes(item.id) || dado.cessoes_gestor?.includes(item.id)))
-      : true
-
-    // 13. Verifica se todos os filtros são verdadeiros
+    // 5. Verifica se todos os filtros são verdadeiros
     return (
       filterSearchInput &&
-      filterStatus &&
-      filterEnteAno &&
-      filterEmpresa &&
-      filterNatureza &&
-      filterAnuenciaAdvogado &&
-      filterFalecido &&
-      filterTele &&
-      filterDataCessao &&
-      filterRequisitorioFaltando &&
-      filterEscrituraFaltando &&
-      filterCessoesGestoresEClientes
+      filterStatusAtualeAntigo() &&
+      filterDataModificacao
     );
   });
 
@@ -284,15 +276,9 @@ export default function StatusPrecatorio() {
     const fieldLabels = {
       id: "Id",
       precatorio: "Precatório",
-      processo: "Processo",
-      cedente: "Cedente",
-      status: "Status",
-      ente: "Ente Público",
-      natureza: "Natureza",
-      data_cessao: "Data da Cessão",
-      empresa: "Empresa",
-      anuencia_advogado: "Anuência",
-      falecido: "Falecido",
+      status_atual: "Status Atual",
+      status_antigo: "Status Antigo",
+      data_modificacao_status: "Data da Modificação",
     };
 
     // Ajustar os dados filtrados com base nos rótulos
@@ -300,13 +286,9 @@ export default function StatusPrecatorio() {
       const filteredItem = {};
       selectedFields.forEach((field) => {
 
-        if (fieldLabels[field] === 'Ente Público') {
-          const label = fieldLabels[field] || field; // Usa o rótulo personalizado ou a chave original
-          filteredItem[label] = `${item[field]} - ${item.ano}`;
-        } else {
-          const label = fieldLabels[field] || field; // Usa o rótulo personalizado ou a chave original
-          filteredItem[label] = item[field];
-        }
+        const label = fieldLabels[field] || field; // Usa o rótulo personalizado ou a chave original
+        filteredItem[label] = item[field];
+
       });
 
       return filteredItem;
@@ -353,7 +335,6 @@ export default function StatusPrecatorio() {
                       {
                         width: '*', stack: [
                           { text: cessao.precatorio, style: 'precatorio', margin: [5, 5, 0, 2] },
-                          { text: cessao.cedente, style: 'cedente', margin: [5, 0, 0, 5] },
                         ]
                       }
                     ]
@@ -384,13 +365,8 @@ export default function StatusPrecatorio() {
                     stack: [
                       {
                         columns: [
-                          { text: cessao.status, style: 'status', color: statusColors[cessao.status] || '#000000' },
-                          ...(cessao.ente ? [{ text: `${cessao.ente} - ${cessao.ano}`, style: 'badge' }] : []),
-                          ...(cessao.natureza ? [{ text: cessao.natureza, style: 'badge' }] : []),
-                          ...(cessao.data_cessao ? [{ text: cessao.data_cessao.split('-').reverse().join('/'), style: 'badge' }] : []),
-                          ...(cessao.empresa ? [{ text: cessao.empresa, style: 'badge' }] : []),
-                          ...(cessao.anuencia_advogado ? [{ text: cessao.anuencia_advogado, style: 'badge' }] : []),
-                          ...(cessao.falecido ? [{ text: cessao.falecido, style: 'badge' }] : []),
+                          { text: cessao.status_antigo, style: 'status', color: statusColors[cessao.status_antigo] || '#000000' },
+                          { text: cessao.status_atual, style: 'status', color: statusColors[cessao.status_atual] || '#000000' },
                         ],
                         columnGap: 5,
                         margin: [10, 5, 0, 5]
@@ -427,27 +403,25 @@ export default function StatusPrecatorio() {
           fontSize: 9,
           bold: true
         },
+
         precatorio: {
           fontSize: 9,
           bold: true
         },
-        cedente: {
-          fontSize: 8,
-          color: '#757575'
-        },
-        status: {
+
+        status_atual: {
           bold: true,
           fontSize: 7,
           margin: [0, 0, 0, 5],
           alignment: 'center'
         },
-        badge: {
-          color: '#000',
+
+        status_antigo: {
+          bold: true,
           fontSize: 7,
           margin: [0, 0, 0, 5],
-          bold: true,
           alignment: 'center'
-        }
+        },
       }
     };
 
