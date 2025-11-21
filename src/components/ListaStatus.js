@@ -66,6 +66,7 @@ export default function ListaStatus({ cessoes, filteredCessoes, isLoading }) {
                 style={{ backgroundColor: `${cessao.cor_status_antigo}` }}
                 data-tooltip-id="my-tooltip"
                 data-tooltip-place="top"
+                data-tooltip-content={`Status Antigo`}
                 className={`px-2 py-1 rounded brightness-110`}>
                 <span className="text-black font-bold">{cessao.status_antigo}</span>
               </a>
@@ -79,6 +80,7 @@ export default function ListaStatus({ cessoes, filteredCessoes, isLoading }) {
                 style={{ backgroundColor: `${cessao.cor_status_atual}` }}
                 data-tooltip-id="my-tooltip"
                 data-tooltip-place="top"
+                data-tooltip-content={`Status Atual`}
                 className={`px-2 py-1 rounded brightness-110`}>
                 <span className="text-black font-bold">{cessao.status_atual}</span>
               </a>
